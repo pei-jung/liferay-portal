@@ -194,8 +194,8 @@ public class MBCategoryLocalServiceImpl extends MBCategoryLocalServiceBaseImpl {
 	public void deleteCategories(long groupId)
 		throws PortalException, SystemException {
 
-		List<MBCategory> categories = mbCategoryPersistence.findByG_P(
-			groupId, MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID);
+		List<MBCategory> categories = mbCategoryPersistence.findByGroupId(
+			groupId);
 
 		for (MBCategory category : categories) {
 			mbCategoryLocalService.deleteCategory(category);
@@ -748,7 +748,8 @@ public class MBCategoryLocalServiceImpl extends MBCategoryLocalServiceBaseImpl {
 		if (status == WorkflowConstants.STATUS_IN_TRASH) {
 			trashEntryLocalService.addTrashEntry(
 				userId, category.getGroupId(), MBCategory.class.getName(),
-				categoryId, WorkflowConstants.STATUS_APPROVED, null, null);
+				categoryId, category.getUuid(), null,
+				WorkflowConstants.STATUS_APPROVED, null, null);
 		}
 
 		return category;
@@ -789,28 +790,26 @@ public class MBCategoryLocalServiceImpl extends MBCategoryLocalServiceBaseImpl {
 		if (category.getCategoryId() == parentCategoryId) {
 			return category.getParentCategoryId();
 		}
-		else {
-			MBCategory parentCategory = mbCategoryPersistence.fetchByPrimaryKey(
-				parentCategoryId);
 
-			if ((parentCategory == null) ||
-				(category.getGroupId() != parentCategory.getGroupId())) {
+		MBCategory parentCategory = mbCategoryPersistence.fetchByPrimaryKey(
+			parentCategoryId);
 
-				return category.getParentCategoryId();
-			}
+		if ((parentCategory == null) ||
+			(category.getGroupId() != parentCategory.getGroupId())) {
 
-			List<Long> subcategoryIds = new ArrayList<Long>();
-
-			getSubcategoryIds(
-				subcategoryIds, category.getGroupId(),
-				category.getCategoryId());
-
-			if (subcategoryIds.contains(parentCategoryId)) {
-				return category.getParentCategoryId();
-			}
-
-			return parentCategoryId;
+			return category.getParentCategoryId();
 		}
+
+		List<Long> subcategoryIds = new ArrayList<Long>();
+
+		getSubcategoryIds(
+			subcategoryIds, category.getGroupId(), category.getCategoryId());
+
+		if (subcategoryIds.contains(parentCategoryId)) {
+			return category.getParentCategoryId();
+		}
+
+		return parentCategoryId;
 	}
 
 	protected void mergeCategories(MBCategory fromCategory, long toCategoryId)

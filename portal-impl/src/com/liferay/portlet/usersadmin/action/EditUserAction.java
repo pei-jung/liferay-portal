@@ -671,7 +671,7 @@ public class EditUserAction extends PortletAction {
 
 			HttpServletRequest request = PortalUtil.getHttpServletRequest(
 				actionRequest);
-			HttpServletResponse response= PortalUtil.getHttpServletResponse(
+			HttpServletResponse response = PortalUtil.getHttpServletResponse(
 				actionResponse);
 			HttpSession session = request.getSession();
 
@@ -722,7 +722,7 @@ public class EditUserAction extends PortletAction {
 		Company company = PortalUtil.getCompany(actionRequest);
 
 		if (company.isStrangersVerify() &&
-			!oldEmailAddress.equalsIgnoreCase(emailAddress)) {
+			!StringUtil.equalsIgnoreCase(oldEmailAddress, emailAddress)) {
 
 			SessionMessages.add(actionRequest, "verificationEmailSent");
 		}

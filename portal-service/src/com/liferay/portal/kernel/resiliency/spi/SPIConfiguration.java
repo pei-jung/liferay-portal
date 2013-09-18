@@ -116,12 +116,12 @@ public class SPIConfiguration implements Serializable {
 		return _connectorPort;
 	}
 
-	public String getJavaExecutable() {
-		return _javaExecutable;
-	}
-
 	public String getExtraSettings() {
 		return _extraSettings;
+	}
+
+	public String getJavaExecutable() {
+		return _javaExecutable;
 	}
 
 	public List<String> getJVMArguments() {

@@ -79,12 +79,9 @@ public class DDLRecordSetStagedModelDataHandler
 			recordSet);
 
 		for (DDMTemplate ddmTemplate : ddmTemplates) {
-			StagedModelDataHandlerUtil.exportStagedModel(
-				portletDataContext, ddmTemplate);
-
-			portletDataContext.addReferenceElement(
-				recordSet, recordSetElement, ddmTemplate,
-				PortletDataContext.REFERENCE_TYPE_STRONG, false);
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, recordSet, ddmTemplate,
+				PortletDataContext.REFERENCE_TYPE_STRONG);
 		}
 
 		portletDataContext.addClassedModel(
@@ -106,7 +103,7 @@ public class DDLRecordSetStagedModelDataHandler
 		DDMStructure ddmStructure =
 			(DDMStructure)portletDataContext.getZipEntryAsObject(structurePath);
 
-		StagedModelDataHandlerUtil.importStagedModel(
+		StagedModelDataHandlerUtil.importReferenceStagedModel(
 			portletDataContext, ddmStructure);
 
 		Map<Long, Long> ddmStructureIds =
@@ -122,7 +119,7 @@ public class DDLRecordSetStagedModelDataHandler
 				recordSet, DDMTemplate.class);
 
 		for (Element ddmTemplateElement : ddmTemplateElements) {
-			StagedModelDataHandlerUtil.importStagedModel(
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
 				portletDataContext, ddmTemplateElement);
 		}
 

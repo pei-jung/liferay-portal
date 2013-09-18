@@ -192,10 +192,6 @@ public class EditGroupAction extends PortletAction {
 					 e instanceof SystemException) {
 
 				SessionErrors.add(actionRequest, e.getClass(), e);
-
-				sendRedirect(
-					portletConfig, actionRequest, actionResponse, redirect,
-					closeRedirect);
 			}
 			else {
 				throw e;
@@ -296,7 +292,7 @@ public class EditGroupAction extends PortletAction {
 
 		List<Team> teams = new UniqueList<Team>();
 
-		long[] teamsTeamIds= StringUtil.split(
+		long[] teamsTeamIds = StringUtil.split(
 			ParamUtil.getString(portletRequest, "teamsTeamIds"), 0L);
 
 		for (long teamsTeamId : teamsTeamIds) {
@@ -584,7 +580,7 @@ public class EditGroupAction extends PortletAction {
 			StringPool.NEW_LINE);
 
 		for (String analyticsType : analyticsTypes) {
-			if (analyticsType.equalsIgnoreCase("google")) {
+			if (StringUtil.equalsIgnoreCase(analyticsType, "google")) {
 				String googleAnalyticsId = ParamUtil.getString(
 					actionRequest, "googleAnalyticsId",
 					typeSettingsProperties.getProperty("googleAnalyticsId"));

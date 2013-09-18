@@ -41,6 +41,7 @@ import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalFeed;
 import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.portlet.journal.service.permission.JournalPermission;
 import com.liferay.portlet.journal.service.persistence.JournalArticleExportActionableDynamicQuery;
 import com.liferay.portlet.journal.service.persistence.JournalFeedExportActionableDynamicQuery;
@@ -130,6 +131,9 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 		JournalArticleLocalServiceUtil.deleteArticles(
 			portletDataContext.getScopeGroupId());
 
+		JournalFolderLocalServiceUtil.deleteFolders(
+			portletDataContext.getGroupId());
+
 		DDMTemplateLocalServiceUtil.deleteTemplates(
 			portletDataContext.getScopeGroupId());
 
@@ -145,9 +149,8 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences)
 		throws Exception {
 
-		portletDataContext.addPermissions(
-			JournalPermission.RESOURCE_NAME,
-			portletDataContext.getScopeGroupId());
+		portletDataContext.addPortletPermissions(
+			JournalPermission.RESOURCE_NAME);
 
 		Element rootElement = addExportDataRootElement(portletDataContext);
 
@@ -207,10 +210,8 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences, String data)
 		throws Exception {
 
-		portletDataContext.importPermissions(
-			JournalPermission.RESOURCE_NAME,
-			portletDataContext.getSourceGroupId(),
-			portletDataContext.getScopeGroupId());
+		portletDataContext.importPortletPermissions(
+			JournalPermission.RESOURCE_NAME);
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "feeds")) {
 			Element feedsElement = portletDataContext.getImportDataGroupElement(

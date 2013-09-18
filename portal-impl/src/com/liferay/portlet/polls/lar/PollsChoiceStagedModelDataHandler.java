@@ -61,8 +61,9 @@ public class PollsChoiceStagedModelDataHandler
 		PollsQuestion question = PollsQuestionLocalServiceUtil.getQuestion(
 			choice.getQuestionId());
 
-		StagedModelDataHandlerUtil.exportStagedModel(
-			portletDataContext, question);
+		StagedModelDataHandlerUtil.exportReferenceStagedModel(
+			portletDataContext, choice, question,
+			PortletDataContext.REFERENCE_TYPE_STRONG);
 
 		Element choiceElement = portletDataContext.getExportDataElement(choice);
 
@@ -85,7 +86,7 @@ public class PollsChoiceStagedModelDataHandler
 		PollsQuestion question =
 			(PollsQuestion)portletDataContext.getZipEntryAsObject(questionPath);
 
-		StagedModelDataHandlerUtil.importStagedModel(
+		StagedModelDataHandlerUtil.importReferenceStagedModel(
 			portletDataContext, question);
 
 		Map<Long, Long> questionIds =

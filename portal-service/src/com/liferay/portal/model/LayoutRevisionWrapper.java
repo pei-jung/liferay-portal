@@ -1671,16 +1671,6 @@ public class LayoutRevisionWrapper implements LayoutRevision,
 	}
 
 	/**
-	* Returns <code>true</code> if this layout revision is in the Recycle Bin.
-	*
-	* @return <code>true</code> if this layout revision is in the Recycle Bin; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isInTrash() {
-		return _layoutRevision.isInTrash();
-	}
-
-	/**
 	* Returns <code>true</code> if this layout revision is pending.
 	*
 	* @return <code>true</code> if this layout revision is pending; <code>false</code> otherwise
@@ -1756,6 +1746,22 @@ public class LayoutRevisionWrapper implements LayoutRevision,
 	public void setExpandoBridgeAttributes(
 		com.liferay.portal.service.ServiceContext serviceContext) {
 		_layoutRevision.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	@Override
+	public java.lang.String[] getAvailableLanguageIds() {
+		return _layoutRevision.getAvailableLanguageIds();
+	}
+
+	@Override
+	public java.lang.String getDefaultLanguageId() {
+		return _layoutRevision.getDefaultLanguageId();
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport()
+		throws com.liferay.portal.LocaleException {
+		_layoutRevision.prepareLocalizedFieldsForImport();
 	}
 
 	@Override
@@ -1863,6 +1869,12 @@ public class LayoutRevisionWrapper implements LayoutRevision,
 	}
 
 	@Override
+	public java.lang.String getThemeSetting(java.lang.String key,
+		java.lang.String device) {
+		return _layoutRevision.getThemeSetting(key, device);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties() {
 		return _layoutRevision.getTypeSettingsProperties();
 	}
@@ -1885,6 +1897,11 @@ public class LayoutRevisionWrapper implements LayoutRevision,
 	public boolean hasChildren()
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutRevision.hasChildren();
+	}
+
+	@Override
+	public boolean isContentDisplayPage() {
+		return _layoutRevision.isContentDisplayPage();
 	}
 
 	@Override

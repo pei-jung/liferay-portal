@@ -75,12 +75,10 @@ public class DLFileEntryTypeStagedModelDataHandler
 		List<DDMStructure> ddmStructures = fileEntryType.getDDMStructures();
 
 		for (DDMStructure ddmStructure : ddmStructures) {
-			StagedModelDataHandlerUtil.exportStagedModel(
-				portletDataContext, ddmStructure);
-
-			Element referenceElement = portletDataContext.addReferenceElement(
-				fileEntryType, fileEntryTypeElement, ddmStructure,
-				PortletDataContext.REFERENCE_TYPE_STRONG, false);
+			Element referenceElement =
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+					portletDataContext, fileEntryType, ddmStructure,
+					PortletDataContext.REFERENCE_TYPE_STRONG);
 
 			referenceElement.addAttribute(
 				"structure-id",
@@ -91,6 +89,27 @@ public class DLFileEntryTypeStagedModelDataHandler
 			fileEntryTypeElement,
 			ExportImportPathUtil.getModelPath(fileEntryType), fileEntryType,
 			DLPortletDataHandler.NAMESPACE);
+	}
+
+	@Override
+	protected void doImportCompanyStagedModel(
+			PortletDataContext portletDataContext,
+			DLFileEntryType fileEntryType)
+		throws Exception {
+
+		DLFileEntryType existingFileEntryType =
+			DLFileEntryTypeLocalServiceUtil.
+				fetchDLFileEntryTypeByUuidAndGroupId(
+					fileEntryType.getUuid(),
+					portletDataContext.getCompanyGroupId());
+
+		Map<Long, Long> fileEntryTypeIds =
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+				DLFileEntryType.class);
+
+		fileEntryTypeIds.put(
+			fileEntryType.getFileEntryTypeId(),
+			existingFileEntryType.getFileEntryTypeId());
 	}
 
 	@Override
@@ -106,7 +125,7 @@ public class DLFileEntryTypeStagedModelDataHandler
 				fileEntryType, DDMStructure.class);
 
 		for (Element ddmStructureElement : ddmStructureElements) {
-			StagedModelDataHandlerUtil.importStagedModel(
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
 				portletDataContext, ddmStructureElement);
 		}
 
@@ -145,14 +164,6 @@ public class DLFileEntryTypeStagedModelDataHandler
 						portletDataContext.getScopeGroupId());
 
 			if (existingDLFileEntryType == null) {
-				existingDLFileEntryType =
-					DLFileEntryTypeLocalServiceUtil.
-						fetchDLFileEntryTypeByUuidAndGroupId(
-							fileEntryType.getUuid(),
-							portletDataContext.getCompanyGroupId());
-			}
-
-			if (existingDLFileEntryType == null) {
 				serviceContext.setUuid(fileEntryType.getUuid());
 
 				importedDLFileEntryType =
@@ -162,11 +173,6 @@ public class DLFileEntryTypeStagedModelDataHandler
 						fileEntryType.getNameMap(),
 						fileEntryType.getDescriptionMap(), ddmStructureIdsArray,
 						serviceContext);
-			}
-			else if (portletDataContext.isCompanyStagedGroupedModel(
-						existingDLFileEntryType)) {
-
-				return;
 			}
 			else {
 				DLFileEntryTypeLocalServiceUtil.updateFileEntryType(
@@ -215,6 +221,22 @@ public class DLFileEntryTypeStagedModelDataHandler
 			DDMStructureLocalServiceUtil.updateDDMStructure(
 				importedDDMStructure);
 		}
+	}
+
+	@Override
+	protected boolean validateMissingReference(
+			String uuid, long companyId, long groupId)
+		throws Exception {
+
+		DLFileEntryType dlFileEntryType =
+			DLFileEntryTypeLocalServiceUtil.
+				fetchDLFileEntryTypeByUuidAndGroupId(uuid, groupId);
+
+		if (dlFileEntryType == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

@@ -21,12 +21,14 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.portlet.wiki.DuplicateNodeNameException;
 import com.liferay.portlet.wiki.NoSuchNodeException;
 import com.liferay.portlet.wiki.NodeNameException;
@@ -162,8 +164,12 @@ public class EditNodeAction extends PortletAction {
 
 		WikiCacheThreadLocal.setClearCache(false);
 
+		String deleteEntryTitle = null;
+
 		if (moveToTrash) {
-			WikiNodeServiceUtil.moveNodeToTrash(nodeId);
+			WikiNode node = WikiNodeServiceUtil.moveNodeToTrash(nodeId);
+
+			deleteEntryTitle = node.getName();
 		}
 		else {
 			WikiNodeServiceUtil.deleteNode(nodeId);
@@ -177,6 +183,17 @@ public class EditNodeAction extends PortletAction {
 
 		if (moveToTrash) {
 			Map<String, String[]> data = new HashMap<String, String[]>();
+
+			data.put(
+				"deleteEntryClassName",
+				new String[] {WikiNode.class.getName()});
+
+			if (Validator.isNotNull(deleteEntryTitle)) {
+				data.put(
+					"deleteEntryTitle",
+					new String[] {
+						TrashUtil.getOriginalTitle(deleteEntryTitle)});
+			}
 
 			data.put("restoreEntryIds", new String[] {String.valueOf(nodeId)});
 

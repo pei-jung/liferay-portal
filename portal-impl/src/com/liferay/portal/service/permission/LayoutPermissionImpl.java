@@ -16,6 +16,7 @@ package com.liferay.portal.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutConstants;
@@ -33,6 +34,7 @@ import com.liferay.portal.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.sites.util.SitesUtil;
 
@@ -84,6 +86,14 @@ public class LayoutPermissionImpl implements LayoutPermission {
 			PermissionChecker permissionChecker, Layout layout,
 			boolean checkViewableGroup, String actionId)
 		throws PortalException, SystemException {
+
+		Boolean hasPermission = StagingPermissionUtil.hasPermission(
+			permissionChecker, layout.getGroup(), Layout.class.getName(),
+			layout.getGroupId(), null, actionId);
+
+		if (hasPermission != null) {
+			return hasPermission.booleanValue();
+		}
 
 		return containsWithViewableGroup(
 			permissionChecker, layout, checkViewableGroup, actionId);
@@ -234,16 +244,24 @@ public class LayoutPermissionImpl implements LayoutPermission {
 			}
 		}
 
+		if (actionId.equals(ActionKeys.ADD_LAYOUT)) {
+			if (!PortalUtil.isLayoutParentable(layout.getType()) ||
+				!SitesUtil.isLayoutSortable(layout)) {
+
+				return false;
+			}
+
+			if (GroupPermissionUtil.contains(
+					permissionChecker, layout.getGroupId(),
+					ActionKeys.ADD_LAYOUT)) {
+
+				return true;
+			}
+		}
+
 		if (GroupPermissionUtil.contains(
 				permissionChecker, layout.getGroupId(),
 				ActionKeys.MANAGE_LAYOUTS)) {
-
-			return true;
-		}
-		else if (actionId.equals(ActionKeys.ADD_LAYOUT) &&
-				 GroupPermissionUtil.contains(
-					 permissionChecker, layout.getGroupId(),
-					 ActionKeys.ADD_LAYOUT)) {
 
 			return true;
 		}

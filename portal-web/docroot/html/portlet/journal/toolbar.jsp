@@ -21,7 +21,7 @@ String strutsAction = ParamUtil.getString(request, "struts_action");
 %>
 
 <aui:nav-bar>
-	<aui:nav>
+	<aui:nav id="toolbarContainer">
 		<aui:nav-item cssClass="hide" dropdown="<%= true %>" id="actionsButtonContainer" label="actions">
 
 			<%
@@ -54,20 +54,20 @@ String strutsAction = ParamUtil.getString(request, "struts_action");
 				String taglibURL = "javascript:" + renderResponse.getNamespace() + "openStructuresView()";
 				%>
 
-				<aui:nav-item href="<%= taglibURL %>" label="structures" />
+				<aui:nav-item href="<%= taglibURL %>" iconClass="icon-tasks" label="structures" />
 
 				<%
 				taglibURL = "javascript:" + renderResponse.getNamespace() + "openTemplatesView()";
 				%>
 
-				<aui:nav-item href="<%= taglibURL %>" label="templates" />
+				<aui:nav-item href="<%= taglibURL %>" iconClass="icon-list-alt" label="templates" />
 
 				<%
 				taglibURL = "javascript:" + renderResponse.getNamespace() + "openFeedsView()";
 				%>
 
 				<c:if test="<%= PortalUtil.isRSSFeedsEnabled() %>">
-					<aui:nav-item href="<%= taglibURL %>" label="feeds" />
+					<aui:nav-item href="<%= taglibURL %>" iconClass="icon-rss" label="feeds" />
 				</c:if>
 			</aui:nav-item>
 		</c:if>
@@ -117,12 +117,19 @@ String strutsAction = ParamUtil.getString(request, "struts_action");
 			{
 				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
 				dialog: {
-					destroyOnHide: true
+					destroyOnHide: true,
+					on: {
+						visibleChange: function(event) {
+							if (!event.newVal) {
+								Liferay.Portlet.refresh('#p_p_id_' + <%= portletDisplay.getId() %> + '_');
+							}
+						}
+					}
 				},
 				refererPortletName: '<%= PortletKeys.JOURNAL %>',
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
-				showGlobalScope: 'false',
-				showManageTemplates: 'true',
+				showGlobalScope: false,
+				showManageTemplates: true,
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "structures") %>'
 			}
 		);
@@ -139,6 +146,7 @@ String strutsAction = ParamUtil.getString(request, "struts_action");
 				groupId: <%= scopeGroupId %>,
 				refererPortletName: '<%= PortletKeys.JOURNAL %>',
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
+				showHeader: false,
 				struts_action: '/dynamic_data_mapping/view_template',
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "templates") %>'
 			}

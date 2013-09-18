@@ -91,6 +91,8 @@ public class PortletKeys {
 
 	public static final String GROUP_STATISTICS = "181";
 
+	public static final String HIGHEST_RATED_ASSETS = "194";
+
 	public static final String IFRAME = "48";
 
 	public static final String INVITATION = "100";
@@ -102,9 +104,6 @@ public class PortletKeys {
 	public static final String JOURNAL_CONTENT_LIST = "62";
 
 	public static final String JOURNAL_CONTENT_SEARCH = "77";
-
-	public static final String KNOWLEDGE_BASE_ADMIN =
-		"1_WAR_knowledgebaseportlet";
 
 	public static final String LANGUAGE = "82";
 
@@ -134,6 +133,8 @@ public class PortletKeys {
 	public static final String MOBILE_DEVICE_SITE_ADMIN = "178";
 
 	public static final String MONITORING = "131";
+
+	public static final String MOST_VIEWED_ASSETS = "193";
 
 	public static final String MY_ACCOUNT = "2";
 

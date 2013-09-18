@@ -51,7 +51,7 @@ String orderByCol = ParamUtil.getString(request, "orderByCol");
 String orderByType = ParamUtil.getString(request, "orderByType");
 
 if (Validator.isNull(orderByCol)) {
-	orderByCol = portalPreferences.getValue(PortletKeys.JOURNAL, "order-by-col", StringPool.BLANK);
+	orderByCol = portalPreferences.getValue(PortletKeys.JOURNAL, "order-by-col", "modified-date");
 	orderByType = portalPreferences.getValue(PortletKeys.JOURNAL, "order-by-type", "asc");
 }
 else {
@@ -77,74 +77,30 @@ entriesChecker.setCssClass("entry-selector");
 searchContainer.setRowChecker(entriesChecker);
 
 ArticleDisplayTerms displayTerms = (ArticleDisplayTerms)searchContainer.getDisplayTerms();
-
-boolean showAddArticleButton = JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_ARTICLE);
 %>
 
 <c:if test="<%= Validator.isNotNull(displayTerms.getStructureId()) %>">
 	<aui:input name="<%= displayTerms.STRUCTURE_ID %>" type="hidden" value="<%= displayTerms.getStructureId() %>" />
 
-	<c:if test="<%= showAddArticleButton %>">
-		<div class="alert alert-info">
+	<%
+	if (!displayTerms.getStructureId().equals("0")) {
+		DDMStructure ddmStructure = null;
 
-			<%
-			String structureId = StringPool.BLANK;
+		try {
+			ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
+		}
+		catch (NoSuchStructureException nsse) {
+			ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
+		}
 
-			if (!displayTerms.getStructureId().equals("0")) {
-				structureId = displayTerms.getStructureId();
+		ddmStructureName = ddmStructure.getName(locale);
+	}
+	%>
 
-				DDMStructure ddmStructure = null;
-
-				try {
-					ddmStructure = DDMStructureLocalServiceUtil.getStructure(scopeGroupId, PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
-				}
-				catch (NoSuchStructureException nsse) {
-					ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
-				}
-
-				ddmStructureName = ddmStructure.getName(locale);
-			}
-			%>
-
-			<liferay-portlet:renderURL varImpl="addArticlesURL" windowState="<%= LiferayWindowState.MAXIMIZED.toString() %>">
-				<portlet:param name="struts_action" value="/journal/edit_article" />
-				<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
-				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="backURL" value="<%= currentURL %>" />
-				<portlet:param name="folderId" value="<%= String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
-				<portlet:param name="structureId" value="<%= structureId %>" />
-			</liferay-portlet:renderURL>
-
-			<liferay-ui:message arguments="<%= HtmlUtil.escape(ddmStructureName) %>" key="showing-content-filtered-by-structure-x" /> (<a href="<%= addArticlesURL.toString() %>"><liferay-ui:message arguments="<%= HtmlUtil.escape(ddmStructureName) %>" key="add-new-x" /></a>)
-		</div>
-	</c:if>
 </c:if>
 
 <c:if test="<%= Validator.isNotNull(displayTerms.getTemplateId()) %>">
 	<aui:input name="<%= displayTerms.TEMPLATE_ID %>" type="hidden" value="<%= displayTerms.getTemplateId() %>" />
-
-	<c:if test="<%= showAddArticleButton %>">
-		<div class="alert alert-info">
-
-			<%
-			DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(scopeGroupId, PortalUtil.getClassNameId(DDMStructure.class), displayTerms.getTemplateId());
-
-			DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(ddmTemplate.getClassPK());
-			%>
-
-			<liferay-portlet:renderURL varImpl="addArticlesURL" windowState="<%= LiferayWindowState.MAXIMIZED.toString() %>">
-				<portlet:param name="struts_action" value="/journal/edit_article" />
-				<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
-				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="backURL" value="<%= currentURL %>" />
-				<portlet:param name="folderId" value="<%= String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
-				<portlet:param name="structureId" value="<%= ddmStructure.getStructureKey() %>" />
-				<portlet:param name="templateId" value="<%= displayTerms.getTemplateId() %>" />
-			</liferay-portlet:renderURL>
-
-			<liferay-ui:message arguments="<%= ddmTemplate.getName(locale) %>" key="showing-content-filtered-by-template-x" /> (<a href="<%= addArticlesURL.toString() %>"><liferay-ui:message arguments="<%= ddmStructure.getName(locale) %>" key="add-new-x" /></a>)
-		</div>
-	</c:if>
 </c:if>
 
 <c:if test="<%= portletName.equals(PortletKeys.JOURNAL) && !((themeDisplay.getScopeGroupId() == themeDisplay.getCompanyGroupId()) && (Validator.isNotNull(displayTerms.getStructureId()) || Validator.isNotNull(displayTerms.getTemplateId()))) %>">
@@ -204,11 +160,11 @@ int total = 0;
 	<c:when test="<%= Validator.isNotNull(displayTerms.getStructureId()) %>">
 
 		<%
-		total = JournalArticleServiceUtil.getArticlesCountByStructureId(scopeGroupId, searchTerms.getStructureId());
+		total = JournalArticleServiceUtil.getArticlesCountByStructureId(displayTerms.getGroupId(), searchTerms.getStructureId());
 
 		searchContainer.setTotal(total);
 
-		results = JournalArticleServiceUtil.getArticlesByStructureId(scopeGroupId, displayTerms.getStructureId(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+		results = JournalArticleServiceUtil.getArticlesByStructureId(displayTerms.getGroupId(), displayTerms.getStructureId(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
 		%>
 
 	</c:when>
@@ -226,11 +182,17 @@ int total = 0;
 	<c:otherwise>
 
 		<%
-		total = JournalFolderServiceUtil.getFoldersAndArticlesCount(scopeGroupId, folderId);
+		int status = WorkflowConstants.STATUS_APPROVED;
+
+		if (permissionChecker.isCompanyAdmin() || permissionChecker.isGroupAdmin(scopeGroupId)) {
+			status = WorkflowConstants.STATUS_ANY;
+		}
+
+		total = JournalFolderServiceUtil.getFoldersAndArticlesCount(scopeGroupId, folderId, status);
 
 		searchContainer.setTotal(total);
 
-		results = JournalFolderServiceUtil.getFoldersAndArticles(scopeGroupId, folderId, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+		results = JournalFolderServiceUtil.getFoldersAndArticles(scopeGroupId, folderId, status, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
 		%>
 
 	</c:otherwise>
@@ -318,10 +280,51 @@ for (int i = 0; i < results.size(); i++) {
 							method="get"
 							url="<%= rowURL.toString() %>"
 						/>
-					</liferay-util:buffer>
 
-					<liferay-util:buffer var="articleStatus">
-						<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= curArticle.getStatus() %>" />
+						<c:if test="<%= curArticle.getGroupId() != scopeGroupId %>">
+							<small class="group-info">
+								<dl>
+
+									<%
+									Group group = GroupLocalServiceUtil.getGroup(curArticle.getGroupId());
+									%>
+
+									<c:if test="<%= !group.isLayout() || (group.getParentGroupId() != scopeGroupId) %>">
+										<dt>
+											<liferay-ui:message key="site" />:
+										</dt>
+
+										<dd>
+
+											<%
+											String groupDescriptiveName = null;
+
+											if (group.isLayout()) {
+												Group parentGroup = group.getParentGroup();
+
+												groupDescriptiveName = parentGroup.getDescriptiveName(locale);
+											}
+											else {
+												groupDescriptiveName = group.getDescriptiveName(locale);
+											}
+											%>
+
+											<%= HtmlUtil.escape(groupDescriptiveName) %>
+										</dd>
+									</c:if>
+
+									<c:if test="<%= group.isLayout() %>">
+										<dt>
+											<liferay-ui:message key="scope" />:
+										</dt>
+
+										<dd>
+											<%= group.getDescriptiveName(locale) %>
+										</dd>
+									</c:if>
+								</dl>
+							</small>
+						</c:if>
 					</liferay-util:buffer>
 
 					<%

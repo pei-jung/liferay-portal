@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 
-<project name="build-common" xmlns:antelope="antlib:ise.antelope.tasks">
+<project name="build-common"
+	xmlns:antelope="antlib:ise.antelope.tasks"
+	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+>
 	<dirname file="${ant.file.build-common}" property="project.dir" />
 
 	<property name="test.properties" value="com/liferay/portal/tools/dependencies/portal-tools.properties" />
@@ -68,11 +71,12 @@
 		<path refid="web-lib.classpath" />
 	</path>
 
-	<taskdef classpathref="lib.classpath" resource="net/sf/antcontrib/antlib.xml" />
-	<taskdef classpathref="lib.classpath" resource="axis-tasks.properties" />
-	<taskdef classpathref="lib.classpath" resource="ise/antelope/tasks/antlib.xml" uri="antlib:ise.antelope.tasks" />
 	<taskdef classpathref="lib.classpath" resource="aQute/bnd/ant/taskdef.properties" />
+	<taskdef classpathref="lib.classpath" resource="axis-tasks.properties" />
 	<taskdef classpathref="lib.classpath" resource="com/orangevolt/tools/ant/taskdefs.properties" />
+	<taskdef classpathref="lib.classpath" resource="ise/antelope/tasks/antlib.xml" uri="antlib:ise.antelope.tasks" />
+	<taskdef classpathref="lib.classpath" resource="net/sf/antcontrib/antlib.xml" />
+	<typedef classpathref="lib.classpath" resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" />
 	<taskdef classpathref="lib.classpath" resource="tasks.properties" />
 
 	<taskdef classname="com.tonicsystems.jarjar.JarJarTask" classpath="${project.dir}/lib/development/jarjar.jar" name="jarjar" />
@@ -746,7 +750,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 
 		<if>
 			<and>
-				<isset property="test.functional.count"/>
+				<isset property="test.functional.count" />
 				<not>
 					<equals arg1="${test.functional.count}" arg2="0" />
 				</not>
@@ -756,7 +760,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			</then>
 			<elseif>
 				<and>
-					<isset property="test.functional-generated.count"/>
+					<isset property="test.functional-generated.count" />
 					<not>
 						<equals arg1="${test.functional-generated.count}" arg2="0" />
 					</not>
@@ -768,7 +772,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			</elseif>
 			<elseif>
 				<and>
-					<isset property="test.integration.count"/>
+					<isset property="test.integration.count" />
 					<not>
 						<equals arg1="${test.integration.count}" arg2="0" />
 					</not>
@@ -779,7 +783,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			</elseif>
 			<elseif>
 				<and>
-					<isset property="test.unit.count"/>
+					<isset property="test.unit.count" />
 					<not>
 						<equals arg1="${test.unit.count}" arg2="0" />
 					</not>
@@ -903,7 +907,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			<jvmarg value="-Duser.timezone=GMT" />
 			<classpath location="test-coverage" />
 			<classpath refid="test.classpath" />
-			<test name="${class}" methods="${methods}"/>
+			<test name="${class}" methods="${methods}" />
 		</junit>
 	</target>
 

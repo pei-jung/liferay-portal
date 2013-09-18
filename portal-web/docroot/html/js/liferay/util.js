@@ -98,6 +98,22 @@
 			};
 		},
 
+		addInputCancel: function() {
+			A.use(
+				'aui-button-search-cancel',
+				function(A) {
+					new A.ButtonSearchCancel(
+						{
+							trigger: 'input[type=password], input[type=search], input.clearable, input.search-query',
+							zIndex: Liferay.zIndex.WINDOW + 100
+						}
+					);
+				}
+			);
+
+			Util.addInputCancel = function(){};
+		},
+
 		addInputFocus: function() {
 			A.use(
 				'aui-base',
@@ -427,7 +443,7 @@
 
 					parentThemeDisplay = parentWindow.themeDisplay;
 
-					if (!parentThemeDisplay) {
+					if (!parentThemeDisplay || window.name === 'devicePreviewIframe') {
 						break;
 					}
 					else if (!parentThemeDisplay.isStatePopUp() || (parentWindow == parentWindow.parent)) {
@@ -459,6 +475,10 @@
 
 		getWindowName: function() {
 			return window.name || Window._name || '';
+		},
+
+		getWindowWidth: function() {
+			return (window.innerWidth > 0) ? window.innerWidth : screen.width;
 		},
 
 		getURLWithSessionId: function(url) {
@@ -506,6 +526,18 @@
 			return Liferay.EDITORS && Liferay.EDITORS[editorImpl];
 		},
 
+		isPhone: function() {
+			var instance = this;
+
+			return (instance.getWindowWidth() < Liferay.BREAKPOINTS.PHONE);
+		},
+
+		isTablet: function() {
+			var instance = this;
+
+			return (instance.getWindowWidth() < Liferay.BREAKPOINTS.TABLET);
+		},
+
 		ns: function(namespace, obj) {
 			var instance = this;
 
@@ -532,6 +564,24 @@
 			return value;
 		},
 
+		openInDialog: function(event) {
+			event.preventDefault();
+
+			var currentTarget = event.currentTarget;
+
+			var config = currentTarget.getData();
+
+			if (!config.uri) {
+				config.uri = currentTarget.getData('href') || currentTarget.attr('href');
+			}
+
+			if (!config.title) {
+				config.title = currentTarget.attr('title');
+			}
+
+			Liferay.Util.openWindow(config);
+		},
+
 		openWindow: function(config, callback) {
 			config.openingWindow = window;
 
@@ -548,7 +598,7 @@
 		},
 
 		randomInt: function() {
-			return (Math.ceil(Math.random() * (new Date).getTime()));
+			return (Math.ceil(Math.random() * (new Date()).getTime()));
 		},
 
 		randomMinMax: function(min, max) {
@@ -664,7 +714,7 @@
 
 				}
 				else {
-					document.selection.createRange().text='\t';
+					document.selection.createRange().text = '\t';
 				}
 
 				el.scrollTop = oldscroll;
@@ -988,7 +1038,7 @@
 			var selector;
 
 			if (isArray(name)) {
-				selector = 'input[name='+ name.join('], input[name=') + STR_RIGHT_SQUARE_BRACKET;
+				selector = 'input[name=' + name.join('], input[name=') + STR_RIGHT_SQUARE_BRACKET;
 			}
 			else {
 				selector = 'input[name=' + name + STR_RIGHT_SQUARE_BRACKET;
@@ -1362,6 +1412,10 @@
 				ddmURL.setParameter('showGlobalScope', config.showGlobalScope);
 			}
 
+			if ('showHeader' in config) {
+				ddmURL.setParameter('showHeader', config.showHeader);
+			}
+
 			if ('showManageTemplates' in config) {
 				ddmURL.setParameter('showManageTemplates', config.showManageTemplates);
 			}
@@ -1714,15 +1768,15 @@
 		Util,
 		'selectFolder',
 		function(folderData, folderHref, namespace) {
-			A.byIdNS(namespace, folderData['idString']).val(folderData['idValue']);
+			A.byIdNS(namespace, folderData.idString).val(folderData.idValue);
 
-			var nameEl = A.byIdNS(namespace, folderData['nameString']);
+			var nameEl = A.byIdNS(namespace, folderData.nameString);
 
-			Liferay.Util.addParams(namespace + 'folderId=' + folderData['idValue'], folderHref);
+			Liferay.Util.addParams(namespace + 'folderId=' + folderData.idValue, folderHref);
 
 			nameEl.attr('href', folderHref);
 
-			nameEl.setContent(folderData['nameValue'] + '&nbsp;');
+			nameEl.setContent(folderData.nameValue + '&nbsp;');
 
 			var button = A.byIdNS(namespace, 'removeFolderButton');
 
@@ -1995,7 +2049,7 @@
 
 			if (searchContainer) {
 				searchContainer.delegate(
-					'change',
+					EVENT_CLICK,
 					function() {
 						Liferay.Util.toggleDisabled(buttonId, !Liferay.Util.listCheckedExcept(form, ignoreFieldName));
 					},
@@ -2019,6 +2073,10 @@
 
 				if (checked) {
 					value = checkbox.val();
+
+					if (value == 'false') {
+						value = 'true';
+					}
 				}
 
 				checkbox.previous().val(value);
@@ -2137,8 +2195,9 @@
 		DROP_AREA: 440,
 		DROP_POSITION: 450,
 		DRAG_ITEM: 460,
-		TOOLTIP: 10000,
-		WINDOW: 1000,
-		MENU: 5000
+		OVERLAY: 1000,
+		WINDOW: 1200,
+		MENU: 5000,
+		TOOLTIP: 10000
 	};
 })(AUI(), Liferay);

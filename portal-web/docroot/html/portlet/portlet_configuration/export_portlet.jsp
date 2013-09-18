@@ -30,6 +30,17 @@ portletURL.setParameter("tabs3", "current-and-previous");
 	refresh="<%= false %>"
 >
 	<liferay-ui:section>
+
+		<%
+		int incompleteBackgroundTaskCount = BackgroundTaskLocalServiceUtil.getBackgroundTasksCount(themeDisplay.getScopeGroupId(), selPortlet.getPortletId(), PortletExportBackgroundTaskExecutor.class.getName(), false);
+		%>
+
+		<div class="<%= (incompleteBackgroundTaskCount == 0) ? "hide" : "in-progress" %>" id="<portlet:namespace />incompleteProcessMessage">
+			<liferay-util:include page="/html/portlet/layouts_admin/incomplete_processes_message.jsp">
+				<liferay-util:param name="incompleteBackgroundTaskCount" value="<%= String.valueOf(incompleteBackgroundTaskCount) %>" />
+			</liferay-util:include>
+		</div>
+
 		<portlet:actionURL var="exportPortletURL">
 			<portlet:param name="struts_action" value="/portlet_configuration/export_import" />
 		</portlet:actionURL>
@@ -53,7 +64,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 				PortletDataHandlerControl[] configurationControls = portletDataHandler.getExportConfigurationControls(company.getCompanyId(), themeDisplay.getScopeGroupId(), selPortlet, exportableLayout.getPlid(), false);
 				%>
 
-				<c:if test="<%= (configurationControls != null) && (configurationControls.length > 0) %>">
+				<c:if test="<%= ArrayUtil.isNotEmpty(configurationControls) %>">
 					<aui:fieldset cssClass="options-group" label="application">
 						<ul class="lfr-tree select-options unstyled">
 							<li class="options">
@@ -160,9 +171,8 @@ portletURL.setParameter("tabs3", "current-and-previous");
 															firstDayOfWeek="<%= yesterday.getFirstDayOfWeek() - 1 %>"
 															monthParam="startDateMonth"
 															monthValue="<%= yesterday.get(Calendar.MONTH) %>"
+															name="startDate"
 															yearParam="startDateYear"
-															yearRangeEnd="<%= yesterday.get(Calendar.YEAR) %>"
-															yearRangeStart="<%= yesterday.get(Calendar.YEAR) - 100 %>"
 															yearValue="<%= yesterday.get(Calendar.YEAR) %>"
 														/>
 
@@ -171,12 +181,14 @@ portletURL.setParameter("tabs3", "current-and-previous");
 														<liferay-ui:input-time
 															amPmParam='<%= "startDateAmPm" %>'
 															amPmValue="<%= yesterday.get(Calendar.AM_PM) %>"
+															dateParam="startDateTime"
+															dateValue="<%= yesterday.getTime() %>"
 															disabled="<%= false %>"
 															hourParam='<%= "startDateHour" %>'
 															hourValue="<%= yesterday.get(Calendar.HOUR) %>"
-															minuteInterval="<%= 1 %>"
 															minuteParam='<%= "startDateMinute" %>'
 															minuteValue="<%= yesterday.get(Calendar.MINUTE) %>"
+															name="startTime"
 														/>
 													</aui:fieldset>
 												</li>
@@ -190,9 +202,8 @@ portletURL.setParameter("tabs3", "current-and-previous");
 															firstDayOfWeek="<%= today.getFirstDayOfWeek() - 1 %>"
 															monthParam="endDateMonth"
 															monthValue="<%= today.get(Calendar.MONTH) %>"
+															name="endDate"
 															yearParam="endDateYear"
-															yearRangeEnd="<%= today.get(Calendar.YEAR) %>"
-															yearRangeStart="<%= today.get(Calendar.YEAR) - 100 %>"
 															yearValue="<%= today.get(Calendar.YEAR) %>"
 														/>
 
@@ -201,11 +212,14 @@ portletURL.setParameter("tabs3", "current-and-previous");
 														<liferay-ui:input-time
 															amPmParam='<%= "endDateAmPm" %>'
 															amPmValue="<%= today.get(Calendar.AM_PM) %>"
+															dateParam="startDateTime"
+															dateValue="<%= today.getTime() %>"
 															disabled="<%= false %>"
 															hourParam='<%= "endDateHour" %>'
 															hourValue="<%= today.get(Calendar.HOUR) %>"
 															minuteParam='<%= "endDateMinute" %>'
 															minuteValue="<%= today.get(Calendar.MINUTE) %>"
+															name="endTime"
 														/>
 													</aui:fieldset>
 												</li>
@@ -252,7 +266,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 												PortletDataHandlerControl[] exportControls = portletDataHandler.getExportControls();
 												PortletDataHandlerControl[] metadataControls = portletDataHandler.getExportMetadataControls();
 
-												if (Validator.isNotNull(exportControls) || Validator.isNotNull(metadataControls)) {
+												if (ArrayUtil.isNotEmpty(exportControls) || ArrayUtil.isNotEmpty(metadataControls)) {
 												%>
 
 													<div class="hide" id="<portlet:namespace />content_<%= selPortlet.getRootPortletId() %>">
@@ -268,7 +282,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 																		request.setAttribute("render_controls.jsp-portletDisabled", !portletDataHandler.isPublishToLiveByDefault());
 																		%>
 
-																		<aui:field-wrapper label='<%= Validator.isNotNull(metadataControls) ? "content" : StringPool.BLANK %>'>
+																		<aui:field-wrapper label='<%= ArrayUtil.isNotEmpty(metadataControls) ? "content" : StringPool.BLANK %>'>
 																			<ul class="lfr-tree unstyled">
 																				<liferay-util:include page="/html/portlet/layouts_admin/render_controls.jsp" />
 																			</ul>
@@ -283,7 +297,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 
 																			PortletDataHandlerControl[] childrenControls = control.getChildren();
 
-																			if ((childrenControls != null) && (childrenControls.length > 0)) {
+																			if (ArrayUtil.isNotEmpty(childrenControls)) {
 																				request.setAttribute("render_controls.jsp-controls", childrenControls);
 																			%>
 
@@ -407,6 +421,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 			commentsNode: '#<%= PortletDataHandlerKeys.COMMENTS %>Checkbox',
 			deletionsNode: '#<%= PortletDataHandlerKeys.DELETIONS %>Checkbox',
 			form: document.<portlet:namespace />fm1,
+			incompleteProcessMessageNode: '#<portlet:namespace />incompleteProcessMessage',
 			namespace: '<portlet:namespace />',
 			processesNode: '#exportProcesses',
 			processesResourceURL: '<%= exportProcessesURL.toString() %>',

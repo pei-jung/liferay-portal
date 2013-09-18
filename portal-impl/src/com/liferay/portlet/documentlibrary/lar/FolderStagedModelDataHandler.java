@@ -97,12 +97,9 @@ public class FolderStagedModelDataHandler
 			repository = RepositoryLocalServiceUtil.getRepository(
 				folder.getRepositoryId());
 
-			StagedModelDataHandlerUtil.exportStagedModel(
-				portletDataContext, repository);
-
-			portletDataContext.addReferenceElement(
-				folder, folderElement, repository,
-				PortletDataContext.REFERENCE_TYPE_STRONG, false);
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, folder, Folder.class, repository,
+				Repository.class, PortletDataContext.REFERENCE_TYPE_STRONG);
 
 			portletDataContext.addClassedModel(
 				folderElement, folderPath, folder,
@@ -125,14 +122,17 @@ public class FolderStagedModelDataHandler
 		if (folder.getParentFolderId() !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
-			StagedModelDataHandlerUtil.exportStagedModel(
-				portletDataContext, folder.getParentFolder());
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, folder, Folder.class,
+				folder.getParentFolder(), Folder.class,
+				PortletDataContext.REFERENCE_TYPE_PARENT);
 		}
 
 		exportFolderFileEntryTypes(portletDataContext, folderElement, folder);
 
 		portletDataContext.addClassedModel(
-			folderElement, folderPath, folder, DLPortletDataHandler.NAMESPACE);
+			folderElement, folderPath, folder, DLFolder.class,
+			DLPortletDataHandler.NAMESPACE);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class FolderStagedModelDataHandler
 				folderElement, Repository.class, folder.getRepositoryId());
 
 		if (referenceDataElement != null) {
-			StagedModelDataHandlerUtil.importStagedModel(
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
 				portletDataContext, referenceDataElement);
 
 			return;
@@ -170,7 +170,7 @@ public class FolderStagedModelDataHandler
 				(Folder)portletDataContext.getZipEntryAsObject(
 					parentFolderPath);
 
-			StagedModelDataHandlerUtil.importStagedModel(
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
 				portletDataContext, parentFolder);
 		}
 
@@ -182,7 +182,7 @@ public class FolderStagedModelDataHandler
 			folderIds, folder.getParentFolderId(), folder.getParentFolderId());
 
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
-			folder, DLPortletDataHandler.NAMESPACE);
+			folder, DLFolder.class, DLPortletDataHandler.NAMESPACE);
 
 		serviceContext.setUserId(userId);
 
@@ -228,7 +228,8 @@ public class FolderStagedModelDataHandler
 			portletDataContext, folderElement, folder, serviceContext);
 
 		portletDataContext.importClassedModel(
-			folder, importedFolder, DLPortletDataHandler.NAMESPACE);
+			folder, importedFolder, DLFolder.class,
+			DLPortletDataHandler.NAMESPACE);
 
 		folderIds.put(folder.getFolderId(), importedFolder.getFolderId());
 	}
@@ -269,12 +270,10 @@ public class FolderStagedModelDataHandler
 			}
 
 			if (dlFileEntryType.isExportable()) {
-				StagedModelDataHandlerUtil.exportStagedModel(
-					portletDataContext, dlFileEntryType);
-
-				portletDataContext.addReferenceElement(
-					folder, folderElement, dlFileEntryType,
-					PortletDataContext.REFERENCE_TYPE_STRONG, false);
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+					portletDataContext, folder, Folder.class, dlFileEntryType,
+					DLFileEntryType.class,
+					PortletDataContext.REFERENCE_TYPE_STRONG);
 			}
 		}
 
@@ -315,10 +314,6 @@ public class FolderStagedModelDataHandler
 
 		List<Long> currentFolderFileEntryTypeIds = new ArrayList<Long>();
 
-		Map<Long, Long> fileEntryTypeIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				DLFileEntryType.class);
-
 		String defaultFileEntryTypeUuid = GetterUtil.getString(
 			folderElement.attributeValue("defaultFileEntryTypeUuid"));
 
@@ -335,35 +330,20 @@ public class FolderStagedModelDataHandler
 				(DLFileEntryType)portletDataContext.getZipEntryAsObject(
 					referencePath);
 
-			String fileEntryTypeUuid = referenceDLFileEntryType.getUuid();
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
+				portletDataContext, referenceDLFileEntryType);
+
+			Map<Long, Long> fileEntryTypeIds =
+				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+					DLFileEntryType.class);
+
+			long dlFileEntryTypeId = MapUtil.getLong(
+				fileEntryTypeIds, referenceDLFileEntryType.getFileEntryTypeId(),
+				referenceDLFileEntryType.getFileEntryTypeId());
 
 			DLFileEntryType existingDLFileEntryType =
-				DLFileEntryTypeLocalServiceUtil.
-					fetchDLFileEntryTypeByUuidAndGroupId(
-						fileEntryTypeUuid,
-						portletDataContext.getScopeGroupId());
-
-			if (existingDLFileEntryType == null) {
-				existingDLFileEntryType =
-					DLFileEntryTypeLocalServiceUtil.
-						fetchDLFileEntryTypeByUuidAndGroupId(
-							fileEntryTypeUuid,
-							portletDataContext.getCompanyGroupId());
-			}
-
-			if (existingDLFileEntryType == null) {
-				StagedModelDataHandlerUtil.importStagedModel(
-					portletDataContext, referenceDLFileEntryType);
-
-				long dlFileEntryTypeId = MapUtil.getLong(
-					fileEntryTypeIds,
-					referenceDLFileEntryType.getFileEntryTypeId(),
-					referenceDLFileEntryType.getFileEntryTypeId());
-
-				existingDLFileEntryType =
-					DLFileEntryTypeLocalServiceUtil.fetchDLFileEntryType(
-						dlFileEntryTypeId);
-			}
+				DLFileEntryTypeLocalServiceUtil.fetchDLFileEntryType(
+					dlFileEntryTypeId);
 
 			if (existingDLFileEntryType == null) {
 				continue;
@@ -372,7 +352,9 @@ public class FolderStagedModelDataHandler
 			currentFolderFileEntryTypeIds.add(
 				existingDLFileEntryType.getFileEntryTypeId());
 
-			if (defaultFileEntryTypeUuid.equals(fileEntryTypeUuid)) {
+			if (defaultFileEntryTypeUuid.equals(
+					referenceDLFileEntryType.getUuid())) {
+
 				defaultFileEntryTypeId =
 					existingDLFileEntryType.getFileEntryTypeId();
 			}

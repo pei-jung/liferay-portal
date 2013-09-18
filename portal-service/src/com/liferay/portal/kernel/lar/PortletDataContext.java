@@ -98,6 +98,11 @@ public interface PortletDataContext extends Serializable {
 
 	public void addClassedModel(
 			Element element, String path, ClassedModel classedModel,
+			Class<?> clazz, String namespace)
+		throws PortalException, SystemException;
+
+	public void addClassedModel(
+			Element element, String path, ClassedModel classedModel,
 			String namespace)
 		throws PortalException, SystemException;
 
@@ -122,6 +127,9 @@ public interface PortletDataContext extends Serializable {
 
 	public void addLocks(String className, String key, Lock lock);
 
+	public Element addMissingReferenceElement(
+		String portletId, ClassedModel classedModel);
+
 	public void addPermissions(Class<?> clazz, long classPK)
 		throws PortalException, SystemException;
 
@@ -130,6 +138,12 @@ public interface PortletDataContext extends Serializable {
 
 	public void addPermissions(
 		String resourceName, long resourcePK, List<KeyValuePair> permissions);
+
+	public void addPortalPermissions()
+		throws PortalException, SystemException;
+
+	public void addPortletPermissions(String resourceName)
+		throws PortalException, SystemException;
 
 	public boolean addPrimaryKey(Class<?> clazz, String primaryKey);
 
@@ -175,6 +189,9 @@ public interface PortletDataContext extends Serializable {
 
 	public ServiceContext createServiceContext(
 		Element element, ClassedModel classedModel, String namespace);
+
+	public ServiceContext createServiceContext(
+		StagedModel stagedModel, Class<?> clazz, String namespace);
 
 	public ServiceContext createServiceContext(
 		StagedModel stagedModel, String namespace);
@@ -388,6 +405,11 @@ public interface PortletDataContext extends Serializable {
 
 	public void importClassedModel(
 			ClassedModel classedModel, ClassedModel newClassedModel,
+			Class<?> clazz, String namespace)
+		throws PortalException, SystemException;
+
+	public void importClassedModel(
+			ClassedModel classedModel, ClassedModel newClassedModel,
 			String namespace)
 		throws PortalException, SystemException;
 
@@ -403,6 +425,12 @@ public interface PortletDataContext extends Serializable {
 
 	public void importPermissions(
 			String resourceName, long resourcePK, long newResourcePK)
+		throws PortalException, SystemException;
+
+	public void importPortalPermissions()
+		throws PortalException, SystemException;
+
+	public void importPortletPermissions(String resourceName)
 		throws PortalException, SystemException;
 
 	public void importRatingsEntries(

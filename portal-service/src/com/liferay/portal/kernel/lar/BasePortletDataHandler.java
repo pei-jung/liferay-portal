@@ -168,13 +168,13 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 		if ((PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
 				companyId, groupId, PortletKeys.PREFS_OWNER_ID_DEFAULT,
 				PortletKeys.PREFS_OWNER_TYPE_LAYOUT, plid, portlet,
-				privateLayout, true) > 0) ||
+				privateLayout, false) > 0) ||
 			(PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
 				groupId, PortletKeys.PREFS_OWNER_TYPE_GROUP,
-				portlet.getRootPortletId(), true) > 0) ||
+				portlet.getRootPortletId(), false) > 0) ||
 			(PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
 				companyId, PortletKeys.PREFS_OWNER_TYPE_COMPANY,
-				portlet.getRootPortletId(), true) > 0)) {
+				portlet.getRootPortletId(), false) > 0)) {
 
 				configurationControls.add(
 					new PortletDataHandlerBoolean(
@@ -186,7 +186,7 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 
 		if (PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
 				-1, PortletKeys.PREFS_OWNER_TYPE_ARCHIVED,
-				portlet.getRootPortletId(), true) > 0) {
+				portlet.getRootPortletId(), false) > 0) {
 
 			configurationControls.add(
 				new PortletDataHandlerBoolean(
@@ -199,10 +199,10 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 
 		if ((PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
 				companyId, groupId, -1, PortletKeys.PREFS_OWNER_TYPE_USER, plid,
-				portlet, privateLayout, true) > 0) ||
+				portlet, privateLayout, false) > 0) ||
 			(PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
 				companyId, groupId, groupId, PortletKeys.PREFS_OWNER_TYPE_USER,
-				PortletKeys.PREFS_PLID_SHARED, portlet, privateLayout, true)
+				PortletKeys.PREFS_PLID_SHARED, portlet, privateLayout, false)
 				> 0)) {
 
 			configurationControls.add(
@@ -234,16 +234,23 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	public PortletDataHandlerControl[] getImportConfigurationControls(
 		Portlet portlet, ManifestSummary manifestSummary) {
 
-		String[] configurationOptions =
+		String[] configurationPortletOptions =
 			manifestSummary.getConfigurationPortletOptions(
 				portlet.getRootPortletId());
+
+		return getImportConfigurationControls(configurationPortletOptions);
+	}
+
+	@Override
+	public PortletDataHandlerControl[] getImportConfigurationControls(
+		String[] configurationPortletOptions) {
 
 		List<PortletDataHandlerBoolean> configurationControls =
 			new ArrayList<PortletDataHandlerBoolean>();
 
 		// Setup
 
-		if (ArrayUtil.contains(configurationOptions, "setup")) {
+		if (ArrayUtil.contains(configurationPortletOptions, "setup")) {
 			configurationControls.add(
 				new PortletDataHandlerBoolean(
 					null, PortletDataHandlerKeys.PORTLET_SETUP, "setup", true,
@@ -252,7 +259,9 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 
 		// Archived setups
 
-		if (ArrayUtil.contains(configurationOptions, "archived-setups")) {
+		if (ArrayUtil.contains(
+				configurationPortletOptions, "archived-setups")) {
+
 			configurationControls.add(
 				new PortletDataHandlerBoolean(
 					null, PortletDataHandlerKeys.PORTLET_ARCHIVED_SETUPS,
@@ -261,7 +270,9 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 
 		// User preferences
 
-		if (ArrayUtil.contains(configurationOptions, "user-preferences")) {
+		if (ArrayUtil.contains(
+				configurationPortletOptions, "user-preferences")) {
+
 			configurationControls.add(
 				new PortletDataHandlerBoolean(
 					null, PortletDataHandlerKeys.PORTLET_USER_PREFERENCES,
@@ -354,6 +365,11 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	}
 
 	@Override
+	public boolean isSupportsDataStrategyCopyAsNew() {
+		return _supportsDataStrategyCopyAsNew;
+	}
+
+	@Override
 	public void prepareManifestSummary(PortletDataContext portletDataContext)
 		throws PortletDataException {
 
@@ -401,8 +417,8 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 					portletDataContext.getGroupId(), displayStyle);
 
 			if (ddmTemplate != null) {
-				StagedModelDataHandlerUtil.exportStagedModel(
-					portletDataContext, ddmTemplate);
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+					portletDataContext, portletId, ddmTemplate);
 			}
 
 			portletDataContext.setScopeGroupId(previousScopeGroupId);
@@ -795,6 +811,12 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 		_publishToLiveByDefault = publishToLiveByDefault;
 	}
 
+	protected void setSupportsDataStrategyCopyAsNew(
+		boolean supportsDataStrategyCopyAsNew) {
+
+		_supportsDataStrategyCopyAsNew = supportsDataStrategyCopyAsNew;
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		BasePortletDataHandler.class);
 
@@ -813,5 +835,6 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 		new PortletDataHandlerControl[0];
 	private String _portletId;
 	private boolean _publishToLiveByDefault;
+	private boolean _supportsDataStrategyCopyAsNew = true;
 
 }

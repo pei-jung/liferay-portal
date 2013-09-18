@@ -15,12 +15,17 @@
 package com.liferay.portal.service;
 
 import com.liferay.portal.GroupParentException;
+import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
@@ -37,12 +42,14 @@ import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.test.MainServletExecutionTestListener;
-import com.liferay.portal.test.TransactionalCallbackAwareExecutionTestListener;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.GroupTestUtil;
 import com.liferay.portal.util.LayoutTestUtil;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portal.util.UserTestUtil;
+import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.portlet.blogs.util.BlogsTestUtil;
@@ -50,6 +57,7 @@ import com.liferay.portlet.blogs.util.BlogsTestUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,11 +67,12 @@ import org.junit.runner.RunWith;
 /**
  * @author Julio Camarero
  * @author Roberto Díaz
+ * @author Sergio González
  */
 @ExecutionTestListeners(
 	listeners = {
 		MainServletExecutionTestListener.class,
-		TransactionalCallbackAwareExecutionTestListener.class
+		TransactionalExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Transactional
@@ -72,6 +81,31 @@ public class GroupServiceTest {
 	@Before
 	public void setUp() {
 		FinderCacheUtil.clearCache();
+	}
+
+	@Test
+	public void testAddCompanyStagingGroup() throws Exception {
+		Group companyGroup = GroupLocalServiceUtil.getCompanyGroup(
+			TestPropsValues.getCompanyId());
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAttribute("staging", Boolean.TRUE);
+
+		Group companyStagingGroup = GroupLocalServiceUtil.addGroup(
+			TestPropsValues.getUserId(), GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			companyGroup.getClassName(), companyGroup.getClassPK(),
+			companyGroup.getGroupId(), companyGroup.getDescriptiveName(),
+			companyGroup.getDescription(), companyGroup.getType(),
+			companyGroup.isManualMembership(),
+			companyGroup.getMembershipRestriction(),
+			companyGroup.getFriendlyURL(), false, companyGroup.isActive(),
+			serviceContext);
+
+		Assert.assertTrue(companyStagingGroup.isCompanyStagingGroup());
+
+		Assert.assertEquals(
+			companyGroup.getGroupId(), companyStagingGroup.getLiveGroupId());
 	}
 
 	@Test
@@ -145,6 +179,20 @@ public class GroupServiceTest {
 	public void testDeleteSite() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			group.getGroupId());
+
+		int initialTagsCount = AssetTagLocalServiceUtil.getGroupTagsCount(
+			group.getGroupId());
+
+		AssetTagLocalServiceUtil.addTag(
+			TestPropsValues.getUserId(), ServiceTestUtil.randomString(), null,
+			serviceContext);
+
+		Assert.assertEquals(
+			initialTagsCount + 1,
+			AssetTagLocalServiceUtil.getGroupTagsCount(group.getGroupId()));
+
 		User user = UserTestUtil.addUser(
 			ServiceTestUtil.randomString(), group.getGroupId());
 
@@ -157,6 +205,9 @@ public class GroupServiceTest {
 
 		GroupLocalServiceUtil.deleteGroup(group.getGroupId());
 
+		Assert.assertEquals(
+			initialTagsCount,
+			AssetTagLocalServiceUtil.getGroupTagsCount(group.getGroupId()));
 		Assert.assertNull(
 			BlogsEntryLocalServiceUtil.fetchBlogsEntry(
 				blogsEntry.getEntryId()));
@@ -434,6 +485,35 @@ public class GroupServiceTest {
 	}
 
 	@Test
+	public void testInheritLocalesByDefault() throws Exception {
+		Group group = GroupTestUtil.addGroup();
+
+		Assert.assertTrue(LanguageUtil.isInheritLocales(group.getGroupId()));
+
+		Locale[] portalAvailableLocales = LanguageUtil.getAvailableLocales();
+
+		Locale[] groupAvailableLocales = LanguageUtil.getAvailableLocales(
+			group.getGroupId());
+
+		Assert.assertArrayEquals(portalAvailableLocales, groupAvailableLocales);
+	}
+
+	@Test
+	public void testInvalidChangeAvailableLanguageIds() throws Exception {
+		testUpdateDisplaySettings(
+			new Locale[] {LocaleUtil.SPAIN, LocaleUtil.US},
+			new Locale[] {LocaleUtil.GERMANY, LocaleUtil.US}, null, true);
+	}
+
+	@Test
+	public void testInvalidChangeDefaultLanguageId() throws Exception {
+		testUpdateDisplaySettings(
+			new Locale[] {LocaleUtil.SPAIN, LocaleUtil.US},
+			new Locale[] {LocaleUtil.SPAIN, LocaleUtil.US}, LocaleUtil.GERMANY,
+			true);
+	}
+
+	@Test
 	public void testScopes() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
@@ -577,6 +657,33 @@ public class GroupServiceTest {
 	}
 
 	@Test
+	public void testUpdateAvailableLocales() throws Exception {
+		Group group = GroupTestUtil.addGroup();
+
+		Locale[] availableLocales =
+			new Locale[] {LocaleUtil.GERMANY, LocaleUtil.SPAIN, LocaleUtil.US};
+
+		group = GroupTestUtil.updateDisplaySettings(
+			group.getGroupId(), availableLocales, null);
+
+		Assert.assertArrayEquals(
+			availableLocales,
+			LanguageUtil.getAvailableLocales(group.getGroupId()));
+	}
+
+	@Test
+	public void testUpdateDefaultLocale() throws Exception {
+		Group group = GroupTestUtil.addGroup();
+
+		group = GroupTestUtil.updateDisplaySettings(
+			group.getGroupId(), null, LocaleUtil.SPAIN);
+
+		Assert.assertEquals(
+			LocaleUtil.SPAIN,
+			PortalUtil.getSiteDefaultLocale(group.getGroupId()));
+	}
+
+	@Test
 	public void testUpdatePermissionsCustomRole() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
@@ -641,6 +748,21 @@ public class GroupServiceTest {
 		testGroup(
 			user, group1, group11, null, false, true, false, true, false, true,
 			true);
+	}
+
+	@Test
+	public void testValidChangeAvailableLanguageIds() throws Exception {
+		testUpdateDisplaySettings(
+			new Locale[] {LocaleUtil.GERMANY, LocaleUtil.SPAIN, LocaleUtil.US},
+			new Locale[] {LocaleUtil.SPAIN, LocaleUtil.US}, null, false);
+	}
+
+	@Test
+	public void testValidChangeDefaultLanguageId() throws Exception {
+		testUpdateDisplaySettings(
+			new Locale[] {LocaleUtil.GERMANY, LocaleUtil.SPAIN, LocaleUtil.US},
+			new Locale[] {LocaleUtil.GERMANY, LocaleUtil.SPAIN, LocaleUtil.US},
+			LocaleUtil.GERMANY, false);
 	}
 
 	protected Group addGroup(
@@ -875,6 +997,42 @@ public class GroupServiceTest {
 					Assert.fail("A group cannot have its live group as parent");
 				}
 			}
+		}
+	}
+
+	protected void testUpdateDisplaySettings(
+			Locale[] portalAvailableLocales, Locale[] groupAvailableLocales,
+			Locale groupDefaultLocale, boolean fail)
+		throws Exception {
+
+		UnicodeProperties properties = new UnicodeProperties();
+
+		properties.put(
+			PropsKeys.LOCALES,
+			StringUtil.merge(LocaleUtil.toLanguageIds(portalAvailableLocales)));
+
+		CompanyLocalServiceUtil.updatePreferences(
+			TestPropsValues.getCompanyId(), properties);
+
+		Group group = GroupTestUtil.addGroup(
+			GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			ServiceTestUtil.randomString());
+
+		try {
+			GroupTestUtil.updateDisplaySettings(
+				group.getGroupId(), groupAvailableLocales, groupDefaultLocale);
+
+			if (fail) {
+				Assert.fail();
+			}
+		}
+		catch (LocaleException le) {
+			if (!fail) {
+				Assert.fail();
+			}
+		}
+		finally {
+			LanguageUtil.resetAvailableLocales(TestPropsValues.getCompanyId());
 		}
 	}
 

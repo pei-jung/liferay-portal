@@ -337,7 +337,7 @@ public class LayoutLocalServiceStagingAdvice implements MethodInterceptor {
 		// Icon
 
 		if (iconImage != null) {
-			if ((iconBytes != null) && (iconBytes.length > 0)) {
+			if (ArrayUtil.isNotEmpty(iconBytes)) {
 				ImageLocalServiceUtil.updateImage(
 					layoutRevision.getIconImageId(), iconBytes);
 			}
@@ -518,7 +518,8 @@ public class LayoutLocalServiceStagingAdvice implements MethodInterceptor {
 					systemEventHierarchyEntry.getExtraData());
 			}
 			finally {
-				SystemEventHierarchyEntryThreadLocal.pop();
+				SystemEventHierarchyEntryThreadLocal.pop(
+					Layout.class, layout.getPlid());
 			}
 		}
 	}
@@ -634,7 +635,6 @@ public class LayoutLocalServiceStagingAdvice implements MethodInterceptor {
 					returnValue = wrapLayouts(
 						(List<Layout>)returnValue, showIncomplete);
 				}
-
 			}
 		}
 

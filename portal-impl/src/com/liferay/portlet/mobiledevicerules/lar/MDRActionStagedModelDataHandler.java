@@ -79,8 +79,9 @@ public class MDRActionStagedModelDataHandler
 			MDRRuleGroupInstanceLocalServiceUtil.getRuleGroupInstance(
 				action.getRuleGroupInstanceId());
 
-		StagedModelDataHandlerUtil.exportStagedModel(
-			portletDataContext, ruleGroupInstance);
+		StagedModelDataHandlerUtil.exportReferenceStagedModel(
+			portletDataContext, action, ruleGroupInstance,
+			PortletDataContext.REFERENCE_TYPE_PARENT);
 
 		Element actionElement = portletDataContext.getExportDataElement(action);
 
@@ -126,7 +127,7 @@ public class MDRActionStagedModelDataHandler
 			(MDRRuleGroupInstance)portletDataContext.getZipEntryAsObject(
 				ruleGroupInstancePath);
 
-		StagedModelDataHandlerUtil.importStagedModel(
+		StagedModelDataHandlerUtil.importReferenceStagedModel(
 			portletDataContext, ruleGroupInstance);
 
 		Map<Long, Long> ruleGroupInstanceIds =

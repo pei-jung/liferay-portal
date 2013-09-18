@@ -82,6 +82,7 @@ public class JournalFolderLocalServiceImpl
 		folder.setCreateDate(serviceContext.getCreateDate(now));
 		folder.setModifiedDate(serviceContext.getModifiedDate(now));
 		folder.setParentFolderId(parentFolderId);
+		folder.setTreePath(folder.buildTreePath());
 		folder.setName(name);
 		folder.setDescription(description);
 		folder.setExpandoBridgeAttributes(serviceContext);
@@ -193,8 +194,8 @@ public class JournalFolderLocalServiceImpl
 	public void deleteFolders(long groupId)
 		throws PortalException, SystemException {
 
-		List<JournalFolder> folders = journalFolderPersistence.findByG_P(
-			groupId, JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+		List<JournalFolder> folders = journalFolderPersistence.findByGroupId(
+			groupId);
 
 		for (JournalFolder folder : folders) {
 			journalFolderLocalService.deleteFolder(folder);
@@ -397,6 +398,7 @@ public class JournalFolderLocalServiceImpl
 
 		folder.setModifiedDate(serviceContext.getModifiedDate(null));
 		folder.setParentFolderId(parentFolderId);
+		folder.setTreePath(folder.buildTreePath());
 		folder.setExpandoBridgeAttributes(serviceContext);
 
 		journalFolderPersistence.update(folder);
@@ -425,7 +427,7 @@ public class JournalFolderLocalServiceImpl
 	}
 
 	@Override
-	public void moveFolderToTrash(long userId, long folderId)
+	public JournalFolder moveFolderToTrash(long userId, long folderId)
 		throws PortalException, SystemException {
 
 		JournalFolder folder = journalFolderPersistence.findByPrimaryKey(
@@ -445,9 +447,6 @@ public class JournalFolderLocalServiceImpl
 
 		// Social
 
-		socialActivityCounterLocalService.disableActivityCounters(
-			JournalFolder.class.getName(), folder.getFolderId());
-
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
 		extraDataJSONObject.put("title", title);
@@ -456,6 +455,26 @@ public class JournalFolderLocalServiceImpl
 			userId, folder.getGroupId(), JournalFolder.class.getName(),
 			folder.getFolderId(), SocialActivityConstants.TYPE_MOVE_TO_TRASH,
 			extraDataJSONObject.toString(), 0);
+
+		return folder;
+	}
+
+	@Override
+	public void rebuildTree(long companyId)
+		throws PortalException, SystemException {
+
+		List<JournalFolder> folders = journalFolderPersistence.findByC_NotS(
+			companyId, WorkflowConstants.STATUS_IN_TRASH);
+
+		for (JournalFolder folder : folders) {
+			if (folder.isInTrashContainer()) {
+				continue;
+			}
+
+			folder.setTreePath(folder.buildTreePath());
+
+			journalFolderPersistence.update(folder);
+		}
 	}
 
 	@Override
@@ -475,9 +494,6 @@ public class JournalFolderLocalServiceImpl
 		updateStatus(userId, folder, trashEntry.getStatus());
 
 		// Social
-
-		socialActivityCounterLocalService.enableActivityCounters(
-			JournalFolder.class.getName(), folder.getFolderId());
 
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -536,6 +552,7 @@ public class JournalFolderLocalServiceImpl
 
 		folder.setModifiedDate(serviceContext.getModifiedDate(null));
 		folder.setParentFolderId(parentFolderId);
+		folder.setTreePath(folder.buildTreePath());
 		folder.setName(name);
 		folder.setDescription(description);
 		folder.setExpandoBridgeAttributes(serviceContext);
@@ -582,11 +599,6 @@ public class JournalFolderLocalServiceImpl
 
 			assetEntryLocalService.updateVisible(
 				JournalFolder.class.getName(), folder.getFolderId(), true);
-
-			// Social
-
-			socialActivityCounterLocalService.enableActivityCounters(
-				JournalFolder.class.getName(), folder.getFolderId());
 		}
 		else if (status == WorkflowConstants.STATUS_IN_TRASH) {
 
@@ -594,11 +606,6 @@ public class JournalFolderLocalServiceImpl
 
 			assetEntryLocalService.updateVisible(
 				JournalFolder.class.getName(), folder.getFolderId(), false);
-
-			// Social
-
-			socialActivityCounterLocalService.disableActivityCounters(
-				JournalFolder.class.getName(), folder.getFolderId());
 		}
 
 		// Trash
@@ -614,7 +621,8 @@ public class JournalFolderLocalServiceImpl
 
 			trashEntryLocalService.addTrashEntry(
 				userId, folder.getGroupId(), JournalFolder.class.getName(),
-				folder.getFolderId(), oldStatus, null, typeSettingsProperties);
+				folder.getFolderId(), folder.getUuid(), null, oldStatus, null,
+				typeSettingsProperties);
 		}
 
 		// Index
@@ -637,27 +645,26 @@ public class JournalFolderLocalServiceImpl
 		if (folder.getFolderId() == parentFolderId) {
 			return folder.getParentFolderId();
 		}
-		else {
-			JournalFolder parentFolder =
-				journalFolderPersistence.fetchByPrimaryKey(parentFolderId);
 
-			if ((parentFolder == null) ||
-				(folder.getGroupId() != parentFolder.getGroupId())) {
+		JournalFolder parentFolder = journalFolderPersistence.fetchByPrimaryKey(
+			parentFolderId);
 
-				return folder.getParentFolderId();
-			}
+		if ((parentFolder == null) ||
+			(folder.getGroupId() != parentFolder.getGroupId())) {
 
-			List<Long> subfolderIds = new ArrayList<Long>();
-
-			getSubfolderIds(
-				subfolderIds, folder.getGroupId(), folder.getFolderId());
-
-			if (subfolderIds.contains(parentFolderId)) {
-				return folder.getParentFolderId();
-			}
-
-			return parentFolderId;
+			return folder.getParentFolderId();
 		}
+
+		List<Long> subfolderIds = new ArrayList<Long>();
+
+		getSubfolderIds(
+			subfolderIds, folder.getGroupId(), folder.getFolderId());
+
+		if (subfolderIds.contains(parentFolderId)) {
+			return folder.getParentFolderId();
+		}
+
+		return parentFolderId;
 	}
 
 	protected long getParentFolderId(long groupId, long parentFolderId)
@@ -725,12 +732,6 @@ public class JournalFolderLocalServiceImpl
 							article.getResourcePrimKey(), false);
 					}
 
-					// Social
-
-					socialActivityCounterLocalService.disableActivityCounters(
-						JournalArticle.class.getName(),
-						article.getResourcePrimKey());
-
 					if (article.getStatus() ==
 							WorkflowConstants.STATUS_PENDING) {
 
@@ -750,12 +751,6 @@ public class JournalFolderLocalServiceImpl
 							JournalArticle.class.getName(),
 							article.getResourcePrimKey(), true);
 					}
-
-					// Social
-
-					socialActivityCounterLocalService.enableActivityCounters(
-						JournalArticle.class.getName(),
-						article.getResourcePrimKey());
 				}
 
 				// Workflow
@@ -811,11 +806,6 @@ public class JournalFolderLocalServiceImpl
 					assetEntryLocalService.updateVisible(
 						JournalFolder.class.getName(), folder.getFolderId(),
 						false);
-
-					// Social
-
-					socialActivityCounterLocalService.disableActivityCounters(
-						JournalFolder.class.getName(), folder.getFolderId());
 				}
 				else {
 
@@ -824,11 +814,6 @@ public class JournalFolderLocalServiceImpl
 					assetEntryLocalService.updateVisible(
 						JournalFolder.class.getName(), folder.getFolderId(),
 						true);
-
-					// Social
-
-					socialActivityCounterLocalService.enableActivityCounters(
-						JournalFolder.class.getName(), folder.getFolderId());
 				}
 
 				// Index

@@ -45,7 +45,8 @@ import com.liferay.portlet.journal.service.JournalArticleServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderServiceUtil;
 import com.liferay.portlet.journal.util.JournalTestUtil;
 
-import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -60,9 +61,10 @@ import org.junit.runner.RunWith;
 @Sync
 public class JournalArticleSearchTest extends BaseSearchTestCase {
 
+	@Ignore()
 	@Override
+	@Test
 	public void testSearchAttachments() throws Exception {
-		Assert.assertTrue("This test does not apply", true);
 	}
 
 	@Override
@@ -98,8 +100,14 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 		JournalFolder folder = (JournalFolder)parentBaseModel;
 
+		long folderId = JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID;
+
+		if (folder != null) {
+			folderId = folder.getFolderId();
+		}
+
 		return JournalTestUtil.addArticleWithWorkflow(
-			folder.getFolderId(), keywords, approved, serviceContext);
+			folderId, keywords, approved, serviceContext);
 	}
 
 	@Override
@@ -139,6 +147,16 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		return DDMIndexerUtil.encodeName(
 			_ddmStructure.getStructureId(), "name",
 			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	protected BaseModel<?> getParentBaseModel(
+			BaseModel<?> parentBaseModel, ServiceContext serviceContext)
+		throws Exception {
+
+		return JournalTestUtil.addFolder(
+			(Long)parentBaseModel.getPrimaryKeyObj(),
+			ServiceTestUtil.randomString(), serviceContext);
 	}
 
 	@Override

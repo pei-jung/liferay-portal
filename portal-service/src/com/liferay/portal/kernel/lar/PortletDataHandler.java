@@ -116,8 +116,10 @@ public interface PortletDataHandler {
 	public long getExportModelCount(ManifestSummary manifestSummary);
 
 	public PortletDataHandlerControl[] getImportConfigurationControls(
-			Portlet portlet, ManifestSummary manifestSummary)
-		throws PortletDataException;
+		Portlet portlet, ManifestSummary manifestSummary);
+
+	public PortletDataHandlerControl[] getImportConfigurationControls(
+		String[] configurationPortletOptions);
 
 	/**
 	 * Returns an array of the controls defined for this data handler. These
@@ -182,6 +184,8 @@ public interface PortletDataHandler {
 	 * @return <code>true</code> to publish to live by default
 	 */
 	public boolean isPublishToLiveByDefault();
+
+	public boolean isSupportsDataStrategyCopyAsNew();
 
 	public void prepareManifestSummary(PortletDataContext portletDataContext)
 		throws PortletDataException;

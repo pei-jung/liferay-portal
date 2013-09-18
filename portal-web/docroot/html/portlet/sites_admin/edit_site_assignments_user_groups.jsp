@@ -147,9 +147,12 @@ userGroupSearch.setEmptyResultsMessage(emptyResultsMessage);
 				viewUserGroupsURL.setParameter("tabs2", "available");
 				%>
 
-				<aui:button-row>
-					<aui:button href="<%= viewUserGroupsURL.toString() %>" value="assign-user-groups" />
-				</aui:button-row>
+				<liferay-ui:icon
+					image="../aui/globe"
+					label="<%= true %>"
+					message="assign-user-groups"
+					url="<%= viewUserGroupsURL.toString() %>"
+				/>
 
 				<%
 				viewUserGroupsURL.setParameter("tabs2", "current");
@@ -165,7 +168,7 @@ userGroupSearch.setEmptyResultsMessage(emptyResultsMessage);
 				%>
 
 				<aui:button-row>
-					<aui:button onClick="<%= taglibOnClick %>" value="save" />
+					<aui:button onClick="<%= taglibOnClick %>" primary="<%= true %>" value="save" />
 				</aui:button-row>
 			</c:otherwise>
 		</c:choose>
@@ -175,9 +178,7 @@ userGroupSearch.setEmptyResultsMessage(emptyResultsMessage);
 		<c:when test='<%= tabs1.equals("summary") && (total > 0) %>'>
 			<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" persistState="<%= true %>" title='<%= LanguageUtil.format(pageContext, (total > 1) ? "x-user-groups" : "x-user-group", total) %>'>
 				<span class="form-search">
-					<aui:input inlineField="<%= true %>" label="" name='<%= DisplayTerms.KEYWORDS + "_user_groups" %>' size="30" value="" />
-
-					<aui:button type="submit" value="search" />
+					<liferay-ui:input-search name='<%= DisplayTerms.KEYWORDS + "_user_groups" %>' />
 				</span>
 
 				<br /><br />
@@ -188,8 +189,6 @@ userGroupSearch.setEmptyResultsMessage(emptyResultsMessage);
 					<a href="<%= viewUserGroupsURL %>"><liferay-ui:message key="view-more" /> &raquo;</a>
 				</c:if>
 			</liferay-ui:panel>
-
-			<div class="separator"><!-- --></div>
 		</c:when>
 		<c:when test='<%= !tabs1.equals("summary") %>'>
 			<c:if test="<%= total > userGroupSearch.getDelta() %>">

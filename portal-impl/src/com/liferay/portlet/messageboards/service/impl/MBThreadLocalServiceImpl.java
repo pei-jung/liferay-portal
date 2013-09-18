@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.increment.BufferedIncrement;
 import com.liferay.portal.kernel.increment.NumberIncrement;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
@@ -338,20 +339,19 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (userId <= 0) {
 			return getGroupThreads(groupId, queryDefinition);
 		}
+
+		if (subscribed) {
+			return mbThreadFinder.findByS_G_U_C(
+				groupId, userId, null, queryDefinition);
+		}
 		else {
-			if (subscribed) {
-				return mbThreadFinder.findByS_G_U_C(
+			if (includeAnonymous) {
+				return mbThreadFinder.findByG_U_C(
 					groupId, userId, null, queryDefinition);
 			}
 			else {
-				if (includeAnonymous) {
-					return mbThreadFinder.findByG_U_C(
-						groupId, userId, null, queryDefinition);
-				}
-				else {
-					return mbThreadFinder.findByG_U_C_A(
-						groupId, userId, null, false, queryDefinition);
-				}
+				return mbThreadFinder.findByG_U_C_A(
+					groupId, userId, null, false, queryDefinition);
 			}
 		}
 	}
@@ -463,20 +463,19 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (userId <= 0) {
 			return getGroupThreadsCount(groupId, queryDefinition);
 		}
+
+		if (subscribed) {
+			return mbThreadFinder.countByS_G_U_C(
+				groupId, userId, null, queryDefinition);
+		}
 		else {
-			if (subscribed) {
-				return mbThreadFinder.countByS_G_U_C(
+			if (includeAnonymous) {
+				return mbThreadFinder.countByG_U_C(
 					groupId, userId, null, queryDefinition);
 			}
 			else {
-				if (includeAnonymous) {
-					return mbThreadFinder.countByG_U_C(
-						groupId, userId, null, queryDefinition);
-				}
-				else {
-					return mbThreadFinder.countByG_U_C_A(
-						groupId, userId, null, false, queryDefinition);
-				}
+				return mbThreadFinder.countByG_U_C_A(
+					groupId, userId, null, false, queryDefinition);
 			}
 		}
 	}
@@ -652,6 +651,10 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		throws PortalException, SystemException {
 
 		MBThread thread = mbThreadPersistence.findByPrimaryKey(threadId);
+
+		if (ExportImportThreadLocal.isImportInProcess()) {
+			return thread;
+		}
 
 		thread.setViewCount(thread.getViewCount() + increment);
 
@@ -1066,7 +1069,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 				trashEntryLocalService.addTrashEntry(
 					userId, thread.getGroupId(), MBThread.class.getName(),
-					thread.getThreadId(), oldStatus, null, null);
+					thread.getThreadId(), thread.getUuid(), null, oldStatus,
+					null, null);
 			}
 			else {
 
@@ -1166,11 +1170,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						false);
 				}
 
-				// Social
-
-				socialActivityCounterLocalService.disableActivityCounters(
-					MBMessage.class.getName(), message.getMessageId());
-
 				// Indexer
 
 				Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
@@ -1199,11 +1198,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						MBMessage.class.getName(), message.getMessageId(),
 						true);
 				}
-
-				// Social
-
-				socialActivityCounterLocalService.enableActivityCounters(
-					MBMessage.class.getName(), message.getMessageId());
 
 				// Indexer
 

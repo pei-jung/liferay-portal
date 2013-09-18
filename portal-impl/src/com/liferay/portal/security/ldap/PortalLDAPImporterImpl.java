@@ -299,7 +299,10 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				ldapServerId, companyId);
 
 			String userMappingsScreenName = GetterUtil.getString(
-				userMappings.getProperty("screenName")).toLowerCase();
+				userMappings.getProperty("screenName"));
+
+			userMappingsScreenName = StringUtil.toLowerCase(
+				userMappingsScreenName);
 
 			SearchControls searchControls = new SearchControls(
 				SearchControls.SUBTREE_SCOPE, 1, 0,
@@ -500,8 +503,8 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				String defaultPassword =
 					PropsValues.LDAP_IMPORT_USER_PASSWORD_DEFAULT;
 
-				if (defaultPassword.equalsIgnoreCase(
-						_USER_PASSWORD_SCREEN_NAME)) {
+				if (StringUtil.equalsIgnoreCase(
+						defaultPassword, _USER_PASSWORD_SCREEN_NAME)) {
 
 					defaultPassword = ldapUser.getScreenName();
 				}
@@ -533,7 +536,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		if (ldapUser.isUpdatePortrait()) {
 			byte[] portraitBytes = ldapUser.getPortraitBytes();
 
-			if ((portraitBytes != null) && (portraitBytes.length > 0)) {
+			if (ArrayUtil.isNotEmpty(portraitBytes)) {
 				user = UserLocalServiceUtil.updatePortrait(
 					user.getUserId(), portraitBytes);
 			}
@@ -628,7 +631,10 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			List<SearchResult> searchResults = new ArrayList<SearchResult>();
 
 			String groupMappingsGroupName = GetterUtil.getString(
-				groupMappings.getProperty("groupName")).toLowerCase();
+				groupMappings.getProperty("groupName"));
+
+			groupMappingsGroupName = StringUtil.toLowerCase(
+				groupMappingsGroupName);
 
 			cookie = PortalLDAPUtil.getGroups(
 				ldapServerId, companyId, ldapContext, cookie, 0,
@@ -684,7 +690,10 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			List<SearchResult> searchResults = new ArrayList<SearchResult>();
 
 			String userMappingsScreenName = GetterUtil.getString(
-				userMappings.getProperty("screenName")).toLowerCase();
+				userMappings.getProperty("screenName"));
+
+			userMappingsScreenName = StringUtil.toLowerCase(
+				userMappingsScreenName);
 
 			cookie = PortalLDAPUtil.getUsers(
 				ldapServerId, companyId, ldapContext, cookie, 0,
@@ -829,7 +838,10 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 					new ArrayList<SearchResult>();
 
 				String groupMappingsGroupName = GetterUtil.getString(
-					groupMappings.getProperty("groupName")).toLowerCase();
+					groupMappings.getProperty("groupName"));
+
+				groupMappingsGroupName = StringUtil.toLowerCase(
+					groupMappingsGroupName);
 
 				cookie = PortalLDAPUtil.searchLDAP(
 					companyId, ldapContext, cookie, 0, baseDN, sb.toString(),
@@ -958,9 +970,13 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			userGroup = UserGroupLocalServiceUtil.getUserGroup(
 				companyId, ldapGroup.getGroupName());
 
-			UserGroupLocalServiceUtil.updateUserGroup(
-				companyId, userGroup.getUserGroupId(), ldapGroup.getGroupName(),
-				ldapGroup.getDescription(), null);
+			if (!Validator.equals(
+					userGroup.getDescription(), ldapGroup.getDescription())) {
+
+				UserGroupLocalServiceUtil.updateUserGroup(
+					companyId, userGroup.getUserGroupId(),
+					ldapGroup.getGroupName(), ldapGroup.getDescription(), null);
+			}
 		}
 		catch (NoSuchUserGroupException nsuge) {
 			if (_log.isDebugEnabled()) {
@@ -1225,7 +1241,9 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		if (!PropsValues.LDAP_IMPORT_USER_PASSWORD_ENABLED) {
 			password = PropsValues.LDAP_IMPORT_USER_PASSWORD_DEFAULT;
 
-			if (password.equalsIgnoreCase(_USER_PASSWORD_SCREEN_NAME)) {
+			if (StringUtil.equalsIgnoreCase(
+					password, _USER_PASSWORD_SCREEN_NAME)) {
+
 				password = ldapUser.getScreenName();
 			}
 		}
@@ -1289,7 +1307,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		if (ldapUser.isUpdatePortrait()) {
 			byte[] portraitBytes = ldapUser.getPortraitBytes();
 
-			if ((portraitBytes != null) && (portraitBytes.length > 0)) {
+			if (ArrayUtil.isNotEmpty(portraitBytes)) {
 				UserLocalServiceUtil.updatePortrait(
 					user.getUserId(), portraitBytes);
 			}

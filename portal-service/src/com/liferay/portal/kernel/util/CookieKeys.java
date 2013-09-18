@@ -44,7 +44,7 @@ public class CookieKeys {
 
 	public static final String LOGIN = "LOGIN";
 
-	public static final int MAX_AGE =(int)Time.YEAR;
+	public static final int MAX_AGE = (int)Time.YEAR;
 
 	public static final String PASSWORD = "PASSWORD";
 
@@ -154,7 +154,7 @@ public class CookieKeys {
 		String host = request.getServerName();
 
 		if (_SESSION_COOKIE_USE_FULL_HOSTNAME) {
-			return host;
+			return StringPool.BLANK;
 		}
 
 		return getDomain(host);
@@ -242,7 +242,7 @@ public class CookieKeys {
 		Map<String, Cookie> cookieMap = _getCookieMap(request);
 
 		if (toUpperCase) {
-			name = name.toUpperCase();
+			name = StringUtil.toUpperCase(name);
 		}
 
 		Cookie cookie = cookieMap.get(name);
@@ -277,7 +277,7 @@ public class CookieKeys {
 			for (Cookie cookie : cookies) {
 				String cookieName = GetterUtil.getString(cookie.getName());
 
-				cookieName = cookieName.toUpperCase();
+				cookieName = StringUtil.toUpperCase(cookieName);
 
 				cookieMap.put(cookieName, cookie);
 			}

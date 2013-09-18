@@ -25,12 +25,15 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
+import com.liferay.portal.util.PortalInstances;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
 import com.liferay.portlet.journal.model.JournalContentSearch;
@@ -65,6 +68,7 @@ public class VerifyJournal extends VerifyProcess {
 		verifyOracleNewLine();
 		verifyPermissionsAndAssets();
 		verifySearch();
+		verifyTree();
 		verifyURLTitle();
 	}
 
@@ -235,7 +239,6 @@ public class VerifyJournal extends VerifyProcess {
 				_log.info("Fix oracle new line");
 			}
 		}
-
 	}
 
 	protected void verifyPermissionsAndAssets() throws Exception {
@@ -310,8 +313,23 @@ public class VerifyJournal extends VerifyProcess {
 						groupId, articleId, version, newContent);
 				}
 
-				JournalArticleLocalServiceUtil.checkStructure(
-					groupId, articleId, version);
+				try {
+					JournalArticleLocalServiceUtil.checkStructure(
+						groupId, articleId, version);
+				}
+				catch (NoSuchStructureException nsse) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Removing reference to missing structure for " +
+								"article " + article.getId());
+					}
+
+					article.setStructureId(StringPool.BLANK);
+					article.setTemplateId(StringPool.BLANK);
+
+					JournalArticleLocalServiceUtil.updateJournalArticle(
+						article);
+				}
 			}
 
 		};
@@ -347,6 +365,15 @@ public class VerifyJournal extends VerifyProcess {
 		}
 		finally {
 			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void verifyTree() throws Exception {
+		long[] companyIds = PortalInstances.getCompanyIdsBySQL();
+
+		for (long companyId : companyIds) {
+			JournalArticleLocalServiceUtil.rebuildTree(companyId);
+			JournalFolderLocalServiceUtil.rebuildTree(companyId);
 		}
 	}
 

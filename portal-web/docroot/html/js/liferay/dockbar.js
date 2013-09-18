@@ -23,11 +23,11 @@ AUI.add(
 
 		var STR_PREVIEW_PANEL = 'previewPanel';
 
-		var TPL_ADD_CONTENT = '<div class="lfr-add-panel" id="{0}" />';
+		var TPL_ADD_CONTENT = '<div class="lfr-add-panel lfr-admin-panel" id="{0}" />';
 
-		var TPL_EDIT_LAYOUT_PANEL = '<div class="lfr-edit-layout-panel id="{0}" />';
+		var TPL_EDIT_LAYOUT_PANEL = '<div class="lfr-admin-panel lfr-edit-layout-panel" id="{0}" />';
 
-		var TPL_PREVIEW_PANEL = '<div class="lfr-device-preview-panel id="{0}" />';
+		var TPL_PREVIEW_PANEL = '<div class="lfr-admin-panel lfr-device-preview-panel" id="{0}" />';
 
 		var TPL_LOADING = '<div class="loading-animation" />';
 
@@ -107,21 +107,6 @@ AUI.add(
 				var instance = this;
 
 				Dockbar._togglePanel(STR_EDIT_LAYOUT_PANEL);
-			},
-
-			_openWindow: function(config, item) {
-				if (item) {
-					A.mix(
-						config,
-						{
-							id: item.guid(),
-							title: item.attr('title'),
-							uri: item.attr('href')
-						}
-					);
-				}
-
-				Util.openWindow(config);
 			},
 
 			_registerPanels: function() {
@@ -221,17 +206,17 @@ AUI.add(
 
 				instance._registerPanels();
 
-				var userAvatar = A.oneNS(namespace, '#userAvatar');
+				var btnNavigation = A.oneNS(namespace, '#navSiteNavigationNavbarBtn');
 
-				if (userAvatar) {
-					userAvatar.delegate(
+				var navigation = A.one(Liferay.Data.NAV_SELECTOR);
+
+				if (btnNavigation && navigation) {
+					btnNavigation.on(
 						EVENT_CLICK,
 						function(event) {
-							event.preventDefault();
-
-							instance._openWindow({}, event.currentTarget);
-						},
-						'a.use-dialog'
+							btnNavigation.toggleClass('open');
+							navigation.toggleClass('open');
+						}
 					);
 				}
 

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.language.LanguageWrapper;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -71,6 +72,7 @@ import javax.servlet.jsp.PageContext;
 /**
  * @author Brian Wing Shun Chan
  * @author Andrius Vitkauskas
+ * @author Eduardo Lundgren
  */
 @DoPrivileged
 public class LanguageImpl implements Language {
@@ -115,7 +117,7 @@ public class LanguageImpl implements Language {
 		try {
 			pattern = get(locale, pattern);
 
-			if ((arguments != null) && (arguments.length > 0)) {
+			if (ArrayUtil.isNotEmpty(arguments)) {
 				pattern = _escapePattern(pattern);
 
 				Object[] formattedArguments = new Object[arguments.length];
@@ -184,7 +186,7 @@ public class LanguageImpl implements Language {
 		try {
 			pattern = get(pageContext, pattern);
 
-			if ((arguments != null) && (arguments.length > 0)) {
+			if (ArrayUtil.isNotEmpty(arguments)) {
 				pattern = _escapePattern(pattern);
 
 				Object[] formattedArguments = new Object[arguments.length];
@@ -256,7 +258,7 @@ public class LanguageImpl implements Language {
 		try {
 			pattern = get(pageContext, pattern);
 
-			if ((arguments != null) && (arguments.length > 0)) {
+			if (ArrayUtil.isNotEmpty(arguments)) {
 				pattern = _escapePattern(pattern);
 
 				Object[] formattedArguments = new Object[arguments.length];
@@ -327,7 +329,7 @@ public class LanguageImpl implements Language {
 		try {
 			pattern = get(portletConfig, locale, pattern);
 
-			if ((arguments != null) && (arguments.length > 0)) {
+			if (ArrayUtil.isNotEmpty(arguments)) {
 				pattern = _escapePattern(pattern);
 
 				Object[] formattedArguments = new Object[arguments.length];
@@ -473,6 +475,25 @@ public class LanguageImpl implements Language {
 	}
 
 	@Override
+	public String getBCP47LanguageId(HttpServletRequest request) {
+		Locale locale = PortalUtil.getLocale(request);
+
+		return getBCP47LanguageId(locale);
+	}
+
+	@Override
+	public String getBCP47LanguageId(Locale locale) {
+		return LocaleUtil.toBCP47LanguageId(locale);
+	}
+
+	@Override
+	public String getBCP47LanguageId(PortletRequest portletRequest) {
+		Locale locale = PortalUtil.getLocale(portletRequest);
+
+		return getBCP47LanguageId(locale);
+	}
+
+	@Override
 	public String getCharset(Locale locale) {
 		return _getInstance()._getCharset(locale);
 	}
@@ -548,8 +569,8 @@ public class LanguageImpl implements Language {
 			value = x.concat(StringPool.SPACE).concat(
 				get(
 					locale,
-					description.substring(
-						pos + 1, description.length()).toLowerCase()));
+					StringUtil.toLowerCase(
+						description.substring(pos + 1, description.length()))));
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -588,8 +609,8 @@ public class LanguageImpl implements Language {
 			value = x.concat(StringPool.SPACE).concat(
 				get(
 					pageContext,
-					description.substring(
-						pos + 1, description.length()).toLowerCase()));
+					StringUtil.toLowerCase(
+						description.substring(pos + 1, description.length()))));
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -834,7 +855,16 @@ public class LanguageImpl implements Language {
 			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-			locale = themeDisplay.getLocale();
+			if (themeDisplay != null) {
+				locale = themeDisplay.getLocale();
+			}
+			else {
+				locale = request.getLocale();
+
+				if (!isAvailableLocale(locale)) {
+					locale = LocaleUtil.getDefault();
+				}
+			}
 
 			portletConfig = (PortletConfig)request.getAttribute(
 				JavaConstants.JAVAX_PORTLET_CONFIG);

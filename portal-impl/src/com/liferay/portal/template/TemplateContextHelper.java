@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
 import com.liferay.portal.kernel.util.ArrayUtil_IW;
+import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.DateUtil_IW;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -90,10 +91,6 @@ import com.liferay.util.portlet.PortletRequestUtil;
 
 import java.lang.reflect.Method;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -152,21 +149,51 @@ public class TemplateContextHelper {
 		return templateVariableGroups;
 	}
 
-	public Map<String, Object> getHelperUtilities(boolean restricted) {
-		TemplateControlContext templateControlContext =
-			getTemplateControlContext();
+	public Map<String, Object> getHelperUtilities(
+		ClassLoader classLoader, boolean restricted) {
 
-		AccessControlContext accessControlContext =
-			templateControlContext.getAccessControlContext();
-		ClassLoader classLoader = templateControlContext.getClassLoader();
+		Map<String, Object>[] helperUtilitiesArray = _helperUtilitiesMaps.get(
+			classLoader);
 
-		if (accessControlContext == null) {
-			return doGetHelperUtilities(classLoader, restricted);
+		if (helperUtilitiesArray == null) {
+			helperUtilitiesArray = (Map<String, Object>[])new Map<?, ?>[2];
+
+			_helperUtilitiesMaps.put(classLoader, helperUtilitiesArray);
+		}
+		else {
+			Map<String, Object> helperUtilities = null;
+
+			if (restricted) {
+				helperUtilities = helperUtilitiesArray[1];
+			}
+			else {
+				helperUtilities = helperUtilitiesArray[0];
+			}
+
+			if (helperUtilities != null) {
+				return helperUtilities;
+			}
 		}
 
-		return AccessController.doPrivileged(
-			new DoGetHelperUtilitiesPrivilegedAction(classLoader, restricted),
-			accessControlContext);
+		Map<String, Object> helperUtilities = new HashMap<String, Object>();
+
+		populateCommonHelperUtilities(helperUtilities);
+		populateExtraHelperUtilities(helperUtilities);
+
+		if (restricted) {
+			Set<String> restrictedVariables = getRestrictedVariables();
+
+			for (String restrictedVariable : restrictedVariables) {
+				helperUtilities.remove(restrictedVariable);
+			}
+
+			helperUtilitiesArray[1] = helperUtilities;
+		}
+		else {
+			helperUtilitiesArray[0] = helperUtilities;
+		}
+
+		return helperUtilities;
 	}
 
 	public Set<String> getRestrictedVariables() {
@@ -322,51 +349,10 @@ public class TemplateContextHelper {
 		_helperUtilitiesMaps.remove(classLoader);
 	}
 
-	protected Map<String, Object> doGetHelperUtilities(
-		ClassLoader classLoader, boolean restricted) {
+	public static interface PACL {
 
-		Map<String, Object> helperUtilities = null;
+		public TemplateControlContext getTemplateControlContext();
 
-		Map<String, Object>[] helperUtilitiesArray = _helperUtilitiesMaps.get(
-			classLoader);
-
-		if (helperUtilitiesArray == null) {
-			helperUtilitiesArray = (Map<String, Object>[])new Map<?, ?>[2];
-
-			_helperUtilitiesMaps.put(classLoader, helperUtilitiesArray);
-		}
-		else {
-			if (restricted) {
-				helperUtilities = helperUtilitiesArray[1];
-			}
-			else {
-				helperUtilities = helperUtilitiesArray[0];
-			}
-
-			if (helperUtilities != null) {
-				return helperUtilities;
-			}
-		}
-
-		helperUtilities = new HashMap<String, Object>();
-
-		populateCommonHelperUtilities(helperUtilities);
-		populateExtraHelperUtilities(helperUtilities);
-
-		if (restricted) {
-			Set<String> restrictedVariables = getRestrictedVariables();
-
-			for (String restrictedVariable : restrictedVariables) {
-				helperUtilities.remove(restrictedVariable);
-			}
-
-			helperUtilitiesArray[1] = helperUtilities;
-		}
-		else {
-			helperUtilitiesArray[0] = helperUtilities;
-		}
-
-		return helperUtilities;
 	}
 
 	protected void populateCommonHelperUtilities(
@@ -401,6 +387,16 @@ public class TemplateContextHelper {
 		try {
 			variables.put(
 				"browserSniffer", BrowserSnifferUtil.getBrowserSniffer());
+		}
+		catch (SecurityException se) {
+			_log.error(se, se);
+		}
+
+		// Calendar factory
+
+		try {
+			variables.put(
+				"calendarFactory", CalendarFactoryUtil.getCalendarFactory());
 		}
 		catch (SecurityException se) {
 			_log.error(se, se);
@@ -883,32 +879,6 @@ public class TemplateContextHelper {
 
 			return new TemplateControlContext(null, contextClassLoader);
 		}
-
-	}
-
-	public static interface PACL {
-
-		public TemplateControlContext getTemplateControlContext();
-
-	}
-
-	private class DoGetHelperUtilitiesPrivilegedAction
-		implements PrivilegedAction<Map<String, Object>> {
-
-		public DoGetHelperUtilitiesPrivilegedAction(
-			ClassLoader classLoader, boolean restricted) {
-
-			_classLoader = classLoader;
-			_restricted = restricted;
-		}
-
-		@Override
-		public Map<String, Object> run() {
-			return doGetHelperUtilities(_classLoader, _restricted);
-		}
-
-		private ClassLoader _classLoader;
-		private boolean _restricted;
 
 	}
 

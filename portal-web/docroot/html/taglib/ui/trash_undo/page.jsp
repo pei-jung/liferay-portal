@@ -35,9 +35,9 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 				continue;
 			}
 
-			primaryKeys = data.get(key);
+			primaryKeys = ArrayUtil.append(primaryKeys, data.get(key));
 
-			trashedEntriesCount += primaryKeys.length;
+			trashedEntriesCount = primaryKeys.length;
 		}
 %>
 
@@ -53,22 +53,33 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 							<%
 							String trashURLString = HttpUtil.setParameter(trashURL.toString(), "doAsGroupId", String.valueOf(themeDisplay.getScopeGroupId()));
 
-							if (Validator.isNull(themeDisplay.getControlPanelCategory())) {
+							if (!layout.isTypeControlPanel() || Validator.isNull(themeDisplay.getControlPanelCategory())) {
 								trashURLString = HttpUtil.setParameter(trashURLString, "controlPanelCategory", "current_site");
 							}
 							%>
 
-							<aui:a href="<%= trashURLString %>" label="recycle-bin" />
+							<aui:a href="<%= trashURLString %>" label="the-recycle-bin" />
 						</c:when>
 						<c:otherwise>
-							<liferay-ui:message key="recycle-bin" />
+							<liferay-ui:message key="the-recycle-bin" />
 						</c:otherwise>
 					</c:choose>
 				</liferay-util:buffer>
 
+				<%
+				String cmd = MapUtil.getString(data, Constants.CMD);
+				%>
+
 				<c:choose>
 					<c:when test="<%= trashedEntriesCount > 1 %>">
-						<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount, trashLink} %>" key="x-items-were-moved-to-x" />
+						<c:choose>
+							<c:when test="<%= Validator.equals(cmd, Constants.REMOVE) %>">
+								<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount} %>" key="x-items-were-removed" />
+							</c:when>
+							<c:otherwise>
+								<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount, trashLink.trim()} %>" key="x-items-were-moved-to-x" />
+							</c:otherwise>
+						</c:choose>
 					</c:when>
 					<c:otherwise>
 
@@ -79,7 +90,7 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 						String type = "selected-item";
 
-						if ((classNames != null) && (classNames.length > 0)) {
+						if (ArrayUtil.isNotEmpty(classNames)) {
 							className = classNames[0];
 
 							type = ResourceActionsUtil.getModelResource(pageContext, className);
@@ -89,14 +100,14 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 						String title = StringPool.BLANK;
 
-						if ((titles != null) && (titles.length > 0)) {
+						if (ArrayUtil.isNotEmpty(titles)) {
 							title = titles[0];
 						}
 						%>
 
 						<liferay-util:buffer var="trashEntityLink">
 							<c:choose>
-								<c:when test="<%= themeDisplay.isShowSiteAdministrationIcon() && Validator.isNotNull(className) && Validator.isNotNull(title) && Validator.isNotNull(primaryKeys[0]) %>">
+								<c:when test="<%= !Validator.equals(cmd, Constants.REMOVE) && themeDisplay.isShowSiteAdministrationIcon() && Validator.isNotNull(className) && Validator.isNotNull(title) && Validator.isNotNull(primaryKeys[0]) %>">
 									<liferay-portlet:renderURL plid="<%= PortalUtil.getControlPanelPlid(company.getCompanyId()) %>" portletName="<%= PortletKeys.TRASH %>" varImpl="trashURL" windowState="<%= WindowState.NORMAL.toString() %>">
 										<portlet:param name="struts_action" value="/trash/view_content" />
 										<portlet:param name="className" value="<%= className %>" />
@@ -111,15 +122,22 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 									}
 									%>
 
-									<em class="delete-entry-title"><aui:a href="<%= trashURLString %>" label="<%= title %>" /></em>
+									<em class="delete-entry-title"><aui:a href="<%= trashURLString %>" label="<%= HtmlUtil.escape(title) %>" /></em>
 								</c:when>
 								<c:when test="<%= Validator.isNotNull(title) %>">
-									<em class="delete-entry-title"><%= title %></em>
+									<em class="delete-entry-title"><%= HtmlUtil.escape(title) %></em>
 								</c:when>
 							</c:choose>
 						</liferay-util:buffer>
 
-						<liferay-ui:message arguments="<%= new Object[] {type, trashEntityLink, trashLink.trim()} %>" key="the-x-x-was-moved-to-x" />
+						<c:choose>
+							<c:when test="<%= Validator.equals(cmd, Constants.REMOVE) %>">
+								<liferay-ui:message arguments="<%= new Object[] {type, trashEntityLink} %>" key="the-x-x-was-removed" />
+							</c:when>
+							<c:otherwise>
+								<liferay-ui:message arguments="<%= new Object[] {type, trashEntityLink, trashLink.trim()} %>" key="the-x-x-was-moved-to-x" />
+							</c:otherwise>
+						</c:choose>
 					</c:otherwise>
 				</c:choose>
 

@@ -37,8 +37,13 @@ if (selGroup.isStagingGroup()) {
 else {
 	liveGroup = selGroup;
 
-	if (selGroup.hasStagingGroup()) {
-		stagingGroup = selGroup.getStagingGroup();
+	if (selGroup.isStaged()) {
+		if (selGroup.isStagedRemotely()) {
+			stagingGroup = selGroup;
+		}
+		else {
+			stagingGroup = selGroup.getStagingGroup();
+		}
 	}
 }
 
@@ -174,7 +179,7 @@ else {
 	}
 }
 
-String rootNodeName = LanguageUtil.get(pageContext, pagesName);
+String rootNodeName = liveGroup.getLayoutRootNodeName(privateLayout, locale);
 
 LayoutView layoutView = layoutLister.getLayoutView(groupId, privateLayout, rootNodeName, locale);
 

@@ -548,7 +548,8 @@ public class DLAppHelperLocalServiceImpl
 
 		trashEntryLocalService.addTrashEntry(
 			userId, dlFileShortcut.getGroupId(), DLFileShortcut.class.getName(),
-			dlFileShortcut.getFileShortcutId(), oldStatus, null, null);
+			dlFileShortcut.getFileShortcutId(), dlFileShortcut.getUuid(), null,
+			oldStatus, null, null);
 
 		return dlFileShortcut;
 	}
@@ -625,6 +626,42 @@ public class DLAppHelperLocalServiceImpl
 	}
 
 	@Override
+	public void registerDLSyncEventCallback(
+			final String event, final String type, final long typePK)
+		throws SystemException {
+
+		DLSyncEvent dlSyncEvent = dlSyncEventLocalService.addDLSyncEvent(
+			event, type, typePK);
+
+		final long modifiedTime = dlSyncEvent.getModifiedTime();
+
+		TransactionCommitCallbackRegistryUtil.registerCallback(
+			new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					Message message = new Message();
+
+					Map<String, Object> values = new HashMap<String, Object>(4);
+
+					values.put("event", event);
+					values.put("modifiedTime", modifiedTime);
+					values.put("type", type);
+					values.put("typePK", typePK);
+
+					message.setValues(values);
+
+					MessageBusUtil.sendMessage(
+						DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR,
+						message);
+
+					return null;
+				}
+
+			});
+	}
+
+	@Override
 	public void restoreFileEntryFromTrash(long userId, FileEntry fileEntry)
 		throws PortalException, SystemException {
 
@@ -648,7 +685,7 @@ public class DLAppHelperLocalServiceImpl
 		Map<String, Serializable> workflowContext =
 			new HashMap<String, Serializable>();
 
-		List<TrashVersion> trashVersions = trashEntryLocalService.getVersions(
+		List<TrashVersion> trashVersions = trashVersionLocalService.getVersions(
 			trashEntry.getEntryId());
 
 		workflowContext.put("trashVersions", (Serializable)trashVersions);
@@ -678,9 +715,6 @@ public class DLAppHelperLocalServiceImpl
 
 		// Social
 
-		socialActivityCounterLocalService.enableActivityCounters(
-			DLFileEntryConstants.getClassName(), fileEntry.getFileEntryId());
-
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
 		extraDataJSONObject.put("title", fileEntry.getTitle());
@@ -707,9 +741,6 @@ public class DLAppHelperLocalServiceImpl
 			new ServiceContext());
 
 		// Social
-
-		socialActivityCounterLocalService.enableActivityCounters(
-			DLFileShortcut.class.getName(), dlFileShortcut.getFileShortcutId());
 
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -753,9 +784,6 @@ public class DLAppHelperLocalServiceImpl
 			folder.getFolderId());
 
 		// Social
-
-		socialActivityCounterLocalService.enableActivityCounters(
-			DLFolderConstants.class.getName(), folder.getFolderId());
 
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -992,21 +1020,6 @@ public class DLAppHelperLocalServiceImpl
 						dlFileEntry.getFileEntryId(), false);
 				}
 
-				// Social
-
-				if (status == WorkflowConstants.STATUS_APPROVED) {
-					socialActivityCounterLocalService.enableActivityCounters(
-						DLFileEntryConstants.getClassName(),
-						dlFileEntry.getFileEntryId());
-				}
-				else if (latestDlFileVersion.getStatus() ==
-							WorkflowConstants.STATUS_APPROVED) {
-
-					socialActivityCounterLocalService.disableActivityCounters(
-						DLFileEntryConstants.getClassName(),
-						dlFileEntry.getFileEntryId());
-				}
-
 				// Index
 
 				Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
@@ -1063,12 +1076,6 @@ public class DLAppHelperLocalServiceImpl
 					assetEntryLocalService.updateVisible(
 						DLFolderConstants.getClassName(),
 						dlFolder.getFolderId(), false);
-
-					// Social
-
-					socialActivityCounterLocalService.disableActivityCounters(
-						DLFolderConstants.getClassName(),
-						dlFolder.getFolderId());
 				}
 				else {
 
@@ -1077,12 +1084,6 @@ public class DLAppHelperLocalServiceImpl
 					assetEntryLocalService.updateVisible(
 						DLFolderConstants.getClassName(),
 						dlFolder.getFolderId(), true);
-
-					// Social
-
-					socialActivityCounterLocalService.enableActivityCounters(
-						DLFolderConstants.getClassName(),
-						dlFolder.getFolderId());
 				}
 
 				// Index
@@ -1249,7 +1250,7 @@ public class DLAppHelperLocalServiceImpl
 			}
 
 			if ((oldStatus != WorkflowConstants.STATUS_IN_TRASH) &&
-				!latestFileVersion.isInTrashContainer()) {
+				!fileEntry.isInTrashContainer()) {
 
 				// Social
 
@@ -1317,9 +1318,7 @@ public class DLAppHelperLocalServiceImpl
 		dlFileVersions = ListUtil.sort(
 			dlFileVersions, new FileVersionVersionComparator());
 
-		FileVersion fileVersion = new LiferayFileVersion(dlFileVersions.get(0));
-
-		if (fileVersion.isInTrash()) {
+		if (fileEntry.isInTrash()) {
 			restoreFileEntryFromTrash(userId, fileEntry);
 
 			fileEntry = dlAppLocalService.moveFileEntry(
@@ -1333,53 +1332,49 @@ public class DLAppHelperLocalServiceImpl
 
 			return fileEntry;
 		}
-		else {
-			dlFileEntryLocalService.updateStatus(
-				userId, fileVersion.getFileVersionId(), fileVersion.getStatus(),
-				new HashMap<String, Serializable>(), serviceContext);
 
-			if (DLAppHelperThreadLocal.isEnabled()) {
+		FileVersion fileVersion = new LiferayFileVersion(dlFileVersions.get(0));
 
-				// File rank
+		dlFileEntryLocalService.updateStatus(
+			userId, fileVersion.getFileVersionId(), fileVersion.getStatus(),
+			new HashMap<String, Serializable>(), serviceContext);
 
-				dlFileRankLocalService.enableFileRanks(
-					fileEntry.getFileEntryId());
+		if (DLAppHelperThreadLocal.isEnabled()) {
 
-				// File shortcut
+			// File rank
 
-				dlFileShortcutLocalService.enableFileShortcuts(
-					fileEntry.getFileEntryId());
-			}
+			dlFileRankLocalService.enableFileRanks(fileEntry.getFileEntryId());
 
-			// App helper
+			// File shortcut
 
-			fileEntry = dlAppService.moveFileEntry(
-				fileEntry.getFileEntryId(), newFolderId, serviceContext);
-
-			// Sync
-
-			registerDLSyncEventCallback(
-				DLSyncConstants.EVENT_RESTORE, DLSyncConstants.TYPE_FILE,
+			dlFileShortcutLocalService.enableFileShortcuts(
 				fileEntry.getFileEntryId());
-
-			// Social
-
-			socialActivityCounterLocalService.enableActivityCounters(
-				DLFileEntryConstants.getClassName(),
-				fileEntry.getFileEntryId());
-
-			JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
-
-			extraDataJSONObject.put("title", fileEntry.getTitle());
-
-			socialActivityLocalService.addActivity(
-				userId, fileEntry.getGroupId(),
-				DLFileEntryConstants.getClassName(), fileEntry.getFileEntryId(),
-				SocialActivityConstants.TYPE_RESTORE_FROM_TRASH,
-				extraDataJSONObject.toString(), 0);
-
-			return fileEntry;
 		}
+
+		// App helper
+
+		fileEntry = dlAppService.moveFileEntry(
+			fileEntry.getFileEntryId(), newFolderId, serviceContext);
+
+		// Sync
+
+		registerDLSyncEventCallback(
+			DLSyncConstants.EVENT_RESTORE, DLSyncConstants.TYPE_FILE,
+			fileEntry.getFileEntryId());
+
+		// Social
+
+		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
+
+		extraDataJSONObject.put("title", fileEntry.getTitle());
+
+		socialActivityLocalService.addActivity(
+			userId, fileEntry.getGroupId(), DLFileEntryConstants.getClassName(),
+			fileEntry.getFileEntryId(),
+			SocialActivityConstants.TYPE_RESTORE_FROM_TRASH,
+			extraDataJSONObject.toString(), 0);
+
+		return fileEntry;
 	}
 
 	protected FileEntry doMoveFileEntryToTrash(long userId, FileEntry fileEntry)
@@ -1442,9 +1437,6 @@ public class DLAppHelperLocalServiceImpl
 
 		// Social
 
-		socialActivityCounterLocalService.disableActivityCounters(
-			DLFileEntryConstants.getClassName(), fileEntry.getFileEntryId());
-
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
 		extraDataJSONObject.put(
@@ -1499,9 +1491,6 @@ public class DLAppHelperLocalServiceImpl
 
 			// Social
 
-			socialActivityCounterLocalService.enableActivityCounters(
-				DLFolderConstants.class.getName(), folder.getFolderId());
-
 			JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
 			extraDataJSONObject.put("title", folder.getName());
@@ -1546,9 +1535,6 @@ public class DLAppHelperLocalServiceImpl
 			folder.getFolderId());
 
 		// Social
-
-		socialActivityCounterLocalService.disableActivityCounters(
-			DLFolderConstants.class.getName(), folder.getFolderId());
 
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -1727,6 +1713,9 @@ public class DLAppHelperLocalServiceImpl
 				dlFileEntryType.getFileEntryTypeId());
 		}
 
+		subscriptionSender.addPersistedSubscribers(
+			DLFileEntry.class.getName(), fileEntry.getFileEntryId());
+
 		subscriptionSender.flushNotificationsAsync();
 	}
 
@@ -1740,41 +1729,6 @@ public class DLAppHelperLocalServiceImpl
 				public Void call() throws Exception {
 					DLProcessorRegistryUtil.trigger(
 						fileEntry, fileVersion, true);
-
-					return null;
-				}
-
-			});
-	}
-
-	protected void registerDLSyncEventCallback(
-			final String event, final String type, final long typePK)
-		throws SystemException {
-
-		DLSyncEvent dlSyncEvent = dlSyncEventLocalService.addDLSyncEvent(
-			event, type, typePK);
-
-		final long modifiedDate = dlSyncEvent.getModifiedDate();
-
-		TransactionCommitCallbackRegistryUtil.registerCallback(
-			new Callable<Void>() {
-
-				@Override
-				public Void call() throws Exception {
-					Message message = new Message();
-
-					Map<String, Object> values = new HashMap<String, Object>(4);
-
-					values.put("event", event);
-					values.put("modifiedDate", modifiedDate);
-					values.put("type", type);
-					values.put("typePK", typePK);
-
-					message.setValues(values);
-
-					MessageBusUtil.sendMessage(
-						DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR,
-						message);
 
 					return null;
 				}

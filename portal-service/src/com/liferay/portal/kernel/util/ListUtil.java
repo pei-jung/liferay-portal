@@ -87,7 +87,7 @@ public class ListUtil {
 	}
 
 	public static <E> List<E> fromArray(E[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<E>();
 		}
 
@@ -236,25 +236,23 @@ public class ListUtil {
 	}
 
 	public static <E> List<E> subList(List<E> list, int start, int end) {
-		List<E> newList = new ArrayList<E>();
-
-		int normalizedSize = list.size() - 1;
-
-		if ((start < 0) || (start > normalizedSize) || (end < 0) ||
-			(start > end)) {
-
-			return newList;
+		if (start < 0) {
+			start = 0;
 		}
 
-		for (int i = start; (i < end) && (i <= normalizedSize); i++) {
-			newList.add(list.get(i));
+		if ((end < 0) || (end > list.size())) {
+			end = list.size();
 		}
 
-		return newList;
+		if (start < end) {
+			return list.subList(start, end);
+		}
+
+		return Collections.emptyList();
 	}
 
 	public static List<Boolean> toList(boolean[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Boolean>();
 		}
 
@@ -268,7 +266,7 @@ public class ListUtil {
 	}
 
 	public static List<Character> toList(char[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Character>();
 		}
 
@@ -282,7 +280,7 @@ public class ListUtil {
 	}
 
 	public static List<Double> toList(double[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Double>();
 		}
 
@@ -296,7 +294,7 @@ public class ListUtil {
 	}
 
 	public static <E> List<E> toList(E[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<E>();
 		}
 
@@ -304,7 +302,7 @@ public class ListUtil {
 	}
 
 	public static List<Float> toList(float[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Float>();
 		}
 
@@ -318,7 +316,7 @@ public class ListUtil {
 	}
 
 	public static List<Integer> toList(int[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Integer>();
 		}
 
@@ -332,7 +330,7 @@ public class ListUtil {
 	}
 
 	public static List<Long> toList(long[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Long>();
 		}
 
@@ -346,7 +344,7 @@ public class ListUtil {
 	}
 
 	public static List<Short> toList(short[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<Short>();
 		}
 

@@ -47,7 +47,7 @@ public class DLSyncEventLocalServiceImpl
 			dlSyncEvent.setTypePK(typePK);
 		}
 
-		dlSyncEvent.setModifiedDate(System.currentTimeMillis());
+		dlSyncEvent.setModifiedTime(System.currentTimeMillis());
 		dlSyncEvent.setEvent(event);
 
 		return dlSyncEventPersistence.update(dlSyncEvent);
@@ -59,10 +59,10 @@ public class DLSyncEventLocalServiceImpl
 	}
 
 	@Override
-	public List<DLSyncEvent> getDLSyncEvents(long modifiedDate)
+	public List<DLSyncEvent> getDLSyncEvents(long modifiedTime)
 		throws SystemException {
 
-		return dlSyncEventPersistence.findByModifiedDate(modifiedDate);
+		return dlSyncEventPersistence.findByModifiedTime(modifiedTime);
 	}
 
 	@Override
@@ -70,16 +70,16 @@ public class DLSyncEventLocalServiceImpl
 		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
 			DLSyncEvent.class);
 
-		Property property = PropertyFactoryUtil.forName("modifiedDate");
+		Property property = PropertyFactoryUtil.forName("modifiedTime");
 
-		DynamicQuery modifiedDateDynamicQuery =
+		DynamicQuery modifiedTimeDynamicQuery =
 			DynamicQueryFactoryUtil.forClass(DLSyncEvent.class);
 
-		Projection projection = ProjectionFactoryUtil.max("modifiedDate");
+		Projection projection = ProjectionFactoryUtil.max("modifiedTime");
 
-		modifiedDateDynamicQuery.setProjection(projection);
+		modifiedTimeDynamicQuery.setProjection(projection);
 
-		dynamicQuery.add(property.eq(modifiedDateDynamicQuery));
+		dynamicQuery.add(property.eq(modifiedTimeDynamicQuery));
 
 		return dlSyncEventPersistence.findWithDynamicQuery(dynamicQuery);
 	}

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.cache.ThreadLocalCachable;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
@@ -284,7 +285,7 @@ public class PasswordPolicyLocalServiceImpl
 			return null;
 		}
 
-		if ((organizationIds == null) || (organizationIds.length == 0)) {
+		if (ArrayUtil.isEmpty(organizationIds)) {
 			return getDefaultPasswordPolicy(companyId);
 		}
 
@@ -328,25 +329,24 @@ public class PasswordPolicyLocalServiceImpl
 		if (passwordPolicyRel != null) {
 			return getPasswordPolicy(passwordPolicyRel.getPasswordPolicyId());
 		}
-		else {
-			List<Organization> organizations = userPersistence.getOrganizations(
-				userId);
 
-			if (organizations.isEmpty()) {
-				return passwordPolicyPersistence.findByC_DP(
-					user.getCompanyId(), true);
-			}
+		List<Organization> organizations = userPersistence.getOrganizations(
+			userId);
 
-			long[] organizationIds = new long[organizations.size()];
-
-			for (int i = 0; i < organizationIds.length; i++) {
-				Organization organization = organizations.get(i);
-
-				organizationIds[i] = organization.getOrganizationId();
-			}
-
-			return getPasswordPolicy(user.getCompanyId(), organizationIds);
+		if (organizations.isEmpty()) {
+			return passwordPolicyPersistence.findByC_DP(
+				user.getCompanyId(), true);
 		}
+
+		long[] organizationIds = new long[organizations.size()];
+
+		for (int i = 0; i < organizationIds.length; i++) {
+			Organization organization = organizations.get(i);
+
+			organizationIds[i] = organization.getOrganizationId();
+		}
+
+		return getPasswordPolicy(user.getCompanyId(), organizationIds);
 	}
 
 	@Override

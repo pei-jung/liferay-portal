@@ -129,10 +129,10 @@ public class SPIAgentResponse extends SPIAgentSerializable {
 		}
 
 		if (ParamUtil.get(
-				request, "prpsf",
+				request, "portalResiliencyPortletShowFooter",
 				PropsValues.PORTAL_RESILIENCY_PORTLET_SHOW_FOOTER)) {
 
-			int index = content.lastIndexOf("</");
+			int index = content.lastIndexOf("</div>");
 
 			if (index > 0) {
 				StringBundler sb = new StringBundler(6);

@@ -307,14 +307,12 @@ public class EditServerAction extends PortletAction {
 
 			return portletURL.toString();
 		}
-		else {
-			MaintenanceUtil.maintain(portletSession.getId(), className);
 
-			MessageBusUtil.sendMessage(
-				DestinationNames.CONVERT_PROCESS, className);
+		MaintenanceUtil.maintain(portletSession.getId(), className);
 
-			return null;
-		}
+		MessageBusUtil.sendMessage(DestinationNames.CONVERT_PROCESS, className);
+
+		return null;
 	}
 
 	protected void gc() throws Exception {
@@ -474,7 +472,8 @@ public class EditServerAction extends PortletAction {
 		long[] companyIds = PortalInstances.getCompanyIds();
 
 		for (long companyId : companyIds) {
-			SearchEngineUtil.indexDictionaries(companyId);
+			SearchEngineUtil.indexQuerySuggestionDictionaries(companyId);
+			SearchEngineUtil.indexSpellCheckerDictionaries(companyId);
 		}
 	}
 
@@ -701,7 +700,8 @@ public class EditServerAction extends PortletAction {
 			String name = enu.nextElement();
 
 			if (name.startsWith("imageMagickLimit")) {
-				String key = name.substring(16, name.length()).toLowerCase();
+				String key = StringUtil.toLowerCase(
+					name.substring(16, name.length()));
 				String value = ParamUtil.getString(actionRequest, name);
 
 				portletPreferences.setValue(

@@ -1,31 +1,35 @@
 <definition>
-	<execute test-case="CPCategoriesAcceptance" />
+	<execute test-suite="CPCategoriesAcceptance" />
 
-	<execute test-case="CPPagetemplatesAcceptance" />
+	<execute test-suite="CPPagetemplatesAcceptance" />
 
-	<execute test-case="CPSitemembershipsAcceptance" />
+	<execute test-suite="CPSitemembershipsAcceptance" />
 
-	<execute test-case="CPSitepagesAcceptance" />
+	<execute test-suite="CPSitepagesAcceptance" />
 
-	<execute test-case="CPSitesAcceptance" />
+	<execute test-suite="CPSitesAcceptance" />
 
-	<execute test-case="CPSitetemplatesAcceptance" />
+	<execute test-suite="CPSitetemplatesAcceptance" />
 
-	<execute test-case="CPWebcontentAcceptance" />
+	<execute test-suite="CPWebcontentAcceptance" />
 
-	<execute test-case="PGApplicationdisplaytemplatesAcceptance" />
+	<execute test-suite="DockbarAcceptance" />
 
-	<execute test-case="PGAssetpublisherSiteAcceptance" />
+	<execute test-suite="PGApplicationdisplaytemplatesAcceptance" />
 
-	<execute test-case="PGAssetpublisherWebcontentAcceptance" />
+	<execute test-suite="PGAssetpublisherSiteAcceptance" />
 
-	<execute test-case="PGWebcontentdisplayAcceptance" />
+	<execute test-suite="PGAssetpublisherWebcontentAcceptance" />
 
-	<execute test-case="RecyclebinBlogsAcceptance" />
+	<execute test-suite="PGStagingAcceptance" />
 
-	<execute test-case="RecyclebinMessageboardsAcceptance" />
+	<execute test-suite="PGWebcontentdisplayAcceptance" />
 
-	<execute test-case="RecyclebinWebcontentAcceptance" />
+	<execute test-suite="RecyclebinBlogsAcceptance" />
 
-	<execute test-case="DockbarAcceptance" />
+	<execute test-suite="RecyclebinMessageboardsAcceptance" />
+
+	<execute test-suite="RecyclebinWebcontentAcceptance" />
+
+	<execute test-suite="RecyclebinWikiAcceptance" />
 </definition>

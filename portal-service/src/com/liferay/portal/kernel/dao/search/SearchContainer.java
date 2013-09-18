@@ -256,14 +256,13 @@ public class SearchContainer<R> {
 
 			return _id;
 		}
-		else {
-			id = DeterminateKeyGenerator.generate("taglib_search_container");
 
-			_id = id.concat("SearchContainer");
-			_uniqueId = true;
+		id = DeterminateKeyGenerator.generate("taglib_search_container");
 
-			return _id;
-		}
+		_id = id.concat("SearchContainer");
+		_uniqueId = true;
+
+		return _id;
 	}
 
 	public PortletURL getIteratorURL() {
@@ -502,8 +501,11 @@ public class SearchContainer<R> {
 	}
 
 	private void _calculateStartAndEnd() {
-		_start = (_cur - 1) * _delta;
-		_end = _start + _delta;
+		int[] startAndEnd = SearchPaginationUtil.calculateStartAndEnd(
+			_cur, _delta);
+
+		_start = startAndEnd[0];
+		_end = startAndEnd[1];
 
 		_resultEnd = _end;
 

@@ -27,9 +27,11 @@ import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.model.Company;
@@ -254,52 +256,7 @@ public class LoginUtil {
 		}
 
 		if (PropsValues.SESSION_ENABLE_PHISHING_PROTECTION) {
-
-			// Invalidate the previous session to prevent phishing
-
-			String[] protectedAttributeNames =
-				PropsValues.SESSION_PHISHING_PROTECTED_ATTRIBUTES;
-
-			Map<String, Object> protectedAttributes =
-				new HashMap<String, Object>();
-
-			for (String protectedAttributeName : protectedAttributeNames) {
-				Object protectedAttributeValue = session.getAttribute(
-					protectedAttributeName);
-
-				if (protectedAttributeValue == null) {
-					continue;
-				}
-
-				protectedAttributes.put(
-					protectedAttributeName, protectedAttributeValue);
-			}
-
-			try {
-				session.invalidate();
-			}
-			catch (IllegalStateException ise) {
-
-				// This only happens in Geronimo
-
-				if (_log.isWarnEnabled()) {
-					_log.warn(ise.getMessage());
-				}
-			}
-
-			session = request.getSession(true);
-
-			for (String protectedAttributeName : protectedAttributeNames) {
-				Object protectedAttributeValue = protectedAttributes.get(
-					protectedAttributeName);
-
-				if (protectedAttributeValue == null) {
-					continue;
-				}
-
-				session.setAttribute(
-					protectedAttributeName, protectedAttributeValue);
-			}
+			session = renewSession(request, session);
 		}
 
 		// Set cookies
@@ -311,7 +268,14 @@ public class LoginUtil {
 		String userIdString = String.valueOf(userId);
 
 		session.setAttribute("j_username", userIdString);
-		session.setAttribute("j_password", user.getPassword());
+
+		if (PropsValues.PORTAL_JAAS_PLAIN_PASSWORD) {
+			session.setAttribute("j_password", password);
+		}
+		else {
+			session.setAttribute("j_password", user.getPassword());
+		}
+
 		session.setAttribute("j_remoteuser", userIdString);
 
 		if (PropsValues.SESSION_STORE_PASSWORD) {
@@ -417,7 +381,10 @@ public class LoginUtil {
 
 		boolean secure = request.isSecure();
 
-		if (secure) {
+		if (secure && !PropsValues.COMPANY_SECURITY_AUTH_REQUIRES_HTTPS &&
+			!StringUtil.equalsIgnoreCase(
+				Http.HTTPS, PropsValues.WEB_SERVER_PROTOCOL)) {
+
 			Boolean httpsInitial = (Boolean)session.getAttribute(
 				WebKeys.HTTPS_INITIAL);
 
@@ -438,6 +405,58 @@ public class LoginUtil {
 		}
 
 		AuthenticatedUserUUIDStoreUtil.register(userUUID);
+	}
+
+	public static HttpSession renewSession(
+			HttpServletRequest request, HttpSession session)
+		throws Exception {
+
+		// Invalidate the previous session to prevent phishing
+
+		String[] protectedAttributeNames =
+			PropsValues.SESSION_PHISHING_PROTECTED_ATTRIBUTES;
+
+		Map<String, Object> protectedAttributes = new HashMap<String, Object>();
+
+		for (String protectedAttributeName : protectedAttributeNames) {
+			Object protectedAttributeValue = session.getAttribute(
+				protectedAttributeName);
+
+			if (protectedAttributeValue == null) {
+				continue;
+			}
+
+			protectedAttributes.put(
+				protectedAttributeName, protectedAttributeValue);
+		}
+
+		try {
+			session.invalidate();
+		}
+		catch (IllegalStateException ise) {
+
+			// This only happens in Geronimo
+
+			if (_log.isWarnEnabled()) {
+				_log.warn(ise.getMessage());
+			}
+		}
+
+		session = request.getSession(true);
+
+		for (String protectedAttributeName : protectedAttributeNames) {
+			Object protectedAttributeValue = protectedAttributes.get(
+				protectedAttributeName);
+
+			if (protectedAttributeValue == null) {
+				continue;
+			}
+
+			session.setAttribute(
+				protectedAttributeName, protectedAttributeValue);
+		}
+
+		return session;
 	}
 
 	public static void sendPassword(ActionRequest actionRequest)

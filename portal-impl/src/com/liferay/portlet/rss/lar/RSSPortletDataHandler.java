@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.lar.DLPortletDataHandler;
 import com.liferay.portlet.journal.NoSuchArticleException;
 import com.liferay.portlet.journal.lar.JournalPortletDataHandler;
@@ -82,7 +83,7 @@ public class RSSPortletDataHandler extends BasePortletDataHandler {
 		setExportMetadataControls(exportMetadataControls);
 
 		setImportControls(getExportControls()[0]);
-		setPublishToLiveByDefault(true);
+		setPublishToLiveByDefault(PropsValues.RSS_PUBLISH_TO_LIVE_BY_DEFAULT);
 	}
 
 	@Override
@@ -211,12 +212,9 @@ public class RSSPortletDataHandler extends BasePortletDataHandler {
 
 			articleElement.addAttribute("path", path);
 
-			StagedModelDataHandlerUtil.exportStagedModel(
-				portletDataContext, article);
-
-			portletDataContext.addReferenceElement(
-				article, articleElement, article,
-				PortletDataContext.REFERENCE_TYPE_WEAK, false);
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, article, article,
+				PortletDataContext.REFERENCE_TYPE_WEAK);
 		}
 
 		return getExportDataRootElementString(rootElement);
@@ -228,10 +226,6 @@ public class RSSPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences, String data)
 		throws Exception {
 
-		Map<String, String> articleIds =
-			(Map<String, String>)portletDataContext.getNewPrimaryKeysMap(
-				JournalArticle.class + ".articleId");
-
 		Layout layout = LayoutLocalServiceUtil.getLayout(
 			portletDataContext.getPlid());
 
@@ -240,6 +234,10 @@ public class RSSPortletDataHandler extends BasePortletDataHandler {
 		Element footerArticleElement = rootElement.element("footer-article");
 
 		importReferenceArticle(portletDataContext, footerArticleElement);
+
+		Map<String, String> articleIds =
+			(Map<String, String>)portletDataContext.getNewPrimaryKeysMap(
+				JournalArticle.class + ".articleId");
 
 		String[] footerArticleValues = portletPreferences.getValues(
 			"footerArticleValues", new String[] {"0", ""});
@@ -309,7 +307,7 @@ public class RSSPortletDataHandler extends BasePortletDataHandler {
 		}
 
 		for (Element referenceDataElement : referenceDataElements) {
-			StagedModelDataHandlerUtil.importStagedModel(
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
 				portletDataContext, referenceDataElement);
 		}
 	}

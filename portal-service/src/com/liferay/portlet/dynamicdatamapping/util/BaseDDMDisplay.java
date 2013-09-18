@@ -29,7 +29,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
@@ -82,15 +81,16 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 			long classPK, String portletResource)
 		throws Exception {
 
-		String backURL = ParamUtil.getString(liferayPortletRequest, "backURL");
+		String redirect = ParamUtil.getString(
+			liferayPortletRequest, "redirect");
 
-		if (Validator.isNull(backURL) || Validator.isNull(portletResource)) {
-			backURL = getViewTemplatesURL(
+		if (Validator.isNull(redirect) || Validator.isNull(portletResource)) {
+			return getViewTemplatesURL(
 				liferayPortletRequest, liferayPortletResponse, classNameId,
 				classPK);
 		}
 
-		return backURL;
+		return redirect;
 	}
 
 	@Override
@@ -279,17 +279,14 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 	}
 
 	@Override
-	public boolean isShowAddStructureButton(
-		PermissionChecker permissionChecker, long groupId) {
-
+	public boolean isShowAddStructureButton() {
 		String portletId = getPortletId();
 
 		if (portletId.equals(PortletKeys.DYNAMIC_DATA_MAPPING)) {
 			return false;
 		}
 
-		return permissionChecker.hasPermission(
-			groupId, getResourceName(), groupId, getAddStructureActionId());
+		return true;
 	}
 
 	@Override

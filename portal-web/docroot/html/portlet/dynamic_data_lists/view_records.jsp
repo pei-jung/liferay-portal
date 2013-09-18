@@ -68,20 +68,29 @@ portletURL.setParameter("recordSetId", String.valueOf(recordSet.getRecordSetId()
 	%>
 
 	<liferay-ui:search-container
-		searchContainer='<%= new SearchContainer(renderRequest, new DisplayTerms(request), null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, headerNames, LanguageUtil.format(pageContext, "no-x-records-were-found", ddmStructure.getName(locale))) %>'
+		searchContainer='<%= new SearchContainer(renderRequest, new DisplayTerms(request), null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, headerNames, LanguageUtil.format(pageContext, "no-x-records-were-found", HtmlUtil.escape(ddmStructure.getName(locale)))) %>'
 	>
 
-		<liferay-ui:search-form
-			page="/html/portlet/dynamic_data_lists/record_search.jsp"
-			searchContainer="<%= searchContainer %>"
-			showAddButton="<%= showAddRecordButton %>"
-		/>
+		<aui:nav-bar>
+			<aui:nav>
+				<c:if test="<%= showAddRecordButton %>">
+					<portlet:renderURL var="addRecordURL">
+						<portlet:param name="struts_action" value="/dynamic_data_lists/edit_record" />
+						<portlet:param name="redirect" value="<%= currentURL %>" />
+						<portlet:param name="recordSetId" value="<%= String.valueOf(recordSet.getRecordSetId()) %>" />
+						<portlet:param name="formDDMTemplateId" value="<%= String.valueOf(formDDMTemplateId) %>" />
+					</portlet:renderURL>
+
+					<aui:nav-item href="<%= addRecordURL %>" iconClass="icon-plus" label='<%= LanguageUtil.format(pageContext, "add-x", HtmlUtil.escape(ddmStructure.getName(locale))) %>' />
+				</c:if>
+			</aui:nav>
+
+			<aui:nav-bar-search cssClass="pull-right" file="/html/portlet/dynamic_data_lists/record_search.jsp" searchContainer="<%= searchContainer %>" />
+		</aui:nav-bar>
 
 		<liferay-ui:search-container-results>
 			<%@ include file="/html/portlet/dynamic_data_lists/record_search_results.jspf" %>
 		</liferay-ui:search-container-results>
-
-		<div class="separator"><!-- --></div>
 
 		<%
 		List resultRows = searchContainer.getResultRows();
@@ -124,7 +133,7 @@ portletURL.setParameter("recordSetId", String.valueOf(recordSet.getRecordSetId()
 			}
 
 			if (editable) {
-				row.addText(LanguageUtil.get(pageContext, WorkflowConstants.getStatusLabel(recordVersion.getStatus())), rowURL);
+				row.addStatus(recordVersion.getStatus(), recordVersion.getStatusByUserId(), recordVersion.getStatusDate(), rowURL);
 				row.addDate(record.getModifiedDate(), rowURL);
 				row.addText(HtmlUtil.escape(PortalUtil.getUserName(recordVersion)), rowURL);
 

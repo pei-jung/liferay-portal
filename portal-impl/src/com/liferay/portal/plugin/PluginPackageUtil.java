@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ReleaseInfo;
@@ -67,7 +68,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -680,7 +680,7 @@ public class PluginPackageUtil {
 				}
 			}
 
-			if ((bytes != null) && (bytes.length > 0)) {
+			if (ArrayUtil.isNotEmpty(bytes)) {
 				repository = _parseRepositoryXml(
 					new String(bytes), repositoryURL);
 
@@ -691,11 +691,10 @@ public class PluginPackageUtil {
 
 				return repository;
 			}
-			else {
-				_lastUpdateDate = new Date();
 
-				throw new PluginPackageException("Download returned 0 bytes");
-			}
+			_lastUpdateDate = new Date();
+
+			throw new PluginPackageException("Download returned 0 bytes");
 		}
 		catch (MalformedURLException murle) {
 			_repositoryCache.remove(repositoryURL);
@@ -787,7 +786,7 @@ public class PluginPackageUtil {
 	private Date _readDate(String text) {
 		if (Validator.isNotNull(text)) {
 			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
-				Time.RFC822_FORMAT, Locale.US);
+				Time.RFC822_FORMAT, LocaleUtil.US);
 
 			try {
 				return dateFormat.parse(text);
@@ -841,7 +840,7 @@ public class PluginPackageUtil {
 		}
 
 		for (Element element : parentElement.elements(name)) {
-			String text = element.getText().trim().toLowerCase();
+			String text = StringUtil.toLowerCase(element.getText().trim());
 
 			list.add(text);
 		}
@@ -1300,7 +1299,6 @@ public class PluginPackageUtil {
 					"Unable to load repository " + repositoryURL + " " +
 						ppe.toString());
 			}
-
 		}
 
 		Indexer indexer = IndexerRegistryUtil.getIndexer(PluginPackage.class);

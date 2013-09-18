@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.upload.ProgressInputStream;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -100,6 +101,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 /**
  * @author Brian Wing Shun Chan
  * @author Hugo Huijser
+ * @author Shuyang Zhou
  */
 @DoPrivileged
 public class HttpImpl implements Http {
@@ -337,7 +339,7 @@ public class HttpImpl implements Http {
 		}
 
 		if (trailing) {
-			for (int i = path.length() - 1; i >=0; i--) {
+			for (int i = path.length() - 1; i >= 0; i--) {
 				if (path.charAt(i) == CharPool.SLASH) {
 					trailingSlashCount++;
 				}
@@ -700,6 +702,13 @@ public class HttpImpl implements Http {
 	}
 
 	@Override
+	public boolean isSecure(String url) {
+		String protocol = getProtocol(url);
+
+		return StringUtil.equalsIgnoreCase(protocol, Http.HTTPS);
+	}
+
+	@Override
 	public Map<String, String[]> parameterMapFromString(String queryString) {
 		Map<String, String[]> parameterMap =
 			new LinkedHashMap<String, String[]>();
@@ -943,17 +952,25 @@ public class HttpImpl implements Http {
 			return null;
 		}
 
-		char[] chars = header.toCharArray();
+		StringBuilder sb = null;
 
-		for (int i = 0; i < chars.length; i++) {
-			char c = chars[i];
+		for (int i = 0; i < header.length(); i++) {
+			char c = header.charAt(i);
 
 			if (((c <= 31) && (c != 9)) || (c == 127) || (c > 255)) {
-				chars[i] = CharPool.SPACE;
+				if (sb == null) {
+					sb = new StringBuilder(header);
+				}
+
+				sb.setCharAt(i, CharPool.SPACE);
 			}
 		}
 
-		return new String(chars);
+		if (sb != null) {
+			header = sb.toString();
+		}
+
+		return header;
 	}
 
 	@Override
@@ -1059,7 +1076,7 @@ public class HttpImpl implements Http {
 			return null;
 		}
 
-		String protocol = url.getProtocol().toLowerCase();
+		String protocol = StringUtil.toLowerCase(url.getProtocol());
 
 		if (protocol.startsWith(Http.HTTP) || protocol.startsWith(Http.HTTPS)) {
 			return URLtoString(url.toString());
@@ -1191,10 +1208,12 @@ public class HttpImpl implements Http {
 		Cookie cookie = new Cookie(
 			commonsCookie.getName(), commonsCookie.getValue());
 
-		String domain = commonsCookie.getDomain();
+		if (!PropsValues.SESSION_COOKIE_USE_FULL_HOSTNAME) {
+			String domain = commonsCookie.getDomain();
 
-		if (Validator.isNotNull(domain)) {
-			cookie.setDomain(domain);
+			if (Validator.isNotNull(domain)) {
+				cookie.setDomain(domain);
+			}
 		}
 
 		Date expiryDate = commonsCookie.getExpiryDate();
@@ -1339,7 +1358,7 @@ public class HttpImpl implements Http {
 
 			httpState = new HttpState();
 
-			if ((cookies != null) && (cookies.length > 0)) {
+			if (ArrayUtil.isNotEmpty(cookies)) {
 				org.apache.commons.httpclient.Cookie[] commonsCookies =
 					toCommonsCookies(cookies);
 

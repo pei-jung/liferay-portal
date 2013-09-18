@@ -89,11 +89,13 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 			<c:otherwise>
 
 				<%
-				results = UserLocalServiceUtil.getGroupUsers(group.getParentGroupId(), userSearchContainer.getStart(), userSearchContainer.getEnd());
 				total = UserLocalServiceUtil.getGroupUsersCount(group.getParentGroupId());
 
-				pageContext.setAttribute("results", results);
-				pageContext.setAttribute("total", total);
+				searchContainer.setTotal(total);
+
+				results = UserLocalServiceUtil.getGroupUsers(group.getParentGroupId(), userSearchContainer.getStart(), userSearchContainer.getEnd());
+
+				searchContainer.setResults(results);
 				%>
 
 			</c:otherwise>
@@ -181,7 +183,7 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 
 				List<Team> teams = TeamLocalServiceUtil.getUserTeams(user2.getUserId(), group.getGroupId());
 
-				if (!userGroupRoles.isEmpty()) {
+				if (!teams.isEmpty() && !userGroupRoles.isEmpty()) {
 					buffer.append(StringPool.COMMA_AND_SPACE);
 				}
 
@@ -213,9 +215,12 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 				viewUsersURL.setParameter("tabs2", "available");
 				%>
 
-				<aui:button-row>
-					<aui:button href="<%= viewUsersURL.toString() %>" value="assign-users" />
-				</aui:button-row>
+				<liferay-ui:icon
+					image="../aui/user"
+					label="<%= true %>"
+					message="assign-users"
+					url="<%= viewUsersURL.toString() %>"
+				/>
 
 				<%
 				viewUsersURL.setParameter("tabs2", "current");
@@ -231,7 +236,7 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 				%>
 
 				<aui:button-row>
-					<aui:button onClick="<%= taglibOnClick %>" value="save" />
+					<aui:button onClick="<%= taglibOnClick %>" primary="<%= true %>" value="save" />
 				</aui:button-row>
 			</c:otherwise>
 		</c:choose>
@@ -241,9 +246,7 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 		<c:when test='<%= tabs1.equals("summary") && (total > 0) %>'>
 			<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" persistState="<%= true %>" title='<%= LanguageUtil.format(pageContext, (total > 1) ? "x-users" : "x-user", total) %>'>
 				<span class="form-search">
-					<aui:input inlineField="<%= true %>" label="" name='<%= DisplayTerms.KEYWORDS + "_users" %>' size="30" value="" />
-
-					<aui:button type="submit" value="search" />
+					<liferay-ui:input-search name='<%= DisplayTerms.KEYWORDS + "_users" %>' />
 				</span>
 
 				<br /><br />
@@ -254,8 +257,6 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 					<a href="<%= viewUsersURL %>"><liferay-ui:message key="view-more" /> &raquo;</a>
 				</c:if>
 			</liferay-ui:panel>
-
-			<div class="separator"><!-- --></div>
 		</c:when>
 		<c:when test='<%= !tabs1.equals("summary") %>'>
 			<c:if test="<%= total > searchContainer.getDelta() %>">

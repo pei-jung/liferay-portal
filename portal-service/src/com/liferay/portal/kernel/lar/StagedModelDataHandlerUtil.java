@@ -21,12 +21,14 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.ClassedModel;
+import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.model.TypedModel;
 import com.liferay.portal.util.PortalUtil;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Mate Thurzo
  */
 public class StagedModelDataHandlerUtil {
 
@@ -47,6 +49,90 @@ public class StagedModelDataHandlerUtil {
 				uuid, portletDataContext.getScopeGroupId(), className,
 				extraData);
 		}
+	}
+
+	public static <T extends StagedModel> void exportReferenceStagedModel(
+			PortletDataContext portletDataContext, String referrerPortletId,
+			T stagedModel)
+		throws PortletDataException {
+
+		if (stagedModel instanceof StagedGroupedModel) {
+			StagedGroupedModel stagedGroupedModel =
+				(StagedGroupedModel)stagedModel;
+
+			if (portletDataContext.isCompanyStagedGroupedModel(
+					stagedGroupedModel)) {
+
+				portletDataContext.addMissingReferenceElement(
+					referrerPortletId, stagedModel);
+
+				return;
+			}
+		}
+
+		exportStagedModel(portletDataContext, stagedModel);
+	}
+
+	public static <T extends StagedModel, U extends StagedModel> Element
+		exportReferenceStagedModel(
+			PortletDataContext portletDataContext, T referrerStagedModel,
+			Class<?> referrerStagedModelClass, U stagedModel,
+			Class<?> stagedModelClass, String referenceType)
+		throws PortletDataException {
+
+		Element referrerStagedModelElement =
+			portletDataContext.getExportDataElement(
+				referrerStagedModel, referrerStagedModelClass);
+
+		return exportReferenceStagedModel(
+			portletDataContext, referrerStagedModel, referrerStagedModelElement,
+			stagedModel, stagedModelClass, referenceType);
+	}
+
+	public static <T extends StagedModel, U extends StagedModel> Element
+		exportReferenceStagedModel(
+			PortletDataContext portletDataContext, T referrerStagedModel,
+			Element referrerStagedModelElement, U stagedModel,
+			Class<?> stagedModelClass, String referenceType)
+		throws PortletDataException {
+
+		Element referenceElement = null;
+
+		if (stagedModel instanceof StagedGroupedModel) {
+			StagedGroupedModel stagedGroupedModel =
+				(StagedGroupedModel)stagedModel;
+
+			if (portletDataContext.isCompanyStagedGroupedModel(
+					stagedGroupedModel)) {
+
+				referenceElement = portletDataContext.addReferenceElement(
+					referrerStagedModel, referrerStagedModelElement,
+					stagedModel, stagedModelClass,
+					PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
+
+				return referenceElement;
+			}
+		}
+
+		exportStagedModel(portletDataContext, stagedModel);
+
+		referenceElement = portletDataContext.addReferenceElement(
+			referrerStagedModel, referrerStagedModelElement, stagedModel,
+			stagedModelClass, referenceType, false);
+
+		return referenceElement;
+	}
+
+	public static <T extends StagedModel, U extends StagedModel> Element
+		exportReferenceStagedModel(
+			PortletDataContext portletDataContext, T referrerStagedModel,
+			U stagedModel, String referenceType)
+		throws PortletDataException {
+
+		return exportReferenceStagedModel(
+			portletDataContext, referrerStagedModel,
+			referrerStagedModel.getModelClass(), stagedModel,
+			stagedModel.getModelClass(), referenceType);
 	}
 
 	public static <T extends StagedModel> void exportStagedModel(
@@ -71,9 +157,61 @@ public class StagedModelDataHandlerUtil {
 		return stagedModelDataHandler.getDisplayName(stagedModel);
 	}
 
+	public static void importReferenceStagedModel(
+			PortletDataContext portletDataContext, Element element)
+		throws PortletDataException {
+
+		StagedModel stagedModel = _getStagedModel(portletDataContext, element);
+
+		importReferenceStagedModel(portletDataContext, stagedModel);
+	}
+
+	public static <T extends StagedModel> void importReferenceStagedModel(
+			PortletDataContext portletDataContext, T stagedModel)
+		throws PortletDataException {
+
+		StagedModelDataHandler<T> stagedModelDataHandler =
+			_getStagedModelDataHandler(stagedModel);
+
+		if (stagedModel instanceof StagedGroupedModel) {
+			StagedGroupedModel stagedGroupedModel =
+				(StagedGroupedModel)stagedModel;
+
+			if (portletDataContext.isCompanyStagedGroupedModel(
+					stagedGroupedModel)) {
+
+				stagedModelDataHandler.importCompanyStagedModel(
+					portletDataContext, stagedModel);
+
+				return;
+			}
+		}
+
+		importStagedModel(portletDataContext, stagedModel);
+	}
+
 	public static void importStagedModel(
 			PortletDataContext portletDataContext, Element element)
 		throws PortletDataException {
+
+		StagedModel stagedModel = _getStagedModel(portletDataContext, element);
+
+		importStagedModel(portletDataContext, stagedModel);
+	}
+
+	public static <T extends StagedModel> void importStagedModel(
+			PortletDataContext portletDataContext, T stagedModel)
+		throws PortletDataException {
+
+		StagedModelDataHandler<T> stagedModelDataHandler =
+			_getStagedModelDataHandler(stagedModel);
+
+		stagedModelDataHandler.importStagedModel(
+			portletDataContext, stagedModel);
+	}
+
+	private static StagedModel _getStagedModel(
+		PortletDataContext portletDataContext, Element element) {
 
 		String path = element.attributeValue("path");
 
@@ -96,18 +234,7 @@ public class StagedModelDataHandlerUtil {
 			}
 		}
 
-		importStagedModel(portletDataContext, stagedModel);
-	}
-
-	public static <T extends StagedModel> void importStagedModel(
-			PortletDataContext portletDataContext, T stagedModel)
-		throws PortletDataException {
-
-		StagedModelDataHandler<T> stagedModelDataHandler =
-			_getStagedModelDataHandler(stagedModel);
-
-		stagedModelDataHandler.importStagedModel(
-			portletDataContext, stagedModel);
+		return stagedModel;
 	}
 
 	private static <T extends StagedModel> StagedModelDataHandler<T>

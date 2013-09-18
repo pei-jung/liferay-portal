@@ -72,8 +72,7 @@
 		color: #34404F;
 		display: block;
 		margin: 0 auto;
-		padding: 0.5em;
-		padding-bottom: 0;
+		padding: 0;
 	}
 
 	.article-structure-template-toolbar {
@@ -111,28 +110,27 @@
 		}
 	}
 
+	.article-translation-toolbar {
+		padding: 1em 0 0 0;
+	}
+
 	.journal-article-header-edit {
 		background: #FCFCFC;
 		border: solid #DDD;
 		border-width: 1px 0;
 		margin: 0 0 1em;
-	}
-
-	.subscribe-link {
-		float: right;
-		margin-bottom: 1em;
-		margin-top: 2em;
+		padding: 1em;
 	}
 
 	.lfr-panel-basic {
 		.lfr-panel-title {
-			border-bottom: 1px solid #ccc;
+			border-bottom: 1px solid #CCC;
 			float: none;
 			position: relative;
 			top: -0.5em;
 
 			span {
-				background: #fff;
+				background: #FFF;
 				padding: 0 8px 0 4px;
 				position: relative;
 				top: 0.55em;
@@ -154,11 +152,17 @@
 	}
 
 	.journal-article-container {
-		.lfr-ddm-container .field-wrapper .field-wrapper {
+		.lfr-ddm-container .field-wrapper {
+			&[data-repeatable="true"], .field-wrapper {
 			border: 1px solid #D0D0D0;
 			border-left-width: 10px;
 			margin: 7px 0 0 5px;
 			padding: 7px 10px 10px;
+		}
+
+			&[data-repeatable="true"]:nth-of-type(even) {
+				background-color: #F5F5F5;
+			}
 		}
 
 		ul {
@@ -216,13 +220,13 @@
 		}
 	}
 
-	li {
+	.structure-tree {
 		list-style: none;
 		position: relative;
-	}
 
-	.structure-tree {
-		position: relative;
+		li {
+			position: relative;
+		}
 
 		li.structure-field {
 			&.repeatable-border {
@@ -333,6 +337,17 @@
 	}
 
 	.journal-container {
+		.group-info {
+			dl {
+				margin: 0 0 0 20px;
+
+				dt {
+					float: left;
+					margin-right: 3px;
+				}
+			}
+		}
+
 		.search-info {
 			background-color: #D3E8F1;
 			padding: 10px;
@@ -386,14 +401,9 @@
 	}
 
 	.taglib-search-iterator-page-iterator-top, .taglib-search-iterator-page-iterator-bottom, .paginator-container {
-		background: #D9D9D9 url(@theme_image_path@/application/subheader_bg.png) 0 0 repeat-x;
 		clear: both;
 		padding: 5px;
 		position: relative;
-	}
-
-	.taglib-search-iterator-page-iterator-top, .taglib-search-iterator-page-iterator-bottom, .paginator-container {
-		text-align: center;
 	}
 
 	.taglib-search-iterator-page-iterator-top.page-iterator-bottom, .lfr-app-column-view .taglib-search-iterator-page-iterator-bottom {
@@ -522,9 +532,6 @@
 	}
 
 	.form-navigator {
-		position: relative;
-		z-index: 430;
-
 		.article-info {
 			font-weight: bold;
 			margin-bottom: 15px;
@@ -658,8 +665,8 @@
 		}
 
 		.placeholder, .tree-placeholder, .tree-sub-placeholder {
-			background: #fff;
-			border: 1px #cdcdcd dashed;
+			background: #FFF;
+			border: 1px #CDCDCD dashed;
 			height: 100px;
 
 			@include opacity(0.75);
@@ -819,12 +826,12 @@
 	}
 
 	.component-dragging {
-		background-color: #fff !important;
+		background-color: #FFF !important;
 	}
 }
 
 .journal-article-helper {
-	background: #dedede;
+	background: #DEDEDE;
 	border: 1px #555 dashed;
 	cursor: move;
 
@@ -957,7 +964,7 @@
 		}
 
 		.error-line {
-			background: #fdd;
+			background: #FDD;
 		}
 
 		pre {

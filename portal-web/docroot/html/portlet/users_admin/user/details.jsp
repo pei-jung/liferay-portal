@@ -75,7 +75,7 @@ if (selContact != null) {
 		}
 		%>
 
-		<liferay-ui:message arguments="<%= sb.toString() %>" key="you-do-not-have-permission-to-modify-the-following-fields" />
+		<liferay-ui:message arguments="<%= sb.toString() %>" key="your-portal-administrator-has-disabled-the-ability-to-modify-the-following-fields" />
 	</liferay-ui:error>
 
 	<liferay-ui:error exception="<%= UserScreenNameException.class %>" message="please-enter-a-valid-screen-name" />
@@ -164,7 +164,7 @@ if (selContact != null) {
 		<c:when test="<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.FIELD_ENABLE_COM_LIFERAY_PORTAL_MODEL_CONTACT_BIRTHDAY) %>">
 			<liferay-ui:error exception="<%= ContactBirthdayException.class %>" message="please-enter-a-valid-date" />
 
-			<aui:input bean="<%= selContact %>" disabled='<%= !UsersAdminUtil.hasUpdateFieldPermission(selUser, "birthday") %>' model="<%= Contact.class %>" name="birthday" value="<%= birthday %>" />
+			<aui:input bean="<%= selContact %>" cssClass="modify-link" disabled='<%= !UsersAdminUtil.hasUpdateFieldPermission(selUser, "birthday") %>' model="<%= Contact.class %>" name="birthday" value="<%= birthday %>" />
 		</c:when>
 		<c:otherwise>
 			<aui:input name="birthdayMonth" type="hidden" value="<%= Calendar.JANUARY %>" />

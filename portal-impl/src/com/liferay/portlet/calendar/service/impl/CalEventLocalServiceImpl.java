@@ -99,11 +99,13 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.XParameter;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Comment;
 import net.fortuna.ical4j.model.property.DateProperty;
@@ -117,6 +119,7 @@ import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 
 /**
  * @author Brian Wing Shun Chan
@@ -890,7 +893,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 		OutputStream os = null;
 
 		try {
-			String extension = ".ics";
+			String extension = "ics";
 
 			if (Validator.isNull(fileName)) {
 				fileName = "liferay_calendar.";
@@ -899,14 +902,14 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 				int pos = fileName.lastIndexOf(CharPool.PERIOD);
 
 				if (pos != -1) {
-					extension = fileName.substring(pos);
+					extension = fileName.substring(pos + 1);
 					fileName = fileName.substring(0, pos);
 				}
 			}
 
 			fileName = FileUtil.getShortFileName(fileName);
 
-			File file = File.createTempFile(fileName, extension);
+			File file = FileUtil.createTempFile(fileName, extension);
 
 			os = new UnsyncBufferedOutputStream(
 				new FileOutputStream(file.getPath()));
@@ -1471,7 +1474,6 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 					recur.getDayList().add(weekDay);
 				}
 			}
-
 		}
 		else if (recurrenceType == Recurrence.WEEKLY) {
 			recur = new Recur(Recur.WEEKLY, -1);
@@ -1580,6 +1582,15 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 			HtmlUtil.render(event.getDescription()));
 
 		eventProps.add(description);
+
+		XProperty xProperty = new XProperty(
+			"X-ALT-DESC", event.getDescription());
+
+		ParameterList parameters = xProperty.getParameters();
+
+		parameters.add(new XParameter("FMTTYPE", "text/html"));
+
+		eventProps.add(xProperty);
 
 		// Location
 

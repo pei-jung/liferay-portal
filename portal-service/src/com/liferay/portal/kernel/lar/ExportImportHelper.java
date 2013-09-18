@@ -28,6 +28,7 @@ import com.liferay.portal.theme.ThemeDisplay;
 import java.io.File;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
@@ -37,6 +38,39 @@ import javax.portlet.PortletRequest;
  * @author Zsolt Berentey
  */
 public interface ExportImportHelper {
+
+	public static final String DATA_HANDLER_COMPANY_SECURE_URL =
+		"@data_handler_company_secure_url@";
+
+	public static final String DATA_HANDLER_COMPANY_URL =
+		"@data_handler_company_url@";
+
+	public static final String DATA_HANDLER_GROUP_FRIENDLY_URL =
+		"@data_handler_group_friendly_url@";
+
+	public static final String DATA_HANDLER_PATH_CONTEXT =
+		"@data_handler_path_context@";
+
+	public static final String DATA_HANDLER_PRIVATE_GROUP_SERVLET_MAPPING =
+		"@data_handler_private_group_servlet_mapping@";
+
+	public static final String DATA_HANDLER_PRIVATE_LAYOUT_SET_SECURE_URL =
+		"@data_handler_private_layout_set_secure_url@";
+
+	public static final String DATA_HANDLER_PRIVATE_LAYOUT_SET_URL =
+		"@data_handler_private_layout_set_url@";
+
+	public static final String DATA_HANDLER_PRIVATE_USER_SERVLET_MAPPING =
+		"@data_handler_private_user_servlet_mapping@";
+
+	public static final String DATA_HANDLER_PUBLIC_LAYOUT_SET_SECURE_URL =
+		"@data_handler_public_layout_set_secure_url@";
+
+	public static final String DATA_HANDLER_PUBLIC_LAYOUT_SET_URL =
+		"@data_handler_public_layout_set_url@";
+
+	public static final String DATA_HANDLER_PUBLIC_SERVLET_MAPPING =
+		"@data_handler_public_servlet_mapping@";
 
 	public static final String TEMP_FOLDER_NAME =
 		ExportImportHelper.class.getName();
@@ -55,6 +89,11 @@ public interface ExportImportHelper {
 
 	public String getExportableRootPortletId(long companyId, String portletId)
 		throws Exception;
+
+	public Map<Long, Boolean> getLayoutIdMap(PortletRequest portletRequest)
+		throws Exception;
+
+	public long[] getLayoutIds(List<Layout> layouts);
 
 	public ManifestSummary getManifestSummary(
 			long userId, long groupId, Map<String, String[]> parameterMap,

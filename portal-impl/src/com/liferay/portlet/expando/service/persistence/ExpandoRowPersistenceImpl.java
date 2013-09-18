@@ -341,6 +341,10 @@ public class ExpandoRowPersistenceImpl extends BasePersistenceImpl<ExpandoRow>
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByTableId(tableId);
 
+		if (count == 0) {
+			return null;
+		}
+
 		List<ExpandoRow> list = findByTableId(tableId, count - 1, count,
 				orderByComparator);
 
@@ -824,6 +828,10 @@ public class ExpandoRowPersistenceImpl extends BasePersistenceImpl<ExpandoRow>
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByClassPK(classPK);
 
+		if (count == 0) {
+			return null;
+		}
+
 		List<ExpandoRow> list = findByClassPK(classPK, count - 1, count,
 				orderByComparator);
 
@@ -1279,6 +1287,10 @@ public class ExpandoRowPersistenceImpl extends BasePersistenceImpl<ExpandoRow>
 
 	private static final String _FINDER_COLUMN_T_C_TABLEID_2 = "expandoRow.tableId = ? AND ";
 	private static final String _FINDER_COLUMN_T_C_CLASSPK_2 = "expandoRow.classPK = ?";
+
+	public ExpandoRowPersistenceImpl() {
+		setModelClass(ExpandoRow.class);
+	}
 
 	/**
 	 * Caches the expando row in the entity cache if it is enabled.

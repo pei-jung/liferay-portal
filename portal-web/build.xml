@@ -5,6 +5,8 @@
 
 	<property name="war.file" value="${ant.project.name}" />
 
+	<property name="alloy-font-awesome.file" value="alloy-font-awesome-1.0.0.zip" />
+
 	<!--
 	When upgrading CKEditor, make sure to delete
 	docroot/html/js/editor/ckeditor_diffs/ckeditor.js.
@@ -13,7 +15,6 @@
 	<property name="ckeditor.file" value="ckeditor-4.0-stable.zip" />
 
 	<property name="fckeditor.file" value="FCKeditor_2.6.3.zip" />
-	<property name="font-awesome.file" value="font-awesome-3.2.1.zip" />
 	<property name="scayt.file" value="scayt_4.0.3.zip" />
 	<property name="tinymce.file" value="tinymce_3.5.6.zip" />
 	<property name="vaadin.file" value="vaadin-6.8.12-liferay.zip" />
@@ -58,7 +59,7 @@
 	<target name="build-alloy">
 		<antcall target="build-alloy-bootstrap" />
 
-		<property name="alloy.version" value="2.0.0pr6" />
+		<property name="alloy.version" value="2.0.0pr7" />
 
 		<property name="alloy.file" value="alloy-${alloy.version}.zip" />
 
@@ -220,11 +221,30 @@
 			</then>
 		</if>
 
-		<!-- Build Font-Awesome -->
+		<!-- Build Alloy Font Awesome -->
 
-		<antcall target="build-font-awesome">
+		<antcall target="build-alloy-font-awesome">
 			<param name="alloy.bootstrap.deploy" value="${alloy.bootstrap.deploy}" />
 		</antcall>
+	</target>
+
+	<target name="build-alloy-font-awesome">
+		<if>
+			<not>
+				<uptodate
+					srcfile="third-party/${alloy-font-awesome.file}"
+					targetfile="${alloy.bootstrap.deploy}/alloy-font-awesome"
+				/>
+			</not>
+			<then>
+				<delete dir="${alloy.bootstrap.deploy}/alloy-font-awesome" />
+
+				<unzip src="third-party/${alloy-font-awesome.file}" dest="${alloy.bootstrap.deploy}" />
+
+				<delete dir="${alloy.bootstrap.deploy}/alloy-font-awesome/css" />
+				<delete dir="${alloy.bootstrap.deploy}/alloy-font-awesome/less" />
+			</then>
+		</if>
 	</target>
 
 	<target name="build-ckeditor">
@@ -483,7 +503,8 @@
 			<arg value="sass.dir.0=/html/css" />
 			<arg value="sass.dir.1=/html/portlet" />
 			<arg value="sass.dir.2=/html/themes" />
-			<arg value="saas.docroot.dir=${basedir}/docroot" />
+			<arg value="sass.docroot.dir=${basedir}/docroot" />
+			<arg value="sass.portal.common.dir=${basedir}/docroot/html/css/common" />
 		</java>
 	</target>
 
@@ -672,9 +693,19 @@
 					</replacevalue>
 				</replace>
 
+				<replace file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmresourceslist.html">
+					<replacetoken><![CDATA[oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )]]></replacetoken>
+					<replacevalue><![CDATA[oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize, errorMessage )]]></replacevalue>
+				</replace>
+
+				<replace file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmresourceslist.html">
+					<replacetoken><![CDATA[var sLink = '<a href="#" onclick="OpenFile(\'' + ProtectPath( fileUrl ) + '\');return false;">' ;]]></replacetoken>
+					<replacevalue><![CDATA[var errorMessageText = (errorMessage ? '\'' + errorMessage + '\'' : null);var sLink = '<a href="#" onclick="OpenFile(\'' + ProtectPath( fileUrl ) + '\' , ' + errorMessageText + ');return false;">' ;]]></replacevalue>
+				</replace>
+
 				<replaceregexp file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmresourceslist.html"
 					match="(\t*)// Get the optional [^;]*?;\r?(\n).*?sFileSize \) \) ;"
-					replace="\1var sFileDesc = oNode.attributes.getNamedItem('desc').value ;\2\1var sFileUrl = oNode.attributes.getNamedItem('url').value ;\2\2\1oHtml.Append( oListManager.GetFileRowHtml( sFileDesc, sFileUrl, sFileSize ) ) ;"
+					replace="\1var sFileDesc = oNode.attributes.getNamedItem('desc').value ;\2\1var sFileErrorMessageNamedItem = oNode.attributes.getNamedItem('errorMessage');\2\1var sFileErrorMessage = null;\2\1 if (sFileErrorMessageNamedItem) {sFileErrorMessage = sFileErrorMessageNamedItem.value;}\2\1var sFileUrl = oNode.attributes.getNamedItem('url').value ;\2\2\1oHtml.Append( oListManager.GetFileRowHtml( sFileDesc, sFileUrl, sFileSize, sFileErrorMessage ) ) ;"
 					flags="s"
 				/>
 
@@ -682,7 +713,7 @@
 
 				<replaceregexp file="docroot/html/js/editor/fckeditor/editor/filemanager/browser/liferay/frmresourcetype.html"
 					match="var aTypes = \[\r?(\n)(\t*)(.)+\] ;"
-					replace="var aTypes = [\1\2['Document','Document'],\1\2['Page','Page'],\1\2['Attachment', 'Attachment']\1] ;"
+					replace="var aTypes = [\1\2['Document','Document'],\1\2['Page','Page'],\1\2['Attachment', 'Attachment'],\1\2['Video', 'Video']\1] ;"
 					flags="s"
 				/>
 
@@ -767,7 +798,9 @@
 							case 209:
 								alert( 'An internal server error occured.' );
 								break ;
-
+							case 210:
+								alert( 'You cannot upload a video file if video preview generation is disabled.' );
+								break ;
 							default :
 						]]>
 					</replacevalue>
@@ -811,14 +844,24 @@
 				</replace>
 
 				<replace file="docroot/html/js/editor/ckeditor/editor/filemanager/browser/liferay/frmresourceslist.html">
+					<replacetoken><![CDATA[function OpenFile( fileUrl )]]></replacetoken>
+					<replacevalue><![CDATA[function OpenFile( fileUrl, errorMessage )]]></replacevalue>
+				</replace>
+
+				<replace file="docroot/html/js/editor/ckeditor/editor/filemanager/browser/liferay/frmresourceslist.html">
 					<replacetoken><![CDATA[window.top.opener.SetUrl( encodeURI( fileUrl ).replace( '#', '%23' ) ) ;]]></replacetoken>
 					<replacevalue>
 						<![CDATA[
-							var match = window.top.location.search.match(/(?:[\?&]|&amp;)CKEditorFuncNum=([^&]+)/i);
+							if (!errorMessage) {
+								var match = window.top.location.search.match(/(?:[\?&]|&amp;)CKEditorFuncNum=([^&]+)/i);
 
-							var funcNum = (match && match.length) ? match[1] : '';
+								var funcNum = (match && match.length) ? match[1] : '';
 
-							window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+								window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+							}
+							else {
+								alert(errorMessage);
+							}
 						]]>
 					</replacevalue>
 				</replace>
@@ -833,25 +876,6 @@
 					<fileset dir="docroot/html/js/editor/fckeditor_diffs" />
 				</copy>
 			</else>
-		</if>
-	</target>
-
-	<target name="build-font-awesome">
-		<if>
-			<not>
-				<uptodate
-					srcfile="third-party/${font-awesome.file}"
-					targetfile="${alloy.bootstrap.deploy}/font-awesome"
-				/>
-			</not>
-			<then>
-				<delete dir="${alloy.bootstrap.deploy}/font-awesome" />
-
-				<unzip src="third-party/${font-awesome.file}" dest="${alloy.bootstrap.deploy}" />
-
-				<delete dir="${alloy.bootstrap.deploy}/font-awesome/css" />
-				<delete dir="${alloy.bootstrap.deploy}/font-awesome/less" />
-			</then>
 		</if>
 	</target>
 
@@ -1536,6 +1560,10 @@ Please set the property "jdk.6.home" in build.properties.
 			destfile="${war.file}.war"
 			excludes="WEB-INF/web.xml,html/js/editor/fckeditor/_samples/**,html/js/editor/fckeditor_diffs/**"
 			webxml="docroot/WEB-INF/web.xml"
-		/>
+		>
+			<metainf dir="${project.dir}/oss-licenses">
+				<exclude name="**/development/**" />
+			</metainf>
+		</war>
 	</target>
 </project>

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -55,6 +56,9 @@ public class DLFileEntryFinderImpl
 
 	public static final String FIND_BY_ANY_IMAGE_ID =
 		DLFileEntryFinder.class.getName() + ".findByAnyImageId";
+
+	public static final String FIND_BY_COMPANY_ID =
+		DLFileEntryFinder.class.getName() + ".findByCompanyId";
 
 	public static final String FIND_BY_EXTRA_SETTINGS =
 		DLFileEntryFinder.class.getName() + ".findByExtraSettings";
@@ -195,6 +199,44 @@ public class DLFileEntryFinderImpl
 
 		throw new NoSuchFileEntryException(
 			"No DLFileEntry exists with the imageId " + imageId);
+	}
+
+	@Override
+	public List<DLFileEntry> findByCompanyId(
+			long companyId, QueryDefinition queryDefinition)
+		throws SystemException {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(
+				FIND_BY_COMPANY_ID, queryDefinition,
+				DLFileVersionImpl.TABLE_NAME);
+
+			sql = CustomSQLUtil.replaceOrderBy(
+				sql, queryDefinition.getOrderByComparator());
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.addEntity(DLFileEntryImpl.TABLE_NAME, DLFileEntryImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(companyId);
+			qPos.add(queryDefinition.getStatus());
+
+			return (List<DLFileEntry>)QueryUtil.list(
+				q, getDialect(), queryDefinition.getStart(),
+				queryDefinition.getEnd());
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
 	}
 
 	@Override
@@ -530,7 +572,7 @@ public class DLFileEntryFinderImpl
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 		}
 
-		if ((mimeTypes != null) && (mimeTypes.length > 0)) {
+		if (ArrayUtil.isNotEmpty(mimeTypes)) {
 			sb.append(WHERE_AND);
 			sb.append(StringPool.OPEN_PARENTHESIS);
 			sb.append(getMimeTypes(mimeTypes, tableName));

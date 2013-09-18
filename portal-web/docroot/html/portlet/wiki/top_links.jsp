@@ -51,6 +51,15 @@ if (categoryId > 0) {
 }
 %>
 
+<c:if test='<%= !strutsAction.endsWith("view_page_attachments") %>'>
+	<portlet:actionURL var="undoTrashURL">
+		<portlet:param name="struts_action" value="/wiki/edit_page" />
+		<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />
+	</portlet:actionURL>
+
+	<liferay-ui:trash-undo portletURL="<%= undoTrashURL %>" />
+</c:if>
+
 <c:if test="<%= portletName.equals(PortletKeys.WIKI_ADMIN) %>">
 	<liferay-ui:header
 		backURL="<%= redirect %>"
@@ -80,7 +89,7 @@ if (categoryId > 0) {
 					<portlet:param name="title" value="<%= WikiPageConstants.FRONT_PAGE %>" />
 				</portlet:renderURL>
 
-				<aui:nav-item cssClass="<%= cssClass %>" href="<%= viewPageURL %>" label="<%= curNode.getName() %>" />
+				<aui:nav-item cssClass="<%= cssClass %>" href="<%= viewPageURL %>" label="<%= HtmlUtil.escape(curNode.getName()) %>" />
 
 			<%
 			}
@@ -153,11 +162,7 @@ if (categoryId > 0) {
 					<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 					<aui:input name="nodeId" type="hidden" value="<%= node.getNodeId() %>" />
 
-					<div class="input-append">
-						<input class="search-query span9" id="<portlet:namespace/>keywords1" name="<portlet:namespace/>keywords" placeholder="<liferay-ui:message key="keywords" />" type="text" value="<%= HtmlUtil.escapeAttribute(keywords) %>" />
-
-						<aui:button primary="<%= false %>" type="submit" value="search" />
-					</div>
+					<liferay-ui:input-search id="keywords1" />
 				</aui:form>
 			</div>
 		</div>

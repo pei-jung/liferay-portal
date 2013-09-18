@@ -851,14 +851,15 @@ public class StagingImpl implements Staging {
 		else if (e instanceof RemoteExportException) {
 			RemoteExportException ree = (RemoteExportException)e;
 
-			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
-
 			if (ree.getType() == RemoteExportException.NO_LAYOUTS) {
 				errorMessage = LanguageUtil.get(
 					locale, "no-pages-are-selected-for-export");
 			}
+
+			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 		}
 		else {
+			errorMessage = e.getLocalizedMessage();
 			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 		}
 
@@ -1345,7 +1346,7 @@ public class StagingImpl implements Staging {
 			layouts.addAll(layout.getAllChildren());
 		}
 
-		long[] layoutIds = getLayoutIds(layouts);
+		long[] layoutIds = ExportImportHelperUtil.getLayoutIds(layouts);
 
 		publishLayouts(
 			userId, layout.getGroupId(), liveGroupId, layout.isPrivateLayout(),
@@ -1414,7 +1415,7 @@ public class StagingImpl implements Staging {
 			}
 		}
 
-		long[] layoutIds = getLayoutIds(layouts);
+		long[] layoutIds = ExportImportHelperUtil.getLayoutIds(layouts);
 
 		publishLayouts(
 			userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
@@ -2024,18 +2025,6 @@ public class StagingImpl implements Staging {
 			GetterUtil.getInteger(group.getTypeSettingsProperty(param)));
 	}
 
-	protected long[] getLayoutIds(List<Layout> layouts) {
-		long[] layoutIds = new long[layouts.size()];
-
-		for (int i = 0; i < layouts.size(); i++) {
-			Layout layout = layouts.get(i);
-
-			layoutIds[i] = layout.getLayoutId();
-		}
-
-		return layoutIds;
-	}
-
 	protected long getLong(
 		PortletRequest portletRequest, Group group, String param) {
 
@@ -2051,7 +2040,7 @@ public class StagingImpl implements Staging {
 
 		PortalPreferences portalPreferences =
 			PortletPreferencesFactoryUtil.getPortalPreferences(
-				user.getCompanyId(), user.getUserId(), signedIn);
+				user.getUserId(), signedIn);
 
 		return portalPreferences;
 	}
@@ -2193,21 +2182,7 @@ public class StagingImpl implements Staging {
 		Map<Long, Boolean> layoutIdMap = new LinkedHashMap<Long, Boolean>();
 
 		if (scope.equals("selected-pages")) {
-			long[] rowIds = ParamUtil.getLongValues(portletRequest, "rowIds");
-
-			for (long selPlid : rowIds) {
-				boolean delete = ParamUtil.getBoolean(
-					portletRequest, "delete_" + selPlid);
-				boolean includeChildren = ParamUtil.getBoolean(
-					portletRequest, "includeChildren_" + selPlid);
-
-				if (!delete && includeChildren) {
-					layoutIdMap.put(selPlid, true);
-				}
-				else {
-					layoutIdMap.put(selPlid, false);
-				}
-			}
+			layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(portletRequest);
 		}
 
 		DateRange dateRange = ExportImportHelperUtil.getDateRange(
@@ -2319,23 +2294,7 @@ public class StagingImpl implements Staging {
 		Map<Long, Boolean> layoutIdMap = null;
 
 		if (scope.equals("selected-pages")) {
-			layoutIdMap = new LinkedHashMap<Long, Boolean>();
-
-			long[] rowIds = ParamUtil.getLongValues(portletRequest, "rowIds");
-
-			for (long selPlid : rowIds) {
-				boolean delete = ParamUtil.getBoolean(
-					portletRequest, "delete_" + selPlid);
-				boolean includeChildren = ParamUtil.getBoolean(
-					portletRequest, "includeChildren_" + selPlid);
-
-				if (!delete && includeChildren) {
-					layoutIdMap.put(selPlid, true);
-				}
-				else {
-					layoutIdMap.put(selPlid, false);
-				}
-			}
+			layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(portletRequest);
 		}
 
 		Map<String, String[]> parameterMap = getStagingParameters(
@@ -2377,12 +2336,6 @@ public class StagingImpl implements Staging {
 		validate(
 			remoteAddress, remotePort, remotePathContext, secureConnection,
 			remoteGroupId);
-
-		if (group.isCompany()) {
-			updateGroupTypeSettingsProperties(
-				group, remoteAddress, remotePort, remotePathContext,
-				secureConnection, remoteGroupId);
-		}
 
 		DateRange dateRange = ExportImportHelperUtil.getDateRange(
 			portletRequest, groupId, privateLayout, 0, null);
@@ -2709,13 +2662,12 @@ public class StagingImpl implements Staging {
 		}
 		catch (SystemException se) {
 			RemoteExportException ree = new RemoteExportException(
-				RemoteExportException.BAD_CONNECTION);
+				RemoteExportException.BAD_CONNECTION, se.getMessage());
 
 			ree.setURL(remoteURL);
 
 			throw ree;
 		}
-
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(StagingImpl.class);

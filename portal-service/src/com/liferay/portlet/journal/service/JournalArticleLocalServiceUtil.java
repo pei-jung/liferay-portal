@@ -674,11 +674,11 @@ public class JournalArticleLocalServiceUtil {
 	* @throws PortalException if a portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
-	public static void deleteArticle(
+	public static com.liferay.portlet.journal.model.JournalArticle deleteArticle(
 		com.liferay.portlet.journal.model.JournalArticle article)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		getService().deleteArticle(article);
+		return getService().deleteArticle(article);
 	}
 
 	/**
@@ -695,13 +695,13 @@ public class JournalArticleLocalServiceUtil {
 	* @throws PortalException if a portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
-	public static void deleteArticle(
+	public static com.liferay.portlet.journal.model.JournalArticle deleteArticle(
 		com.liferay.portlet.journal.model.JournalArticle article,
 		java.lang.String articleURL,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		getService().deleteArticle(article, articleURL, serviceContext);
+		return getService().deleteArticle(article, articleURL, serviceContext);
 	}
 
 	/**
@@ -720,13 +720,14 @@ public class JournalArticleLocalServiceUtil {
 	found or if a portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
-	public static void deleteArticle(long groupId, java.lang.String articleId,
-		double version, java.lang.String articleURL,
+	public static com.liferay.portlet.journal.model.JournalArticle deleteArticle(
+		long groupId, java.lang.String articleId, double version,
+		java.lang.String articleURL,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		getService()
-			.deleteArticle(groupId, articleId, version, articleURL,
+		return getService()
+				   .deleteArticle(groupId, articleId, version, articleURL,
 			serviceContext);
 	}
 
@@ -889,6 +890,18 @@ public class JournalArticleLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .fetchLatestArticle(resourcePrimKey, status, preferApproved);
+	}
+
+	public static com.liferay.portlet.journal.model.JournalArticle fetchLatestArticle(
+		long groupId, java.lang.String articleId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchLatestArticle(groupId, articleId, status);
+	}
+
+	public static com.liferay.portlet.journal.model.JournalArticle fetchLatestIndexableArticle(
+		long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchLatestIndexableArticle(resourcePrimKey);
 	}
 
 	/**
@@ -1539,6 +1552,12 @@ public class JournalArticleLocalServiceUtil {
 		long groupId, java.lang.String articleId)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getArticles(groupId, articleId);
+	}
+
+	public static java.util.List<com.liferay.portlet.journal.model.JournalArticle> getArticlesByResourcePrimKey(
+		long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getArticlesByResourcePrimKey(resourcePrimKey);
 	}
 
 	/**
@@ -2237,6 +2256,12 @@ public class JournalArticleLocalServiceUtil {
 		return getService().moveArticleToTrash(userId, groupId, articleId);
 	}
 
+	public static void rebuildTree(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().rebuildTree(companyId);
+	}
+
 	/**
 	* Removes the web content of the web content article matching the group,
 	* article ID, and version, and language.
@@ -2271,11 +2296,11 @@ public class JournalArticleLocalServiceUtil {
 	occurred
 	* @throws SystemException if a system exception occurred
 	*/
-	public static void restoreArticleFromTrash(long userId,
-		com.liferay.portlet.journal.model.JournalArticle article)
+	public static com.liferay.portlet.journal.model.JournalArticle restoreArticleFromTrash(
+		long userId, com.liferay.portlet.journal.model.JournalArticle article)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		getService().restoreArticleFromTrash(userId, article);
+		return getService().restoreArticleFromTrash(userId, article);
 	}
 
 	/**

@@ -6,7 +6,9 @@
 			<name>Liferay Portal</name>
 		</general-data>
 		<general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+
 			<!-- Do not use Project Properties customizer when editing this file manually. -->
+
 			<name>Liferay Portal</name>
 			<properties/>
 			<folders>
@@ -206,14 +208,14 @@
 					</source-file>
 				</items>
 				<context-menu>
-					<ide-action name="All"/>
-					<ide-action name="Build"/>
-					<ide-action name="Clean"/>
-					<ide-action name="Compile"/>
-					<ide-action name="Deploy"/>
-					<ide-action name="Javadoc"/>
-					<ide-action name="Rebuild"/>
-					<ide-action name="Test"/>
+					<ide-action name="All" />
+					<ide-action name="Build" />
+					<ide-action name="Clean" />
+					<ide-action name="Compile" />
+					<ide-action name="Deploy" />
+					<ide-action name="Javadoc" />
+					<ide-action name="Rebuild" />
+					<ide-action name="Test" />
 				</context-menu>
 			</view>
 			<subprojects/>
@@ -276,6 +278,7 @@
 				<classpath mode="compile">lib/development/jutf7.jar</classpath>
 				<classpath mode="compile">lib/development/jymsg.jar</classpath>
 				<classpath mode="compile">lib/development/mail.jar</classpath>
+				<classpath mode="compile">lib/development/maven-ant-tasks.jar</classpath>
 				<classpath mode="compile">lib/development/mockito.jar</classpath>
 				<classpath mode="compile">lib/development/mysql.jar</classpath>
 				<classpath mode="compile">lib/development/objenesis.jar</classpath>
@@ -376,8 +379,6 @@
 				<classpath mode="compile">lib/portal/freshcookies-security.jar</classpath>
 				<classpath mode="compile">lib/portal/gif89.jar</classpath>
 				<classpath mode="compile">lib/portal/groovy.jar</classpath>
-				<classpath mode="compile">lib/portal/gt-coverage.jar</classpath>
-				<classpath mode="compile">lib/portal/gt-metadata.jar</classpath>
 				<classpath mode="compile">lib/portal/hessian.jar</classpath>
 				<classpath mode="compile">lib/portal/hibernate3.jar</classpath>
 				<classpath mode="compile">lib/portal/htmlparser.jar</classpath>

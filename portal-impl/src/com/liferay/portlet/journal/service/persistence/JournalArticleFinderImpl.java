@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -789,6 +790,11 @@ public class JournalArticleFinderImpl
 			String sql = CustomSQLUtil.get(
 				COUNT_BY_G_C_S, queryDefinition, "JournalArticle");
 
+			if (groupId <= 0) {
+				sql = StringUtil.replace(
+					sql, "(groupId = ?) AND", StringPool.BLANK);
+			}
+
 			if (ddmStructureKey.equals(
 					String.valueOf(
 						JournalArticleConstants.CLASSNAME_ID_DEFAULT))) {
@@ -811,7 +817,10 @@ public class JournalArticleFinderImpl
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			qPos.add(groupId);
+			if (groupId > 0) {
+				qPos.add(groupId);
+			}
+
 			qPos.add(classNameId);
 			qPos.add(ddmStructureKey);
 			qPos.add(queryDefinition.getStatus());
@@ -1132,6 +1141,11 @@ public class JournalArticleFinderImpl
 			sql = CustomSQLUtil.replaceOrderBy(
 				sql, queryDefinition.getOrderByComparator());
 
+			if (groupId <= 0) {
+				sql = StringUtil.replace(
+					sql, "(JournalArticle.groupId = ?) AND", StringPool.BLANK);
+			}
+
 			if (ddmStructureKey.equals(
 					String.valueOf(
 						JournalArticleConstants.CLASSNAME_ID_DEFAULT))) {
@@ -1156,7 +1170,10 @@ public class JournalArticleFinderImpl
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			qPos.add(groupId);
+			if (groupId > 0) {
+				qPos.add(groupId);
+			}
+
 			qPos.add(classNameId);
 			qPos.add(ddmStructureKey);
 			qPos.add(queryDefinition.getStatus());
@@ -1441,7 +1458,7 @@ public class JournalArticleFinderImpl
 	}
 
 	protected boolean isNullArray(Object[] array) {
-		if ((array == null) || (array.length == 0)) {
+		if (ArrayUtil.isEmpty(array)) {
 			return true;
 		}
 

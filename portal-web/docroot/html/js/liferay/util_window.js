@@ -2,6 +2,9 @@ AUI.add(
 	'liferay-util-window',
 	function(A) {
 		var Lang = A.Lang;
+
+		var DOM = A.DOM;
+
 		var Util = Liferay.Util;
 		var Window = Util.Window;
 
@@ -51,7 +54,7 @@ AUI.add(
 
 				IFRAME_SUFFIX: '_iframe_',
 
-				TITLE_TEMPLATE: '<h3/>',
+				TITLE_TEMPLATE: '<h3>&nbsp;</h3>',
 
 				_winResizeHandler: null,
 
@@ -175,7 +178,9 @@ AUI.add(
 						config.id = A.guid();
 					}
 
-					config.iframeId = config.id + instance.IFRAME_SUFFIX;
+					if (!config.iframeId) {
+						config.iframeId = config.id + instance.IFRAME_SUFFIX;
+					}
 				},
 
 				_getWindow: function(config) {
@@ -247,11 +252,11 @@ AUI.add(
 
 					var width = modalConfig.width;
 
-					if (height === 'auto' || height === '' || height === undefined) {
+					if (height === 'auto' || height === '' || height === undefined || height > DOM.winHeight()) {
 						modalConfig.autoHeight = true;
 					}
 
-					if (width === 'auto' || width === '' || width === undefined) {
+					if (width === 'auto' || width === '' || width === undefined || width > DOM.winWidth()) {
 						modalConfig.autoWidth = true;
 					}
 
@@ -350,7 +355,7 @@ AUI.add(
 							height = autoSizeNode.get('offsetHeight');
 						}
 						else {
-							height = A.DOM.winHeight();
+							height = DOM.winHeight();
 						}
 
 						height *= modal.get('autoHeightRatio');
@@ -365,7 +370,7 @@ AUI.add(
 							width = autoSizeNode.get('offsetWidth');
 						}
 						else {
-							width = A.DOM.winWidth();
+							width = DOM.winWidth();
 						}
 
 						width *= modal.get('autoWidthRatio');
@@ -406,6 +411,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-modal', 'aui-dialog-iframe-deprecated', 'event-resize', 'liferay-widget-zindex']
+		requires: ['aui-dialog-iframe-deprecated', 'aui-modal', 'event-resize', 'liferay-widget-zindex']
 	}
 );

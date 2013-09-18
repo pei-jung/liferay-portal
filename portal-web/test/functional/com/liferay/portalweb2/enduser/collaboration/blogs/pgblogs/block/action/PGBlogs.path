@@ -49,6 +49,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>UNSUBSCRIBE_LINK</td>
+	<td>//div[@class='subscribe']/span/a[contains(.,'Unsubscribe')]/span</td>
+	<td></td>
+</tr>
+<tr>
 	<td>RSS_LINK</td>
 	<td>//div[@class='subscribe']/span/a[contains(.,'RSS')]/span</td>
 	<td></td>
@@ -91,6 +96,11 @@
 </tr>
 <!--ENTRY-->
 <tr>
+	<td>ENTRY_TITLE</td>
+	<td>//div[@class='entry-title' and contains(.,'${key_entryTitle}')]/h2/a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ENTRY_TITLE_1</td>
 	<td>xpath=(//div[@class='entry-title']/h2/a)[1]</td>
 	<td></td>
@@ -111,6 +121,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ENTRY_CONTENT</td>
+	<td>//div[@class='entry approved' and contains(.,'${key_entryTitle}')]//div[@class='entry-body']/div</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ENTRY_CONTENT_1</td>
 	<td>xpath=(//div[@class='entry-body']/div)[1]</td>
 	<td></td>
@@ -123,6 +138,11 @@
 <tr>
 	<td>ENTRY_CONTENT_3</td>
 	<td>xpath=(//div[@class='entry-body']/div)[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_EDIT</td>
+	<td>//div[@class='entry approved' and contains(.,'${key_entryTitle}')]//div[contains(@class,'edit-actions')]//span/a/span[.='Edit']</td>
 	<td></td>
 </tr>
 <tr>
@@ -141,8 +161,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ENTRY_EDIT_1</td>
-	<td>xpath=(//div[contains(@class,'edit-actions')]//span/a/span[.='Edit'])[1]</td>
+	<td>ENTRY_PERMISSIONS</td>
+	<td>//div[@class='entry approved' and contains(.,'${key_entryTitle}')]//span/a/span[.='Permissions']</td>
 	<td></td>
 </tr>
 <tr>
@@ -158,6 +178,11 @@
 <tr>
 	<td>ENTRY_PERMISSIONS_3</td>
 	<td>xpath=(//div[contains(@class,'edit-actions')]//span/a/span[.='Permissions'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_RECYCLE_BIN</td>
+	<td>//div[@class='entry approved' and contains(.,'${key_entryTitle}')]//div[contains(@class,'edit-actions')]//span/a/span[.='Move to the Recycle Bin']</td>
 	<td></td>
 </tr>
 <tr>

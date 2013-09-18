@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -163,10 +162,9 @@ public class LDAPAuth implements Authenticator {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
 						"Failed to bind to the LDAP server with userDN " +
-							userDN + " and password " + password);
+							userDN + " and password " + password,
+						e);
 				}
-
-				_log.error("Failed to bind to the LDAP server", e);
 
 				ldapAuthResult.setAuthenticated(false);
 				ldapAuthResult.setErrorMessage(e.getMessage());
@@ -190,16 +188,8 @@ public class LDAPAuth implements Authenticator {
 					PropsKeys.LDAP_AUTH_PASSWORD_ENCRYPTION_ALGORITHM);
 
 				if (Validator.isNotNull(algorithm)) {
-					StringBundler sb = new StringBundler(4);
-
-					sb.append(StringPool.OPEN_CURLY_BRACE);
-					sb.append(algorithm);
-					sb.append(StringPool.CLOSE_CURLY_BRACE);
-					sb.append(
-						PasswordEncryptorUtil.encrypt(
-							algorithm, password, ldapPassword));
-
-					encryptedPassword = sb.toString();
+					encryptedPassword = PasswordEncryptorUtil.encrypt(
+						algorithm, password, ldapPassword);
 				}
 
 				if (ldapPassword.equals(encryptedPassword)) {
@@ -208,8 +198,8 @@ public class LDAPAuth implements Authenticator {
 				else {
 					ldapAuthResult.setAuthenticated(false);
 
-					if (_log.isWarnEnabled()) {
-						_log.warn(
+					if (_log.isDebugEnabled()) {
+						_log.debug(
 							"Passwords do not match for userDN " + userDN);
 					}
 				}
@@ -249,7 +239,10 @@ public class LDAPAuth implements Authenticator {
 				ldapServerId, companyId);
 
 			String userMappingsScreenName = GetterUtil.getString(
-				userMappings.getProperty("screenName")).toLowerCase();
+				userMappings.getProperty("screenName"));
+
+			userMappingsScreenName = StringUtil.toLowerCase(
+				userMappingsScreenName);
 
 			SearchControls searchControls = new SearchControls(
 				SearchControls.SUBTREE_SCOPE, 1, 0,

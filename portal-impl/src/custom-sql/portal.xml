@@ -416,12 +416,12 @@
 		<![CDATA[
 			INNER JOIN
 				ResourceTypePermission ON
-					(ResourceTypePermission.groupId = Group_.groupId) AND
-					(ResourceTypePermission.name = ?) AND
-					(ResourceTypePermission.roleId = ?) AND
-					(BITAND(CAST_LONG(ResourceTypePermission.actionIds), ?) != 0)
+					(ResourceTypePermission.groupId = Group_.groupId)
 			WHERE
-				(Group_.liveGroupId = 0)
+				(Group_.liveGroupId = 0) AND
+				(ResourceTypePermission.name = ?) AND
+				(ResourceTypePermission.roleId = ?) AND
+				(BITAND(CAST_LONG(ResourceTypePermission.actionIds), ?) != 0)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.joinBySite">
@@ -474,20 +474,15 @@
 				{Layout.*}
 			FROM
 				Layout
+			LEFT JOIN
+				ResourcePermission ON
+					(ResourcePermission.companyId = Layout.companyId) AND
+					(ResourcePermission.name = Layout.name) AND
+					(ResourcePermission.scope = ?) AND
+					(ResourcePermission.primKey = CAST_TEXT(Layout.plid)) AND
+					(ResourcePermission.roleId = ?)
 			WHERE
-				(plid NOT IN (
-					SELECT
-						Layout.plid
-					FROM
-						Layout
-					INNER JOIN
-						ResourcePermission ON
-							(ResourcePermission.companyId = Layout.companyId) AND
-							(ResourcePermission.name = Layout.name) AND
-							(ResourcePermission.scope = ?) AND
-							(ResourcePermission.primKey = CAST_TEXT(Layout.plid)) AND
-							(ResourcePermission.roleId = ?)
-				))
+				ResourcePermission.primKey IS NULL
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.LayoutFinder.findByNullFriendlyURL">
@@ -629,6 +624,23 @@
 					(lower(Address.city) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
 					(lower(Address.zip) LIKE ? [$AND_OR_NULL_CHECK$])
 				)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.findByNoAssets">
+		<![CDATA[
+			SELECT
+				{Organization_.*}
+			FROM
+				Organization_
+			WHERE
+				(organizationId NOT IN (
+					SELECT
+						classPK
+					FROM
+						AssetEntry
+					WHERE
+						classNameId = [$CLASS_NAME_ID_COM.LIFERAY.PORTAL.MODEL.ORGANIZATION$]
+				))
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.findByCompanyId">

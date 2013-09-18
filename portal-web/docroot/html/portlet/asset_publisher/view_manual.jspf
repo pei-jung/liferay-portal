@@ -15,13 +15,11 @@
 --%>
 
 <%
-List<AssetEntry> assetEntries = AssetPublisherUtil.getAssetEntries(renderRequest, portletPreferences, permissionChecker, groupIds, assetEntryXmls, false, enablePermissions);
+List<AssetEntry> assetEntries = AssetPublisherUtil.getAssetEntries(renderRequest, portletPreferences, permissionChecker, groupIds, allAssetCategoryIds, assetEntryXmls, allAssetTagNames, false, enablePermissions);
 
 searchContainer.setTotal(assetEntries.size());
 
-int end = (assetEntries.size() < searchContainer.getEnd()) ? assetEntries.size() : searchContainer.getEnd();
-
-assetEntries = assetEntries.subList(searchContainer.getStart(), end);
+assetEntries = assetEntries.subList(searchContainer.getStart(), searchContainer.getResultEnd());
 
 searchContainer.setResults(assetEntries);
 

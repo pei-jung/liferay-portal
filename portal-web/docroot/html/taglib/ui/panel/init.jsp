@@ -43,6 +43,8 @@ if (panelCount != null) {
 	}
 }
 
+cssClass += " lfr-panel";
+
 if ((extended != null) && extended) {
 	cssClass += " lfr-panel-extended";
 }
@@ -53,6 +55,10 @@ String headerCssClass = StringPool.BLANK;
 if (collapsible) {
 	contentCssClass += "toggler-content";
 	headerCssClass += "toggler-header";
+}
+
+if (BrowserSnifferUtil.isMobile(request)) {
+	state = "closed";
 }
 
 if (state == null) {

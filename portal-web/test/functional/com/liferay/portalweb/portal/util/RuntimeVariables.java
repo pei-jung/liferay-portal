@@ -61,7 +61,7 @@ public class RuntimeVariables {
 				}
 
 				String[] arguments = StringUtil.split(
-					statementMatcher.group(3));
+					statementMatcher.group(3), "'");
 
 				List<String> argumentsList = new ArrayList<String>();
 
@@ -88,7 +88,7 @@ public class RuntimeVariables {
 					result = String.valueOf(operandValue.length());
 				}
 				else if (method.startsWith("lowercase")) {
-					result = operandValue.toLowerCase();
+					result = StringUtil.toLowerCase(operandValue);
 				}
 				else if (method.startsWith("replace")) {
 					result = operandValue.replace(

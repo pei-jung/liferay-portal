@@ -349,6 +349,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByGroupId(groupId);
 
+		if (count == 0) {
+			return null;
+		}
+
 		List<SocialActivitySet> list = findByGroupId(groupId, count - 1, count,
 				orderByComparator);
 
@@ -837,6 +841,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 	public SocialActivitySet fetchByUserId_Last(long userId,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByUserId(userId);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<SocialActivitySet> list = findByUserId(userId, count - 1, count,
 				orderByComparator);
@@ -1378,6 +1386,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 		int type, OrderByComparator orderByComparator)
 		throws SystemException {
 		int count = countByG_U_T(groupId, userId, type);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<SocialActivitySet> list = findByG_U_T(groupId, userId, type,
 				count - 1, count, orderByComparator);
@@ -1945,6 +1957,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 		int type, OrderByComparator orderByComparator)
 		throws SystemException {
 		int count = countByC_C_T(classNameId, classPK, type);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<SocialActivitySet> list = findByC_C_T(classNameId, classPK, type,
 				count - 1, count, orderByComparator);
@@ -2535,6 +2551,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 		long classNameId, int type, OrderByComparator orderByComparator)
 		throws SystemException {
 		int count = countByG_U_C_T(groupId, userId, classNameId, type);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<SocialActivitySet> list = findByG_U_C_T(groupId, userId,
 				classNameId, type, count - 1, count, orderByComparator);
@@ -3139,6 +3159,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 		throws SystemException {
 		int count = countByU_C_C_T(userId, classNameId, classPK, type);
 
+		if (count == 0) {
+			return null;
+		}
+
 		List<SocialActivitySet> list = findByU_C_C_T(userId, classNameId,
 				classPK, type, count - 1, count, orderByComparator);
 
@@ -3404,6 +3428,10 @@ public class SocialActivitySetPersistenceImpl extends BasePersistenceImpl<Social
 	private static final String _FINDER_COLUMN_U_C_C_T_CLASSNAMEID_2 = "socialActivitySet.classNameId = ? AND ";
 	private static final String _FINDER_COLUMN_U_C_C_T_CLASSPK_2 = "socialActivitySet.classPK = ? AND ";
 	private static final String _FINDER_COLUMN_U_C_C_T_TYPE_2 = "socialActivitySet.type = ?";
+
+	public SocialActivitySetPersistenceImpl() {
+		setModelClass(SocialActivitySet.class);
+	}
 
 	/**
 	 * Caches the social activity set in the entity cache if it is enabled.

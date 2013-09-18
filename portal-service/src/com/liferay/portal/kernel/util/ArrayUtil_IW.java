@@ -227,6 +227,43 @@ public class ArrayUtil_IW {
 		return ArrayUtil.contains(array, value);
 	}
 
+	public boolean containsAll(boolean[] array1, boolean[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(byte[] array1, byte[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(char[] array1, char[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(double[] array1, double[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(float[] array1, float[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(int[] array1, int[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(long[] array1, long[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(java.lang.Object[] array1,
+		java.lang.Object[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
+	public boolean containsAll(short[] array1, short[] array2) {
+		return ArrayUtil.containsAll(array1, array2);
+	}
+
 	public java.lang.String[] distinct(java.lang.String[] array) {
 		return ArrayUtil.distinct(array);
 	}
@@ -289,6 +326,78 @@ public class ArrayUtil_IW {
 		return ArrayUtil.getValue(array, pos);
 	}
 
+	public boolean isEmpty(boolean[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(byte[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(char[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(double[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(float[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(int[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(long[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(java.lang.Object[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isEmpty(short[] array) {
+		return ArrayUtil.isEmpty(array);
+	}
+
+	public boolean isNotEmpty(boolean[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(byte[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(char[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(double[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(float[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(int[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(long[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(java.lang.Object[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	public boolean isNotEmpty(short[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
 	public boolean[] remove(boolean[] array, boolean value) {
 		return ArrayUtil.remove(array, value);
 	}
@@ -325,6 +434,30 @@ public class ArrayUtil_IW {
 	public java.lang.String[] removeByPrefix(java.lang.String[] array,
 		java.lang.String prefix) {
 		return ArrayUtil.removeByPrefix(array, prefix);
+	}
+
+	public void reverse(boolean[] array) {
+		ArrayUtil.reverse(array);
+	}
+
+	public void reverse(char[] array) {
+		ArrayUtil.reverse(array);
+	}
+
+	public void reverse(double[] array) {
+		ArrayUtil.reverse(array);
+	}
+
+	public void reverse(int[] array) {
+		ArrayUtil.reverse(array);
+	}
+
+	public void reverse(long[] array) {
+		ArrayUtil.reverse(array);
+	}
+
+	public void reverse(short[] array) {
+		ArrayUtil.reverse(array);
 	}
 
 	public void reverse(java.lang.String[] array) {
