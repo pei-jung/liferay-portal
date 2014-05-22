@@ -21,11 +21,11 @@ import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.log.test.CaptureAppender;
+import com.liferay.portal.log.test.Log4JLoggerTestUtil;
 import com.liferay.portal.security.pacl.PACLExecutionTestListener;
 import com.liferay.portal.security.pacl.PACLIntegrationJUnitTestRunner;
 import com.liferay.portal.template.TemplateContextHelper;
-import com.liferay.portal.test.CaptureAppender;
-import com.liferay.portal.test.Log4JLoggerTestUtil;
 
 import org.apache.log4j.Level;
 

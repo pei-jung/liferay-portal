@@ -525,6 +525,8 @@ public interface PropsKeys {
 
 	public static final String COMPANY_SETTINGS_FORM_MISCELLANEOUS = "company.settings.form.miscellaneous";
 
+	public static final String COMPANY_SETTINGS_FORM_SOCIAL = "company.settings.form.social";
+
 	public static final String CONTROL_PANEL_DEFAULT_ENTRY_CLASS = "control.panel.default.entry.class";
 
 	public static final String CONTROL_PANEL_HOME_PORTLET_ID = "control.panel.home.portlet.id";
@@ -800,6 +802,10 @@ public interface PropsKeys {
 	public static final String DL_RELATED_ASSETS_ENABLED = "dl.related.assets.enabled";
 
 	public static final String DL_REPOSITORY_CMIS_DELETE_DEPTH = "dl.repository.cmis.delete.depth";
+
+	public static final String DL_REPOSITORY_GUEST_PASSWORD = "dl.repository.guest.password";
+
+	public static final String DL_REPOSITORY_GUEST_USERNAME = "dl.repository.guest.username";
 
 	public static final String DL_REPOSITORY_IMPL = "dl.repository.impl";
 

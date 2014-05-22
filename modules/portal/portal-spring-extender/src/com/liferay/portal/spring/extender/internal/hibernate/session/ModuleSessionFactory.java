@@ -45,13 +45,13 @@ public class ModuleSessionFactory
 
 	@Override
 	protected SessionFactory createSessionFactory(DataSource dataSource) {
-		ModuleHibernateConfiguration osgiBundleHibernateConfiguration =
+		ModuleHibernateConfiguration moduleHibernateConfiguration =
 			new ModuleHibernateConfiguration();
 
-		osgiBundleHibernateConfiguration.setDataSource(dataSource);
+		moduleHibernateConfiguration.setDataSource(dataSource);
 
 		try {
-			return osgiBundleHibernateConfiguration.buildSessionFactory();
+			return moduleHibernateConfiguration.buildSessionFactory();
 		}
 		catch (Exception e) {
 			return null;

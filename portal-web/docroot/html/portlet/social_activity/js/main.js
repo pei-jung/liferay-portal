@@ -419,7 +419,7 @@ AUI.add(
 
 						A.each(
 							originalConfig.dataSet,
-							function(item, index, collection) {
+							function(item, index) {
 								item.localizedName = activityDefinitionLanguageKeys[item.modelName + '.' + item.languageKey];
 
 								item.settingsDisplay = instance;
@@ -850,6 +850,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'aui-datatype', 'aui-template-deprecated', 'liferay-portlet-base', 'transition']
+		requires: ['aui-base', 'aui-datatype', 'aui-template-deprecated', 'liferay-portlet-base', 'liferay-service', 'transition']
 	}
 );

@@ -1,5 +1,17 @@
 <#assign liferay_ui = taglibLiferayHash["/WEB-INF/tld/liferay-ui.tld"] />
 
+<#if !entries?has_content>
+	<#if !themeDisplay.isSignedIn()>
+		${renderRequest.setAttribute("PORTLET_CONFIGURATOR_VISIBILITY", true)}
+	</#if>
+
+	<div class="alert alert-info">
+		<@liferay_ui["message"]
+			key="there-are-no-results"
+		/>
+	</div>
+</#if>
+
 <#list entries as entry>
 	<#assign entry = entry />
 
@@ -10,7 +22,7 @@
 	<#assign viewURL = assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry) />
 
 	<#if assetLinkBehavior != "showFullContent">
-		<#assign viewURL = assetRenderer.getURLViewInContext(renderRequest, renderResponse, viewURL) />
+		<#assign viewURL = assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true) />
 	</#if>
 
 	<div class="asset-abstract">

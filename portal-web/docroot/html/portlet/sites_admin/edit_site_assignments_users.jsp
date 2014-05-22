@@ -126,11 +126,19 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 
 			List<String> names = new ArrayList<String>();
 
-			boolean organizationUser = SitesUtil.isOrganizationUser(company.getCompanyId(), group, user2, names);
+			List<String> organizationNames = SitesUtil.getOrganizationNames(group, user2);
+
+			names.addAll(organizationNames);
+
+			boolean organizationUser = !organizationNames.isEmpty();
 
 			row.setParameter("organizationUser", organizationUser);
 
-			boolean userGroupUser = SitesUtil.isUserGroupUser(company.getCompanyId(), group, user2, names);
+			List<String> userGroupNames = SitesUtil.getUserGroupNames(group, user2);
+
+			names.addAll(userGroupNames);
+
+			boolean userGroupUser = !userGroupNames.isEmpty();
 
 			row.setParameter("userGroupUser", userGroupUser);
 
@@ -210,40 +218,42 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 	</liferay-ui:search-container-row>
 
 	<liferay-util:buffer var="formButton">
-		<c:choose>
-			<c:when test='<%= tabs2.equals("current") %>'>
+		<c:if test="<%= GroupPermissionUtil.contains(permissionChecker, group.getGroupId(), ActionKeys.ASSIGN_MEMBERS) %>">
+			<c:choose>
+				<c:when test='<%= tabs2.equals("current") %>'>
 
-				<%
-				viewUsersURL.setParameter("tabs2", "available");
-				viewUsersURL.setParameter("redirect", currentURL);
-				%>
+					<%
+					viewUsersURL.setParameter("tabs2", "available");
+					viewUsersURL.setParameter("redirect", currentURL);
+					%>
 
-				<liferay-ui:icon
-					image="../aui/user"
-					label="<%= true %>"
-					message="assign-users"
-					url="<%= viewUsersURL.toString() %>"
-				/>
+					<liferay-ui:icon
+						image="../aui/user"
+						label="<%= true %>"
+						message="assign-users"
+						url="<%= viewUsersURL.toString() %>"
+					/>
 
-				<%
-				viewUsersURL.setParameter("tabs2", "current");
-				%>
+					<%
+					viewUsersURL.setParameter("tabs2", "current");
+					%>
 
-			</c:when>
-			<c:otherwise>
+				</c:when>
+				<c:otherwise>
 
-				<%
-				portletURL.setParameter("tabs2", "current");
-				portletURL.setParameter("cur", String.valueOf(cur));
+					<%
+					portletURL.setParameter("tabs2", "current");
+					portletURL.setParameter("cur", String.valueOf(cur));
 
-				String taglibOnClick = renderResponse.getNamespace() + "updateGroupUsers('" + redirect + "');";
-				%>
+					String taglibOnClick = renderResponse.getNamespace() + "updateGroupUsers('" + redirect + "');";
+					%>
 
-				<aui:button-row>
-					<aui:button onClick="<%= taglibOnClick %>" primary="<%= true %>" value="save" />
-				</aui:button-row>
-			</c:otherwise>
-		</c:choose>
+					<aui:button-row>
+						<aui:button onClick="<%= taglibOnClick %>" primary="<%= true %>" value="save" />
+					</aui:button-row>
+				</c:otherwise>
+			</c:choose>
+		</c:if>
 	</liferay-util:buffer>
 
 	<c:choose>

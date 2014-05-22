@@ -29,10 +29,11 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.test.EnvironmentExecutionTestListener;
 import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.test.TransactionalCallbackAwareExecutionTestListener;
-import com.liferay.portal.util.GroupTestUtil;
-import com.liferay.portal.util.LayoutTestUtil;
-import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portal.util.comparator.RoleRoleIdComparator;
+import com.liferay.portal.util.test.GroupTestUtil;
+import com.liferay.portal.util.test.LayoutTestUtil;
+import com.liferay.portal.util.test.RandomTestUtil;
+import com.liferay.portal.util.test.TestPropsValues;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -175,7 +176,7 @@ public class RoleLocalServiceTest {
 		Team team = (Team)organizationAndTeam[1];
 
 		Layout layout = LayoutTestUtil.addLayout(
-			organization.getGroupId(), ServiceTestUtil.randomString());
+			organization.getGroupId(), RandomTestUtil.randomString());
 
 		Group group = GroupTestUtil.addGroup(
 			TestPropsValues.getUserId(), organization.getGroupId(), layout);
@@ -193,11 +194,11 @@ public class RoleLocalServiceTest {
 			OrganizationLocalServiceUtil.addOrganization(
 				user.getUserId(),
 				OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
-				ServiceTestUtil.randomString(), false);
+				RandomTestUtil.randomString(), false);
 
 		Team team = TeamLocalServiceUtil.addTeam(
 			user.getUserId(), organization.getGroupId(),
-			ServiceTestUtil.randomString(), null);
+			RandomTestUtil.randomString(), null);
 
 		return new Object[] {organization, team};
 	}

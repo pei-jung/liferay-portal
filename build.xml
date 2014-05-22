@@ -3,6 +3,20 @@
 <project name="portal" basedir="." default="compile" xmlns:antelope="antlib:ise.antelope.tasks">
 	<import file="build-common.xml" />
 
+	<macrodef name="app-server-properties-reset">
+		<sequential>
+			<delete file="app.server.${user.name}.properties" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="app-server-properties-update">
+		<text name="properties" />
+
+		<sequential>
+			<echo file="app.server.${user.name}.properties">@{properties}</echo>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="setup-jrebel">
 		<sequential>
 			<echo file="${app.server.lib.global.dir}/rebel.xml"><![CDATA[<?xml version="1.0"?>
@@ -107,7 +121,7 @@
 
 					<echo
 						append="true"
-						file="${project.dir}/tools/sdk/build.${user.name}.properties"
+						file="${project.dir}/tools/sdk/build.${env.COMPUTERNAME}.properties"
 					>
 						app.@{app.server.dir.property}.dir=${temp.app.server.dir}
 					</echo>
@@ -116,9 +130,87 @@
 				</sequential>
 			</for>
 
+			<propertyselector
+				casesensitive="false"
+				delimiter="," match="ivy.pom.(.+)"
+				property="ivy.pom.property.list"
+				select="\1"
+			/>
+
+			<sortlist
+				delimiter=","
+				override="true"
+				property="ivy.pom.property.list"
+				value="${ivy.pom.property.list}"
+			/>
+
+			<if>
+				<not>
+					<equals arg1="${ivy.pom.property.list}" arg2="$${ivy.pom.property.list}" />
+				</not>
+				<then>
+					<for list="${ivy.pom.property.list}" param="ivy.pom.property">
+						<sequential>
+							<propertycopy
+								from="ivy.pom.@{ivy.pom.property}"
+								name="temp.ivy.pom"
+							/>
+
+							<echo
+								append="true"
+								file="${project.dir}/tools/sdk/build.${env.COMPUTERNAME}.properties"
+							>
+								ivy.pom.@{ivy.pom.property}=${temp.ivy.pom}
+							</echo>
+
+							<var name="temp.ivy.pom" unset="true" />
+						</sequential>
+					</for>
+				</then>
+			</if>
+
+			<propertyselector
+				casesensitive="false"
+				delimiter="," match="sonatype.(.+)"
+				property="sonatype.property.list"
+				select="\1"
+			/>
+
+			<sortlist
+				delimiter=","
+				override="true"
+				property="sonatype.property.list"
+				value="${sonatype.property.list}"
+			/>
+
+			<if>
+				<not>
+					<equals arg1="${sonatype.property.list}" arg2="$${sonatype.property.list}" />
+				</not>
+				<then>
+					<for list="${sonatype.property.list}" param="sonatype.property">
+						<sequential>
+							<propertycopy
+								from="sonatype.@{sonatype.property}"
+								name="temp.sonatype"
+							/>
+
+							<echo
+								append="true"
+								file="${project.dir}/tools/sdk/build.${env.COMPUTERNAME}.properties"
+							>
+								sonatype.@{sonatype.property}=${temp.sonatype}
+							</echo>
+
+							<var name="temp.sonatype" unset="true" />
+						</sequential>
+					</for>
+				</then>
+			</if>
+
 			<echo
 				append="true"
-				file="${project.dir}/tools/sdk/build.${user.name}.properties"
+				file="${project.dir}/tools/sdk/build.${env.COMPUTERNAME}.properties"
 			>
 				app.server.type=${app.server.type}
 				auto.deploy.dir=${liferay.home}/osgi/apps
@@ -126,6 +218,9 @@
 				clean.delete.lib=true
 				liferay.home=${liferay.home}
 			</echo>
+
+			<copy file="${project.dir}/tools/sdk/build.${env.COMPUTERNAME}.properties" tofile="${project.dir}/tools/sdk/build.${env.HOST}.properties" />
+			<copy file="${project.dir}/tools/sdk/build.${env.COMPUTERNAME}.properties" tofile="${project.dir}/tools/sdk/build.${env.HOSTNAME}.properties" />
 
 			<if>
 				<not>
@@ -159,8 +254,6 @@
 	</target>
 
 	<target name="clean">
-		<setup-sdk />
-
 		<ant dir="classes" target="clean" inheritAll="false" />
 
 		<ant dir="portal-service" target="clean" inheritAll="false" />
@@ -172,6 +265,7 @@
 
 		<ant dir="portal-impl" target="clean" inheritAll="false" />
 		<ant dir="portal-pacl" target="clean" inheritAll="false" />
+		<ant dir="portal-test" target="clean" inheritAll="false" />
 
 		<ant dir="portal-web" target="clean" inheritAll="false" />
 
@@ -298,6 +392,8 @@
 			</then>
 		</if>
 
+		<setup-sdk />
+
 		<ant-execute
 			ant.dir="${project.dir}/modules"
 			ant.target="clean"
@@ -315,6 +411,7 @@
 		<ant dir="util-taglib" target="compile" inheritAll="false" />
 
 		<ant dir="portal-impl" target="compile" inheritAll="false" />
+		<ant dir="portal-test" target="compile" inheritAll="false" />
 		<ant dir="portal-pacl" target="compile" inheritAll="false" />
 	</target>
 
@@ -836,6 +933,7 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 			<link href="http://docs.liferay.com/portal/${lp.version.major}/javadocs" />
 
 			<packageset dir="portal-service/src" />
+			<packageset dir="portal-test/src" />
 			<packageset dir="util-bridges/src" />
 			<packageset dir="util-java/src" />
 			<packageset dir="util-slf4j/src" />
@@ -876,6 +974,7 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 
 			<packageset dir="portal-impl/src" />
 			<packageset dir="portal-service/src" />
+			<packageset dir="portal-test/src" />
 			<packageset dir="util-bridges/src" />
 			<packageset dir="util-java/src" />
 			<packageset dir="util-slf4j/src" />

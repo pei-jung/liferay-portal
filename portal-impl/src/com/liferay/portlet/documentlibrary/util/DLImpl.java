@@ -28,6 +28,9 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.settings.ParameterMapSettings;
+import com.liferay.portal.kernel.settings.Settings;
+import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -54,9 +57,6 @@ import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.SubscriptionLocalServiceUtil;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
-import com.liferay.portal.settings.ParameterMapSettings;
-import com.liferay.portal.settings.Settings;
-import com.liferay.portal.settings.SettingsFactoryUtil;
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -725,11 +725,11 @@ public class DLImpl implements DL {
 
 		StringBundler sb = new StringBundler(5);
 
-		sb.append("<img style=\"border-width: 0; text-align: left;\" src=\"");
+		sb.append("<img src=\"");
 		sb.append(themeDisplay.getPathThemeImages());
 		sb.append("/file_system/small/");
 		sb.append(fileEntry.getIcon());
-		sb.append(".png\">");
+		sb.append(".png\" style=\"border-width: 0; text-align: left;\">");
 
 		return sb.toString();
 	}

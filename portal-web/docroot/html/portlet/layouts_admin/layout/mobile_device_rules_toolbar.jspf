@@ -53,7 +53,7 @@
 				}
 			);
 		},
-		['aui-loading-mask-deprecated']
+		['aui-loading-mask-deprecated', 'liferay-service']
 	);
 
 	Liferay.provide(
@@ -81,7 +81,7 @@
 				}
 			);
 		},
-		['aui-loading-mask-deprecated']
+		['aui-loading-mask-deprecated', 'liferay-service']
 	);
 
 	Liferay.provide(

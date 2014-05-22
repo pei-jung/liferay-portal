@@ -124,18 +124,18 @@ public class Table {
 		appendColumn(sb, value, last);
 	}
 
-	public String generateTempFile() throws Exception {
+	public void generateTempFile() throws Exception {
 		Connection con = DataAccess.getUpgradeOptimizedConnection();
 
 		try {
-			return generateTempFile(con);
+			generateTempFile(con);
 		}
 		finally {
 			DataAccess.cleanUp(con);
 		}
 	}
 
-	public String generateTempFile(Connection con) throws Exception {
+	public void generateTempFile(Connection con) throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -201,12 +201,12 @@ public class Table {
 		}
 
 		if (!empty) {
-			return tempFileName;
+			_tempFileName = tempFileName;
+
+			return;
 		}
 
 		FileUtil.delete(tempFileName);
-
-		return null;
 	}
 
 	public Object[][] getColumns() {
@@ -331,6 +331,10 @@ public class Table {
 		return _tableName;
 	}
 
+	public String getTempFileName() {
+		return _tempFileName;
+	}
+
 	public long getTotalRows() {
 		return _totalRows;
 	}
@@ -399,6 +403,9 @@ public class Table {
 		else if (t == Types.INTEGER) {
 			value = GetterUtil.getInteger(rs.getInt(name));
 		}
+		else if (t == Types.LONGVARCHAR) {
+			value = GetterUtil.getString(rs.getString(name));
+		}
 		else if (t == Types.NUMERIC) {
 			value = GetterUtil.getLong(rs.getLong(name));
 		}
@@ -416,6 +423,9 @@ public class Table {
 				value = StringPool.NULL;
 			}
 		}
+		else if (t == Types.TINYINT) {
+			value = GetterUtil.getShort(rs.getShort(name));
+		}
 		else if (t == Types.VARCHAR) {
 			value = GetterUtil.getString(rs.getString(name));
 		}
@@ -427,26 +437,28 @@ public class Table {
 		return value;
 	}
 
-	public void populateTable(String tempFileName) throws Exception {
+	public void populateTable() throws Exception {
 		Connection con = DataAccess.getUpgradeOptimizedConnection();
 
 		try {
-			populateTable(tempFileName, con);
+			populateTable(con);
 		}
 		finally {
 			DataAccess.cleanUp(con);
 		}
 	}
 
-	public void populateTable(String tempFileName, Connection con)
-		throws Exception {
+	public void populateTable(Connection con) throws Exception {
+		if (_tempFileName == null) {
+			return;
+		}
 
 		PreparedStatement ps = null;
 
 		String insertSQL = getInsertSQL();
 
 		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
-			new FileReader(tempFileName));
+			new FileReader(_tempFileName));
 
 		String line = null;
 
@@ -549,7 +561,9 @@ public class Table {
 		else if (t == Types.BOOLEAN) {
 			ps.setBoolean(paramIndex, GetterUtil.getBoolean(value));
 		}
-		else if ((t == Types.CLOB) || (t == Types.VARCHAR)) {
+		else if ((t == Types.CLOB) || (t == Types.LONGVARCHAR) ||
+				 (t == Types.VARCHAR)) {
+
 			value = StringUtil.replace(
 				value, _SAFE_TABLE_CHARS[1], _SAFE_TABLE_CHARS[0]);
 
@@ -577,6 +591,9 @@ public class Table {
 				ps.setTimestamp(
 					paramIndex, new Timestamp(df.parse(value).getTime()));
 			}
+		}
+		else if (t == Types.TINYINT) {
+			ps.setShort(paramIndex, GetterUtil.getShort(value));
 		}
 		else {
 			throw new UpgradeException(
@@ -647,6 +664,7 @@ public class Table {
 	private int[] _order;
 	private String _selectSQL;
 	private String _tableName;
+	private String _tempFileName;
 	private long _totalRows;
 
 }

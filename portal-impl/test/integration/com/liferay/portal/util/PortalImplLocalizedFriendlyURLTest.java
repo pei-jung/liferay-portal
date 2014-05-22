@@ -28,11 +28,16 @@ import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.VirtualLayoutConstants;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.test.CompanyTestUtil;
+import com.liferay.portal.util.test.GroupTestUtil;
+import com.liferay.portal.util.test.LayoutTestUtil;
+import com.liferay.portal.util.test.ServiceContextTestUtil;
+import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.test.UserGroupTestUtil;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -61,11 +66,15 @@ public class PortalImplLocalizedFriendlyURLTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		_availableLocales = LanguageUtil.getAvailableLocales();
+		_defaultLocale = LocaleUtil.getDefault();
 
 		CompanyTestUtil.resetCompanyLocales(
 			PortalUtil.getDefaultCompanyId(),
 			new Locale[] {
-				LocaleUtil.CANADA_FRENCH, LocaleUtil.SPAIN, LocaleUtil.US});
+				LocaleUtil.CANADA_FRENCH, LocaleUtil.SPAIN, LocaleUtil.US
+			},
+			LocaleUtil.US
+		);
 
 		_nameMap = new HashMap<Locale, String>();
 
@@ -83,7 +92,8 @@ public class PortalImplLocalizedFriendlyURLTest {
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 		CompanyTestUtil.resetCompanyLocales(
-			PortalUtil.getDefaultCompanyId(), _availableLocales);
+			PortalUtil.getDefaultCompanyId(), _availableLocales,
+			_defaultLocale);
 	}
 
 	@Test
@@ -681,8 +691,8 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		Group group = GroupTestUtil.addGroup();
 
-		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
-			group.getGroupId());
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
 			group.getGroupId());
@@ -721,8 +731,8 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		Group group = GroupTestUtil.addGroup();
 
-		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
-			group.getGroupId());
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
 			group.getGroupId());
@@ -761,8 +771,8 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		Group group = GroupTestUtil.addGroup();
 
-		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
-			group.getGroupId());
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
 			group.getGroupId());
@@ -811,8 +821,8 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		Group group = GroupTestUtil.addGroup();
 
-		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
-			group.getGroupId());
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
 			group.getGroupId());
@@ -846,6 +856,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 		PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING;
 
 	private static Locale[] _availableLocales;
+	private static Locale _defaultLocale;
 	private static Map<Locale, String> _friendlyURLMap;
 	private static Map<Locale, String> _nameMap;
 

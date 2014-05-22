@@ -27,5 +27,9 @@ AUI.add(
 		Liferay.UsersAdmin = {
 			Addresses: Addresses
 		};
+	},
+	'',
+	{
+		requires: ['liferay-service']
 	}
 );

@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.journal.util;
 
+import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.diff.DiffHtmlUtil;
@@ -88,11 +89,7 @@ import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleDisplay;
 import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
-import com.liferay.portlet.journal.model.JournalStructure;
-import com.liferay.portlet.journal.model.JournalStructureAdapter;
 import com.liferay.portlet.journal.model.JournalStructureConstants;
-import com.liferay.portlet.journal.model.JournalTemplate;
-import com.liferay.portlet.journal.model.JournalTemplateAdapter;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalArticleServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
@@ -1045,27 +1042,6 @@ public class JournalUtil {
 		return restrictionType;
 	}
 
-	public static long[] getStructureClassPKs(
-			long[] groupIds, String structureId)
-		throws SystemException {
-
-		List<Long> classPKs = new ArrayList<Long>();
-
-		for (long groupId : groupIds) {
-			@SuppressWarnings("deprecation")
-			JournalStructure structure =
-				com.liferay.portlet.journal.service.
-					JournalStructureLocalServiceUtil.fetchStructure(
-						groupId, structureId);
-
-			if (structure != null) {
-				classPKs.add(structure.getId());
-			}
-		}
-
-		return ArrayUtil.toLongArray(classPKs);
-	}
-
 	public static String getTemplateScript(
 		DDMTemplate ddmTemplate, Map<String, String> tokens, String languageId,
 		boolean transform) {
@@ -1258,6 +1234,59 @@ public class JournalUtil {
 		return curContent;
 	}
 
+	public static String prepareLocalizedContentForImport(
+			String content, Locale defaultImportLocale)
+		throws LocaleException {
+
+		try {
+			Document oldDocument = SAXReaderUtil.read(content);
+
+			Document newDocument = SAXReaderUtil.read(content);
+
+			Element newRootElement = newDocument.getRootElement();
+
+			Attribute availableLocalesAttribute = newRootElement.attribute(
+				"available-locales");
+
+			String defaultImportLanguageId = LocaleUtil.toLanguageId(
+				defaultImportLocale);
+
+			if (!StringUtil.contains(
+					availableLocalesAttribute.getValue(),
+					defaultImportLanguageId)) {
+
+				availableLocalesAttribute.setValue(
+					availableLocalesAttribute.getValue() + StringPool.COMMA +
+						defaultImportLanguageId);
+
+				_mergeArticleContentUpdate(
+					oldDocument, newRootElement,
+					LocaleUtil.toLanguageId(defaultImportLocale));
+
+				content = DDMXMLUtil.formatXML(newDocument);
+			}
+
+			Attribute defaultLocaleAttribute = newRootElement.attribute(
+				"default-locale");
+
+			Locale defaultContentLocale = LocaleUtil.fromLanguageId(
+				defaultLocaleAttribute.getValue());
+
+			if (!LocaleUtil.equals(defaultContentLocale, defaultImportLocale)) {
+				defaultLocaleAttribute.setValue(defaultImportLanguageId);
+
+				content = DDMXMLUtil.formatXML(newDocument);
+			}
+		}
+		catch (Exception e) {
+			throw new LocaleException(
+				LocaleException.TYPE_CONTENT,
+				"The locale " + defaultImportLocale + " is not available");
+		}
+
+		return content;
+	}
+
 	public static String removeArticleLocale(
 		Document document, String content, String languageId) {
 
@@ -1403,36 +1432,6 @@ public class JournalUtil {
 		}
 	}
 
-	public static List<JournalStructure> toJournalStructures(
-			List<DDMStructure> ddmStructures)
-		throws SystemException {
-
-		List<JournalStructure> structures = new ArrayList<JournalStructure>();
-
-		for (DDMStructure ddmStructure : ddmStructures) {
-			JournalStructure structure = new JournalStructureAdapter(
-				ddmStructure);
-
-			structures.add(structure);
-		}
-
-		return Collections.unmodifiableList(structures);
-	}
-
-	public static List<JournalTemplate> toJournalTemplates(
-		List<DDMTemplate> ddmTemplates) {
-
-		List<JournalTemplate> templates = new ArrayList<JournalTemplate>();
-
-		for (DDMTemplate ddmTemplate : ddmTemplates) {
-			JournalTemplate template = new JournalTemplateAdapter(ddmTemplate);
-
-			templates.add(template);
-		}
-
-		return Collections.unmodifiableList(templates);
-	}
-
 	public static String transform(
 			ThemeDisplay themeDisplay, Map<String, String> tokens,
 			String viewMode, String languageId, Document document,
@@ -1461,6 +1460,10 @@ public class JournalUtil {
 
 	private static Element _getElementByInstanceId(
 		Document document, String instanceId) {
+
+		if (Validator.isNull(instanceId)) {
+			return null;
+		}
 
 		XPath xPathSelector = SAXReaderUtil.createXPath(
 			"//dynamic-element[@instance-id=" +

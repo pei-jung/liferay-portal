@@ -704,6 +704,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-tree', 'liferay-asset-tags-selector']
+		requires: ['aui-tree', 'liferay-asset-tags-selector', 'liferay-service']
 	}
 );

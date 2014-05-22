@@ -4,7 +4,9 @@
 	<import file="build-test.xml" />
 
 	<target name="run-selenium-tcat">
-		<echo file="app.server.${user.name}.properties">app.server.type=tomcat</echo>
+		<app-server-properties-update>
+			app.server.type=tomcat
+		</app-server-properties-update>
 
 		<echo file="test.${user.name}.properties" append="true">
 			tcat.enabled=true
@@ -36,6 +38,18 @@ plugins.includes=marketplace-portlet</echo>
 			token="CATALINA_HOME=%CURRENT_DIR%"
 			value="CATALINA_HOME=${app.server.tcat.agent.dir}"
 		/>
+
+		<chmod perm="a+x">
+			<fileset dir="${app.server.tcat.admin.bin.dir}">
+				<include name="*.sh" />
+			</fileset>
+		</chmod>
+
+		<chmod perm="a+x">
+			<fileset dir="${app.server.tcat.agent.bin.dir}">
+				<include name="*.sh" />
+			</fileset>
+		</chmod>
 
 		<antcall target="revert-test-properties" />
 
