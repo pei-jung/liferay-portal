@@ -25,5 +25,10 @@ AUI.add(
 		};
 
 		Liferay.Address = Address;
+	},
+	'',
+	{
+		requires: ['liferay-service']
 	}
+);
 );

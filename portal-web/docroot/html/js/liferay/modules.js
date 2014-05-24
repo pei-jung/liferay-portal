@@ -38,7 +38,10 @@
 				combine: COMBINE,
 				modules: {
 					'liferay-address' : {
-						path: 'address.js'
+						path: 'address.js',
+						requires: [
+							'liferay-service'
+						]
 					},
 					'liferay-ajax-session': {
 						condition: {
