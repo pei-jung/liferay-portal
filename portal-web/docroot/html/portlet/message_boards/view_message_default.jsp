@@ -177,7 +177,7 @@ MBThread thread = messageDisplay.getThread();
 
 			A.one('#<portlet:namespace />addAnswerFlag_' + messageId).show();
 		},
-		['aui-base']
+		['aui-base', 'liferay-service']
 	);
 
 	<c:if test="<%= thread.getRootMessageId() != message.getMessageId() %>">

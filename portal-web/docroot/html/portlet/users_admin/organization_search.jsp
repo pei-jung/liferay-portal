@@ -74,7 +74,7 @@ if (displayTerms.getParentOrganizationId() > 0) {
 	</aui:fieldset>
 </liferay-ui:search-toggle>
 
-<aui:script use="liferay-dynamic-select">
+<aui:script use="liferay-address,liferay-dynamic-select">
 	new Liferay.DynamicSelect(
 		[
 			{
