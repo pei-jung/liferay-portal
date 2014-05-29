@@ -45,7 +45,7 @@ boolean privateLayout = ParamUtil.getBoolean(request, "privateLayout");
 			Ticket ticket = TicketLocalServiceUtil.addTicket(user.getCompanyId(), User.class.getName(), user.getUserId(), TicketConstants.TYPE_IMPERSONATE, null, expirationDate, new ServiceContext());
 			%>
 
-			<aui:script use="liferay-upload">
+			<aui:script use="liferay-service,liferay-upload">
 				var liferayUpload = new Liferay.Upload(
 					{
 						boundingBox: '#<portlet:namespace />fileUpload',

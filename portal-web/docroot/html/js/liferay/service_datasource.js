@@ -11,7 +11,7 @@ AUI.add(
 
 						var source = instance.get('source');
 
-						source(event.request, A.rbind('_serviceCallbackFn', instance, event));
+						source(event.request).then(A.rbind('_serviceCallbackFn', instance, event));
 					},
 
 					_serviceCallbackFn: function(obj, xHR, event) {
@@ -35,6 +35,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'datasource-local']
+		requires: ['aui-base', 'datasource-local', 'liferay-service']
 	}
 );

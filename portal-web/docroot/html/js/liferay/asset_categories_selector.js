@@ -309,9 +309,8 @@ AUI.add(
 											'@vocabularyId': '$vocabularies.vocabularyId'
 										}
 									}
-								},
-								callback
-							);
+								}
+							).then(callback);
 						}
 						else {
 							if (!portalModelResource && (themeDisplay.getSiteGroupId() != themeDisplay.getCompanyGroupId())) {
@@ -330,9 +329,8 @@ AUI.add(
 											'@vocabularyId': '$vocabularies.vocabularyId'
 										}
 									}
-								},
-								callback
-							);
+								}
+							).then(callback);
 						}
 					},
 
@@ -599,9 +597,8 @@ AUI.add(
 											'@categoryId': '$display.categories.categoryId'
 										}
 									}
-								},
-								callback
-							);
+								}
+							).then(callback);
 						}
 
 						searchResults.toggle(!!searchValue);
@@ -710,6 +707,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-tree', 'liferay-asset-tags-selector']
+		requires: ['aui-tree', 'liferay-asset-tags-selector', 'liferay-service']
 	}
 );

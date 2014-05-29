@@ -549,9 +549,8 @@ AUI.add(
 										'/assettag/delete-tags',
 										{
 											tagIds: checkedItemsIds
-										},
-										A.bind('_processActionResult', instance)
-									);
+										}
+									).then(A.bind('_processActionResult', instance));
 								}
 							}
 						}
@@ -567,9 +566,8 @@ AUI.add(
 							'/assettag/delete-tag',
 							{
 								tagId: tagId
-							},
-							callback
-						);
+							}
+						).then(callback);
 					},
 
 					_displayTagData: function() {
@@ -911,7 +909,8 @@ AUI.add(
 								groupId: themeDisplay.getSiteGroupId(),
 								name: instance._tagsSearch.get('query'),
 								start: start
-							},
+							}
+						).then(
 							function(result) {
 								var total = result.total;
 
@@ -1234,9 +1233,8 @@ AUI.add(
 								fromTagId: fromId,
 								overrideProperties: true,
 								toTagId: toId
-							},
-							callback
-						);
+							}
+						).then(callback);
 					},
 
 					_mergeTags: function(fromIds, toId, overrideProperties, callback) {
@@ -1246,9 +1244,8 @@ AUI.add(
 								fromTagIds: fromIds,
 								overrideProperties: overrideProperties,
 								toTagId: toId
-							},
-							callback
-						);
+							}
+						).then(callback);
 					},
 
 					_onDeleteTag: function(event) {
@@ -1872,6 +1869,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-button', 'aui-dialog-iframe-deprecated', 'aui-io-plugin-deprecated', 'aui-loading-mask-deprecated', 'aui-pagination', 'aui-tree-view', 'autocomplete-base', 'dd', 'json', 'liferay-form', 'liferay-history-manager', 'liferay-portlet-url', 'liferay-token-list', 'liferay-util-window']
+		requires: ['aui-button', 'aui-dialog-iframe-deprecated', 'aui-io-plugin-deprecated', 'aui-loading-mask-deprecated', 'aui-pagination', 'aui-tree-view', 'autocomplete-base', 'dd', 'json', 'liferay-form', 'liferay-history-manager', 'liferay-portlet-url', 'liferay-service', 'liferay-token-list', 'liferay-util-window']
 	}
 );

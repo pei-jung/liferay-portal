@@ -323,9 +323,8 @@ AUI.add(
 							{
 								groupId: groupId,
 								className: modelName
-							},
-							callback
-						);
+							}
+						).then(callback);
 					},
 
 					_onSocialActivityFormSubmit: function(event) {
@@ -850,6 +849,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'aui-datatype', 'aui-template-deprecated', 'liferay-portlet-base', 'transition']
+		requires: ['aui-base', 'aui-datatype', 'aui-template-deprecated', 'liferay-portlet-base', 'liferay-service', 'transition']
 	}
 );

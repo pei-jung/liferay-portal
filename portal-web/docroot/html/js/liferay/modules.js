@@ -37,6 +37,12 @@
 				base: PATH_JAVASCRIPT + '/liferay/',
 				combine: COMBINE,
 				modules: {
+					'liferay-address' : {
+						path: 'address.js',
+						requires: [
+							'liferay-service'
+						]
+					},
 					'liferay-ajax-session': {
 						condition: {
 							trigger: 'aui-io-request'
@@ -695,6 +701,14 @@
 							'aui-base',
 							'aui-datatable-core',
 							'event-mouseenter'
+						]
+					},
+					'liferay-service': {
+						path: 'service.js',
+						requires: [
+							'array-extras',
+							'aui-io-request',
+							'json'
 						]
 					},
 					'liferay-service-datasource': {

@@ -249,9 +249,8 @@ AUI.add(
 							'/assettag/get-groups-tags',
 							{
 								groupIds: instance.get('groupIds')
-							},
-							callback
-						);
+							}
+						).then(callback);
 					},
 
 					_getPopup: function() {
@@ -627,6 +626,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['array-extras', 'async-queue', 'aui-autocomplete-deprecated', 'aui-io-plugin-deprecated', 'aui-io-request', 'aui-live-search-deprecated', 'aui-template-deprecated', 'aui-textboxlist', 'datasource-cache', 'liferay-service-datasource', 'liferay-util-window', 'yql']
+		requires: ['array-extras', 'async-queue', 'aui-autocomplete-deprecated', 'aui-io-plugin-deprecated', 'aui-io-request', 'aui-live-search-deprecated', 'aui-template-deprecated', 'aui-textboxlist', 'datasource-cache', 'liferay-service', 'liferay-service-datasource', 'liferay-util-window', 'yql']
 	}
 );

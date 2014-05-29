@@ -208,7 +208,7 @@ if (layout != null) {
 		</aui:script>
 	</c:if>
 
-	<aui:script use="aui-base">
+	<aui:script use="aui-base,liferay-service">
 		var stagingLink = A.one('#<portlet:namespace />stagingLink');
 		var warningMessage = A.one('#<portlet:namespace />warningMessage');
 
@@ -219,9 +219,10 @@ if (layout != null) {
 					groupId: '<%= liveGroup.getGroupId() %>',
 					taskExecutorClassName: '<%= LayoutStagingBackgroundTaskExecutor.class.getName() %>',
 					completed: false
-				},
-				function(obj) {
-					var incomplete = obj > 0;
+				}
+			).then(
+				function(result) {
+					var incomplete = result > 0;
 
 					if (stagingLink) {
 						stagingLink.toggle(!incomplete);

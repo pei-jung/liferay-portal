@@ -7,9 +7,8 @@ AUI.add(
 					'/country/get-countries',
 					{
 						active: true
-					},
-					callback
-				);
+					}
+				).then(callback);
 			},
 
 			getRegions: function(callback, selectKey) {
@@ -18,14 +17,17 @@ AUI.add(
 					{
 						countryId: Number(selectKey),
 						active: true
-					},
-					callback
-				);
+					}
+				).then(callback);
 			}
 		};
 
 		Liferay.UsersAdmin = {
 			Addresses: Addresses
 		};
+	},
+	'',
+	{
+		requires: ['liferay-service']
 	}
 );

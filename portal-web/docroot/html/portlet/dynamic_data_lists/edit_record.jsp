@@ -127,7 +127,7 @@ if (translating) {
 				readOnly="<%= recordId <= 0 %>"
 			/>
 
-			<aui:script use="liferay-translation-manager">
+			<aui:script use="liferay-service,liferay-translation-manager">
 				var translationManager = Liferay.component('<portlet:namespace />translationManager');
 
 				translationManager.on(

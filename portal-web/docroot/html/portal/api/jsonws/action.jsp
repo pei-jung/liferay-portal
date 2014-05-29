@@ -392,7 +392,7 @@ String signature = ParamUtil.getString(request, "signature");
 			</aui:form>
 		</div>
 
-		<aui:script use="aui-io,aui-template-deprecated,querystring-parse">
+		<aui:script use="aui-io,aui-template-deprecated,liferay-service,querystring-parse">
 			var REGEX_QUERY_STRING = new RegExp('([^?=&]+)(?:=([^&]*))?', 'g');
 
 			var form = A.one('#execute');
@@ -451,11 +451,16 @@ String signature = ParamUtil.getString(request, "signature");
 
 					var formEl = form.getDOM();
 
-					Liferay.Service(
-						'<%= invocationPath %>',
-						formEl,
-						function(obj) {
-							serviceOutput.html(A.JSON.stringify(obj, null, 2));
+					Liferay.Service('<%= invocationPath %>', formEl).then(
+						function(result) {
+							serviceOutput.html(result);
+
+							output.removeClass('loading-results');
+
+							location.hash = '#serviceResults';
+						},
+						function(messageError) {
+							serviceOutput.html(messageError);
 
 							output.removeClass('loading-results');
 
@@ -551,16 +556,18 @@ String signature = ParamUtil.getString(request, "signature");
 		</aui:script>
 
 <textarea class="hide" id="scriptTpl">
-Liferay.Service(
-  '<%= invocationPath %>',
-  <tpl if="data.length">{
-<%= StringPool.FOUR_SPACES %><tpl for="data">{key}: {[this.formatDataType(values.key, values.value)]}<tpl if="!$last">,
-<%= StringPool.FOUR_SPACES %></tpl></tpl>
-  },
-  </tpl>function(obj) {
-<%= StringPool.FOUR_SPACES %>console.log(obj);
-  }
-);
+AUI().use('liferay-service', function(A) {
+  Liferay.Service(
+    '<%= invocationPath %>'<tpl if="data.length">, {
+  <%= StringPool.FOUR_SPACES %><tpl for="data">{key}: {[this.formatDataType(values.key, values.value)]}<tpl if="!$last">,
+  <%= StringPool.FOUR_SPACES %></tpl></tpl>
+    }</tpl>
+  ).then(
+    function(result) {
+    <%= StringPool.FOUR_SPACES %>console.log(result);
+    }
+  );
+});
 </textarea>
 
 <textarea class="hide" id="curlTpl">
