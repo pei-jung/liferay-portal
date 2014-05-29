@@ -37,6 +37,9 @@
 				base: PATH_JAVASCRIPT + '/liferay/',
 				combine: COMBINE,
 				modules: {
+					'liferay-address' : {
+						path: 'address.js'
+					},
 					'liferay-ajax-session': {
 						condition: {
 							trigger: 'aui-io-request'
