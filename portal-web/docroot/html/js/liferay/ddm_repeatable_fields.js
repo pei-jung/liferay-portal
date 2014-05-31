@@ -248,6 +248,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'aui-datatype', 'aui-io-request', 'aui-parse-content']
+		requires: ['aui-base', 'aui-datatype', 'aui-io-request', 'aui-parse-content', 'liferay-liferay']
 	}
 );

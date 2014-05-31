@@ -1,22 +1,27 @@
 ;(function() {
-	var A = AUI();
+	AUI().use(
+		'liferay-liferay',
+		function(A) {
+			var A = AUI();
 
-	var LiferayUtil = Liferay.Util;
+			var LiferayUtil = Liferay.Util;
 
-	var entities = A.merge(
-		LiferayUtil.MAP_HTML_CHARS_ESCAPED,
-		{
-			'[': '&#91;',
-			']': '&#93;',
-			'(': '&#40;',
-			')': '&#41;'
+			var entities = A.merge(
+				LiferayUtil.MAP_HTML_CHARS_ESCAPED,
+				{
+					'[': '&#91;',
+					']': '&#93;',
+					'(': '&#40;',
+					')': '&#41;'
+				}
+			);
+
+			var BBCodeUtil = Liferay.namespace('BBCodeUtil');
+
+			BBCodeUtil.escape = A.rbind('escapeHTML', LiferayUtil, true, entities);
+			BBCodeUtil.unescape = A.rbind('unescapeHTML', LiferayUtil, entities);		
 		}
 	);
-
-	var BBCodeUtil = Liferay.namespace('BBCodeUtil');
-
-	BBCodeUtil.escape = A.rbind('escapeHTML', LiferayUtil, true, entities);
-	BBCodeUtil.unescape = A.rbind('unescapeHTML', LiferayUtil, entities);
 }());;(function() {
 	var REGEX_BBCODE = /(?:\[((?:[a-z]|\*){1,16})(?:=([^\x00-\x1F"'\(\)<>\[\]]{1,2083}))?\])|(?:\[\/([a-z]{1,16})\])/ig;
 

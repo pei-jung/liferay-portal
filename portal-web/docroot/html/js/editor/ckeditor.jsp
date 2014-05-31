@@ -117,9 +117,9 @@ if (!inlineEdit) {
 			<script src="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathJavaScript() + "/editor/ckeditor/main.js", javaScriptLastModified)) %>" type="text/javascript"></script>
 		</c:if>
 
-		<script type="text/javascript">
+		<aui:script use="liferay-liferay">
 			Liferay.namespace('EDITORS')['<%= editorImpl %>'] = true;
-		</script>
+		</aui:script>
 	</liferay-util:html-top>
 </c:if>
 

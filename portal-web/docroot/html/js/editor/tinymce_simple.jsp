@@ -41,9 +41,9 @@ boolean skipEditorLoading = GetterUtil.getBoolean((String)request.getAttribute("
 
 		<script src="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathJavaScript() + "/editor/tiny_mce/tiny_mce.js", javaScriptLastModified)) %>" type="text/javascript"></script>
 
-		<script type="text/javascript">
+		<aui:script use="liferay-liferay">
 			Liferay.namespace('EDITORS')['<%= editorImpl %>'] = true;
-		</script>
+		</aui:script>
 	</liferay-util:html-top>
 </c:if>
 

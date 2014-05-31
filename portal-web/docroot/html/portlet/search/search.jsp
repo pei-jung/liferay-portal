@@ -75,7 +75,7 @@ request.setAttribute("search.jsp-returnToFullPageURL", portletDisplay.getURLBack
 		<div class="lfr-token-list-content" id="<portlet:namespace />searchTokensContent"></div>
 	</div>
 
-	<aui:script use="liferay-token-list">
+	<aui:script use="liferay-liferay,liferay-token-list">
 		Liferay.namespace('Search').tokenList = new Liferay.TokenList(
 			{
 				after: {

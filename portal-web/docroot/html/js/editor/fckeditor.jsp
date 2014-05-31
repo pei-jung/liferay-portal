@@ -74,9 +74,9 @@ String toolbarSet = (String)request.getAttribute("liferay-ui:input-editor:toolba
 
 		<script src="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathJavaScript() + "/editor/fckeditor/fckeditor.js", javaScriptLastModified)) %>" type="text/javascript"></script>
 
-		<script type="text/javascript">
+		<aui:script use="liferay-liferay">
 			Liferay.namespace('EDITORS')['<%= editorImpl %>'] = true;
-		</script>
+		</aui:script>
 	</liferay-util:html-top>
 </c:if>
 
