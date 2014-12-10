@@ -344,7 +344,7 @@
 	</model>
 	<model name="com.liferay.portal.model.LayoutBranch">
 		<field name="mvccVersion" type="long" />
-		<field name="LayoutBranchId" type="long" />
+		<field name="layoutBranchId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="userId" type="long" />
@@ -1018,9 +1018,7 @@
 			<hint-collection name="TEXTAREA" />
 			<hint name="display-width">400</hint>
 		</field>
-		<field name="firstName" type="String">
-			<validator name="required" />
-		</field>
+		<field name="firstName" type="String" />
 		<field name="middleName" type="String" />
 		<field name="lastName" type="String" />
 		<field name="jobTitle" type="String">
