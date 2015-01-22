@@ -192,12 +192,11 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		portalExecutorManagerUtil.setPortalExecutorManager(
 			new MockPortalExecutorManager());
 
-		CaptureHandler captureHandler = JDKLoggerTestUtil.configureJDKLogger(
-			ClusterExecutorImpl.class.getName(), Level.SEVERE);
-
 		ClusterExecutorImpl clusterExecutorImpl = new ClusterExecutorImpl();
 
-		try {
+		try (CaptureHandler captureHandler =
+				JDKLoggerTestUtil.configureJDKLogger(
+					ClusterExecutorImpl.class.getName(), Level.SEVERE)) {
 
 			// Test 1, connect channel with log enabled
 
@@ -264,8 +263,12 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 
 			// Test 5, execute unicast request
 
-			clusterRequest = ClusterRequest.createUnicastRequest(
-				null, new AddressImpl(new MockAddress()));
+			Address address = new AddressImpl(new MockAddress());
+
+			clusterRequest = ClusterRequest.createUnicastRequest(null, address);
+
+			clusterExecutorImpl.memberJoined(
+				address, new ClusterNode(PortalUUIDUtil.generate()));
 
 			try {
 				clusterExecutorImpl.execute(clusterRequest);
@@ -278,8 +281,6 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 			}
 		}
 		finally {
-			captureHandler.close();
-
 			clusterExecutorImpl.destroy();
 		}
 	}
@@ -292,7 +293,18 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 	@Test
 	public void testExecuteByFireAndForget() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl1 = getClusterExecutorImpl();
+
+		MockClusterEventListener mockClusterEventListener =
+			new MockClusterEventListener();
+
+		clusterExecutorImpl1.addClusterEventListener(mockClusterEventListener);
+
 		ClusterExecutorImpl clusterExecutorImpl2 = getClusterExecutorImpl();
+
+		assertClusterEvent(
+			mockClusterEventListener.waitJoinMessage(), ClusterEventType.JOIN,
+			clusterExecutorImpl2.getLocalClusterNode());
+
 		String timestamp = null;
 
 		try {
@@ -442,44 +454,13 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 				ClusterMessageType.NOTIFY,
 				clusterRequest.getClusterMessageType());
 
-			// Test 2, execute with shortcut local method disabled
-
-			BaseReceiverAdvice.reset(1);
+			// Test 2, execute
 
 			String timestamp = String.valueOf(System.currentTimeMillis());
-
-			MethodHandler methodHandler = new MethodHandler(
-				testMethod1MethodKey, timestamp);
-
-			clusterRequest = ClusterRequest.createUnicastRequest(
-				methodHandler,
-				clusterExecutorImpl.getLocalClusterNodeAddress());
-
-			clusterExecutorImpl.setShortcutLocalMethod(false);
-
-			clusterExecutorImpl.execute(clusterRequest);
-
-			object = BaseReceiverAdvice.getJGroupsMessagePayload(
-				channel.getReceiver(), channel.getAddress());
-
-			clusterRequest = (ClusterRequest)object;
-			MethodHandler newMethodHandler = clusterRequest.getMethodHandler();
-
-			Assert.assertEquals(
-				ClusterMessageType.EXECUTE,
-				clusterRequest.getClusterMessageType());
-			Assert.assertEquals(
-				methodHandler.toString(), newMethodHandler.toString());
-
-			// Test 3, execute with shortcut local method enabled
-
-			timestamp = String.valueOf(System.currentTimeMillis());
 
 			clusterRequest = ClusterRequest.createUnicastRequest(
 				new MethodHandler(testMethod1MethodKey, timestamp),
 				clusterExecutorImpl.getLocalClusterNodeAddress());
-
-			clusterExecutorImpl.setShortcutLocalMethod(true);
 
 			FutureClusterResponses futureClusterResponses =
 				clusterExecutorImpl.execute(clusterRequest);

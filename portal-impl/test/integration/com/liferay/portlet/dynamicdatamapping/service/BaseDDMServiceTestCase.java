@@ -87,16 +87,34 @@ public class BaseDDMServiceTestCase {
 			String name, String definition, String storageType, int type)
 		throws Exception {
 
+		return addStructure(
+			parentStructureId, classNameId, structureKey, name,
+			StringPool.BLANK, definition, storageType, type);
+	}
+
+	protected DDMStructure addStructure(
+			long parentStructureId, long classNameId, String structureKey,
+			String name, String description, String definition,
+			String storageType, int type)
+		throws Exception {
+
 		return ddmStructureTestHelper.addStructure(
-			parentStructureId, classNameId, structureKey, name, definition,
-			storageType, type);
+			parentStructureId, classNameId, structureKey, name, description,
+			definition, storageType, type);
 	}
 
 	protected DDMStructure addStructure(long classNameId, String name)
 		throws Exception {
 
+		return addStructure(classNameId, name, null);
+	}
+
+	protected DDMStructure addStructure(
+			long classNameId, String name, String description)
+		throws Exception {
+
 		return addStructure(
-			classNameId, null, name, read("test-structure.xsd"),
+			0, classNameId, null, name, description, read("test-structure.xsd"),
 			StorageType.JSON.getValue(), DDMStructureConstants.TYPE_DEFAULT);
 	}
 
@@ -137,7 +155,7 @@ public class BaseDDMServiceTestCase {
 
 		return DDMTemplateLocalServiceUtil.addTemplate(
 			TestPropsValues.getUserId(), group.getGroupId(), classNameId,
-			classPK, templateKey, LocaleTestUtil.getDefaultLocaleMap(name),
+			classPK, 0, templateKey, LocaleTestUtil.getDefaultLocaleMap(name),
 			null, type, mode, language, script, cacheable, smallImage,
 			smallImageURL, smallFile,
 			ServiceContextTestUtil.getServiceContext());

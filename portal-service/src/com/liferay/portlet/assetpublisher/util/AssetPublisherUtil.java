@@ -50,13 +50,6 @@ public class AssetPublisherUtil {
 			portletRequest, className, classPK, assetEntryOrder);
 	}
 
-	public static void addRecentFolderId(
-		PortletRequest portletRequest, String className, long classPK) {
-
-		getAssetPublisher().addRecentFolderId(
-			portletRequest, className, classPK);
-	}
-
 	public static void addSelection(
 			PortletRequest portletRequest,
 			PortletPreferences portletPreferences, String portletId)
@@ -335,12 +328,6 @@ public class AssetPublisherUtil {
 			portletPreferences, scopeGroupId, layout);
 	}
 
-	public static long getRecentFolderId(
-		PortletRequest portletRequest, String className) {
-
-		return getAssetPublisher().getRecentFolderId(portletRequest, className);
-	}
-
 	public static String getScopeId(Group group, long scopeGroupId)
 		throws PortalException {
 
@@ -388,6 +375,10 @@ public class AssetPublisherUtil {
 			user, portletPreferences, assetEntryQuery);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public static void registerAssetQueryProcessor(
 		String name, AssetEntryQueryProcessor assetQueryProcessor) {
 
@@ -403,13 +394,6 @@ public class AssetPublisherUtil {
 			assetEntryUuids, portletPreferences);
 	}
 
-	public static void removeRecentFolderId(
-		PortletRequest portletRequest, String className, long classPK) {
-
-		getAssetPublisher().removeRecentFolderId(
-			portletRequest, className, classPK);
-	}
-
 	public static void subscribe(
 			PermissionChecker permissionChecker, long groupId, long plid,
 			String portletId)
@@ -419,6 +403,10 @@ public class AssetPublisherUtil {
 			permissionChecker, groupId, plid, portletId);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public static void unregisterAssetQueryProcessor(
 		String assetQueryProcessorClassName) {
 

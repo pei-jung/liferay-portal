@@ -20,6 +20,7 @@ import com.liferay.document.library.google.docs.util.ResourceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.servlet.taglib.ui.Menu;
 import com.liferay.portal.kernel.servlet.taglib.ui.MenuItem;
 import com.liferay.portal.kernel.servlet.taglib.ui.ToolbarItem;
 import com.liferay.portal.kernel.servlet.taglib.ui.UIItem;
@@ -85,15 +86,19 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 	}
 
 	@Override
+	public Menu getMenu() throws PortalException {
+		Menu menu = super.getMenu();
+
+		_processGoogleDocsMenuItems(menu.getMenuItems());
+
+		return menu;
+	}
+
+	@Override
 	public List<MenuItem> getMenuItems() throws PortalException {
 		List<MenuItem> menuItems = super.getMenuItems();
 
-		_removeUnsupportedUIItems(menuItems);
-
-		URLMenuItem urlMenuItem = _insertEditInGoogleURLUIItem(
-			new URLMenuItem(), menuItems);
-
-		urlMenuItem.setMethod("GET");
+		_processGoogleDocsMenuItems(menuItems);
 
 		return menuItems;
 	}
@@ -107,6 +112,16 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 		_insertEditInGoogleURLUIItem(new URLToolbarItem(), toolbarItems);
 
 		return toolbarItems;
+	}
+
+	@Override
+	public boolean isDownloadLinkVisible() throws PortalException {
+		return false;
+	}
+
+	@Override
+	public boolean isVersionInfoVisible() throws PortalException {
+		return false;
 	}
 
 	@Override
@@ -183,6 +198,19 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 		return urlUIItem;
 	}
 
+	private List<MenuItem> _processGoogleDocsMenuItems(
+		List<MenuItem> menuItems) {
+
+		_removeUnsupportedUIItems(menuItems);
+
+		URLMenuItem urlMenuItem = _insertEditInGoogleURLUIItem(
+			new URLMenuItem(), menuItems);
+
+		urlMenuItem.setMethod("GET");
+
+		return menuItems;
+	}
+
 	private void _removeUIItem(List<? extends UIItem> uiItems, String key) {
 		int index = _getIndex(uiItems, key);
 
@@ -192,6 +220,9 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 	}
 
 	private void _removeUnsupportedUIItems(List<? extends UIItem> uiItems) {
+		_removeUIItem(uiItems, DLUIItemKeys.CANCEL_CHECKOUT);
+		_removeUIItem(uiItems, DLUIItemKeys.CHECKIN);
+		_removeUIItem(uiItems, DLUIItemKeys.CHECKOUT);
 		_removeUIItem(uiItems, DLUIItemKeys.DOWNLOAD);
 		_removeUIItem(uiItems, DLUIItemKeys.OPEN_IN_MS_OFFICE);
 	}
@@ -199,6 +230,6 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 	private static final UUID _UUID = UUID.fromString(
 		"7B61EA79-83AE-4FFD-A77A-1D47E06EBBE9");
 
-	private GoogleDocsMetadataHelper _googleDocsMetadataHelper;
+	private final GoogleDocsMetadataHelper _googleDocsMetadataHelper;
 
 }

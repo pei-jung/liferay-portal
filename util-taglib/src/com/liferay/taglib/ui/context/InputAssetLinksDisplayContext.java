@@ -311,8 +311,6 @@ public class InputAssetLinksDisplayContext {
 			_request, PortletKeys.ASSET_BROWSER, controlPanelPlid,
 			PortletRequest.RENDER_PHASE);
 
-		portletURL.setParameter("struts_action", "/asset_browser/view");
-
 		long groupId = _getAssetBrowserGroupId(assetRendererFactory);
 
 		portletURL.setParameter("groupId", String.valueOf(groupId));
@@ -488,15 +486,15 @@ public class InputAssetLinksDisplayContext {
 		return _stagedReferrerPortlet;
 	}
 
-	private long _assetEntryId;
+	private final long _assetEntryId;
 	private List<AssetLink> _assetLinks;
 	private String _eventName;
-	private PageContext _pageContext;
-	private PortletRequest _portletRequest;
+	private final PageContext _pageContext;
+	private final PortletRequest _portletRequest;
 	private String _randomNamespace;
-	private HttpServletRequest _request;
+	private final HttpServletRequest _request;
 	private Boolean _stagedLocally;
 	private Boolean _stagedReferrerPortlet;
-	private ThemeDisplay _themeDisplay;
+	private final ThemeDisplay _themeDisplay;
 
 }

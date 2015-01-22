@@ -121,8 +121,7 @@ public class BundleManagerServlet extends HttpServlet {
 				"(&(bundle.id=" + bundle.getBundleId() +
 					")(objectClass=javax.servlet.ServletContext))");
 
-			serviceTracker = new ServiceTracker<ServletContext, ServletContext>(
-				bundleContext, filter, null);
+			serviceTracker = new ServiceTracker<>(bundleContext, filter, null);
 
 			serviceTracker.open();
 
@@ -241,7 +240,8 @@ public class BundleManagerServlet extends HttpServlet {
 
 	private static final long _TIMEOUT = 10000;
 
-	private static Log _log = LogFactoryUtil.getLog(BundleManagerServlet.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		BundleManagerServlet.class);
 
 	private Bundle _bundle;
 	private String _contextPathHeader;
