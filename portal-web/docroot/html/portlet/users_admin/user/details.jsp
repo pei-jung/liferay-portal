@@ -92,7 +92,18 @@ if (selContact != null) {
 		<liferay-ui:error exception="<%= UserScreenNameException.MustNotBeDuplicate.class %>" focusField="screenName" message="the-screen-name-you-requested-is-already-taken" />
 		<liferay-ui:error exception="<%= UserScreenNameException.MustNotBeNumeric.class %>" focusField="screenName" message="please-enter-a-screen-name-without-numbers" />
 		<liferay-ui:error exception="<%= UserScreenNameException.MustNotBeUsedByGroup.class %>" focusField="screenName" message="the-screen-name-you-requested-is-already-taken-by-a-group" />
-		<liferay-ui:error exception="<%= UserScreenNameException.MustValidate.class %>" focusField="screenName" message="please-enter-a-valid-screen-name" />
+
+		<liferay-ui:error exception="<%= UserScreenNameException.MustValidate.class %>" focusField="screenName">
+			<%
+			UserScreenNameException.MustValidate usne = (UserScreenNameException.MustValidate)errorException;
+
+			ScreenNameValidator screenNameValidator = usne.screenNameValidator;
+
+			String validatorName = ClassUtil.getClassName(screenNameValidator);
+			%>
+
+			<liferay-ui:message arguments="<%= validatorName %>" key="this-screen-name-must-validate-with-validator" translateArguments="<%= false %>" />
+		</liferay-ui:error>
 
 		<c:if test="<%= !PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_SCREEN_NAME_ALWAYS_AUTOGENERATE) || (selUser != null) %>">
 			<c:choose>
