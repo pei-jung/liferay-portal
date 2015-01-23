@@ -54,9 +54,11 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -116,8 +118,16 @@ public class ClusterExecutorImpl
 
 		List<Address> addresses = prepareAddresses(clusterRequest);
 
+		Set<String> clusterNodeIds = new HashSet<>();
+
+		for (Address address : addresses) {
+			ClusterNode clusterNode = _liveInstances.get(address);
+
+			clusterNodeIds.add(clusterNode.getClusterNodeId());
+		}
+
 		FutureClusterResponses futureClusterResponses =
-			new FutureClusterResponses(addresses);
+			new FutureClusterResponses(clusterNodeIds);
 
 		if (!clusterRequest.isFireAndForget()) {
 			String uuid = clusterRequest.getUuid();
@@ -125,9 +135,7 @@ public class ClusterExecutorImpl
 			_futureClusterResponses.put(uuid, futureClusterResponses);
 		}
 
-		if (_shortcutLocalMethod &&
-			addresses.remove(getLocalClusterNodeAddress())) {
-
+		if (addresses.remove(getLocalClusterNodeAddress())) {
 			runLocalMethod(clusterRequest, futureClusterResponses);
 		}
 
@@ -339,14 +347,6 @@ public class ClusterExecutorImpl
 		_clusterEventListeners.addAllAbsent(clusterEventListeners);
 	}
 
-	public void setShortcutLocalMethod(boolean shortcutLocalMethod) {
-		if (!isEnabled()) {
-			return;
-		}
-
-		_shortcutLocalMethod = shortcutLocalMethod;
-	}
-
 	protected void fireClusterEvent(ClusterEvent clusterEvent) {
 		for (ClusterEventListener listener : _clusterEventListeners) {
 			listener.processClusterEvent(clusterEvent);
@@ -456,10 +456,6 @@ public class ClusterExecutorImpl
 		clusterNode.setPortalProtocol(PropsValues.PORTAL_INSTANCE_PROTOCOL);
 
 		_localClusterNode = clusterNode;
-	}
-
-	protected boolean isShortcutLocalMethod() {
-		return _shortcutLocalMethod;
 	}
 
 	protected void memberJoined(Address joinAddress, ClusterNode clusterNode) {
@@ -601,7 +597,6 @@ public class ClusterExecutorImpl
 		new ConcurrentHashMap<>();
 	private Address _localAddress;
 	private ClusterNode _localClusterNode;
-	private boolean _shortcutLocalMethod;
 
 	private class ClusterResponseCallbackJob implements Runnable {
 

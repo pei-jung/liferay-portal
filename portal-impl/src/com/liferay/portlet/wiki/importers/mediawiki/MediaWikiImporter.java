@@ -44,7 +44,6 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.asset.NoSuchTagException;
 import com.liferay.portlet.asset.model.AssetTag;
 import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
-import com.liferay.portlet.asset.service.AssetTagPropertyLocalServiceUtil;
 import com.liferay.portlet.asset.util.AssetUtil;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 import com.liferay.portlet.wiki.ImportFilesException;
@@ -361,8 +360,7 @@ public class MediaWikiImporter implements WikiImporter {
 					paths[paths.length - 1]);
 
 				ObjectValuePair<String, InputStream> inputStreamOVP =
-					new ObjectValuePair<String, InputStream>(
-						fileName, inputStream);
+					new ObjectValuePair<>(fileName, inputStream);
 
 				inputStreamOVPs.add(inputStreamOVP);
 
@@ -516,37 +514,19 @@ public class MediaWikiImporter implements WikiImporter {
 
 			categoryName = normalize(categoryName, 75);
 
-			Element revisionElement = pageElement.element("revision");
-
-			String description = revisionElement.elementText("text");
-
-			description = normalizeDescription(description);
-
 			try {
-				AssetTag assetTag = null;
+				AssetTagLocalServiceUtil.getTag(
+					node.getGroupId(), categoryName);
+			}
+			catch (NoSuchTagException nste) {
+				ServiceContext serviceContext = new ServiceContext();
 
-				try {
-					assetTag = AssetTagLocalServiceUtil.getTag(
-						node.getGroupId(), categoryName);
-				}
-				catch (NoSuchTagException nste) {
-					ServiceContext serviceContext = new ServiceContext();
+				serviceContext.setAddGroupPermissions(true);
+				serviceContext.setAddGuestPermissions(true);
+				serviceContext.setScopeGroupId(node.getGroupId());
 
-					serviceContext.setAddGroupPermissions(true);
-					serviceContext.setAddGuestPermissions(true);
-					serviceContext.setScopeGroupId(node.getGroupId());
-
-					assetTag = AssetTagLocalServiceUtil.addTag(
-						userId, categoryName, null, serviceContext);
-
-					if (PropsValues.ASSET_TAG_PROPERTIES_ENABLED &&
-						Validator.isNotNull(description)) {
-
-						AssetTagPropertyLocalServiceUtil.addTagProperty(
-							userId, assetTag.getTagId(), "description",
-							description);
-					}
-				}
+				AssetTagLocalServiceUtil.addTag(
+					userId, categoryName, serviceContext);
 			}
 			catch (SystemException se) {
 				_log.error(se, se);
@@ -585,7 +565,7 @@ public class MediaWikiImporter implements WikiImporter {
 				serviceContext.setScopeGroupId(node.getGroupId());
 
 				assetTag = AssetTagLocalServiceUtil.addTag(
-					userId, categoryName, null, serviceContext);
+					userId, categoryName, serviceContext);
 			}
 
 			assetTagNames.add(assetTag.getName());
@@ -697,20 +677,21 @@ public class MediaWikiImporter implements WikiImporter {
 
 	private static final String _WORK_IN_PROGRESS_TAG = "work in progress";
 
-	private static Log _log = LogFactoryUtil.getLog(MediaWikiImporter.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		MediaWikiImporter.class);
 
-	private static Pattern _categoriesPattern = Pattern.compile(
+	private static final Pattern _categoriesPattern = Pattern.compile(
 		"\\[\\[[Cc]ategory:([^\\]]*)\\]\\][\\n]*");
-	private static Pattern _parentPattern = Pattern.compile(
+	private static final Pattern _parentPattern = Pattern.compile(
 		"\\{{2}OtherTopics\\|([^\\}]*)\\}{2}");
-	private static Pattern _redirectPattern = Pattern.compile(
+	private static final Pattern _redirectPattern = Pattern.compile(
 		"#REDIRECT \\[\\[([^\\]]*)\\]\\]");
-	private static Set<String> _specialMediaWikiDirs = SetUtil.fromArray(
+	private static final Set<String> _specialMediaWikiDirs = SetUtil.fromArray(
 		new String[] {"archive", "temp", "thumb"});
-	private static Pattern _wikiPageTitlesRemovePattern = Pattern.compile(
+	private static final Pattern _wikiPageTitlesRemovePattern = Pattern.compile(
 		PropsValues.WIKI_PAGE_TITLES_REMOVE_REGEXP);
 
-	private MediaWikiToCreoleTranslator _translator =
+	private final MediaWikiToCreoleTranslator _translator =
 		new MediaWikiToCreoleTranslator();
 
 }

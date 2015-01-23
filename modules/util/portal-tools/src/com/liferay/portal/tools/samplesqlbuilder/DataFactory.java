@@ -831,7 +831,8 @@ public class DataFactory {
 			"BASIC-WEB-CONTENT", _journalDDMStructureContent);
 		_defaultJournalDDMTemplateModel = newDDMTemplateModel(
 			_globalGroupId, _defaultUserId,
-			_defaultJournalDDMStructureModel.getStructureId());
+			_defaultJournalDDMStructureModel.getStructureId(),
+			getJournalArticleClassNameId());
 	}
 
 	public void initGroupModels() throws Exception {
@@ -2571,7 +2572,7 @@ public class DataFactory {
 	}
 
 	protected DDMTemplateModel newDDMTemplateModel(
-		long groupId, long userId, long structureId) {
+		long groupId, long userId, long structureId, long sourceClassNameId) {
 
 		DDMTemplateModel ddmTemplateModel = new DDMTemplateModelImpl();
 
@@ -2585,6 +2586,7 @@ public class DataFactory {
 		ddmTemplateModel.setClassNameId(
 			_classNameModelsMap.get(DDMStructure.class.getName()));
 		ddmTemplateModel.setClassPK(structureId);
+		ddmTemplateModel.setSourceClassNameId(structureId);
 		ddmTemplateModel.setTemplateKey(String.valueOf(_counter.get()));
 		ddmTemplateModel.setVersion(DDMTemplateConstants.VERSION_DEFAULT);
 
@@ -3003,49 +3005,52 @@ public class DataFactory {
 
 	private static final String _SAMPLE_USER_NAME = "Sample";
 
-	private static PortletPreferencesFactory _portletPreferencesFactory =
+	private static final PortletPreferencesFactory _portletPreferencesFactory =
 		new PortletPreferencesFactoryImpl();
 
-	private long _accountId;
+	private final long _accountId;
 	private AccountModel _accountModel;
 	private RoleModel _administratorRoleModel;
-	private Map<Long, SimpleCounter> _assetCategoryCounters = new HashMap<>();
+	private final Map<Long, SimpleCounter> _assetCategoryCounters =
+		new HashMap<>();
 	private List<AssetCategoryModel>[] _assetCategoryModelsArray;
-	private Map<Long, SimpleCounter> _assetPublisherQueryCounter =
+	private final Map<Long, SimpleCounter> _assetPublisherQueryCounter =
 		new HashMap<>();
 	private String _assetPublisherQueryName;
-	private Map<Long, SimpleCounter> _assetTagCounters = new HashMap<>();
+	private final Map<Long, SimpleCounter> _assetTagCounters = new HashMap<>();
 	private List<AssetTagModel>[] _assetTagModelsArray;
 	private List<AssetTagStatsModel>[] _assetTagStatsModelsArray;
 	private List<AssetVocabularyModel>[] _assetVocabularyModelsArray;
-	private List<ClassNameModel> _classNameModels;
-	private Map<String, Long> _classNameModelsMap = new HashMap<>();
-	private long _companyId;
+	private final List<ClassNameModel> _classNameModels;
+	private final Map<String, Long> _classNameModelsMap = new HashMap<>();
+	private final long _companyId;
 	private CompanyModel _companyModel;
-	private SimpleCounter _counter;
-	private PortletPreferencesImpl _defaultAssetPublisherPortletPreference;
+	private final SimpleCounter _counter;
+	private final PortletPreferencesImpl
+		_defaultAssetPublisherPortletPreference;
 	private AssetVocabularyModel _defaultAssetVocabularyModel;
 	private DDMStructureModel _defaultDLDDMStructureModel;
 	private DLFileEntryTypeModel _defaultDLFileEntryTypeModel;
 	private DDMStructureModel _defaultJournalDDMStructureModel;
 	private DDMTemplateModel _defaultJournalDDMTemplateModel;
-	private long _defaultUserId;
+	private final long _defaultUserId;
 	private UserModel _defaultUserModel;
-	private String _dlDDMStructureContent;
+	private final String _dlDDMStructureContent;
 	private List<String> _firstNames;
-	private SimpleCounter _futureDateCounter;
-	private long _globalGroupId;
+	private final SimpleCounter _futureDateCounter;
+	private final long _globalGroupId;
 	private GroupModel _globalGroupModel;
 	private List<GroupModel> _groupModels;
-	private long _guestGroupId;
+	private final long _guestGroupId;
 	private GroupModel _guestGroupModel;
 	private RoleModel _guestRoleModel;
 	private UserModel _guestUserModel;
 	private String _journalArticleContent;
-	private Map<Long, String> _journalArticleResourceUUIDs = new HashMap<>();
-	private String _journalDDMStructureContent;
+	private final Map<Long, String> _journalArticleResourceUUIDs =
+		new HashMap<>();
+	private final String _journalDDMStructureContent;
 	private List<String> _lastNames;
-	private Map<Long, SimpleCounter> _layoutCounters = new HashMap<>();
+	private final Map<Long, SimpleCounter> _layoutCounters = new HashMap<>();
 	private int _maxAssetCategoryCount;
 	private int _maxAssetEntryToAssetCategoryCount;
 	private int _maxAssetEntryToAssetTagCount;
@@ -3075,17 +3080,17 @@ public class DataFactory {
 	private int _maxWikiPageCount;
 	private RoleModel _ownerRoleModel;
 	private RoleModel _powerUserRoleModel;
-	private SimpleCounter _resourcePermissionCounter;
+	private final SimpleCounter _resourcePermissionCounter;
 	private List<RoleModel> _roleModels;
-	private long _sampleUserId;
+	private final long _sampleUserId;
 	private UserModel _sampleUserModel;
 	private Format _simpleDateFormat =
 		FastDateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private RoleModel _siteMemberRoleModel;
-	private SimpleCounter _socialActivityCounter;
-	private SimpleCounter _timeCounter;
+	private final SimpleCounter _socialActivityCounter;
+	private final SimpleCounter _timeCounter;
 	private RoleModel _userRoleModel;
-	private SimpleCounter _userScreenNameCounter;
+	private final SimpleCounter _userScreenNameCounter;
 	private VirtualHostModel _virtualHostModel;
 
 }

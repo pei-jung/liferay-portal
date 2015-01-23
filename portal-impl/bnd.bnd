@@ -21,6 +21,7 @@ Export-Package:\
 	com.liferay.portal.security.ac,\
 	com.liferay.portal.security.lang,\
 	com.liferay.portal.service.http,\
+	com.liferay.portal.servlet.filters.authverifier,\
 	com.liferay.portal.spring.aop,\
 	com.liferay.portal.spring.bean,\
 	com.liferay.portal.spring.context,\
@@ -31,6 +32,7 @@ Export-Package:\
 	com.liferay.portal.upload,\
 	com.liferay.portal.verify,\
 	com.liferay.portal.xml,\
+	com.liferay.portlet.asset.service.permission,\
 	com.liferay.portlet.dynamicdatamapping.service.permission,\
 	com.liferay.portlet.documentlibrary,\
 	com.liferay.portlet.documentlibrary.action,\

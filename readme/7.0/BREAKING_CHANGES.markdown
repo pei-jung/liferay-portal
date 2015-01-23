@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `87f85c5`.*
+*This document has been reviewed through commit `d774a2f`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -689,5 +689,61 @@ If you are using the method, you can achieve the same behavior with CSS.
 
 This method was removed due to there being no working use cases in Portal, and
 its overall lack of functionality.
+
+---------------------------------------
+
+### Removed *Asset Tag Properties*
+- **Date:** 2015-Jan-13
+- **JIRA Ticket:** LPS-52588
+
+#### What changed?
+
+The *Asset Tag Properties* have been removed. The service no longer exists and
+the Asset Tag Service API no longer has this parameter. The behavior associated
+with tag properties in the Asset Publisher and XSL portlets has also been
+removed.
+
+#### Who is affected?
+
+This affects any plugin that uses the Asset Tag Properties service.
+
+#### How should I update my code?
+
+If you are using this functionality, you can achieve the same behavior with
+*Asset Category Properties*. If you are using the Asset Tag Service, remove the
+`String[]` tag properties parameter from your calls to the service's methods.
+
+#### Why was this change made?
+
+The Asset Tag Properties were deprecated for the 6.2 version of Liferay Portal.
+
+---------------------------------------
+
+### Removed *asset.publisher.asset.entry.query.processors*
+- **Date:** 2015-Jan-22
+- **JIRA Ticket:** LPS-52966
+
+#### What changed?
+
+The *asset.publisher.asset.entry.query.processors* property has been removed.
+
+#### Who is affected?
+
+This affects any hook that uses the
+*asset.publisher.asset.entry.query.processors* property.
+
+#### How should I update my code?
+
+If you are using this property to register Asset Entry Query Processors, they
+have to be registered in a different way. Your Asset Entery Query Processor
+should implements the interface
+`implements com.liferay.portlet.assetpublisher.util.AssetEntryQueryProcessor`
+and it should have the annotation
+`@Component(service=AssetEntryQueryProcessor.class)`.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to modularize Liferay
+Portal.
 
 ---------------------------------------
