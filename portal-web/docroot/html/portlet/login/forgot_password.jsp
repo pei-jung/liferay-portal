@@ -48,6 +48,8 @@ if (reminderAttempts == null) {
 	<liferay-ui:error exception="<%= SendPasswordException.class %>" message="your-password-can-only-be-sent-to-an-external-email-address" />
 	<liferay-ui:error exception="<%= UserActiveException.class %>" message="your-account-is-not-active" />
 	<liferay-ui:error exception="<%= UserEmailAddressException.class %>" message="please-enter-a-valid-email-address" />
+	<liferay-ui:error exception="<%= UserEmailAddressException.MustNotBeNull.class %>" message="please-enter-an-email-address" />
+	<liferay-ui:error exception="<%= UserEmailAddressException.MustValidate.class %>" message="please-enter-a-valid-email-address" />
 	<liferay-ui:error exception="<%= UserLockoutException.PasswordPolicyLockout.class %>" message="this-account-has-been-locked" />
 	<liferay-ui:error exception="<%= UserReminderQueryException.class %>" message="your-answer-does-not-match-what-is-in-our-database" />
 
