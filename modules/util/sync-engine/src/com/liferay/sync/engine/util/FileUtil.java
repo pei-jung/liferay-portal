@@ -26,6 +26,8 @@ import java.io.InputStream;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -43,8 +45,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -69,6 +69,30 @@ public class FileUtil {
 		}
 
 		return checksum1.equals(checksum2);
+	}
+
+	public static void deleteFile(final Path filePath) {
+		try {
+			Files.deleteIfExists(filePath);
+		}
+		catch (Exception e) {
+			PathCallable pathCallable = new PathCallable(filePath) {
+
+				@Override
+				public Object call() throws Exception {
+					FileTime fileTime = Files.getLastModifiedTime(filePath);
+
+					if (fileTime.toMillis() <= getStartTime()) {
+						Files.deleteIfExists(filePath);
+					}
+
+					return null;
+				}
+
+			};
+
+			FileLockRetryUtil.registerPathCallable(pathCallable);
+		}
 	}
 
 	public static void fireDeleteEvents(Path filePath) throws IOException {
@@ -214,6 +238,17 @@ public class FileUtil {
 		}
 	}
 
+	public static FileLock getFileLock(FileChannel fileChannel) {
+		try {
+			return fileChannel.tryLock();
+		}
+		catch (Exception e) {
+			_logger.error(e.getMessage(), e);
+
+			return null;
+		}
+	}
+
 	public static Path getFilePath(String first, String... more) {
 		FileSystem fileSystem = FileSystems.getDefault();
 
@@ -324,6 +359,7 @@ public class FileUtil {
 		String fileName = String.valueOf(filePath.getFileName());
 
 		if (_syncFileIgnoreNames.contains(fileName) ||
+			MSOfficeFileUtil.isTempCreatedFile(filePath) ||
 			(PropsValues.SYNC_FILE_IGNORE_HIDDEN && isHidden(filePath)) ||
 			Files.isSymbolicLink(filePath) || fileName.endsWith(".lnk")) {
 
@@ -408,26 +444,6 @@ public class FileUtil {
 		}
 	}
 
-	public static boolean isOfficeTempFile(String fileName, Path filePath) {
-		if (Files.isDirectory(filePath)) {
-			return false;
-		}
-
-		if (fileName.startsWith("~$") ||
-			(fileName.startsWith("~") && fileName.endsWith(".tmp"))) {
-
-			return true;
-		}
-
-		Matcher matcher = _pattern.matcher(fileName);
-
-		if (matcher.matches()) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public static boolean isValidChecksum(Path filePath) throws IOException {
 		if (Files.notExists(filePath) ||
 			(Files.size(filePath) >
@@ -474,16 +490,52 @@ public class FileUtil {
 		return true;
 	}
 
-	public static void moveFile(Path sourceFilePath, Path targetFilePath) {
-		checkFilePath(sourceFilePath);
+	public static void moveFile(
+		final Path sourceFilePath, final Path targetFilePath) {
 
 		try {
+			checkFilePath(sourceFilePath);
+
 			Files.move(
 				sourceFilePath, targetFilePath,
 				StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (Exception e) {
-			_logger.error(e.getMessage(), e);
+			PathCallable pathCallable = new PathCallable(sourceFilePath) {
+
+				@Override
+				public Object call() throws Exception {
+					FileTime fileTime = Files.getLastModifiedTime(
+						targetFilePath);
+
+					if (fileTime.toMillis() <= getStartTime()) {
+						Files.move(
+							sourceFilePath, targetFilePath,
+							StandardCopyOption.REPLACE_EXISTING);
+					}
+					else {
+						Files.deleteIfExists(sourceFilePath);
+					}
+
+					return null;
+				}
+
+			};
+
+			FileLockRetryUtil.registerPathCallable(pathCallable);
+		}
+	}
+
+	public static void releaseFileLock(FileLock fileLock) {
+		try {
+			if (fileLock != null) {
+				fileLock.release();
+			}
+		}
+		catch (Exception e) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -499,8 +551,51 @@ public class FileUtil {
 		Files.setLastModifiedTime(filePath, fileTime);
 	}
 
-	public static void writeFileKey(Path filePath, String fileKey) {
-		if (!Files.exists(filePath)) {
+	public static void writeFileKey(final Path filePath, final String fileKey) {
+		if (FileUtil.getFileKey(filePath) == Long.parseLong(fileKey)) {
+			return;
+		}
+
+		PathCallable pathCallable = new PathCallable(filePath) {
+
+			@Override
+			public Object call() throws Exception {
+				doWriteFileKey(filePath, fileKey);
+
+				return null;
+			}
+
+		};
+
+		FileLockRetryUtil.registerPathCallable(pathCallable);
+	}
+
+	protected static void checkFilePath(Path filePath) {
+
+		// Check to see if the file or folder is still being written to. If
+		// it is, wait until the process is finished before making any future
+		// modifications. This is used to prevent file system interruptions.
+
+		try {
+			while (true) {
+				long size1 = FileUtils.sizeOf(filePath.toFile());
+
+				Thread.sleep(1000);
+
+				long size2 = FileUtils.sizeOf(filePath.toFile());
+
+				if (size1 == size2) {
+					break;
+				}
+			}
+		}
+		catch (Exception e) {
+			_logger.error(e.getMessage(), e);
+		}
+	}
+
+	protected static void doWriteFileKey(Path filePath, String fileKey) {
+		if (FileUtil.getFileKey(filePath) == Long.parseLong(fileKey)) {
 			return;
 		}
 
@@ -540,30 +635,6 @@ public class FileUtil {
 		}
 	}
 
-	protected static void checkFilePath(Path filePath) {
-
-		// Check to see if the file or folder is still being written to. If
-		// it is, wait until the process is finished before making any future
-		// modifications. This is used to prevent file system interruptions.
-
-		try {
-			while (true) {
-				long size1 = FileUtils.sizeOf(filePath.toFile());
-
-				Thread.sleep(1000);
-
-				long size2 = FileUtils.sizeOf(filePath.toFile());
-
-				if (size1 == size2) {
-					break;
-				}
-			}
-		}
-		catch (Exception e) {
-			_logger.error(e.getMessage(), e);
-		}
-	}
-
 	protected static Xattrj getXattrj() {
 		if (_xattrj != null) {
 			return _xattrj;
@@ -586,7 +657,6 @@ public class FileUtil {
 	private static final Logger _logger = LoggerFactory.getLogger(
 		FileUtil.class);
 
-	private static final Pattern _pattern = Pattern.compile("[0-9A-F]{8}");
 	private static final Set<String> _syncFileIgnoreNames = new HashSet<>(
 		Arrays.asList(PropsValues.SYNC_FILE_IGNORE_NAMES));
 	private static Xattrj _xattrj;
