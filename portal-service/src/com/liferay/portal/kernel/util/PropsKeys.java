@@ -601,6 +601,8 @@ public interface PropsKeys {
 
 	public static final String DISCUSSION_EMAIL_SUBJECT = "discussion.email.subject";
 
+	public static final String DISCUSSION_MAX_COMMENTS = "discussion.max.comments";
+
 	public static final String DISCUSSION_SUBSCRIBE_BY_DEFAULT = "discussion.subscribe.by.default";
 
 	public static final String DL_ACTIONS_VISIBLE = "dl.actions.visible";
@@ -2492,8 +2494,6 @@ public interface PropsKeys {
 	public static final String SQL_DATA_MAX_PARAMETERS = "sql.data.max.parameters";
 
 	public static final String STAGING_LIVE_GROUP_REMOTE_STAGING_ENABLED = "staging.live.group.remote.staging.enabled";
-
-	public static final String STAGING_LOCK_ENABLED = "staging.lock.enabled";
 
 	public static final String STAGING_REMOTE_TRANSFER_BUFFER_SIZE = "staging.remote.transfer.buffer.size";
 
