@@ -108,6 +108,9 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
 /**
+ * Provides utility methods for managing the configuration, managing scopes of
+ * content, and obtaining lists of assets for the Asset Publisher portlet.
+ *
  * @author Raymond Augé
  * @author Julio Camarero
  */
@@ -1152,7 +1155,6 @@ public class AssetPublisherUtil {
 			"[$ASSET_ENTRIES$]",
 			ListUtil.toString(
 				assetEntries, _titleAccessor, StringPool.COMMA_AND_SPACE));
-		subscriptionSender.setContextUserPrefix("ASSET_PUBLISHER");
 		subscriptionSender.setFrom(fromAddress, fromName);
 		subscriptionSender.setHtmlFormat(true);
 		subscriptionSender.setLocalizedBodyMap(localizedBodyMap);

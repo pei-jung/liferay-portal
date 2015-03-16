@@ -609,6 +609,33 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.portal.ldap"
 		},
 
+		// Monitoring
+
+		new String[] {
+			"monitoring.portal.request", "monitor.portal.request",
+			"com.liferay.portal.monitoring"
+		},
+		new String[] {
+			"monitoring.portlet.action.request",
+			"monitor.portlet.action.request", "com.liferay.portal.monitoring"
+		},
+		new String[] {
+			"monitoring.portlet.event.request", "monitor.portlet.event.request",
+			"com.liferay.portal.monitoring"
+		},
+		new String[] {
+			"monitoring.portlet.render.request",
+			"monitor.portlet.render.request", "com.liferay.portal.monitoring"
+		},
+		new String[] {
+			"monitoring.portlet.resource.request",
+			"monitor.portlet.resource.request", "com.liferay.portal.monitoring"
+		},
+		new String[] {
+			"monitoring.show.per.request.data.sample",
+			"show.per.request.data.sample", "com.liferay.portal.monitoring"
+		},
+
 		// Navigation
 
 		new String[] {
@@ -828,6 +855,7 @@ public class VerifyProperties extends VerifyProcess {
 		"asset.publisher.filter.unlistable.entries",
 		"asset.tag.permissions.enabled", "asset.tag.properties.default",
 		"asset.tag.properties.enabled", "auth.max.failures.limit",
+		"breadcrumb.display.style.options",
 		"buffered.increment.parallel.queue.size",
 		"buffered.increment.serial.queue.size", "cas.validate.url",
 		"cluster.executor.heartbeat.interval",
@@ -835,6 +863,7 @@ public class VerifyProperties extends VerifyProcess {
 		"com.liferay.portal.servlet.filters.doubleclick.DoubleClickFilter",
 		"com.liferay.portal.servlet.filters.charbufferpool." +
 			"CharBufferPoolFilter",
+		"com.liferay.portal.servlet.filters.monitoring.MonitoringFilter",
 		"com.liferay.portal.servlet.filters.validhtml.ValidHtmlFilter",
 		"commons.pool.enabled", "convert.processes", "discussion.thread.view",
 		"dl.file.entry.read.count.enabled",
@@ -920,7 +949,14 @@ public class VerifyProperties extends VerifyProcess {
 			"amazon.license.3", "amazon.access.key.id"
 		},
 		new String[] {
+			"breadcrumb.display.style.default",
+			"breadcrumb.ddm.template.key.default"
+		},
+		new String[] {
 			"cdn.host", "cdn.host.http"
+		},
+		new String[] {
+			"cluster.executor.debug.enabled", "cluster.link.debug.enabled"
 		},
 		new String[] {
 			"com.liferay.portal.servlet.filters.compression.CompressionFilter",
@@ -1096,7 +1132,7 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.portal.kernel.util.StringBundler.unsafe.create." +
 				"threshold",
 			"com.liferay.portal.kernel.util.StringBundler.threadlocal.buffer." +
-				"limit",
+				"limit"
 		}
 	};
 

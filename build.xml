@@ -1252,15 +1252,24 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 
 			ant setup-sdk
 
-			ant -f modules/build.xml clean
+			ant -f modules/apps/build.xml clean
+			ant -f modules/core/build.xml clean
+			ant -f modules/portal/build.xml clean
+			ant -f modules/sdk/build.xml clean
+			ant -f modules/test/build.xml clean
+			ant -f modules/third-party/build.xml clean
+			ant -f modules/util/build.xml clean
 
 			ant -f modules/core/registry-api/build.xml deploy
 			ant -f modules/core/registry-test/build.xml compile-test
 
-			ant -f modules/build.xml compile-test
-
-			ant -f modules/sdk/ant-arquillian/build.xml clean compile
-			ant -f modules/test/poshi-runner/build.xml clean compile
+			ant -f modules/apps/build.xml compile-test
+			ant -f modules/core/build.xml compile-test
+			ant -f modules/portal/build.xml compile-test
+			ant -f modules/sdk/build.xml compile-test
+			ant -f modules/test/build.xml compile-test
+			ant -f modules/third-party/build.xml compile-test
+			ant -f modules/util/build.xml compile-test
 
 			ant -f portal-service/build.xml test-class -Dtest.class=StringUtilTest
 		</execute>
