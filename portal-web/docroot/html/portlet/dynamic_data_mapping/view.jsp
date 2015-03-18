@@ -28,8 +28,8 @@ portletURL.setParameter("groupId", String.valueOf(groupId));
 portletURL.setParameter("tabs1", tabs1);
 %>
 
-<liferay-ui:error exception="<%= RequiredStructureException.MustNotDeleteReferencedStructure.class %>" message="required-structures-could-not-be-deleted" />
-<liferay-ui:error exception="<%= RequiredStructureException.MustNotDeleteReferencedStructureLink.class %>" message="required-structure-links-could-not-be-deleted" />
+<liferay-ui:error exception="<%= RequiredStructureException.MustNotDeleteStructureThatHasChild.class %>" message="required-structures-could-not-be-deleted-they-are-referenced-by-other-structures" />
+<liferay-ui:error exception="<%= RequiredStructureException.MustNotDeleteStructureReferencedByStructureLink.class %>" message="required-structures-could-not-be-deleted-they-are-referenced-by-structure-links" />
 <liferay-ui:error exception="<%= RequiredStructureException.MustNotDeleteStructureReferencedByTemplates.class %>" message="required-structures-could-not-be-deleted-they-are-referenced-by-templates" />
 
 <aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
