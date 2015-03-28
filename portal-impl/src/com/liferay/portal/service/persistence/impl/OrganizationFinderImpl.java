@@ -181,8 +181,10 @@ public class OrganizationFinderImpl
 
 			boolean doUnion = false;
 
+			Long groupOrganization = null;
+
 			if (params != null) {
-				Long groupOrganization = (Long)params.get("groupOrganization");
+				groupOrganization = (Long)params.remove("groupOrganization");
 
 				if (groupOrganization != null) {
 					doUnion = true;
@@ -244,6 +246,10 @@ public class OrganizationFinderImpl
 			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 
 			QueryPos qPos = QueryPos.getInstance(q);
+
+			if (doUnion) {
+				qPos.add(groupOrganization);
+			}
 
 			setJoin(qPos, params);
 
@@ -425,7 +431,7 @@ public class OrganizationFinderImpl
 
 		sb.append(StringPool.OPEN_PARENTHESIS);
 
-		Long groupOrganization = (Long)params.get("groupOrganization");
+		Long groupOrganization = (Long)params.remove("groupOrganization");
 
 		boolean doUnion = Validator.isNotNull(groupOrganization);
 
@@ -484,6 +490,10 @@ public class OrganizationFinderImpl
 			q.addScalar("orgId", Type.LONG);
 
 			QueryPos qPos = QueryPos.getInstance(q);
+
+			if (doUnion) {
+				qPos.add(groupOrganization);
+			}
 
 			setJoin(qPos, params);
 
