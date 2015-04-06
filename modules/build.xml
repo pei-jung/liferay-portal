@@ -19,6 +19,7 @@
 		<dirset dir="apps/invitation" includes="*" />
 		<dirset dir="apps/journal" includes="*" />
 		<dirset dir="apps/loan-calculator" includes="*" />
+		<dirset dir="apps/mentions" excludes="mentions-editor-config" includes="*" />
 		<dirset dir="apps/message-boards" includes="*" />
 		<dirset dir="apps/nested-portlets" includes="*" />
 		<dirset dir="apps/network-utilities" includes="*" />
@@ -28,6 +29,7 @@
 		<dirset dir="apps/quick-note" includes="*" />
 		<dirset dir="apps/rss" includes="*" />
 		<dirset dir="apps/search" includes="*" />
+		<!--<dirset dir="apps/service-access-control-profile" includes="*" />-->
 		<dirset dir="apps/site" includes="*" />
 		<dirset dir="apps/site-navigation" includes="*" />
 		<dirset dir="apps/social" excludes="social-networking-*" includes="*" />
@@ -38,6 +40,7 @@
 		<dirset dir="apps/wiki" includes="*" />
 		<dirset dir="apps/xsl-content" includes="*" />
 		<dirset dir="core" includes="*" />
+		<dirset dir="frontend" includes="*" />
 		<dirset dir="portal" excludes="portal-taglib-aui-form-extension-sample" includes="*" />
 		<dirset dir="util" includes="pmd,portal-tools,sass-compiler" />
 	</path>

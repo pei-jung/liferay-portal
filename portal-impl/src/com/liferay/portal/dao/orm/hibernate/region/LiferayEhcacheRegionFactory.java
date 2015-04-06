@@ -14,13 +14,13 @@
 
 package com.liferay.portal.dao.orm.hibernate.region;
 
-import com.liferay.portal.cache.ehcache.CacheManagerUtil;
 import com.liferay.portal.cache.ehcache.ModifiableEhcacheWrapper;
 import com.liferay.portal.kernel.cache.CacheListener;
 import com.liferay.portal.kernel.cache.CacheListenerScope;
 import com.liferay.portal.kernel.cache.CacheManagerListener;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheManager;
+import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.cache.PortalCacheProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -176,7 +176,7 @@ public class LiferayEhcacheRegionFactory extends EhCacheRegionFactory {
 
 			configuration.setDefaultTransactionManager(transactionManager);*/
 
-			manager = CacheManagerUtil.createCacheManager(configuration);
+			manager = new CacheManager(configuration);
 
 			boolean skipUpdateCheck = GetterUtil.getBoolean(
 				SystemProperties.get("net.sf.ehcache.skipUpdateCheck"));
@@ -474,10 +474,6 @@ public class LiferayEhcacheRegionFactory extends EhCacheRegionFactory {
 				EhcacheConfigurationUtil.getConfiguration(
 					configurationURL, _usingDefault);
 
-			if (!_name.equals(configuration.getName())) {
-				return;
-			}
-
 			synchronized (manager) {
 				Map<String, CacheConfiguration> cacheConfigurations =
 					configuration.getCacheConfigurations();
@@ -517,7 +513,9 @@ public class LiferayEhcacheRegionFactory extends EhCacheRegionFactory {
 		private HibernatePortalCacheManager(CacheManager cacheManager) {
 			_cacheManager = cacheManager;
 
-			_name = cacheManager.getName();
+			_cacheManager.setName(PortalCacheManagerNames.HIBERNATE);
+
+			_name = _cacheManager.getName();
 		}
 
 		private final CacheManager _cacheManager;

@@ -41,7 +41,7 @@
 </tr>
 <tr>
 	<td>OPTIONS_WRENCH_ICON</td>
-	<td>//a[@title='Options']</td>
+	<td>//div[@id='main-content']//a[@title='Options']</td>
 	<td></td>
 </tr>
 <tr>
@@ -403,6 +403,11 @@
 <tr>
 	<td>ENTRY_DESCRIPTIVE_CATEGORY_COPY</td>
 	<td>xpath=(//div[@data-title='${key_webContentTitle}']//span[contains(@class,'asset-category') and contains(.,'${key_categoryName}')])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_DESCRIPTIVE_TAG</td>
+	<td>//div[@data-title='${key_webContentTitle}']//span[contains(@class,'asset-tags') and contains(.,'${key_tagName}')]</td>
 	<td></td>
 </tr>
 <tr>

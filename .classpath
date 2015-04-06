@@ -134,6 +134,7 @@
 	<classpathentry kind="lib" path="lib/portal/chemistry-opencmis-commons-api.jar"/>
 	<classpathentry kind="lib" path="lib/portal/chemistry-opencmis-commons-impl.jar"/>
 	<classpathentry kind="lib" path="lib/portal/closure-compiler.jar"/>
+	<classpathentry kind="lib" path="lib/portal/com.liferay.rtl.css.jar"/>
 	<classpathentry kind="lib" path="lib/portal/com.liferay.ruby.gems.jar"/>
 	<classpathentry kind="lib" path="lib/portal/com.liferay.sass.compiler.jar"/>
 	<classpathentry kind="lib" path="lib/portal/commons-beanutils.jar"/>
@@ -210,7 +211,6 @@
 	<classpathentry kind="lib" path="lib/portal/jericho-html.jar"/>
 	<classpathentry kind="lib" path="lib/portal/jets3t.jar"/>
 	<classpathentry kind="lib" path="lib/portal/jfreechart.jar"/>
-	<classpathentry kind="lib" path="lib/portal/jgroups.jar"/>
 	<classpathentry kind="lib" path="lib/portal/jhighlight.jar"/>
 	<classpathentry kind="lib" path="lib/portal/jhlabs-filters.jar"/>
 	<classpathentry kind="lib" path="lib/portal/jmatio.jar"/>

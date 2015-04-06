@@ -19,6 +19,7 @@
 		<dirset dir="invitation" includes="*" />
 		<dirset dir="journal" includes="*" />
 		<dirset dir="loan-calculator" includes="*" />
+		<dirset dir="mentions" excludes="mentions-editor-config" includes="*" />
 		<dirset dir="message-boards" includes="*" />
 		<dirset dir="nested-portlets" includes="*" />
 		<dirset dir="network-utilities" includes="*" />
@@ -28,6 +29,7 @@
 		<dirset dir="quick-note" includes="*" />
 		<dirset dir="rss" includes="*" />
 		<dirset dir="search" includes="*" />
+		<!--<dirset dir="service-access-control-profile" includes="*" />-->
 		<dirset dir="site" includes="*" />
 		<dirset dir="site-navigation" includes="*" />
 		<dirset dir="social" includes="*" />
