@@ -67,9 +67,7 @@ public class PoshiRunnerContext {
 		return _commandSummaries.get("action#" + classCommandName);
 	}
 
-	public static int getActionLocatorCount(String classCommandName)
-		throws PoshiRunnerException {
-
+	public static int getActionLocatorCount(String classCommandName) {
 		String commandName =
 			PoshiRunnerGetterUtil.getCommandNameFromClassCommandName(
 				classCommandName);
@@ -82,7 +80,14 @@ public class PoshiRunnerContext {
 		return _rootElements.get("action#" + className);
 	}
 
-	public static String getFilePath(String fileName) {
+	public static String getFilePathFromClassKey(String classKey) {
+		String fileName = PoshiRunnerGetterUtil.getFileNameFromClassKey(
+			classKey);
+
+		return _filePaths.get(fileName);
+	}
+
+	public static String getFilePathFromFileName(String fileName) {
 		return _filePaths.get(fileName);
 	}
 
@@ -94,9 +99,7 @@ public class PoshiRunnerContext {
 		return _commandSummaries.get("function#" + classCommandName);
 	}
 
-	public static int getFunctionLocatorCount(String className)
-		throws PoshiRunnerException {
-
+	public static int getFunctionLocatorCount(String className) {
 		return _functionLocatorCounts.get(className);
 	}
 
@@ -120,6 +123,10 @@ public class PoshiRunnerContext {
 		return _pathLocators.get(pathLocatorKey);
 	}
 
+	public static Map<String, Element> getRootElementsMap() {
+		return _rootElements;
+	}
+
 	public static int getSeleniumParameterCount(String commandName) {
 		return _seleniumParameterCounts.get(commandName);
 	}
@@ -132,8 +139,13 @@ public class PoshiRunnerContext {
 		return _rootElements.get("testcase#" + className);
 	}
 
+	public static void readFiles() throws Exception {
+		_readPoshiFiles();
+		_readSeleniumFiles();
+	}
+
 	private static String _getCommandSummary(
-		String classCommandName, Element commandElement) {
+		String classCommandName, String classType, Element commandElement) {
 
 		String summaryIgnore = commandElement.attributeValue("summary-ignore");
 
@@ -143,12 +155,23 @@ public class PoshiRunnerContext {
 			return null;
 		}
 
-		if (commandElement.attributeValue("summary") != null) {
+		if (Validator.isNotNull(commandElement.attributeValue("summary"))) {
 			return commandElement.attributeValue("summary");
 		}
-		else {
-			return classCommandName;
+
+		if (classType.equals("function")) {
+			String className =
+				PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
+					classCommandName);
+
+			Element rootElement = getFunctionRootElement(className);
+
+			if (Validator.isNotNull(rootElement.attributeValue("summary"))) {
+				return rootElement.attributeValue("summary");
+			}
 		}
+
+		return classCommandName;
 	}
 
 	private static List<String> _getRelatedActionClassCommandNames(
@@ -179,7 +202,7 @@ public class PoshiRunnerContext {
 	}
 
 	private static void _readPathFile(String filePath, String className)
-		throws PoshiRunnerException {
+		throws Exception {
 
 		Element rootElement = PoshiRunnerGetterUtil.getRootElementFromFilePath(
 			filePath);
@@ -227,7 +250,7 @@ public class PoshiRunnerContext {
 		}
 	}
 
-	private static void _readPoshiFiles() throws PoshiRunnerException {
+	private static void _readPoshiFiles() throws Exception {
 		DirectoryScanner directoryScanner = new DirectoryScanner();
 
 		directoryScanner.setBasedir(_BASE_DIR);
@@ -292,7 +315,8 @@ public class PoshiRunnerContext {
 
 					_commandSummaries.put(
 						classType + "#" + classCommandName,
-						_getCommandSummary(classCommandName, commandElement));
+						_getCommandSummary(
+							classCommandName, classType, commandElement));
 				}
 
 				if (classType.equals("function")) {
@@ -308,7 +332,8 @@ public class PoshiRunnerContext {
 					_commandSummaries.put(
 						classType + "#" + className,
 						_getCommandSummary(
-							defaultClassCommandName, defaultCommandElement));
+							defaultClassCommandName, classType,
+							defaultCommandElement));
 
 					String xml = rootElement.asXML();
 
@@ -333,7 +358,7 @@ public class PoshiRunnerContext {
 		}
 	}
 
-	private static void _readSeleniumFiles() throws PoshiRunnerException {
+	private static void _readSeleniumFiles() throws Exception {
 		String[] fileNames = {
 			"LiferaySelenium.java", "WebDriverToSeleniumBridge.java"
 		};
@@ -398,15 +423,5 @@ public class PoshiRunnerContext {
 	private static final Map<String, Element> _rootElements = new HashMap<>();
 	private static final Map<String, Integer> _seleniumParameterCounts =
 		new HashMap<>();
-
-	static {
-		try {
-			_readPoshiFiles();
-			_readSeleniumFiles();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 }

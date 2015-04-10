@@ -98,6 +98,16 @@ public class PoshiRunnerGetterUtil {
 		return classCommandName.substring(x + 1);
 	}
 
+	public static String getFileNameFromClassKey(String classKey) {
+		int x = classKey.indexOf("#");
+		int y = classKey.length();
+
+		String classType = classKey.substring(0, x);
+		String className = classKey.substring(x + 1, y);
+
+		return className + "." + classType;
+	}
+
 	public static String getProjectDir() {
 		File file = new File(StringPool.PERIOD);
 
@@ -107,22 +117,29 @@ public class PoshiRunnerGetterUtil {
 	}
 
 	public static Element getRootElementFromFilePath(String filePath)
-		throws PoshiRunnerException {
+		throws Exception {
 
+		boolean cdata = false;
+		int lineNumber = 1;
 		StringBuilder sb = new StringBuilder();
 
-		int lineNumber = 1;
+		BufferedReader bufferedReader = new BufferedReader(
+			new StringReader(FileUtil.read(filePath)));
 
-		try {
-			BufferedReader bufferedReader = new BufferedReader(
-				new StringReader(FileUtil.read(filePath)));
+		String line = null;
 
-			String line = null;
+		while ((line = bufferedReader.readLine()) != null) {
+			Matcher matcher = _tagPattern.matcher(line);
 
-			while ((line = bufferedReader.readLine()) != null) {
-				Matcher matcher = _tagPattern.matcher(line);
+			if (line.contains("<![CDATA[") || cdata) {
+				if (line.contains("]]>")) {
+					cdata = false;
+				}
+				else {
+					cdata = true;
+				}
 
-				if (matcher.find()) {
+				if (line.contains("<![CDATA[") && matcher.find()) {
 					for (String reservedTag : _reservedTags) {
 						if (line.contains("<" + reservedTag)) {
 							line = StringUtil.replace(
@@ -134,26 +151,62 @@ public class PoshiRunnerGetterUtil {
 						}
 					}
 				}
+			}
+			else if (matcher.find()) {
+				boolean tagIsReservedTag = false;
 
-				sb.append(line);
+				for (String reservedTag : _reservedTags) {
+					if (line.contains("<" + reservedTag)) {
+						line = StringUtil.replace(
+							line, matcher.group(),
+							matcher.group() + " line-number=\"" +
+							lineNumber + "\"");
 
-				lineNumber++;
+						tagIsReservedTag = true;
+
+						break;
+					}
+				}
+
+				if (!tagIsReservedTag) {
+					int x = line.indexOf("<");
+					int y = line.indexOf(" ", x);
+
+					if (y == -1) {
+						y = line.indexOf(">");
+
+						if (y == -1) {
+							y = line.indexOf(">");
+						}
+					}
+
+					String tagName = line.substring(x + 1, y);
+
+					throw new PoshiRunnerException(
+						"Invaild \"" + tagName + "\" tag\n" + filePath + ":" +
+							lineNumber);
+				}
 			}
 
-			String content = sb.toString();
+			sb.append(line);
 
-			InputStream inputStream = new ByteArrayInputStream(
-				content.getBytes("UTF-8"));
-
-			SAXReader saxReader = new SAXReader();
-
-			Document document = saxReader.read(inputStream);
-
-			return document.getRootElement();
+			lineNumber++;
 		}
-		catch (Exception e) {
-			throw new PoshiRunnerException(e);
-		}
+
+		String content = sb.toString();
+
+		InputStream inputStream = new ByteArrayInputStream(
+			content.getBytes("UTF-8"));
+
+		SAXReader saxReader = new SAXReader();
+
+		Document document = saxReader.read(inputStream);
+
+		Element rootElement = document.getRootElement();
+
+		PoshiRunnerValidation.validate(rootElement, filePath);
+
+		return rootElement;
 	}
 
 	public static String getVarMethodValue(String classCommandName)
@@ -274,11 +327,12 @@ public class PoshiRunnerGetterUtil {
 
 	private static final List<String> _reservedTags = Arrays.asList(
 		new String[] {
-			"and", "case", "command", "condition", "contains", "default",
-			"definition", "delimiter", "description", "echo", "else", "elseif",
-			"equals", "execute", "fail", "for", "if", "isset", "not", "or",
-			"property", "set-up", "take-screenshot", "td", "tear-down", "then",
-			"tr", "while", "var"
+			"and", "body", "case", "command", "condition", "contains",
+			"default", "definition", "description", "echo", "else", "elseif",
+			"equals", "execute", "fail", "for", "if", "head", "html", "isset",
+			"not", "or", "property", "set-up", "table", "take-screenshot",
+			"task", "tbody", "td", "tear-down", "thead", "then", "title", "tr",
+			"var", "while"
 		});
 	private static final Pattern _tagPattern = Pattern.compile("<[a-z\\-]+");
 

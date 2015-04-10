@@ -45,7 +45,7 @@
 </tr>
 <tr>
 	<td>ALL_CATEGORIES_CHECKBOX</td>
-	<td>//input[contains(@name,'AssetCategories')]</td>
+	<td>//input[contains(@name,'allRowIds')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -61,11 +61,6 @@
 <tr>
 	<td>INFO_MESSAGE_ALERT</td>
 	<td>//div[contains(@class,'message-response') and contains(@class,'alert')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CONFIRMATION</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>

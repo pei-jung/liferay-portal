@@ -30,7 +30,7 @@
 </tr>
 <tr>
 	<td>OPTIONS_ICON</td>
-	<td>//menu[@class='portlet-topper-toolbar']/div/a/i</td>
+	<td>//div[@id='main-content']//menu[@class='portlet-topper-toolbar']/div/a/i</td>
 	<td></td>
 </tr>
 <tr>
@@ -51,11 +51,6 @@
 <tr>
 	<td>INFO_MESSAGE</td>
 	<td>//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CONFIRMATION</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>

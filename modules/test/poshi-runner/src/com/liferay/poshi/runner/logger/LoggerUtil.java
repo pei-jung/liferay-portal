@@ -16,6 +16,9 @@ package com.liferay.poshi.runner.logger;
 
 import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
 import com.liferay.poshi.runner.util.FileUtil;
+import com.liferay.poshi.runner.util.Validator;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -28,8 +31,212 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  */
 public final class LoggerUtil {
 
-	public static void startLogger() throws Exception {
+	public static void addChildLoggerElement(
+		LoggerElement parentLoggerElement, LoggerElement childLoggerElement) {
+
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var parentNode = document.getElementById('");
+		sb.append(parentLoggerElement.getID());
+		sb.append("');");
+
+		sb.append("var childNode = document.createElement('");
+		sb.append(childLoggerElement.getName());
+		sb.append("');");
+
+		if (Validator.isNotNull(childLoggerElement.getClassName())) {
+			sb.append("childNode.setAttribute('class', '");
+			sb.append(
+				StringEscapeUtils.escapeEcmaScript(
+					childLoggerElement.getClassName()));
+			sb.append("');");
+		}
+
+		if (Validator.isNotNull(childLoggerElement.getText())) {
+			sb.append("childNode.innerHTML = '");
+			sb.append(
+				StringEscapeUtils.escapeEcmaScript(
+					childLoggerElement.getText()));
+			sb.append("';");
+		}
+
+		sb.append("childNode.setAttribute('id', '");
+		sb.append(
+			StringEscapeUtils.escapeEcmaScript(childLoggerElement.getID()));
+		sb.append("');");
+
+		sb.append("parentNode.appendChild(childNode);");
+
+		_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static String getClassName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("return node.getAttribute('class');");
+
+		return (String)_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static String getName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("return node.nodeName;");
+
+		return (String)_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static String getText(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("return node.innerHTML;");
+
+		return (String)_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static boolean isLoggerStarted() {
 		if (_webDriver != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isWrittenToLogger(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return false;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("if (node == null) {");
+		sb.append("return false;");
+		sb.append("}");
+
+		sb.append("return true;");
+
+		return (boolean)_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static void setClassName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("node.setAttribute('class', '");
+		sb.append(
+			StringEscapeUtils.escapeEcmaScript(loggerElement.getClassName()));
+		sb.append("');");
+
+		_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static void setID(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("node.setAttribute('id', '");
+		sb.append(StringEscapeUtils.escapeEcmaScript(loggerElement.getID()));
+		sb.append("');");
+
+		_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static void setName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var oldNode = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("var newNode = document.createElement('");
+		sb.append(StringEscapeUtils.escapeEcmaScript(loggerElement.getName()));
+		sb.append("');");
+
+		sb.append("newNode.innerHTML = oldNode.innerHTML;");
+		sb.append(
+			"newNode.setAttribute('class', oldNode.getAttribute('class'));");
+		sb.append("newNode.setAttribute('id', oldNode.getAttribute('id'));");
+
+		sb.append(
+			"oldNode.parentNode.insertBefore(newNode, oldNode.nextSibling);");
+
+		sb.append("var parentNode = oldNode.parentNode;");
+
+		sb.append("parentNode.removeChild(oldNode);");
+
+		_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static void setText(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("node.innerHTML = '");
+		sb.append(StringEscapeUtils.escapeEcmaScript(loggerElement.getText()));
+		sb.append("';");
+
+		_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static void startLogger() throws Exception {
+		if (isLoggerStarted()) {
 			return;
 		}
 
@@ -53,7 +260,7 @@ public final class LoggerUtil {
 
 		FileUtil.write(_CURRENT_DIR + "/test-results/report.html", content);
 
-		if (_webDriver != null) {
+		if (isLoggerStarted()) {
 			_webDriver.quit();
 
 			_webDriver = null;

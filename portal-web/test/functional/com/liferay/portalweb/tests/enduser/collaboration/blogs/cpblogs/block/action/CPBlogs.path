@@ -25,7 +25,7 @@
 </tr>
 <tr>
 	<td>OPTIONS</td>
-	<td>//a[@title='Options']/i</td>
+	<td>//div[@id='main-content']//a[@title='Options']/i</td>
 	<td></td>
 </tr>
 <tr>
@@ -71,11 +71,6 @@
 <tr>
 	<td>RECYCLE_BIN_BUTTON</td>
 	<td>//button[contains(.,'Move to the Recycle Bin')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CONFIRMATION</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>

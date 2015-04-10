@@ -76,7 +76,6 @@ import com.liferay.portlet.messageboards.DiscussionMaxCommentsException;
 import com.liferay.portlet.messageboards.MBGroupServiceSettings;
 import com.liferay.portlet.messageboards.MessageBodyException;
 import com.liferay.portlet.messageboards.MessageSubjectException;
-import com.liferay.portlet.messageboards.NoSuchDiscussionException;
 import com.liferay.portlet.messageboards.NoSuchThreadException;
 import com.liferay.portlet.messageboards.RequiredMessageException;
 import com.liferay.portlet.messageboards.model.MBCategory;
@@ -103,6 +102,9 @@ import com.liferay.portlet.social.model.SocialActivityConstants;
 import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.util.SerializableUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 
@@ -434,6 +436,29 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	@Override
 	public MBMessage addMessage(
 			long userId, String userName, long groupId, long categoryId,
+			String subject, String body, String fileName, File file,
+			ServiceContext serviceContext)
+		throws FileNotFoundException, PortalException {
+
+		List<ObjectValuePair<String, InputStream>> inputStreamOVPs =
+			new ArrayList<>(1);
+
+		InputStream inputStream = new FileInputStream(file);
+
+		ObjectValuePair<String, InputStream> inputStreamOVP =
+			new ObjectValuePair<>(fileName, inputStream);
+
+		inputStreamOVPs.add(inputStreamOVP);
+
+		return addMessage(
+			userId, userName, groupId, categoryId, 0, 0, subject, body,
+			MBMessageConstants.DEFAULT_FORMAT, inputStreamOVPs, false, 0.0,
+			false, serviceContext);
+	}
+
+	@Override
+	public MBMessage addMessage(
+			long userId, String userName, long groupId, long categoryId,
 			String subject, String body, String format,
 			List<ObjectValuePair<String, InputStream>> inputStreamOVPs,
 			boolean anonymous, double priority, boolean allowPingbacks,
@@ -536,32 +561,36 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	public void deleteDiscussionMessages(String className, long classPK)
 		throws PortalException {
 
-		try {
-			long classNameId = classNameLocalService.getClassNameId(className);
+		long classNameId = classNameLocalService.getClassNameId(className);
 
-			MBDiscussion discussion = mbDiscussionPersistence.findByC_C(
-				classNameId, classPK);
+		MBDiscussion discussion = mbDiscussionPersistence.fetchByC_C(
+			classNameId, classPK);
 
-			List<MBMessage> messages = mbMessagePersistence.findByT_P(
-				discussion.getThreadId(),
-				MBMessageConstants.DEFAULT_PARENT_MESSAGE_ID, 0, 1);
-
-			if (!messages.isEmpty()) {
-				MBMessage message = messages.get(0);
-
-				deleteDiscussionSocialActivities(
-					BlogsEntry.class.getName(), message);
-
-				mbThreadLocalService.deleteThread(message.getThreadId());
+		if (discussion == null) {
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Unable to delete discussion message for class name " +
+						className + " and class PK " + classPK +
+							" because it does not exist");
 			}
 
-			mbDiscussionPersistence.remove(discussion);
+			return;
 		}
-		catch (NoSuchDiscussionException nsde) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(nsde.getMessage());
-			}
+
+		List<MBMessage> messages = mbMessagePersistence.findByT_P(
+			discussion.getThreadId(),
+			MBMessageConstants.DEFAULT_PARENT_MESSAGE_ID, 0, 1);
+
+		if (!messages.isEmpty()) {
+			MBMessage message = messages.get(0);
+
+			deleteDiscussionSocialActivities(
+				BlogsEntry.class.getName(), message);
+
+			mbThreadLocalService.deleteThread(message.getThreadId());
 		}
+
+		mbDiscussionPersistence.remove(discussion);
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -693,7 +722,9 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 						mbMessagePersistence.update(childMessage);
 					}
 				}
-				else {
+				else if (message.getStatus() ==
+							WorkflowConstants.STATUS_APPROVED) {
+
 					MessageCreateDateComparator comparator =
 						new MessageCreateDateComparator(true);
 

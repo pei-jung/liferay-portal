@@ -36,7 +36,7 @@ LPS-30525.
 </#function>
 
 <#macro breadcrumbs>
-	${theme.runtime("com_liferay_site_navigation_breadcrumb_web_portlet_BreadcrumbPortlet")}
+	${theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry", portletProviderAction.VIEW)}
 </#macro>
 
 <#macro css
@@ -78,6 +78,10 @@ ${languageUtil.get(locale, key)}</#macro>
 	key
 >
 ${languageUtil.format(locale, key, arguments)}</#macro>
+
+<#macro languages>
+	${theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry", portletProviderAction.VIEW)}
+</#macro>
 
 <#macro quick_access
 	content_id

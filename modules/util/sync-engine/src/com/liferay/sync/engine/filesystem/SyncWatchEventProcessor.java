@@ -101,6 +101,13 @@ public class SyncWatchEventProcessor implements Runnable {
 		}
 
 		count = SyncFileService.getSyncFilesCount(
+			_syncAccountId, SyncFile.UI_EVENT_DOWNLOADING);
+
+		if (count > 0) {
+			return true;
+		}
+
+		count = SyncFileService.getSyncFilesCount(
 			_syncAccountId, SyncFile.UI_EVENT_UPLOADING);
 
 		if (count > 0) {
@@ -361,6 +368,7 @@ public class SyncWatchEventProcessor implements Runnable {
 		SyncFile syncFile = SyncFileService.fetchSyncFile(filePath.toString());
 
 		if ((syncFile == null) ||
+			(syncFile.getState() == SyncFile.STATE_IN_PROGRESS) ||
 			Files.exists(Paths.get(syncFile.getFilePathName()))) {
 
 			return;

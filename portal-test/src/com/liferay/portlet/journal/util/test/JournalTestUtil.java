@@ -42,6 +42,7 @@ import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
@@ -139,14 +140,29 @@ public class JournalTestUtil {
 			boolean approved, ServiceContext serviceContext)
 		throws Exception {
 
+		return addArticle(
+			groupId, folderId, classNameId, StringPool.BLANK, true, titleMap,
+			descriptionMap, contentMap, layoutUuid, defaultLocale,
+			expirationDate, workflowEnabled, approved, serviceContext);
+	}
+
+	public static JournalArticle addArticle(
+			long groupId, long folderId, long classNameId, String articleId,
+			boolean autoArticleId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Map<Locale, String> contentMap,
+			String layoutUuid, Locale defaultLocale, Date expirationDate,
+			boolean workflowEnabled, boolean approved,
+			ServiceContext serviceContext)
+		throws Exception {
+
 		String content = DDMStructureTestUtil.getSampleStructuredContent(
 			contentMap, LocaleUtil.toLanguageId(defaultLocale));
 
-		String definition = DDMStructureTestUtil.getSampleStructureDefinition(
+		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm(
 			_locales, defaultLocale);
 
 		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
-			groupId, JournalArticle.class.getName(), definition, defaultLocale);
+			groupId, JournalArticle.class.getName(), ddmForm, defaultLocale);
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
 			groupId, ddmStructure.getStructureId());
@@ -198,7 +214,7 @@ public class JournalTestUtil {
 
 		return JournalArticleLocalServiceUtil.addArticle(
 			serviceContext.getUserId(), groupId, folderId, classNameId, 0,
-			StringPool.BLANK, true, JournalArticleConstants.VERSION_DEFAULT,
+			articleId, autoArticleId, JournalArticleConstants.VERSION_DEFAULT,
 			titleMap, descriptionMap, content, ddmStructure.getStructureKey(),
 			ddmTemplate.getTemplateKey(), layoutUuid, displayDateMonth,
 			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,

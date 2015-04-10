@@ -922,18 +922,6 @@
 				</licenses>
 			</library>
 			<library>
-				<file-name>lib/development/sonar-ant-task.jar</file-name>
-				<version>2.1</version>
-				<project-name>Sonar Source</project-name>
-				<project-url>http://www.sonarsource.org</project-url>
-				<licenses>
-					<license>
-						<license-name>LGPL 2.1</license-name>
-						<license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
 				<file-name>lib/development/spring-instrument.jar</file-name>
 				<version>3.2.10</version>
 				<project-name>Spring</project-name>
@@ -1044,7 +1032,7 @@
 				</comments>
 			</library>
 			<library>
-				<file-name>global/portlet.jar</file-name>
+				<file-name>lib/global/portlet.jar</file-name>
 				<version>2.0</version>
 				<project-name>JSR 286 Portlet 2.0 Specification</project-name>
 				<project-url>http://jcp.org/en/jsr/detail?id=286</project-url>
@@ -1501,30 +1489,6 @@
 					<license>
 						<license-name>Apache License 2.0</license-name>
 						<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
-				<file-name>lib/portal/commons-compiler.jar</file-name>
-				<version>2.7.4</version>
-				<project-name>Commons Compiler</project-name>
-				<project-url>http://docs.codehaus.org/display/JANINO/Home</project-url>
-				<licenses>
-					<license>
-						<license-name>BSD Style License</license-name>
-						<license-url>http://en.wikipedia.org/wiki/BSD_licenses</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
-				<file-name>lib/portal/commons-compiler-jdk.jar</file-name>
-				<version>2.7.4</version>
-				<project-name>Commons Compiler JDK</project-name>
-				<project-url>http://docs.codehaus.org/display/JANINO/Home</project-url>
-				<licenses>
-					<license>
-						<license-name>BSD Style License</license-name>
-						<license-url>http://en.wikipedia.org/wiki/BSD_licenses</license-url>
 					</license>
 				</licenses>
 			</library>
@@ -2160,18 +2124,6 @@
 					</license>
 				</licenses>
 			</library>
-				<library>
-				<file-name>lib/portal/janino.jar</file-name>
-				<version>2.7.4</version>
-				<project-name>Janino</project-name>
-				<project-url>http://docs.codehaus.org/display/JANINO/Home</project-url>
-				<licenses>
-					<license>
-						<license-name>BSD Style License</license-name>
-						<license-url>http://en.wikipedia.org/wiki/BSD_licenses</license-url>
-					</license>
-				</licenses>
-			</library>
 			<library>
 				<file-name>lib/portal/java-diff.jar</file-name>
 				<version>1.0.5</version>
@@ -2393,21 +2345,6 @@
 						<license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>
 					</license>
 				</licenses>
-			</library>
-			<library>
-				<file-name>lib/portal/jgroups.jar</file-name>
-				<version>3.2.10</version>
-				<project-name>JGroups</project-name>
-				<project-url>http://www.jgroups.org/javagroupsnew/docs</project-url>
-				<licenses>
-					<license>
-						<license-name>LGPL 2.1</license-name>
-						<license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>
-					</license>
-				</licenses>
-				<comments>
-					See LPS-4474.
-				</comments>
 			</library>
 			<library>
 				<file-name>lib/portal/jhighlight.jar</file-name>
@@ -2698,7 +2635,7 @@
 				</comments>
 			</library>
 			<library>
-				<file-name>lib/portal/liferay-yuicompressor.jar</file-name>
+				<file-name>lib/portal/liferay-yui-compressor.jar</file-name>
 				<version>2.4.7</version>
 				<project-name>YUI Compressor</project-name>
 				<project-url>http://developer.yahoo.com/yui/compressor</project-url>

@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.settings;
 
+import com.liferay.portal.kernel.resource.manager.ResourceManager;
+
 import java.util.Set;
 
 /**
@@ -23,7 +25,11 @@ public interface SettingsDescriptor {
 
 	public Set<String> getAllKeys();
 
+	public Object getConfigurationBean();
+
 	public Set<String> getMultiValuedKeys();
+
+	public ResourceManager getResourceManager();
 
 	public Class<?> getSettingsClass();
 

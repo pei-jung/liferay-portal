@@ -237,7 +237,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(
 			companyId, portletId);
 
-		if (portlet == null) {
+		if ((portlet == null) || portlet.isUndeployedPortlet()) {
 			return null;
 		}
 
@@ -1305,12 +1305,24 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				continue;
 			}
 
-			String url = DLUtil.getPreviewURL(
-				importedFileEntry, importedFileEntry.getFileVersion(), null,
-				StringPool.BLANK, false, false);
+			String reference = StringPool.BLANK;
+
+			if (entityStagedModel instanceof JournalArticle) {
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+				jsonObject.put("groupId", importedFileEntry.getGroupId());
+				jsonObject.put("uuid", importedFileEntry.getUuid());
+
+				reference = jsonObject.toString();
+			}
+			else {
+				reference = DLUtil.getPreviewURL(
+					importedFileEntry, importedFileEntry.getFileVersion(), null,
+					StringPool.BLANK, false, false);
+			}
 
 			content = StringUtil.replace(
-				content, "[$dl-reference=" + path + "$]", url);
+				content, "[$dl-reference=" + path + "$]", reference);
 		}
 
 		return content;
@@ -1913,7 +1925,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(
 			companyId, portletId);
 
-		if (portlet == null) {
+		if ((portlet == null) || portlet.isUndeployedPortlet()) {
 			return false;
 		}
 

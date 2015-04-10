@@ -420,11 +420,11 @@
 		<priority value="ERROR" />
 	</category>
 
-	<category name="com.liferay.portal.model.Image">
+	<category name="com.liferay.portal.model.DefaultModelHintsImpl">
 		<priority value="ERROR" />
 	</category>
 
-	<category name="com.liferay.portal.model.ModelHintsImpl">
+	<category name="com.liferay.portal.model.Image">
 		<priority value="ERROR" />
 	</category>
 
@@ -684,10 +684,6 @@
 		<priority value="WARN" />
 	</category>
 
-	<category name="com.liferay.portal.servlet.LuceneServlet">
-		<priority value="INFO" />
-	</category>
-
 	<category name="com.liferay.portal.servlet.MainServlet">
 		<priority value="WARN" />
 	</category>
@@ -940,7 +936,7 @@
 		<priority value="ERROR" />
 	</category>
 
-	<category name="com.liferay.portal.xml.SAXReaderImpl">
+	<category name="com.liferay.portal.xml.SAXReaderFactory">
 		<priority value="WARN" />
 	</category>
 

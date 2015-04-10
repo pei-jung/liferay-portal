@@ -16,6 +16,7 @@ package com.liferay.portal.settings.impl;
 
 import com.liferay.portal.kernel.settings.ParameterMapSettings;
 import com.liferay.portal.kernel.settings.PortletInstanceSettings;
+import com.liferay.portal.kernel.settings.PortletInstanceSettingsLocator;
 import com.liferay.portal.kernel.settings.PortletInstanceSettingsProvider;
 import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.SettingsException;
@@ -50,8 +51,8 @@ public class PortletInstanceSettingsProviderBuilder
 	public P getPortletInstanceSettings(Layout layout, String portletId)
 		throws SettingsException {
 
-		Settings settings = _settingsFactory.getPortletInstanceSettings(
-			layout, portletId);
+		Settings settings = _settingsFactory.getSettings(
+			new PortletInstanceSettingsLocator(layout, portletId));
 
 		try {
 			return _getSettings(settings);
@@ -67,8 +68,8 @@ public class PortletInstanceSettingsProviderBuilder
 			Layout layout, String portletId, Map<String, String[]> parameterMap)
 		throws SettingsException {
 
-		Settings settings = _settingsFactory.getPortletInstanceSettings(
-			layout, portletId);
+		Settings settings = _settingsFactory.getSettings(
+			new PortletInstanceSettingsLocator(layout, portletId));
 
 		try {
 			return _getSettings(
@@ -94,15 +95,19 @@ public class PortletInstanceSettingsProviderBuilder
 	}
 
 	private P _getSettings(Settings settings) throws Exception {
+		Object settingsExtraInstance = null;
+
 		Class<?> settingsExtraClass =
 			_settingsDefinition.getSettingsExtraClass();
 
-		Constructor<?> constructor = settingsExtraClass.getConstructor(
-			TypedSettings.class);
-
 		TypedSettings typedSettings = new TypedSettings(settings);
 
-		Object settingsExtraInstance = constructor.newInstance(typedSettings);
+		if (settingsExtraClass != null) {
+			Constructor<?> constructor = settingsExtraClass.getConstructor(
+				TypedSettings.class);
+
+			settingsExtraInstance = constructor.newInstance(typedSettings);
+		}
 
 		SettingsInvocationHandler<P, C> settingsInvocationHandler =
 			new SettingsInvocationHandler<>(

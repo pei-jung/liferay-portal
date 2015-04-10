@@ -23,6 +23,9 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutTypeController;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.productivity.center.constants.ProductivityCenterWebKeys;
+import com.liferay.productivity.center.service.panel.PanelAppRegistry;
+import com.liferay.productivity.center.service.panel.PanelCategoryRegistry;
 import com.liferay.taglib.servlet.PipingServletResponse;
 
 import java.util.Collection;
@@ -80,7 +83,14 @@ public class UserPersonalPanelLayoutController implements LayoutTypeController {
 		PipingServletResponse pipingServletResponse = new PipingServletResponse(
 			response, unsyncStringWriter);
 
-		requestDispatcher.include(request, pipingServletResponse);
+		try {
+			setPanelEntryRegistries(request);
+
+			requestDispatcher.include(request, pipingServletResponse);
+		}
+		finally {
+			removePanelEntryRegistries(request);
+		}
 
 		return unsyncStringWriter.toString();
 	}
@@ -101,7 +111,14 @@ public class UserPersonalPanelLayoutController implements LayoutTypeController {
 
 		String contentType = pipingServletResponse.getContentType();
 
-		requestDispatcher.include(request, pipingServletResponse);
+		try {
+			setPanelEntryRegistries(request);
+
+			requestDispatcher.include(request, pipingServletResponse);
+		}
+		finally {
+			removePanelEntryRegistries(request);
+		}
 
 		if (contentType != null) {
 			response.setContentType(contentType);
@@ -149,6 +166,32 @@ public class UserPersonalPanelLayoutController implements LayoutTypeController {
 		}
 	}
 
+	protected void removePanelEntryRegistries(HttpServletRequest request) {
+		request.removeAttribute(ProductivityCenterWebKeys.PANEL_APP_REGISTRY);
+		request.removeAttribute(
+			ProductivityCenterWebKeys.PANEL_CATEGORY_REGISTRY);
+	}
+
+	@Reference(unbind = "-")
+	protected void setPanelAppRegistry(PanelAppRegistry panelAppRegistry) {
+		_panelAppRegistry = panelAppRegistry;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPanelCategoryRegistry(
+		PanelCategoryRegistry panelCategoryRegistry) {
+
+		_panelCategoryRegistry = panelCategoryRegistry;
+	}
+
+	protected void setPanelEntryRegistries(HttpServletRequest request) {
+		request.setAttribute(
+			ProductivityCenterWebKeys.PANEL_APP_REGISTRY, _panelAppRegistry);
+		request.setAttribute(
+			ProductivityCenterWebKeys.PANEL_CATEGORY_REGISTRY,
+			_panelCategoryRegistry);
+	}
+
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.productivity.center.web)"
 	)
@@ -171,6 +214,8 @@ public class UserPersonalPanelLayoutController implements LayoutTypeController {
 	private static final String _VIEW_PATH =
 		"/layout/view/user_personal_panel.jsp";
 
+	private PanelAppRegistry _panelAppRegistry;
+	private PanelCategoryRegistry _panelCategoryRegistry;
 	private ServletContext _servletContext;
 
 }
