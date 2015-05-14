@@ -46,10 +46,14 @@ import com.liferay.portal.model.OrganizationConstants;
 import com.liferay.portal.model.Phone;
 import com.liferay.portal.model.Website;
 import com.liferay.portal.security.auth.PrincipalException;
+import com.liferay.portal.security.membershippolicy.MembershipPolicyException;
 import com.liferay.portal.security.permission.ActionKeys;
+import com.liferay.portal.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.service.OrganizationServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
+import com.liferay.portal.service.UserGroupServiceUtil;
+import com.liferay.portal.service.UserServiceUtil;
 import com.liferay.portal.service.permission.GroupPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -225,6 +229,53 @@ public class UsersAdminPortlet extends MVCPortlet {
 		return organization;
 	}
 
+	public void updateOrganizationUserGroups(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long organizationId = ParamUtil.getLong(
+			actionRequest, "organizationId");
+
+		Organization organization =
+			OrganizationLocalServiceUtil.getOrganization(organizationId);
+
+		long groupId = organization.getGroupId();
+
+		long[] addUserGroupIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "addUserGroupIds"), 0L);
+		long[] removeUserGroupIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "removeUserGroupIds"), 0L);
+
+		UserGroupServiceUtil.addGroupUserGroups(groupId, addUserGroupIds);
+		UserGroupServiceUtil.unsetGroupUserGroups(groupId, removeUserGroupIds);
+
+		String redirect = ParamUtil.getString(
+			actionRequest, "assignmentsRedirect");
+
+		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
+	}
+
+	public void updateOrganizationUsers(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long organizationId = ParamUtil.getLong(
+			actionRequest, "organizationId");
+
+		long[] addUserIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "addUserIds"), 0L);
+		long[] removeUserIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "removeUserIds"), 0L);
+
+		UserServiceUtil.addOrganizationUsers(organizationId, addUserIds);
+		UserServiceUtil.unsetOrganizationUsers(organizationId, removeUserIds);
+
+		String redirect = ParamUtil.getString(
+			actionRequest, "assignmentsRedirect");
+
+		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
+	}
+
 	@Override
 	protected void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
@@ -249,6 +300,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 			cause instanceof AddressZipException ||
 			cause instanceof DuplicateOrganizationException ||
 			cause instanceof EmailAddressException ||
+			cause instanceof MembershipPolicyException ||
 			cause instanceof NoSuchCountryException ||
 			cause instanceof NoSuchListTypeException ||
 			cause instanceof NoSuchRegionException ||
@@ -262,111 +314,6 @@ public class UsersAdminPortlet extends MVCPortlet {
 		}
 
 		return false;
-	}
-	
-	@Override
-	public void processAction(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, ActionRequest actionRequest,
-			ActionResponse actionResponse)
-		throws Exception {
-
-		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
-
-		try {
-			if (cmd.equals("organization_user_groups")) {
-				updateOrganizationUserGroups(actionRequest);
-			}
-			else if (cmd.equals("organization_users")) {
-				updateOrganizationUsers(actionRequest);
-			}
-
-			if (Validator.isNotNull(cmd)) {
-				String redirect = ParamUtil.getString(
-					actionRequest, "assignmentsRedirect");
-
-				sendRedirect(actionRequest, actionResponse, redirect);
-			}
-		}
-		catch (Exception e) {
-			if (e instanceof MembershipPolicyException) {
-				SessionErrors.add(actionRequest, e.getClass(), e);
-			}
-			else if (e instanceof NoSuchOrganizationException ||
-					 e instanceof PrincipalException) {
-
-				SessionErrors.add(actionRequest, e.getClass());
-
-				setForward(actionRequest, "portlet.users_admin.error");
-			}
-			else {
-				throw e;
-			}
-		}
-	}
-
-	@Override
-	public ActionForward render(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
-
-		try {
-			ActionUtil.getOrganization(renderRequest);
-		}
-		catch (Exception e) {
-			if (e instanceof NoSuchOrganizationException ||
-				e instanceof PrincipalException) {
-
-				SessionErrors.add(renderRequest, e.getClass());
-
-				return actionMapping.findForward("portlet.users_admin.error");
-			}
-			else {
-				throw e;
-			}
-		}
-
-		return actionMapping.findForward(
-			getForward(
-				renderRequest,
-				"portlet.users_admin.edit_organization_assignments"));
-	}
-
-	protected void updateOrganizationUserGroups(ActionRequest actionRequest)
-		throws Exception {
-
-		long organizationId = ParamUtil.getLong(
-			actionRequest, "organizationId");
-
-		Organization organization =
-			OrganizationLocalServiceUtil.getOrganization(organizationId);
-
-		long groupId = organization.getGroupId();
-
-		long[] addUserGroupIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "addUserGroupIds"), 0L);
-		long[] removeUserGroupIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "removeUserGroupIds"), 0L);
-
-		UserGroupServiceUtil.addGroupUserGroups(groupId, addUserGroupIds);
-		UserGroupServiceUtil.unsetGroupUserGroups(groupId, removeUserGroupIds);
-	}
-
-	protected void updateOrganizationUsers(ActionRequest actionRequest)
-		throws Exception {
-
-		long organizationId = ParamUtil.getLong(
-			actionRequest, "organizationId");
-
-		long[] addUserIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "addUserIds"), 0L);
-		long[] removeUserIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "removeUserIds"), 0L);
-
-		UserServiceUtil.addOrganizationUsers(organizationId, addUserIds);
-		UserServiceUtil.unsetOrganizationUsers(organizationId, removeUserIds);
 	}
 
 }
