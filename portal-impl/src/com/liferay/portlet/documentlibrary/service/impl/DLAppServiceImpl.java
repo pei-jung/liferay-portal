@@ -63,8 +63,9 @@ import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission
 import com.liferay.portlet.documentlibrary.service.permission.DLPermission;
 import com.liferay.portlet.documentlibrary.util.DLAppUtil;
 import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
+import com.liferay.portlet.documentlibrary.util.comparator.FolderNameComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifiedDateComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelNameComparator;
+import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelTitleComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -882,7 +883,7 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getFileEntries(
 			repositoryId, folderId, start, end,
-			new RepositoryModelNameComparator(true));
+			new RepositoryModelTitleComparator<FileEntry>(true));
 	}
 
 	/**
@@ -958,7 +959,7 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getFileEntries(
 			repositoryId, folderId, fileEntryTypeId, start, end,
-			new RepositoryModelNameComparator(true));
+			new RepositoryModelTitleComparator<FileEntry>(true));
 	}
 
 	/**
@@ -995,7 +996,8 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getFileEntries(
 			repositoryId, folderId, mimeTypes, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, new RepositoryModelNameComparator(true));
+			QueryUtil.ALL_POS,
+			new RepositoryModelTitleComparator<FileEntry>(true));
 	}
 
 	@Override
@@ -1351,7 +1353,7 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getFolders(
 			repositoryId, parentFolderId, includeMountFolders, start, end,
-			new RepositoryModelNameComparator(true));
+			new FolderNameComparator(true));
 	}
 
 	/**
@@ -1461,7 +1463,7 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getFolders(
 			repositoryId, parentFolderId, start, end,
-			new RepositoryModelNameComparator(true));
+			new FolderNameComparator(true));
 	}
 
 	/**
@@ -1532,7 +1534,7 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getFoldersAndFileEntriesAndFileShortcuts(
 			repositoryId, folderId, status, includeMountFolders, start, end,
-			new RepositoryModelNameComparator(true));
+			new RepositoryModelTitleComparator<Object>(true));
 	}
 
 	/**
@@ -1975,7 +1977,7 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 		return getMountFolders(
 			repositoryId, parentFolderId, start, end,
-			new RepositoryModelNameComparator(true));
+			new FolderNameComparator(true));
 	}
 
 	/**

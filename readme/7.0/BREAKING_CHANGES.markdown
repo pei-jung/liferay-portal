@@ -101,35 +101,34 @@ parameters `currentLogoURL`, `hasUpdateLogoPermission`, `maxFileSize`, and/or
 
 **Example**
 
-Replace:
-```
-<portlet:renderURL var="editUserPortraitURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-    <portlet:param name="struts_action" value="/users_admin/edit_user_portrait" />
-    <portlet:param name="redirect" value="<%= currentURL %>" />
-    <portlet:param name="p_u_i_d" value="<%= String.valueOf(selUser.getUserId()) %>" />
-    <portlet:param name="portrait_id" value="<%= String.valueOf(selUser.getPortraitId()) %>" />
-</portlet:renderURL>
+Old way:
 
-<liferay-ui:logo-selector
-    defaultLogoURL="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), selUser.isMale(), 0) %>"
-    editLogoURL="<%= editUserPortraitURL %>"
-    imageId="<%= selUser.getPortraitId() %>"
-    logoDisplaySelector=".user-logo"
-/>
-```
+    <portlet:renderURL var="editUserPortraitURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+        <portlet:param name="struts_action" value="/users_admin/edit_user_portrait" />
+        <portlet:param name="redirect" value="<%= currentURL %>" />
+        <portlet:param name="p_u_i_d" value="<%= String.valueOf(selUser.getUserId()) %>" />
+        <portlet:param name="portrait_id" value="<%= String.valueOf(selUser.getPortraitId()) %>" />
+    </portlet:renderURL>
 
-With:
-```
-<liferay-ui:logo-selector
-    currentLogoURL="<%= selUser.getPortraitURL(themeDisplay) %>"
-    defaultLogoURL="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), selUser.isMale(), 0) %>"
-    hasUpdateLogoPermission='<%= UsersAdminUtil.hasUpdateFieldPermission(selUser, "portrait") %>'
-    imageId="<%= selUser.getPortraitId() %>"
-    logoDisplaySelector=".user-logo"
-    maxFileSize="<%= PrefsPropsUtil.getLong(PropsKeys.USERS_IMAGE_MAX_SIZE) / 1024 %>"
-    tempImageFileName="<%= String.valueOf(selUser.getUserId()) %>"
-/>
-```
+    <liferay-ui:logo-selector
+        defaultLogoURL="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), selUser.isMale(), 0) %>"
+        editLogoURL="<%= editUserPortraitURL %>"
+        imageId="<%= selUser.getPortraitId() %>"
+        logoDisplaySelector=".user-logo"
+    />
+
+
+New way:
+
+    <liferay-ui:logo-selector
+        currentLogoURL="<%= selUser.getPortraitURL(themeDisplay) %>"
+        defaultLogoURL="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), selUser.isMale(), 0) %>"
+        hasUpdateLogoPermission='<%= UsersAdminUtil.hasUpdateFieldPermission(selUser, "portrait") %>'
+        imageId="<%= selUser.getPortraitId() %>"
+        logoDisplaySelector=".user-logo"
+        maxFileSize="<%= PrefsPropsUtil.getLong(PropsKeys.USERS_IMAGE_MAX_SIZE) / 1024 %>"
+        tempImageFileName="<%= String.valueOf(selUser.getUserId()) %>"
+    />
 
 #### Why was this change made?
 This change helps keep a unified UI and consistent experience for uploading
@@ -167,16 +166,14 @@ previously configured in your `portal-ext.properties` file.
 
 **Example**
 
-Replace:
-```
-wiki.email.page.updated.body=A wiki page was updated.
-wiki.email.page.updated.signature=For any doubts email the system administrator
-```
+Old way:
 
-With:
-```
-wiki.email.page.updated.body=A wiki page was updated.\n--\nFor any doubts email the system administrator
-```
+    wiki.email.page.updated.body=A wiki page was updated.
+    wiki.email.page.updated.signature=For any doubts email the system administrator
+
+New way:
+
+    wiki.email.page.updated.body=A wiki page was updated.\n--\nFor any doubts email the system administrator
 
 #### Why was this change made?
 This change helps simplify the user interface. The signatures can still be set
@@ -204,15 +201,13 @@ name that take a `ResourceBundle` parameter, instead of taking a
 
 **Example**
 
-Replace:
-```
-LanguageUtil.get(portletConfig, locale, key);
-```
+Old call:
 
-With:
-```
-LanguageUtil.get(portletConfig.getResourceBundle(locale), key);
-```
+    LanguageUtil.get(portletConfig, locale, key);
+
+New call:
+
+    LanguageUtil.get(portletConfig.getResourceBundle(locale), key);
 
 #### Why was this change made?
 The removed methods didn't work properly and would never work properly, since
@@ -263,27 +258,25 @@ These methods must be updated in all AssetRenderer and Indexer implementations.
 Add a `PortletRequest` and `PortletResponse` parameter to the signatures of
 these methods.
 
-**Example**
+**Example 1**
 
-Replace:
-```
-protected Summary doGetSummary(Document document, Locale locale, String snippet, PortletURL portletURL)
-```
+Old signature:
 
-With:
-```
-protected Summary doGetSummary(Document document, Locale locale, String snippet, PortletRequest portletRequest, PortletResponse portletResponse)
-```
+    protected Summary doGetSummary(Document document, Locale locale, String snippet, PortletURL portletURL)
 
-and replace:
-```
-public String getSummary(Locale locale)
-```
+New signature:
 
-With:
-```
-public String getSummary(PortletRequest portletRequest, PortletResponse portletResponse)
-```
+    protected Summary doGetSummary(Document document, Locale locale, String snippet, PortletRequest portletRequest, PortletResponse portletResponse)
+
+**Example 2**
+
+Old signature:
+
+    public String getSummary(Locale locale)
+
+New signature:
+
+    public String getSummary(PortletRequest portletRequest, PortletResponse portletResponse)
 
 #### Why was this change made?
 Some content (such as web content) needs the `PortletRequest` and
@@ -571,19 +564,15 @@ The classes from package `com.liferay.util.bridges.mvc` in `util-bridges.jar`
 were moved to a new package `com.liferay.portal.kernel.portlet.bridges.mvc`
 in `portal-service.jar`.
 
-The classes affected are:
+Old classes:
 
-```
-com.liferay.util.bridges.mvc.ActionCommand
-com.liferay.util.bridges.mvc.BaseActionCommand
-```
+    com.liferay.util.bridges.mvc.ActionCommand
+    com.liferay.util.bridges.mvc.BaseActionCommand
 
-They are now:
+New classes:
 
-```
-com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand
-com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand
-```
+    com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand
+    com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand
 
 In addition, `com.liferay.util.bridges.mvc.MVCPortlet` is deprecated, but was
 made to extend `com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet`.
@@ -1611,11 +1600,15 @@ This affects anyone who uses those methods.
 
 The removed methods were generic and had long signatures with optional
 parameters. They now have one specialized version per parameter and are
-in the `RepositoryProvider` service. For instance, if you called ...
+in the `RepositoryProvider` service. 
+
+**Example**
+
+Old call:
 
     RepositoryLocalServiceUtil.getRepositoryImpl(0, fileEntryId, 0)
 
-... you must now call ...
+New call:
 
     RepositoryProviderUtil.getLocalRepositoryByFileEntryId(fileEntryId)
 
@@ -1652,5 +1645,79 @@ methods used by `addFileEntry`.
 The logic inside the `addFileEntry` method was moved, out from
 `DLAppHelperLocalService` and into repository capabilities, to further decouple
 core repository implementations from additional (optional) functionality.
+
+---------------------------------------
+
+### Indexers called from Document Library no longer receive a DLFileEntry, but a FileEntry 
+- **Date:** 2015-May-20
+- **JIRA Ticket:** LPS-55613
+
+#### What changed?
+
+Indexers that previously received a DLFileEntry object (for example in the addRelatedEntryFields() method) will no longer receive a DLFileEntry but a FileEntry.
+
+#### Who is affected?
+
+This affects anyone who implements an Indexer handling DLFileEntry objects.
+
+#### How should I update my code?
+
+You should try to use methods in FileEntry or exported repository capabilities to obtain the value you were using. If no capability exist for your use case you can resort to fileEntry.getModel() and cast the result to a DLFileEntry, but this breaks all encapsulation and may result in future failures or compatibility problems.
+
+Example of old code:
+
+```
+	@Override
+	public void addRelatedEntryFields(Document document, Object obj)
+		throws Exception {
+		
+        DLFileEntry dlFileEntry = (DLFileEntry)obj;
+        
+        long fileEntryId = dlFileEntry.getFileEntryId();
+```
+
+should be replaced by:
+
+```
+	@Override
+	public void addRelatedEntryFields(Document document, Object obj)
+		throws Exception {
+		
+        FileEntry fileEntry = (FileEntry)obj;
+        
+        long fileEntryId = fileEntry.getFileEntryId();
+```
+
+#### Why was this change made?
+
+This change was made to enhance the Repository API and make decoupling from Document Library easier when modularizing the portal.
+
+---------------------------------------
+
+### Removed permissionClassName, permissionClassPK and permissionOwner parameters from MBMessage API
+- **Date:** 2015-May-27
+- **JIRA Ticket:** LPS-55877
+
+#### What changed?
+
+The parameters `permissionClassName`, `permissionClassPK` and
+`permissionOwner` have been removed from Message Boards API and
+Discussion taglib.
+
+#### Who is affected?
+
+Any code that invokes the affected methods (locally or remotely) as
+well as any view that uses the Discusion taglib.
+
+#### How should I update my code?
+
+It suffices to remove the parameters from the method calls (for
+consumers of the API) or the attributes in taglib invocations.
+
+#### Why was this change made?
+
+Those API methods were exposed in the remote services, allowing any
+cosumer to bypass the permission system by providing customized
+className, classPK or ownerId.
 
 ---------------------------------------

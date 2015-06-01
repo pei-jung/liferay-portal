@@ -14,8 +14,10 @@
 
 package com.liferay.journal.web.portlet;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.journal.web.asset.JournalArticleAssetRenderer;
 import com.liferay.journal.web.constants.JournalPortletKeys;
+import com.liferay.journal.web.constants.JournalWebKeys;
 import com.liferay.journal.web.portlet.action.ActionUtil;
 import com.liferay.journal.web.upgrade.JournalWebUpgrade;
 import com.liferay.journal.web.util.JournalRSSUtil;
@@ -48,6 +50,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.TrashedModel;
+import com.liferay.portal.security.auth.ConfigurationException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -370,6 +373,21 @@ public class JournalPortlet extends MVCPortlet {
 		updateArticle(actionRequest, actionResponse);
 	}
 
+	@Override
+	public void render(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		String path = getPath(renderRequest);
+
+		if (Validator.equals(path, "/edit_article.jsp")) {
+			renderRequest.setAttribute(
+				JournalWebKeys.ITEM_SELECTOR, _itemSelector);
+		}
+
+		super.render(renderRequest, renderResponse);
+	}
+
 	public void restoreTrashEntries(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
@@ -464,6 +482,11 @@ public class JournalPortlet extends MVCPortlet {
 		else {
 			super.serveResource(resourceRequest, resourceResponse);
 		}
+	}
+
+	@Reference
+	public void setItemSelector(ItemSelector itemSelector) {
+		_itemSelector = itemSelector;
 	}
 
 	public void subscribeFolder(
@@ -1028,6 +1051,8 @@ public class JournalPortlet extends MVCPortlet {
 		throws IOException, PortletException {
 
 		if (SessionErrors.contains(
+				renderRequest, ConfigurationException.class.getName()) ||
+			SessionErrors.contains(
 				renderRequest, NoSuchArticleException.class.getName()) ||
 			SessionErrors.contains(
 				renderRequest, NoSuchFeedException.class.getName()) ||
@@ -1038,7 +1063,10 @@ public class JournalPortlet extends MVCPortlet {
 			SessionErrors.contains(
 				renderRequest, NoSuchTemplateException.class.getName()) ||
 			SessionErrors.contains(
-				renderRequest, PrincipalException.class.getName())) {
+				renderRequest, PrincipalException.getNestedClasses()) ||
+			SessionErrors.contains(
+				renderRequest,
+				PrincipalException.MustNotBeGroupAdmin.class.getName())) {
 
 			include(
 				"/portlet/journal/html/error.jsp", renderRequest,
@@ -1326,6 +1354,7 @@ public class JournalPortlet extends MVCPortlet {
 	private static final Log _log = LogFactoryUtil.getLog(JournalPortlet.class);
 
 	private DDMStructureLocalService _ddmStructureLocalService;
+	private ItemSelector _itemSelector;
 	private JournalArticleService _journalArticleService;
 	private JournalContentSearchLocalService _journalContentSearchLocalService;
 	private JournalFeedService _journalFeedService;

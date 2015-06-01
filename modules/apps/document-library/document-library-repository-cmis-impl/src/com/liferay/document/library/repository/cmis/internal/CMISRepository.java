@@ -69,8 +69,8 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelCreateDateComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifiedDateComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelNameComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelSizeComparator;
+import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelTitleComparator;
 
 import java.io.InputStream;
 
@@ -1573,13 +1573,15 @@ public class CMISRepository extends BaseCmisRepository {
 
 		if (properties != null) {
 			if (!allowableActionsSet.contains(Action.CAN_UPDATE_PROPERTIES)) {
-				throw new PrincipalException();
+				throw new PrincipalException.MustHavePermission(
+					0, Action.CAN_UPDATE_PROPERTIES.toString());
 			}
 		}
 
 		if (contentStream != null) {
 			if (!allowableActionsSet.contains(Action.CAN_SET_CONTENT_STREAM)) {
-				throw new PrincipalException();
+				throw new PrincipalException.MustHavePermission(
+					0, Action.CAN_SET_CONTENT_STREAM.toString());
 			}
 		}
 	}
@@ -2117,17 +2119,15 @@ public class CMISRepository extends BaseCmisRepository {
 			 e.getMessage().contains("authorized")) ||
 			(e instanceof CmisPermissionDeniedException)) {
 
-			String message = e.getMessage();
+			String login = null;
 
 			try {
-				message =
-					"Unable to login with user " +
-						_cmisRepositoryHandler.getLogin();
+				login = _cmisRepositoryHandler.getLogin();
 			}
 			catch (Exception e2) {
 			}
 
-			throw new PrincipalException(message, e);
+			throw new PrincipalException.MustBeAuthenticated(login);
 		}
 	}
 
@@ -2151,8 +2151,8 @@ public class CMISRepository extends BaseCmisRepository {
 		if ((obc != null) &&
 			((obc instanceof RepositoryModelCreateDateComparator) ||
 			 (obc instanceof RepositoryModelModifiedDateComparator) ||
-			 (obc instanceof RepositoryModelNameComparator) ||
-			 (obc instanceof RepositoryModelSizeComparator))) {
+			 (obc instanceof RepositoryModelSizeComparator) ||
+			 (obc instanceof RepositoryModelTitleComparator))) {
 
 			list = ListUtil.sort(list, obc);
 		}

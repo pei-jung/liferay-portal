@@ -98,7 +98,6 @@ import com.liferay.portal.service.permission.PortalPermissionUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.service.persistence.LayoutSetUtil;
 import com.liferay.portal.service.persistence.LayoutUtil;
-import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
@@ -197,19 +196,12 @@ public class SitesImpl implements Sites {
 			HttpServletRequest request, RenderResponse renderResponse)
 		throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			com.liferay.portal.kernel.util.WebKeys.THEME_DISPLAY);
-
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		String portletName = portletDisplay.getPortletName();
-
-		if ((renderResponse == null) ||
-			portletName.equals(PortletKeys.GROUP_PAGES) ||
-			portletName.equals(PortletKeys.MY_PAGES)) {
-
+		if (renderResponse == null) {
 			return;
 		}
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			com.liferay.portal.kernel.util.WebKeys.THEME_DISPLAY);
 
 		Group unescapedGroup = group.toUnescapedModel();
 
@@ -542,7 +534,10 @@ public class SitesImpl implements Sites {
 			!GroupPermissionUtil.contains(
 				permissionChecker, group, ActionKeys.PUBLISH_STAGING)) {
 
-			throw new PrincipalException();
+			throw new PrincipalException.MustHavePermission(
+				permissionChecker.getUserId(), Group.class.getName(),
+				group.getGroupId(), ActionKeys.MANAGE_STAGING,
+				ActionKeys.PUBLISH_STAGING);
 		}
 
 		if (LayoutPermissionUtil.contains(
@@ -1576,18 +1571,24 @@ public class SitesImpl implements Sites {
 			!LayoutPermissionUtil.contains(
 				permissionChecker, layout, ActionKeys.UPDATE)) {
 
-			throw new PrincipalException();
+			throw new PrincipalException.MustHavePermission(
+				permissionChecker.getUserId(), layout.getName(),
+				layout.getLayoutId(), ActionKeys.UPDATE);
 		}
 		else if (!group.isUser() &&
 				 !GroupPermissionUtil.contains(
 					 permissionChecker, group, ActionKeys.UPDATE)) {
 
-			throw new PrincipalException();
+			throw new PrincipalException.MustHavePermission(
+				permissionChecker.getUserId(), group.getName(),
+				group.getGroupId(), ActionKeys.UPDATE);
 		}
 		else if (group.isUser() &&
 				 (permissionChecker.getUserId() != group.getClassPK())) {
 
-			throw new PrincipalException();
+			throw new PrincipalException.MustBeOwnedByCurrentUser(
+				permissionChecker.getUserId(), group.getName(),
+				group.getClassPK(), ActionKeys.UPDATE);
 		}
 	}
 
