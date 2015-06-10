@@ -30,6 +30,7 @@ public abstract class
 		implements ItemSelectorCriterionHandler {
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ItemSelectorView<T>>
 		getItemSelectorViews(
 			ItemSelectorCriterion fileItemSelectorCriterion) {
@@ -45,7 +46,7 @@ public abstract class
 
 					@Override
 					public boolean filter(ItemSelectorView itemSelectorView) {
-						Class itemSelectorCriterionClass =
+						Class<?> itemSelectorCriterionClass =
 							itemSelectorView.getItemSelectorCriterionClass();
 
 						return itemSelectorCriterionClass.isAssignableFrom(
