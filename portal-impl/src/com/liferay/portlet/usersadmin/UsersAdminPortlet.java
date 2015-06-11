@@ -50,7 +50,6 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Address;
@@ -97,39 +96,20 @@ import javax.portlet.RenderResponse;
 public class UsersAdminPortlet extends MVCPortlet {
 
 	public void deactivateUsers(
-		ActionRequest actionRequest,
-		ActionResponse actionResponse) throws Exception {
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
-		try {
-			long[] deleteUserIds = StringUtil.split(
-				ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
+		long[] deleteUserIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
 
-			for (long deleteUserId : deleteUserIds) {
-				int status = WorkflowConstants.STATUS_INACTIVE;
+		for (long deleteUserId : deleteUserIds) {
+			int status = WorkflowConstants.STATUS_INACTIVE;
 
-				UserServiceUtil.updateStatus(
-					deleteUserId, status, new ServiceContext());
-			}
-
-			sendEditUserRedirect(actionRequest, actionResponse);
+			UserServiceUtil.updateStatus(
+				deleteUserId, status, new ServiceContext());
 		}
-		catch (Exception e) {
-			String password1 = actionRequest.getParameter("password1");
-			String password2 = actionRequest.getParameter("password2");
 
-			boolean submittedPassword = false;
-
-			if (e instanceof RequiredUserException ||
-				!Validator.isBlank(password1) ||
-				!Validator.isBlank(password2)) {
-
-				handleEditUserException(
-					actionRequest, actionResponse, submittedPassword);
-			}
-			else {
-				throw e;
-			}
-		}
+		sendEditUserRedirect(actionRequest);
 	}
 
 	public void deleteOrganizations(
@@ -154,120 +134,62 @@ public class UsersAdminPortlet extends MVCPortlet {
 	}
 
 	public void deleteRole(
-		ActionRequest actionRequest,
-		ActionResponse actionResponse) throws Exception {
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
-		try {
-			User user = PortalUtil.getSelectedUser(actionRequest);
+		User user = PortalUtil.getSelectedUser(actionRequest);
 
-			long roleId = ParamUtil.getLong(actionRequest, "roleId");
+		long roleId = ParamUtil.getLong(actionRequest, "roleId");
 
-			UserServiceUtil.deleteRoleUser(roleId, user.getUserId());
+		UserServiceUtil.deleteRoleUser(roleId, user.getUserId());
 
-			sendEditUserRedirect(actionRequest, actionResponse);
-		}
-		catch (Exception e) {
-			String password1 = actionRequest.getParameter("password1");
-			String password2 = actionRequest.getParameter("password2");
-
-			boolean submittedPassword = false;
-
-			if (e instanceof RequiredUserException ||
-				!Validator.isBlank(password1) ||
-				!Validator.isBlank(password2)) {
-
-				handleEditUserException(
-					actionRequest, actionResponse, submittedPassword);
-			}
-			else {
-				throw e;
-			}
-		}
+		sendEditUserRedirect(actionRequest);
 	}
 
 	public void deleteUsers(
-		ActionRequest actionRequest,
-		ActionResponse actionResponse) throws Exception {
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
-		try {
-			long[] deleteUserIds = StringUtil.split(
-				ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
+		long[] deleteUserIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
 
-			for (long deleteUserId : deleteUserIds) {
-				UserServiceUtil.deleteUser(deleteUserId);
-			}
-
-			sendEditUserRedirect(actionRequest, actionResponse);
+		for (long deleteUserId : deleteUserIds) {
+			UserServiceUtil.deleteUser(deleteUserId);
 		}
-		catch (Exception e) {
-			String password1 = actionRequest.getParameter("password1");
-			String password2 = actionRequest.getParameter("password2");
 
-			boolean submittedPassword = false;
-
-			if (e instanceof RequiredUserException ||
-				!Validator.isBlank(password1) ||
-				!Validator.isBlank(password2)) {
-
-				handleEditUserException(
-					actionRequest, actionResponse, submittedPassword);
-			}
-			else {
-				throw e;
-			}
-		}
+		sendEditUserRedirect(actionRequest);
 	}
 
 	public void editLockout(
-		ActionRequest actionRequest,
-		ActionResponse actionResponse) throws Exception {
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
-		try {
-			User user = PortalUtil.getSelectedUser(actionRequest);
+		User user = PortalUtil.getSelectedUser(actionRequest);
 
-			UserServiceUtil.updateLockoutById(user.getUserId(), false);
+		UserServiceUtil.updateLockoutById(user.getUserId(), false);
 
-			ThemeDisplay themeDisplay =
-					(ThemeDisplay)actionRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
-			String redirect = ParamUtil.getString(actionRequest, "redirect");
+		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
-			if (user != null) {
-				redirect = HttpUtil.setParameter(
-					redirect, actionResponse.getNamespace() + "p_u_i_d",
-					user.getUserId());
-			}
-
-			Group scopeGroup = themeDisplay.getScopeGroup();
-
-			if (scopeGroup.isUser() &&
-				(UserLocalServiceUtil.fetchUserById(
-					scopeGroup.getClassPK()) == null)) {
-
-				redirect = HttpUtil.setParameter(redirect, "doAsGroupId", 0);
-				redirect = HttpUtil.setParameter(redirect, "refererPlid", 0);
-			}
-
-			actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
+		if (user != null) {
+			redirect = HttpUtil.setParameter(
+				redirect, actionResponse.getNamespace() + "p_u_i_d",
+				user.getUserId());
 		}
-		catch (Exception e) {
-			String password1 = actionRequest.getParameter("password1");
-			String password2 = actionRequest.getParameter("password2");
 
-			boolean submittedPassword = false;
+		Group scopeGroup = themeDisplay.getScopeGroup();
 
-			if (e instanceof RequiredUserException ||
-				!Validator.isBlank(password1) ||
-				!Validator.isBlank(password2)) {
+		if (scopeGroup.isUser() &&
+			(UserLocalServiceUtil.fetchUserById(
+				scopeGroup.getClassPK()) == null)) {
 
-				handleEditUserException(
-					actionRequest, actionResponse, submittedPassword);
-			}
-			else {
-				throw e;
-			}
+			redirect = HttpUtil.setParameter(redirect, "doAsGroupId", 0);
+			redirect = HttpUtil.setParameter(redirect, "refererPlid", 0);
 		}
+
+		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
 	}
 
 	public void editOrganization(
@@ -482,39 +404,20 @@ public class UsersAdminPortlet extends MVCPortlet {
 	}
 
 	public void restoreUsers(
-		ActionRequest actionRequest,
-		ActionResponse actionResponse) throws Exception {
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
-		try {
-			long[] deleteUserIds = StringUtil.split(
-				ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
+		long[] deleteUserIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
 
-			for (long deleteUserId : deleteUserIds) {
-				int status = WorkflowConstants.STATUS_APPROVED;
+		for (long deleteUserId : deleteUserIds) {
+			int status = WorkflowConstants.STATUS_APPROVED;
 
-				UserServiceUtil.updateStatus(
-					deleteUserId, status, new ServiceContext());
-			}
-
-			sendEditUserRedirect(actionRequest, actionResponse);
+			UserServiceUtil.updateStatus(
+				deleteUserId, status, new ServiceContext());
 		}
-		catch (Exception e) {
-			String password1 = actionRequest.getParameter("password1");
-			String password2 = actionRequest.getParameter("password2");
 
-			boolean submittedPassword = false;
-
-			if (e instanceof RequiredUserException ||
-				!Validator.isBlank(password1) ||
-				!Validator.isBlank(password2)) {
-
-				handleEditUserException(
-					actionRequest, actionResponse, submittedPassword);
-			}
-			else {
-				throw e;
-			}
-		}
+		sendEditUserRedirect(actionRequest);
 	}
 
 	@Override
@@ -535,26 +438,6 @@ public class UsersAdminPortlet extends MVCPortlet {
 		}
 		else {
 			super.doDispatch(renderRequest, renderResponse);
-		}
-	}
-
-	protected void handleEditUserException(
-		ActionRequest actionRequest, ActionResponse actionResponse,
-		boolean submittedPassword) throws Exception {
-
-		String redirect = PortalUtil.escapeRedirect(
-			ParamUtil.getString(actionRequest, "redirect"));
-
-		if (submittedPassword) {
-			User user = PortalUtil.getSelectedUser(actionRequest);
-
-			redirect = HttpUtil.setParameter(
-				redirect, actionResponse.getNamespace() + "p_u_i_d",
-				user.getUserId());
-		}
-
-		if (Validator.isNotNull(redirect)) {
-			actionResponse.sendRedirect(redirect);
 		}
 	}
 
@@ -596,8 +479,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 		return false;
 	}
 
-	protected void sendEditUserRedirect(
-			ActionRequest actionRequest, ActionResponse actionResponse)
+	protected void sendEditUserRedirect(ActionRequest actionRequest)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
