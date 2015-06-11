@@ -218,43 +218,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 		}
 	}
 
-	public void restoreUsers(
-		ActionRequest actionRequest,
-		ActionResponse actionResponse) throws Exception {
-
-		try {
-			long[] deleteUserIds = StringUtil.split(
-				ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
-
-			for (long deleteUserId : deleteUserIds) {
-				int status = WorkflowConstants.STATUS_APPROVED;
-
-				UserServiceUtil.updateStatus(
-					deleteUserId, status, new ServiceContext());
-			}
-
-			sendEditUserRedirect(actionRequest, actionResponse);
-		}
-		catch (Exception e) {
-			String password1 = actionRequest.getParameter("password1");
-			String password2 = actionRequest.getParameter("password2");
-
-			boolean submittedPassword = false;
-
-			if (e instanceof RequiredUserException ||
-				!Validator.isBlank(password1) ||
-				!Validator.isBlank(password2)) {
-
-				handleEditUserException(
-					actionRequest, actionResponse, submittedPassword);
-			}
-			else {
-				throw e;
-			}
-		}
-	}
-
-	public void updateLockout(
+	public void editLockout(
 		ActionRequest actionRequest,
 		ActionResponse actionResponse) throws Exception {
 
@@ -264,7 +228,8 @@ public class UsersAdminPortlet extends MVCPortlet {
 			UserServiceUtil.updateLockoutById(user.getUserId(), false);
 
 			ThemeDisplay themeDisplay =
-					(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+					(ThemeDisplay)actionRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
 
 			String redirect = ParamUtil.getString(actionRequest, "redirect");
 
@@ -305,7 +270,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 		}
 	}
 
-	public void updateOrganization(
+	public void editOrganization(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
@@ -418,7 +383,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
 	}
 
-	public void updateOrganizationUserGroups(
+	public void editOrganizationUserGroups(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
@@ -444,7 +409,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
 	}
 
-	public void updateOrganizationUsers(
+	public void editOrganizationUsers(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
@@ -465,7 +430,7 @@ public class UsersAdminPortlet extends MVCPortlet {
 		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
 	}
 
-	public void updateOrgLabor(
+	public void editOrgLabor(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
@@ -513,6 +478,42 @@ public class UsersAdminPortlet extends MVCPortlet {
 				orgLaborId, typeId, sunOpen, sunClose, monOpen, monClose,
 				tueOpen, tueClose, wedOpen, wedClose, thuOpen, thuClose,
 				friOpen, friClose, satOpen, satClose);
+		}
+	}
+
+	public void restoreUsers(
+		ActionRequest actionRequest,
+		ActionResponse actionResponse) throws Exception {
+
+		try {
+			long[] deleteUserIds = StringUtil.split(
+				ParamUtil.getString(actionRequest, "deleteUserIds"), 0L);
+
+			for (long deleteUserId : deleteUserIds) {
+				int status = WorkflowConstants.STATUS_APPROVED;
+
+				UserServiceUtil.updateStatus(
+					deleteUserId, status, new ServiceContext());
+			}
+
+			sendEditUserRedirect(actionRequest, actionResponse);
+		}
+		catch (Exception e) {
+			String password1 = actionRequest.getParameter("password1");
+			String password2 = actionRequest.getParameter("password2");
+
+			boolean submittedPassword = false;
+
+			if (e instanceof RequiredUserException ||
+				!Validator.isBlank(password1) ||
+				!Validator.isBlank(password2)) {
+
+				handleEditUserException(
+					actionRequest, actionResponse, submittedPassword);
+			}
+			else {
+				throw e;
+			}
 		}
 	}
 
