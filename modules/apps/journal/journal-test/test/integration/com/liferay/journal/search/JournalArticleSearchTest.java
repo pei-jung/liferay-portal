@@ -244,7 +244,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		testOrderHelper.testOrderByDDMTextFieldRepeatable();
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testSearchAttachments() throws Exception {

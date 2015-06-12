@@ -198,15 +198,23 @@ public class DLFolderIndexer extends BaseIndexer implements FolderIndexer {
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Object object) {
 					DLFolder dlFolder = (DLFolder)object;
 
-					Document document = getDocument(dlFolder);
+					try {
+						Document document = getDocument(dlFolder);
 
-					if (document != null) {
-						actionableDynamicQuery.addDocument(document);
+						if (document != null) {
+							actionableDynamicQuery.addDocument(document);
+						}
+					}
+					catch (PortalException pe) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to index document library folder " +
+									dlFolder.getFolderId(),
+								pe);
+						}
 					}
 				}
 

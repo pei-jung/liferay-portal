@@ -623,15 +623,23 @@ public class DLFileEntryIndexer
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Object object) {
 					DLFileEntry dlFileEntry = (DLFileEntry)object;
 
-					Document document = getDocument(dlFileEntry);
+					try {
+						Document document = getDocument(dlFileEntry);
 
-					if (document != null) {
-						actionableDynamicQuery.addDocument(document);
+						if (document != null) {
+							actionableDynamicQuery.addDocument(document);
+						}
+					}
+					catch (PortalException pe) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to index document library file entry " +
+									dlFileEntry.getFileEntryId(),
+								pe);
+						}
 					}
 				}
 

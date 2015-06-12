@@ -180,15 +180,23 @@ public class AssetVocabularyIndexer extends BaseIndexer {
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Object object) {
 					AssetVocabulary assetVocabulary = (AssetVocabulary)object;
 
-					Document document = getDocument(assetVocabulary);
+					try {
+						Document document = getDocument(assetVocabulary);
 
-					if (document != null) {
-						actionableDynamicQuery.addDocument(document);
+						if (document != null) {
+							actionableDynamicQuery.addDocument(document);
+						}
+					}
+					catch (PortalException pe) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to index asset vocabulary " +
+									assetVocabulary.getVocabularyId(),
+								pe);
+						}
 					}
 				}
 

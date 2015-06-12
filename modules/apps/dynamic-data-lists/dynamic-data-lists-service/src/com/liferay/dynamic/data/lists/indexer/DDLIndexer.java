@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -283,9 +284,19 @@ public class DDLIndexer extends BaseIndexer {
 		Collection<Document> documents = new ArrayList<>(records.size());
 
 		for (DDLRecord record : records) {
-			Document document = getDocument(record);
+			try {
+				Document document = getDocument(record);
 
-			documents.add(document);
+				documents.add(document);
+			}
+			catch (PortalException pe) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to index dynamic data lists record " +
+							record.getRecordId(),
+						pe);
+				}
+			}
 		}
 
 		SearchEngineUtil.updateDocuments(

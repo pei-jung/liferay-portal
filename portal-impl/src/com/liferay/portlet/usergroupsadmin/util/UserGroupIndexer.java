@@ -16,6 +16,8 @@ package com.liferay.portlet.usergroupsadmin.util;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -213,14 +215,22 @@ public class UserGroupIndexer extends BaseIndexer {
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Object object) {
 					UserGroup userGroup = (UserGroup)object;
 
-					Document document = getDocument(userGroup);
+					try {
+						Document document = getDocument(userGroup);
 
-					actionableDynamicQuery.addDocument(document);
+						actionableDynamicQuery.addDocument(document);
+					}
+					catch (PortalException pe) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to index user group " +
+									userGroup.getUserGroupId(),
+								pe);
+						}
+					}
 				}
 
 			});
@@ -228,5 +238,8 @@ public class UserGroupIndexer extends BaseIndexer {
 
 		actionableDynamicQuery.performActions();
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		UserGroupIndexer.class);
 
 }

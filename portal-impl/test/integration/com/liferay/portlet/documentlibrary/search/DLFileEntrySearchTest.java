@@ -82,7 +82,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
 			SynchronousDestinationTestRule.INSTANCE);
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testLocalizedSearch() throws Exception {
@@ -176,7 +176,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 		testOrderHelper.testOrderByDDMTextFieldRepeatable();
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testSearchAttachments() throws Exception {
