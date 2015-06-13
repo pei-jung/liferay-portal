@@ -260,7 +260,7 @@ public class AssetPublisherExportImportTest
 				portletPreferences.getValue("displayStyle", null)));
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testExportImportAssetLinks() throws Exception {

@@ -48,126 +48,198 @@ public class ExportImportConfigurationTrashHandlerTest
 			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
 			SynchronousDestinationTestRule.INSTANCE);
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testDeleteTrashVersions() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelAndDeleteWithParentIsNotRestorable()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelAndParent() throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashBaseModelAndParentAndDeleteGroupTrashEntries()
 		throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashBaseModelAndParentAndDeleteParent() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashBaseModelAndParentAndRestoreModel() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelAndParentAndRestoreModelIsVisible()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelAndParentIsNotVisible() throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelAndTrashParentAndDeleteParentIsNotRestorable()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelAndTrashParentIsNotRestorable()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashBaseModelWithParentIsRestorable() throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashDuplicate() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashGrandparentBaseModel() throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashGrandparentBaseModelAndRestoreParentModel()
 		throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashIsRestorableBaseModel() throws Exception {
 	}
 
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashIsRestorableBaseModelWithParent1() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashIsRestorableBaseModelWithParent2() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashIsRestorableBaseModelWithParent3() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashIsRestorableBaseModelWithParent4() throws Exception {
-	}
-
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashMoveBaseModel() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashMoveBaseModelIndexable() throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashMyBaseModel() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashParent() throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashParentAndDeleteGroupTrashEntries() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashParentAndDeleteParent() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashRecentBaseModel() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashVersionBaseModelAndDelete() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashVersionBaseModelAndDeleteIndexable() throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashVersionBaseModelAndRestore() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
+	@Override
+	@Test
+	public void testTrashVersionBaseModelAndRestoreIndexable()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashVersionBaseModelAndRestoreIsVisible()
+		throws Exception {
+	}
+
+	@Ignore
 	@Override
 	@Test
 	public void testTrashVersionParentBaseModel() throws Exception {
 	}
 
-	@Ignore()
+	@Ignore
 	@Override
 	@Test
 	public void testTrashVersionParentBaseModelAndRestore() throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashVersionParentBaseModelIndexable() throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testTrashVersionParentBaseModelIsNotVisible() throws Exception {
 	}
 
 	@Override
@@ -220,11 +292,6 @@ public class ExportImportConfigurationTrashHandlerTest
 
 	@Override
 	protected boolean isBaseModelMoveableFromTrash() {
-		return false;
-	}
-
-	@Override
-	protected boolean isIndexableBaseModel() {
 		return false;
 	}
 

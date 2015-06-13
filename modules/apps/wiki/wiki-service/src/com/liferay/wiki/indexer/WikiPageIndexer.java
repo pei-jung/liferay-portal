@@ -162,7 +162,7 @@ public class WikiPageIndexer
 				}
 				catch (Exception e) {
 					if (_log.isDebugEnabled()) {
-						_log.debug("Unable to get node " + nodeId, e);
+						_log.debug("Unable to get wiki node " + nodeId, e);
 					}
 
 					continue;
@@ -322,14 +322,21 @@ public class WikiPageIndexer
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Object object) {
 					WikiPage page = (WikiPage)object;
 
-					Document document = getDocument(page);
+					try {
+						Document document = getDocument(page);
 
-					actionableDynamicQuery.addDocument(document);
+						actionableDynamicQuery.addDocument(document);
+					}
+					catch (PortalException pe) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to index wiki page " + page.getPageId(),
+								pe);
+						}
+					}
 				}
 
 			});

@@ -196,9 +196,12 @@ public class MBMessageIndexer
 				try {
 					MBCategoryServiceUtil.getCategory(categoryId);
 				}
-				catch (Exception e) {
+				catch (PortalException pe) {
 					if (_log.isDebugEnabled()) {
-						_log.debug("Unable to get category " + categoryId, e);
+						_log.debug(
+							"Unable to get message boards category " +
+								categoryId,
+							pe);
 					}
 
 					continue;
@@ -444,18 +447,26 @@ public class MBMessageIndexer
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Object object) {
 					MBMessage message = (MBMessage)object;
 
 					if (message.isDiscussion() && message.isRoot()) {
 						return;
 					}
 
-					Document document = getDocument(message);
+					try {
+						Document document = getDocument(message);
 
-					actionableDynamicQuery.addDocument(document);
+						actionableDynamicQuery.addDocument(document);
+					}
+					catch (PortalException pe) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to index message boards message " +
+									message.getMessageId(),
+								pe);
+						}
+					}
 				}
 
 			});

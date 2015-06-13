@@ -115,6 +115,8 @@
 			<forward name="portal.update_password" path="portal.update_password" />
 		</action>
 
+		<action path="/portal/update_portlet_title" type="com.liferay.portal.action.UpdatePortletTitleAction" />
+
 		<action path="/portal/update_reminder_query" type="com.liferay.portal.action.UpdateReminderQueryAction">
 			<forward name="portal.update_reminder_query" path="portal.update_reminder_query" />
 		</action>
@@ -782,6 +784,13 @@
 		<action path="/monitoring/view" forward="portlet.monitoring.view" />
 
 		<!-- My Account -->
+
+		<action path="/my_account/edit_user" type="com.liferay.portlet.myaccount.action.EditUserAction">
+			<forward name="portlet.users_admin.edit_user" path="portlet.users_admin.edit_user" />
+			<forward name="portlet.users_admin.error" path="portlet.users_admin.error" />
+		</action>
+
+		<action path="/my_account/edit_user_details" forward="portlet.users_admin.edit_user_details" />
 
 		<action path="/my_account/view" type="com.liferay.portlet.myaccount.action.ViewAction">
 			<forward name="portlet.my_account.edit_user" path="portlet.users_admin.edit_user" />
