@@ -252,10 +252,6 @@
 
 	<definition name="portlet.login" extends="portlet" />
 
-	<definition name="portlet.login.create_account" extends="portlet.login">
-		<put name="portlet_content" value="/portlet/login/create_account.jsp" />
-	</definition>
-
 	<definition name="portlet.login.create_anonymous_account" extends="portlet.login">
 		<put name="portlet_content" value="/portlet/login/create_anonymous_account.jsp" />
 	</definition>

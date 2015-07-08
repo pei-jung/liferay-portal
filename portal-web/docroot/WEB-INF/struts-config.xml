@@ -251,12 +251,6 @@
 
 		<action path="/login/captcha" type="com.liferay.portal.captcha.CaptchaPortletAction" />
 
-		<action path="/login/create_account" type="com.liferay.portlet.login.action.CreateAccountAction">
-			<forward name="portlet.login.create_account" path="portlet.login.create_account" />
-			<forward name="portlet.login.login" path="portlet.login.login" />
-			<forward name="portlet.login.update_account" path="portlet.login.update_account" />
-		</action>
-
 		<action path="/login/create_anonymous_account" type="com.liferay.portlet.login.action.CreateAnonymousAccountAction">
 			<forward name="portlet.login.create_anonymous_account" path="portlet.login.create_anonymous_account" />
 			<forward name="portlet.login.login" path="portlet.login.login" />
