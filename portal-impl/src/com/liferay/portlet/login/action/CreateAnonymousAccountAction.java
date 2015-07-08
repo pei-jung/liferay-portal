@@ -164,34 +164,6 @@ public class CreateAnonymousAccountAction extends PortletAction {
 		}
 	}
 
-	@Override
-	public ActionForward render(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		Company company = themeDisplay.getCompany();
-
-		if (!company.isStrangers()) {
-			return actionMapping.findForward("portlet.login.login");
-		}
-
-		String portletName = portletConfig.getPortletName();
-
-		if (!portletName.equals(PortletKeys.FAST_LOGIN)) {
-			return actionMapping.findForward("portlet.login.login");
-		}
-
-		renderResponse.setTitle(themeDisplay.translate("anonymous-account"));
-
-		return actionMapping.findForward(
-			"portlet.login.create_anonymous_account");
-	}
-
 	protected void addAnonymousUser(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
