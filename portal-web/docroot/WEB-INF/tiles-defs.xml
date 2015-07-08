@@ -264,10 +264,6 @@
 		<put name="portlet_content" value="/portlet/login/forgot_password.jsp" />
 	</definition>
 
-	<definition name="portlet.login.login" extends="portlet.login">
-		<put name="portlet_content" value="/portlet/login/login.jsp" />
-	</definition>
-
 	<definition name="portlet.login.login_redirect" extends="portlet.login">
 		<put name="portlet_content" value="/portlet/login/login_redirect.jsp" />
 	</definition>
