@@ -200,7 +200,8 @@ public class FacebookConnectAction extends BaseStrutsAction {
 			request, PortletKeys.FAST_LOGIN, themeDisplay.getPlid(),
 			PortletRequest.RENDER_PHASE);
 
-		redirectURL.setParameter("struts_action", "/login/login_redirect");
+		redirectURL.setParameter(
+			"mvcPath", "/html/portlet/login/login_redirect.jsp");
 		redirectURL.setParameter("emailAddress", user.getEmailAddress());
 		redirectURL.setParameter("anonymousUser", Boolean.FALSE.toString());
 		redirectURL.setPortletMode(PortletMode.VIEW);
