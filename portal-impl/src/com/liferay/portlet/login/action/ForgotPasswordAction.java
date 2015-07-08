@@ -111,27 +111,6 @@ public class ForgotPasswordAction extends PortletAction {
 		}
 	}
 
-	@Override
-	public ActionForward render(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		Company company = themeDisplay.getCompany();
-
-		if (!company.isSendPassword() && !company.isSendPasswordResetLink()) {
-			return actionMapping.findForward("portlet.login.login");
-		}
-
-		renderResponse.setTitle(themeDisplay.translate("forgot-password"));
-
-		return actionMapping.findForward("portlet.login.forgot_password");
-	}
-
 	protected void checkCaptcha(ActionRequest actionRequest)
 		throws CaptchaException {
 
