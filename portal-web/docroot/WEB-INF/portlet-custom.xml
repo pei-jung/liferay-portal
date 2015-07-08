@@ -236,10 +236,6 @@
 			<name>template-path</name>
 			<value>/html/portlet/login/</value>
 		</init-param>
-		<init-param>
-			<name>view-action</name>
-			<value>/login/login</value>
-		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
 			<mime-type>text/html</mime-type>

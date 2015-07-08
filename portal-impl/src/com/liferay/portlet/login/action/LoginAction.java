@@ -140,17 +140,6 @@ public class LoginAction extends PortletAction {
 		}
 	}
 
-	@Override
-	public ActionForward render(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
-
-		return actionMapping.findForward(
-			getForward(renderRequest, "portlet.login.login"));
-	}
-
 	protected String getCompleteRedirectURL(
 		HttpServletRequest request, String redirect) {
 
