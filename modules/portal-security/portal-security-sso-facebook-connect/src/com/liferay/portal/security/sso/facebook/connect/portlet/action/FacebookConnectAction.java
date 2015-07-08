@@ -194,7 +194,8 @@ public class FacebookConnectAction extends BaseStrutsAction {
 			PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("saveLastPath", Boolean.FALSE.toString());
-		portletURL.setParameter("struts_action", "/login/update_account");
+		portletURL.setParameter(
+			"mvcPath", "/html/portlet/login/update_account.jsp");
 
 		PortletURL redirectURL = PortletURLFactoryUtil.create(
 			request, PortletKeys.FAST_LOGIN, themeDisplay.getPlid(),

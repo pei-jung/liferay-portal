@@ -256,10 +256,6 @@
 		<put name="portlet_content" value="/portlet/login/open_id.jsp" />
 	</definition>
 
-	<definition name="portlet.login.update_account" extends="portlet.login">
-		<put name="portlet_content" value="/portlet/login/update_account.jsp" />
-	</definition>
-
 	<!-- Maps -->
 
 	<definition name="portlet.maps" extends="portlet" />
