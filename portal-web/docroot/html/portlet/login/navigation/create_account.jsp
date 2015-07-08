@@ -17,11 +17,11 @@
 <%@ include file="/html/portlet/login/init.jsp" %>
 
 <%
-String strutsAction = ParamUtil.getString(request, "struts_action");
+String mvcRenderCommand = ParamUtil.getString(request, "mvcRenderCommandName");
 
 boolean showCreateAccountIcon = false;
 
-if (!strutsAction.equals("/login/create_account") && company.isStrangers() && !portletName.equals(PortletKeys.FAST_LOGIN)) {
+if (!mvcRenderCommand.equals("/login/create_account") && company.isStrangers() && !portletName.equals(PortletKeys.FAST_LOGIN)) {
 	showCreateAccountIcon = true;
 }
 %>
