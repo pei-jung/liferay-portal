@@ -251,11 +251,6 @@
 
 		<action path="/login/captcha" type="com.liferay.portal.captcha.CaptchaPortletAction" />
 
-		<action path="/login/forgot_password" type="com.liferay.portlet.login.action.ForgotPasswordAction">
-			<forward name="portlet.login.forgot_password" path="portlet.login.forgot_password" />
-			<forward name="portlet.login.login" path="portlet.login.login" />
-		</action>
-
 		<action path="/login/login_redirect" forward="portlet.login.login_redirect" />
 
 		<action path="/login/update_account" forward="portlet.login.update_account" />
