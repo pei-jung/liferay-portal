@@ -199,28 +199,6 @@ public class CreateAccountAction extends PortletAction {
 		}
 	}
 
-	@Override
-	public ActionForward render(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		Company company = themeDisplay.getCompany();
-
-		if (!company.isStrangers()) {
-			return actionMapping.findForward("portlet.login.login");
-		}
-
-		renderResponse.setTitle(themeDisplay.translate("create-account"));
-
-		return actionMapping.findForward(
-			getForward(renderRequest, "portlet.login.create_account"));
-	}
-
 	protected void addUser(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
