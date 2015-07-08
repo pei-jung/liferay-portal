@@ -173,7 +173,7 @@ public class LoginUtil {
 			request, PortletKeys.LOGIN, plid, PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("saveLastPath", Boolean.FALSE.toString());
-		portletURL.setParameter("struts_action", "/login/login");
+		portletURL.setParameter("mvcRenderCommandName", "/login/login");
 		portletURL.setPortletMode(PortletMode.VIEW);
 		portletURL.setWindowState(WindowState.MAXIMIZED);
 
