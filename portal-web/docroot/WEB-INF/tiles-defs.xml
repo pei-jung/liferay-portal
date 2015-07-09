@@ -248,14 +248,6 @@
 		<put name="portlet_content" value="/portlet/invitation/view.jsp" />
 	</definition>
 
-	<!-- Login -->
-
-	<definition name="portlet.login" extends="portlet" />
-
-	<definition name="portlet.login.open_id" extends="portlet.login">
-		<put name="portlet_content" value="/portlet/login/open_id.jsp" />
-	</definition>
-
 	<!-- Maps -->
 
 	<definition name="portlet.maps" extends="portlet" />
