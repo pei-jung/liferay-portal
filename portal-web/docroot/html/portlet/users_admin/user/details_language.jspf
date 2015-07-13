@@ -88,7 +88,7 @@ String portletKey = portletName.equals(PortletKeys.MY_ACCOUNT) ? PortletKeys.USE
 						);
 					},
 					success: function(responseData) {
-						var responseUserNameFields = $(responseData).find('#<%= PortalUtil.getPortletNamespace(portletKey) %>userNameFields').html();
+						var responseUserNameFields = $(responseData).find('#<portlet:namespace />userNameFields').html();
 
 						userNameFields.html(responseUserNameFields);
 					},

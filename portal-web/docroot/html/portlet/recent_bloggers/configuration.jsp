@@ -66,7 +66,7 @@ if (organizationId > 0) {
 									constrain: true,
 									modal: true
 								},
-								id: '<%= PortalUtil.getPortletNamespace(PortletKeys.USERS_ADMIN) %>selectOrganization',
+								id: '<portlet:namespace />selectOrganization',
 								title: '<liferay-ui:message arguments="organization" key="select-x" />',
 								uri: '<liferay-portlet:renderURL portletName="<%= PortletKeys.USERS_ADMIN %>" windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/html/portlet/users_admin/select_organization.jsp" /></liferay-portlet:renderURL>'
 							},
