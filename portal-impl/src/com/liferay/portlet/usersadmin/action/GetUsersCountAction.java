@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.usersadmin.action;
 
+import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
+import com.liferay.portal.kernel.struts.StrutsAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Organization;
@@ -33,6 +35,9 @@ import org.apache.struts.action.ActionMapping;
 /**
  * @author Gavin Wan
  */
+@OSGiBeanProperties(
+	property = "path=/users_admin/get_users_count", service = StrutsAction.class
+)
 public class GetUsersCountAction extends AJAXAction {
 
 	@Override
