@@ -60,7 +60,8 @@ public class PortletKeys {
 	public static final String EXPANDO =
 		"com_liferay_expando_web_portlet_ExpandoPortlet";
 
-	public static final String EXPORT_IMPORT = "200";
+	public static final String EXPORT_IMPORT =
+		"com_liferay_exportimport_web_portlet_ExportImportPortlet";
 
 	public static final String FAST_LOGIN = "164";
 
@@ -119,8 +120,6 @@ public class PortletKeys {
 
 	public static final String NESTED_PORTLETS =
 		"com_liferay_nested_portlets_web_portlet_NestedPortletsPortlet";
-
-	public static final String PAGE_COMMENTS = "107";
 
 	public static final String PAGE_RATINGS = "108";
 

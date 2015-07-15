@@ -320,18 +320,6 @@
 		<active>false</active>
 	</portlet>
 	<portlet>
-		<portlet-name>107</portlet-name>
-		<icon>/html/icons/page_comments.png</icon>
-		<struts-path>page_comments</struts-path>
-		<portlet-data-handler-class>com.liferay.portlet.messageboards.lar.CommentsPortletDataHandler</portlet-data-handler-class>
-		<preferences-owned-by-group>true</preferences-owned-by-group>
-		<use-default-template>false</use-default-template>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<css-class-wrapper>portlet-page-comments</css-class-wrapper>
-	</portlet>
-	<portlet>
 		<portlet-name>108</portlet-name>
 		<icon>/html/icons/page_ratings.png</icon>
 		<struts-path>page_ratings</struts-path>
@@ -378,15 +366,6 @@
 		<private-session-attributes>false</private-session-attributes>
 		<render-weight>50</render-weight>
 		<system>true</system>
-	</portlet>
-	<portlet>
-		<portlet-name>121</portlet-name>
-		<struts-path>requests</struts-path>
-		<use-default-template>false</use-default-template>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<css-class-wrapper>portlet-activities</css-class-wrapper>
 	</portlet>
 	<portlet>
 		<portlet-name>124</portlet-name>
@@ -547,16 +526,6 @@
 		<system>true</system>
 	</portlet>
 	<portlet>
-		<portlet-name>143</portlet-name>
-		<icon>/html/icons/page_flags.png</icon>
-		<struts-path>page_flags</struts-path>
-		<use-default-template>false</use-default-template>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<css-class-wrapper>portlet-page-flags</css-class-wrapper>
-	</portlet>
-	<portlet>
 		<portlet-name>145</portlet-name>
 		<icon>/html/icons/default.png</icon>
 		<struts-path>dockbar</struts-path>
@@ -575,6 +544,7 @@
 		<portlet-name>162</portlet-name>
 		<icon>/html/icons/message_boards.png</icon>
 		<struts-path>message_boards_admin</struts-path>
+		<parent-struts-path>message_boards</parent-struts-path>
 		<configuration-action-class>com.liferay.portlet.messageboards.action.ConfigurationActionImpl</configuration-action-class>
 		<portlet-url-class>com.liferay.portal.struts.StrutsActionPortletURL</portlet-url-class>
 		<portlet-data-handler-class>com.liferay.portlet.messageboards.lar.MBPortletDataHandler</portlet-data-handler-class>
@@ -792,34 +762,6 @@
 		<footer-portlet-javascript>/html/portlet/document_library/js/main.js</footer-portlet-javascript>
 		<footer-portlet-javascript>/html/portlet/document_library/js/upload.js</footer-portlet-javascript>
 		<css-class-wrapper>portlet-document-library</css-class-wrapper>
-	</portlet>
-	<portlet>
-		<portlet-name>200</portlet-name>
-		<icon>/html/icons/default.png</icon>
-		<struts-path>export_import</struts-path>
-		<scheduler-entry>
-			<scheduler-event-listener-class>com.liferay.portlet.exportimport.messaging.DraftExportImportConfigurationMessageListener</scheduler-event-listener-class>
-			<trigger>
-				<simple>
-					<property-key>staging.draft.export.import.configuration.check.interval</property-key>
-					<time-unit>hour</time-unit>
-				</simple>
-			</trigger>
-		</scheduler-entry>
-		<portlet-url-class>com.liferay.portal.struts.StrutsActionPortletURL</portlet-url-class>
-		<control-panel-entry-category>site_administration.configuration</control-panel-entry-category>
-		<control-panel-entry-weight>2.0</control-panel-entry-weight>
-		<control-panel-entry-class>com.liferay.portlet.exportimport.ExportImportControlPanelEntry</control-panel-entry-class>
-		<preferences-owned-by-group>true</preferences-owned-by-group>
-		<use-default-template>false</use-default-template>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<header-portlet-css>/html/portlet/export_import/css/main.css</header-portlet-css>
-		<footer-portlet-javascript>/html/portlet/export_import/js/main.js</footer-portlet-javascript>
-		<css-class-wrapper>portlet-export-import</css-class-wrapper>
-		<add-default-resource>true</add-default-resource>
-		<system>true</system>
 	</portlet>
 	<role-mapper>
 		<role-name>administrator</role-name>

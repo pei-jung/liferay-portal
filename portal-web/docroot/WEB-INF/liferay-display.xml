@@ -16,9 +16,7 @@
 		<portlet id="186" />
 		<portlet id="187" />
 		<portlet id="188" />
-		<portlet id="107" />
 		<portlet id="108" />
-		<portlet id="143" />
 	</category>
 	<category name="category.entertainment" />
 	<category name="category.finance" />
@@ -45,7 +43,6 @@
 		<portlet id="196" />
 		<portlet id="197" />
 		<portlet id="199" />
-		<portlet id="200" />
 	</category>
 	<category name="category.news">
 		<portlet id="83" />
@@ -58,7 +55,6 @@
 		<portlet id="34" />
 	</category>
 	<category name="category.social">
-		<portlet id="121" />
 		<portlet id="180" />
 		<portlet id="181" />
 	</category>
