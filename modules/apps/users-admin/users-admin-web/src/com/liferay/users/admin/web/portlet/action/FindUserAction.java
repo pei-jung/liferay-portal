@@ -12,32 +12,38 @@
  * details.
  */
 
-package com.liferay.portlet.usersadmin;
+package com.liferay.users.admin.web.portlet.action;
 
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.expando.model.BaseCustomAttributesDisplay;
+import com.liferay.portal.struts.FindAction;
+import com.liferay.portal.util.PortletKeys;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author Jorge Ferrer
+ * @author Raymond Augé
  */
-public class OrganizationCustomAttributesDisplay
-	extends BaseCustomAttributesDisplay {
+public class FindUserAction extends FindAction {
 
 	@Override
-	public String getClassName() {
-		return Organization.class.getName();
+	protected long getGroupId(long primaryKey) throws Exception {
+		return 0;
 	}
 
 	@Override
-	public String getIconCssClass() {
-		return "icon-globe";
+	protected String getPrimaryKeyParameterName() {
+		return "p_u_i_d";
 	}
 
 	@Override
-	public String getIconPath(ThemeDisplay themeDisplay) {
-		return
-			themeDisplay.getPathThemeImages() + "/common/organization_icon.png";
+	protected String getStrutsAction(
+		HttpServletRequest request, String portletId) {
+
+		return "/directory/view_user";
+	}
+
+	@Override
+	protected String[] initPortletIds() {
+		return new String[] {PortletKeys.DIRECTORY};
 	}
 
 }
