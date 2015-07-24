@@ -14,7 +14,7 @@
  */
 --%>
 
-<%@ include file="/html/portlet/users_admin/init.jsp" %>
+<%@ include file="/init.jsp" %>
 
 <%
 User selUser = (User)request.getAttribute("user.selUser");
@@ -168,9 +168,9 @@ else {
 			</c:otherwise>
 		</c:choose>
 
-		<%@ include file="/html/portlet/users_admin/user/details_language.jspf" %>
+		<%@ include file="/user/details_language.jspf" %>
 
-		<%@ include file="/html/portlet/users_admin/user/details_user_name.jspf" %>
+		<%@ include file="/user/details_user_name.jspf" %>
 	</aui:fieldset>
 
 	<aui:fieldset cssClass="col-md-5">
