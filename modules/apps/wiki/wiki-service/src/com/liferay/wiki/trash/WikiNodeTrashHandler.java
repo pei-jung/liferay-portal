@@ -94,9 +94,9 @@ public class WikiNodeTrashHandler extends BaseWikiTrashHandler {
 			PortletRequest portletRequest, long classPK)
 		throws PortalException {
 
-		WikiNode node = WikiNodeLocalServiceUtil.getNode(classPK);
-
 		PortletURL portletURL = getRestoreURL(portletRequest, classPK, false);
+
+		WikiNode node = WikiNodeLocalServiceUtil.getNode(classPK);
 
 		portletURL.setParameter("nodeId", String.valueOf(node.getNodeId()));
 
@@ -213,21 +213,24 @@ public class WikiNodeTrashHandler extends BaseWikiTrashHandler {
 			boolean isContainerModel)
 		throws PortalException {
 
-		String portletId = WikiPortletKeys.WIKI;
+		PortletURL portletURL = null;
 
 		WikiNode node = WikiNodeLocalServiceUtil.getNode(classPK);
+		String portletId = WikiPortletKeys.WIKI;
 
 		long plid = PortalUtil.getPlidFromPortletId(
-			node.getGroupId(), WikiPortletKeys.WIKI);
+			node.getGroupId(), portletId);
 
 		if (plid == LayoutConstants.DEFAULT_PLID) {
 			portletId = WikiPortletKeys.WIKI_ADMIN;
 
-			plid = PortalUtil.getControlPanelPlid(portletRequest);
+			portletURL = PortalUtil.getControlPanelPortletURL(
+				portletRequest, portletId, 0, PortletRequest.RENDER_PHASE);
 		}
-
-		PortletURL portletURL = PortletURLFactoryUtil.create(
-			portletRequest, portletId, plid, PortletRequest.RENDER_PHASE);
+		else {
+			portletURL = PortletURLFactoryUtil.create(
+				portletRequest, portletId, plid, PortletRequest.RENDER_PHASE);
+		}
 
 		if (!isContainerModel) {
 			if (portletId.equals(WikiPortletKeys.WIKI)) {
