@@ -5,7 +5,7 @@ Use computer number format to prevent issues with locale settings. See
 LPS-30525.
 -->
 
-<#setting number_format="computer">
+<#setting number_format = "computer">
 
 <#assign css_main_file = "" />
 
@@ -87,6 +87,10 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 
 <#macro languages>
 	${theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry", portletProviderAction.VIEW)}
+</#macro>
+
+<#macro navigation_menu>
+	${theme.runtime("com.liferay.portal.theme.NavItem", portletProviderAction.VIEW)}
 </#macro>
 
 <#macro product_menu>
