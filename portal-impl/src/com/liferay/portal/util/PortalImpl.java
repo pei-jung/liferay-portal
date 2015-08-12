@@ -1742,26 +1742,12 @@ public class PortalImpl implements Portal {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		Layout layout = null;
+		Layout layout = getControlPanelLayout(themeDisplay);
 
-		try {
-			long plid = getControlPanelPlid(themeDisplay.getCompanyId());
-
-			layout = LayoutLocalServiceUtil.getLayout(plid);
-		}
-		catch (PortalException pe) {
-			_log.error("Unable to determine control panel layout", pe);
-
-			return null;
-		}
-
-		VirtualLayout virtualLayout = new VirtualLayout(
-			layout, themeDisplay.getScopeGroup());
-
-		request.setAttribute(WebKeys.LAYOUT, virtualLayout);
+		request.setAttribute(WebKeys.LAYOUT, layout);
 
 		LiferayPortletURL liferayPortletURL = new PortletURLImpl(
-			request, portletId, virtualLayout.getPlid(), lifecycle);
+			request, portletId, layout.getPlid(), lifecycle);
 
 		try {
 			liferayPortletURL.setWindowState(WindowState.MAXIMIZED);
@@ -1781,26 +1767,12 @@ public class PortalImpl implements Portal {
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		Layout layout = null;
+		Layout layout = getControlPanelLayout(themeDisplay);
 
-		try {
-			long plid = getControlPanelPlid(themeDisplay.getCompanyId());
-
-			layout = LayoutLocalServiceUtil.getLayout(plid);
-		}
-		catch (PortalException pe) {
-			_log.error("Unable to determine control panel layout", pe);
-
-			return null;
-		}
-
-		VirtualLayout virtualLayout = new VirtualLayout(
-			layout, themeDisplay.getScopeGroup());
-
-		portletRequest.setAttribute(WebKeys.LAYOUT, virtualLayout);
+		portletRequest.setAttribute(WebKeys.LAYOUT, layout);
 
 		LiferayPortletURL liferayPortletURL = new PortletURLImpl(
-			portletRequest, portletId, virtualLayout.getPlid(), lifecycle);
+			portletRequest, portletId, layout.getPlid(), lifecycle);
 
 		try {
 			liferayPortletURL.setWindowState(WindowState.MAXIMIZED);
@@ -2767,6 +2739,8 @@ public class PortalImpl implements Portal {
 	@Override
 	public String getLayoutActualURL(Layout layout, String mainPath) {
 		Map<String, String> variables = new HashMap<>();
+
+		layout = getBrowsableLayout(layout);
 
 		variables.put("liferay:groupId", String.valueOf(layout.getGroupId()));
 		variables.put("liferay:mainPath", mainPath);
@@ -7644,6 +7618,37 @@ public class PortalImpl implements Portal {
 		return locale;
 	}
 
+	protected Layout getBrowsableLayout(Layout layout) {
+		LayoutType layoutType = layout.getLayoutType();
+
+		if (layoutType.isBrowsable()) {
+			return layout;
+		}
+
+		Layout browsableChildLayout = null;
+
+		List<Layout> childLayouts = layout.getAllChildren();
+
+		for (Layout childLayout : childLayouts) {
+			LayoutType childLayoutType = childLayout.getLayoutType();
+
+			if (childLayoutType.isBrowsable()) {
+				browsableChildLayout = childLayout;
+
+				break;
+			}
+		}
+
+		if (browsableChildLayout != null) {
+			return browsableChildLayout;
+		}
+
+		long defaultPlid = LayoutLocalServiceUtil.getDefaultPlid(
+			layout.getGroupId(), layout.getPrivateLayout());
+
+		return LayoutLocalServiceUtil.fetchLayout(defaultPlid);
+	}
+
 	protected String getCanonicalDomain(
 		String virtualHostname, String portalDomain) {
 
@@ -7714,6 +7719,35 @@ public class PortalImpl implements Portal {
 		}
 
 		return contextPath;
+	}
+
+	protected Layout getControlPanelLayout(ThemeDisplay themeDisplay) {
+		Layout layout = null;
+
+		try {
+			long plid = getControlPanelPlid(themeDisplay.getCompanyId());
+
+			layout = LayoutLocalServiceUtil.getLayout(plid);
+		}
+		catch (PortalException pe) {
+			_log.error("Unable to get control panel layout", pe);
+
+			return null;
+		}
+
+		Group group = null;
+
+		long groupId = themeDisplay.getDoAsGroupId();
+
+		if (groupId > 0) {
+			group = GroupLocalServiceUtil.fetchGroup(groupId);
+		}
+
+		if (group == null) {
+			group = themeDisplay.getScopeGroup();
+		}
+
+		return new VirtualLayout(layout, group);
 	}
 
 	protected long getDefaultScopeGroupId(long companyId)
