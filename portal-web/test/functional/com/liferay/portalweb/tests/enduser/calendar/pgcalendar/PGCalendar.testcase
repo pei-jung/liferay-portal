@@ -28,7 +28,7 @@
 		</execute>
 
 		<if>
-			<condition function="IsElementPresent" locator1="PGCalendar#SCHEDULER_EVENT_GENERIC" />
+			<condition function="IsElementPresent" locator1="Calendar#SCHEDULER_EVENT_GENERIC" />
 			<then>
 				<execute macro="CalendarEvent#tearDown" />
 			</then>
@@ -2712,7 +2712,7 @@
 			<var name="eventTitle" value="${eventTitle}" />
 			<var name="eventTitleEdit" value="${eventTitleEdit}" />
 			<var name="eventType" value="${eventType}" />
-			<var name="inviteResource" value="true" />
+			<var name="optionSetValue" value="inviteResource" />
 			<var name="pageName" value="${pageName}" />
 		</execute>
 

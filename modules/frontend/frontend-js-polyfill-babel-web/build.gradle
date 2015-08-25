@@ -1,7 +1,3 @@
-plugins {
-	id "com.moowork.node" version "0.10"
-}
-
 dependencies {
 	compile group: "org.osgi", name: "org.osgi.core", version: "5.0.0"
 }
@@ -25,6 +21,13 @@ buildBabelCore {
 
 downloadBabelCore {
 	args = ["install", "babel-core@${babelCoreVersion}"]
+
+	onlyIf {
+		File dir = new File(node.nodeModulesDir, "node_modules/babel-core")
+
+		!dir.exists()
+	}
+
 	workingDir = node.nodeModulesDir
 }
 

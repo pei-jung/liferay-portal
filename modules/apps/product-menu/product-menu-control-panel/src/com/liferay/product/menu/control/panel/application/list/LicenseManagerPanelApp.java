@@ -37,11 +37,6 @@ import org.osgi.service.component.annotations.Reference;
 public class LicenseManagerPanelApp extends BaseControlPanelEntryPanelApp {
 
 	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.CONTROL_PANEL_APPS;
-	}
-
-	@Override
 	public String getPortletId() {
 		return PortletKeys.LICENSE_MANAGER;
 	}
@@ -50,7 +45,7 @@ public class LicenseManagerPanelApp extends BaseControlPanelEntryPanelApp {
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 }

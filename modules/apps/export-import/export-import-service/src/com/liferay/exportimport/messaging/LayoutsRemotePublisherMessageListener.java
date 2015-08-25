@@ -16,9 +16,7 @@ package com.liferay.exportimport.messaging;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageStatus;
-import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.model.User;
@@ -32,20 +30,16 @@ import java.io.Serializable;
 
 import java.util.Map;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @author Bruno Farache
  * @author Daniel Kocsis
  */
-@Component(
-	immediate = true,
-	property = {"destination.name=liferay/layouts_local_publisher"},
-	service = MessageListener.class
-)
 public class LayoutsRemotePublisherMessageListener
 	extends BasePublisherMessageListener {
+
+	public LayoutsRemotePublisherMessageListener() {
+		super("liferay/message_bus/message_status");
+	}
 
 	@Override
 	protected void doReceive(Message message, MessageStatus messageStatus)
@@ -77,7 +71,7 @@ public class LayoutsRemotePublisherMessageListener
 			settingsMap, "remotePathContext");
 		boolean secureConnection = MapUtil.getBoolean(
 			settingsMap, "secureConnection");
-		long remoteGroupId = MapUtil.getLong(settingsMap, "remoteGroupId");
+		long targetGroupId = MapUtil.getLong(settingsMap, "targetGroupId");
 		boolean remotePrivateLayout = MapUtil.getBoolean(
 			settingsMap, "remotePrivateLayout");
 
@@ -91,16 +85,11 @@ public class LayoutsRemotePublisherMessageListener
 			StagingUtil.copyRemoteLayouts(
 				sourceGroupId, privateLayout, layoutIdMap, parameterMap,
 				remoteAddress, remotePort, remotePathContext, secureConnection,
-				remoteGroupId, remotePrivateLayout);
+				targetGroupId, remotePrivateLayout);
 		}
 		finally {
 			resetThreadLocals();
 		}
-	}
-
-	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
-	protected void setModuleServiceLifecycle(
-		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
 }

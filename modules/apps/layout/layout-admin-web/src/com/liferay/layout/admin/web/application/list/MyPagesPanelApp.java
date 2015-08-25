@@ -45,11 +45,6 @@ import org.osgi.service.component.annotations.Reference;
 public class MyPagesPanelApp extends GroupPagesPanelApp {
 
 	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.MY_SPACE_PRODUCTIVITY_CENTER;
-	}
-
-	@Override
 	public String getPortletId() {
 		return LayoutAdminPortletKeys.MY_PAGES;
 	}
@@ -84,7 +79,7 @@ public class MyPagesPanelApp extends GroupPagesPanelApp {
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

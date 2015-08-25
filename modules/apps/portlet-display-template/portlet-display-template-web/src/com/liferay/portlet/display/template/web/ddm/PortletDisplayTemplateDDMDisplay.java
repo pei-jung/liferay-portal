@@ -58,7 +58,7 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 	public String getEditTemplateBackURL(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse, long classNameId,
-			long classPK, String portletResource)
+			long classPK, long resourceClassNameId, String portletResource)
 		throws Exception {
 
 		String redirect = ParamUtil.getString(
@@ -67,7 +67,7 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 		if (Validator.isNull(redirect)) {
 			return getViewTemplatesURL(
 				liferayPortletRequest, liferayPortletResponse, classNameId,
-				classPK);
+				classPK, resourceClassNameId);
 		}
 
 		return redirect;
@@ -97,7 +97,7 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 		}
 
 		return new long[] {
-			_portletDisplayTemplate.getDDMTemplateGroupId(
+			portletDisplayTemplate.getDDMTemplateGroupId(
 				themeDisplay.getScopeGroupId())
 			};
 	}
@@ -167,10 +167,10 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 	protected void setPortletDisplayTemplate(
 		PortletDisplayTemplate portletDisplayTemplate) {
 
-		_portletDisplayTemplate = portletDisplayTemplate;
+		this.portletDisplayTemplate = portletDisplayTemplate;
 	}
 
-	protected PortletDisplayTemplate _portletDisplayTemplate;
+	protected PortletDisplayTemplate portletDisplayTemplate;
 
 	private static final Set<String> _viewTemplateExcludedColumnNames =
 		SetUtil.fromArray(new String[] {"language", "mode", "structure"});

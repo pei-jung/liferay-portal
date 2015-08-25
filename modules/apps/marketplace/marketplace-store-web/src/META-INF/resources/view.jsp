@@ -16,8 +16,26 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+String remoteMVCPath = "/marketplace/view.jsp";
+
+String portletId = portletDisplay.getId();
+
+if (portletId.equals(MarketplaceStorePortletKeys.MARKETPLACE_PURCHASED)) {
+	remoteMVCPath = "/marketplace_server/view_purchased.jsp";
+}
+%>
+
 <liferay-portlet:renderURL var="viewURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-	<portlet:param name="remoteMVCPath" value="/marketplace/view.jsp" />
+	<portlet:param name="remoteMVCPath" value="<%= remoteMVCPath %>" />
 </liferay-portlet:renderURL>
 
 <iframe frameborder="0" id="<portlet:namespace />frame" name="<portlet:namespace />frame" scrolling="no" src="<%= viewURL %>"></iframe>
+
+<c:if test="<%= GetterUtil.getBoolean(request.getAttribute(MarketplaceStoreWebKeys.OAUTH_AUTHORIZED)) %>">
+	<div class="sign-out">
+		<liferay-portlet:actionURL name="deauthorize" var="deauthorizeURL" />
+
+		<aui:button onClick="<%= deauthorizeURL %>" value="sign-out" />
+	</div>
+</c:if>

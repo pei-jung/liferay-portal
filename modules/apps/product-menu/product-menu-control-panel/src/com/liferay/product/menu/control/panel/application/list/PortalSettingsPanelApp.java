@@ -37,11 +37,6 @@ import org.osgi.service.component.annotations.Reference;
 public class PortalSettingsPanelApp extends BaseControlPanelEntryPanelApp {
 
 	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.CONTROL_PANEL_CONFIGURATION;
-	}
-
-	@Override
 	public String getPortletId() {
 		return PortletKeys.PORTAL_SETTINGS;
 	}
@@ -50,7 +45,7 @@ public class PortalSettingsPanelApp extends BaseControlPanelEntryPanelApp {
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 }
