@@ -2,6 +2,8 @@ import com.liferay.gradle.util.FileUtil
 import com.liferay.gradle.util.OSDetector
 import com.liferay.gradle.util.copy.StripPathSegmentsAction
 
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 buildscript {
 	repositories {
 		if (!Boolean.getBoolean("maven.local.ignore")) {
@@ -14,7 +16,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.util", version: "1.0.17"
+		classpath group: "com.liferay", name: "com.liferay.gradle.util", version: "1.0.18"
 	}
 }
 
@@ -51,6 +53,14 @@ buildLang {
 	translateClientSecret = project.properties["microsoft.translator.client.secret"]
 }
 
+configure([test, testIntegration]) {
+	testLogging {
+		events = EnumSet.allOf(TestLogEvent)
+		exceptionFormat = "full"
+		stackTraceFilters = []
+	}
+}
+
 configurations {
 	all {
 		resolutionStrategy {
@@ -67,6 +77,11 @@ configurations {
 	portal
 	portalEclipse
 	portalTest
+
+	alloyTaglib {
+		extendsFrom configurations.runtime
+		extendsFrom portal
+	}
 
 	whenObjectAdded {
 		Configuration configuration ->
@@ -86,6 +101,8 @@ if (FileUtil.exists(project, "docroot")) {
 }
 
 dependencies {
+	alloyTaglib rootProject.files("../lib/development/alloy-taglib.jar", "../lib/development/org.freemarker-2.3.17.LIFERAY-PATCHED-1.jar")
+
 	cssBuilder group: "com.liferay", name: "com.liferay.css.builder", version: "default"
 	javadocFormatter group: "com.liferay", name: "com.liferay.javadoc.formatter", version: "default"
 	langBuilder group: "com.liferay", name: "com.liferay.lang.builder", version: "default"
@@ -169,15 +186,13 @@ repositories {
 }
 
 sourceSets {
-	FileCollection portalJarsFileCollection = fileTree(dir: appServerLibPortalDir, include: "util-slf4j.jar")
-
 	main {
 		compileClasspath += configurations.portal
 	}
 
 	test {
-		compileClasspath = portalJarsFileCollection + compileClasspath + configurations.portal + configurations.portalTest
-		runtimeClasspath = portalJarsFileCollection + runtimeClasspath + configurations.portal + configurations.portalTest
+		compileClasspath = configurations.compile + configurations.portal + compileClasspath + configurations.portalTest
+		runtimeClasspath = configurations.compile + configurations.portal + runtimeClasspath + configurations.portalTest
 	}
 
 	testIntegration {
@@ -224,28 +239,11 @@ tasks.withType(JavaCompile) {
 	options.warnings = false
 }
 
-String testClassGroupIndex = System.getProperty("test.class.group.index")
-
-if (testClassGroupIndex) {
-	Properties properties = new Properties()
-
-	File file = new File(rootDir, "../test.class.file.names.properties")
-
-	properties.load(new StringReader(file.text.replace("\\", "/")))
-
-	String testClassGroup = properties["TEST_CLASS_GROUP_" + testClassGroupIndex]
-	String testClassGroups = properties["TEST_CLASS_GROUPS"]
-
-	List<String> testClasses = testClassGroup.tokenize(",")
-
+if (gradle.hasProperty("testClassGroupIndex")) {
 	configure([test, testIntegration]) {
-		include testClasses
+		include gradle.testClasses
 
-		jvmArgs "-Dtest.class.group.index=" + testClassGroupIndex
-		jvmArgs "-Dtest.class.groups=" + testClassGroups
-	}
-
-	if (testClassGroupIndex == "0") {
-		test.finalizedBy compileJSP
+		jvmArgs "-Dtest.class.group.index=" + gradle.testClassGroupIndex
+		jvmArgs "-Dtest.class.groups=" + gradle.testClassGroups
 	}
 }
