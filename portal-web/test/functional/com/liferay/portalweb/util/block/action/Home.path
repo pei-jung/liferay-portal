@@ -282,6 +282,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PAGE_TEMPLATE</td>
+	<td>//div[@id='heading']/span[contains(@title,'${key_pageTemplateName}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PAGE_TEMPLATE_4</td>
 	<td>//div[contains(@class,'navbar-classic')]/ul/li[4]/a</td>
 	<td></td>
@@ -381,12 +386,22 @@
 <!--PAGE_COLUMN_PORTLET-->
 <tr>
 	<td>PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE</td>
-	<td>//div[@id='column-1']//h1[@class='portlet-title' and contains(.,'${key_portletTitleName}')]/span</td>
+	<td>//div[@id='column-1']//h2[contains(.,'${key_portletTitleName}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_COLUMN_PORTLET_COLUMN_2_PORTLET_TITLE</td>
-	<td>//div[@id='column-2']//h1[@class='portlet-title' and contains(.,'${key_portletTitleName}')]/span</td>
+	<td>//div[@id='column-2']//h2[contains(.,'${key_portletTitleName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_HEADER</td>
+	<td>//div[@id='column-1']//header[contains(.,'${key_portletTitleName}')]/div/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_COLUMN_PORTLET_COLUMN_2_PORTLET_HEADER</td>
+	<td>//div[@id='column-2']//header[contains(.,'${key_portletTitleName}')]/div/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -475,7 +490,7 @@
 </tr>
 <tr>
 	<td>PORTLET</td>
-	<td>//section[header/h1[contains(.,'${key_portletName}')]] | //div[contains(@class,'portlet-borderless')]/span[contains(.,'${key_portletName}')]</td>
+	<td>//section//h2[contains(.,'${key_portletName}')] | //div[contains(@class,'portlet-borderless')]/span[contains(.,'${key_portletName}')]</td>
 	<td></td>
 </tr>
 <tr>

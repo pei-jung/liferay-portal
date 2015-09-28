@@ -251,7 +251,7 @@ public class TrashPortlet extends MVCPortlet {
 
 				writeJSON(resourceRequest, resourceResponse, jsonObject);
 			}
-			catch (PortalException e) {
+			catch (PortalException pe) {
 			}
 		}
 		else {

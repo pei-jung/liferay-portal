@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -711,9 +712,11 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String image)
 		throws Exception {
 
-		File file = new File(
-			_TEST_BASE_DIR_NAME + "/" +
-				liferaySelenium.getSikuliImagesDirName() + image);
+		String filePath =
+			FileUtil.getSeparator() + liferaySelenium.getSikuliImagesDirName() +
+				image;
+
+		File file = new File(getSourceDirFilePath(filePath));
 
 		return new ImageTarget(file);
 	}
@@ -724,6 +727,44 @@ public class LiferaySeleniumHelper {
 
 	public static String getNumberIncrement(String value) {
 		return StringUtil.valueOf(GetterUtil.getInteger(value) + 1);
+	}
+
+	public static String getSourceDirFilePath(String fileName)
+		throws Exception {
+
+		List<String> filePaths = new ArrayList<>();
+
+		List<String> baseDirNames = new ArrayList<>();
+
+		baseDirNames.add(PropsValues.TEST_BASE_DIR_NAME);
+		baseDirNames.addAll(Arrays.asList(PropsValues.TEST_INCLUDE_DIR_NAMES));
+
+		for (String baseDirName : baseDirNames) {
+			String filePath = PoshiRunnerGetterUtil.getCanonicalPath(
+				baseDirName + FileUtil.getSeparator() + fileName);
+
+			if (FileUtil.exists(filePath)) {
+				filePaths.add(filePath);
+			}
+		}
+
+		if (filePaths.size() > 1) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("Duplicate file names found!\n");
+
+			for (String filePath : filePaths) {
+				sb.append(filePath);
+				sb.append("\n");
+			}
+
+			throw new Exception(sb.toString());
+		}
+		else if (filePaths.isEmpty()) {
+			throw new Exception("File not found " + fileName);
+		}
+
+		return filePaths.get(0);
 	}
 
 	public static boolean isConfirmation(
@@ -1021,9 +1062,8 @@ public class LiferaySeleniumHelper {
 		_screenshotCount++;
 
 		captureScreen(
-			liferaySelenium.getProjectDirName() +
-				"portal-web/test-results/functional/screenshots/" +
-					_screenshotCount + ".jpg");
+			_CURRENT_DIR_NAME + "test-results/functional/screenshots/" +
+				_screenshotCount + ".jpg");
 	}
 
 	public static void saveScreenshotBeforeAction(
@@ -1039,9 +1079,8 @@ public class LiferaySeleniumHelper {
 		}
 
 		captureScreen(
-			liferaySelenium.getProjectDirName() +
-				"portal-web/test-results/functional/screenshots/" +
-					"ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
+			_CURRENT_DIR_NAME + "test-results/functional/screenshots/" +
+				"ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
 	}
 
 	public static void sendEmail(
@@ -1265,15 +1304,17 @@ public class LiferaySeleniumHelper {
 
 		keyboard.keyUp(Key.CTRL);
 
-		String fileName =
-			_TEST_BASE_DIR_NAME + "/" + _TEST_DEPENDENCIES_DIR_NAME + "/" +
-				value;
+		String filePath =
+			FileUtil.getSeparator() + _TEST_DEPENDENCIES_DIR_NAME +
+				FileUtil.getSeparator() + value;
+
+		filePath = getSourceDirFilePath(filePath);
 
 		if (OSDetector.isWindows()) {
-			fileName = StringUtil.replace(fileName, "/", "\\");
+			filePath = StringUtil.replace(filePath, "/", "\\");
 		}
 
-		sikuliType(liferaySelenium, image, fileName);
+		sikuliType(liferaySelenium, image, filePath);
 
 		keyboard.type(Key.ENTER);
 	}
@@ -1760,8 +1801,8 @@ public class LiferaySeleniumHelper {
 		return screenRegion.findAll(imageTarget);
 	}
 
-	private static final String _TEST_BASE_DIR_NAME =
-		PoshiRunnerGetterUtil.getCanonicalPath(PropsValues.TEST_BASE_DIR_NAME);
+	private static final String _CURRENT_DIR_NAME =
+		PoshiRunnerGetterUtil.getCanonicalPath(".");
 
 	private static final String _TEST_DEPENDENCIES_DIR_NAME =
 		PropsValues.TEST_DEPENDENCIES_DIR_NAME;

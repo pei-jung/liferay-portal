@@ -54,8 +54,8 @@ public class PanelAppRegistry {
 					return panelApp;
 				}
 			}
-			catch (PortalException e) {
-				_log.error(e);
+			catch (PortalException pe) {
+				_log.error(pe, pe);
 			}
 		}
 
@@ -63,14 +63,7 @@ public class PanelAppRegistry {
 	}
 
 	public List<PanelApp> getPanelApps(PanelCategory parentPanelCategory) {
-		List<PanelApp> panelApps = _serviceTrackerMap.getService(
-			parentPanelCategory.getKey());
-
-		if (panelApps == null) {
-			return Collections.emptyList();
-		}
-
-		return panelApps;
+		return getPanelApps(parentPanelCategory.getKey());
 	}
 
 	public List<PanelApp> getPanelApps(
@@ -93,14 +86,25 @@ public class PanelAppRegistry {
 						return panelApp.hasAccessPermission(
 							permissionChecker, group);
 					}
-					catch (PortalException e) {
-						_log.error(e);
+					catch (PortalException pe) {
+						_log.error(pe, pe);
 					}
 
 					return false;
 				}
 
 			});
+	}
+
+	public List<PanelApp> getPanelApps(String parentPanelCategoryKey) {
+		List<PanelApp> panelApps = _serviceTrackerMap.getService(
+			parentPanelCategoryKey);
+
+		if (panelApps == null) {
+			return Collections.emptyList();
+		}
+
+		return panelApps;
 	}
 
 	@Activate

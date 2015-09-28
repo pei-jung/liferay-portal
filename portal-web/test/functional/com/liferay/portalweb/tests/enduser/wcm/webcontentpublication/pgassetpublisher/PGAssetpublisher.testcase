@@ -455,7 +455,7 @@
 
 		<var name="key_templateName" value="Advertisement Template Name" />
 
-		<execute function="Click" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ACTIONS" />
+		<execute function="Click" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ELLIPSIS" />
 		<execute function="Click" locator1="MenuItem#PERMISSIONS" />
 
 		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
@@ -488,7 +488,7 @@
 
 		<var name="key_templateName" value="Press Release Template Name" />
 
-		<execute function="Click" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ACTIONS" />
+		<execute function="Click" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ELLIPSIS" />
 		<execute function="Click" locator1="MenuItem#PERMISSIONS" />
 
 		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
@@ -1142,8 +1142,7 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureAPSelectMoreThanOnePG">
-			<var name="contentName" value="Bookmarks Entry" />
-			<var name="selectContent" value="${contentName}" />
+			<var name="selectContent" value="Bookmarks Entry" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -1159,9 +1158,8 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureAPSelectMoreThanOnePG" >
-			<var name="contentName" value="Bookmarks Entry" />
 			<var name="moveSelected" value="true" />
-			<var name="selectContent" value="${contentName}" />
+			<var name="selectContent" value="Bookmarks Entry" />
 		</execute>
 
 		<execute macro="Page#gotoPG">

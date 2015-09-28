@@ -24,14 +24,10 @@ import io.appium.java_client.MobileDriver;
 public abstract class BaseMobileDriverImpl
 	extends MobileDriverToSeleniumBridge implements LiferaySelenium {
 
-	public BaseMobileDriverImpl(
-		String projectDirName, String browserURL, MobileDriver mobileDriver) {
-
+	public BaseMobileDriverImpl(String browserURL, MobileDriver mobileDriver) {
 		super(mobileDriver);
 
 		System.setProperty("java.awt.headless", "false");
-
-		_projectDirName = projectDirName;
 	}
 
 	@Override
@@ -337,11 +333,6 @@ public abstract class BaseMobileDriverImpl
 	@Override
 	public String getPrimaryTestSuiteName() {
 		return _primaryTestSuiteName;
-	}
-
-	@Override
-	public String getProjectDirName() {
-		return _projectDirName;
 	}
 
 	@Override
@@ -726,7 +717,9 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
-	public void uploadCommonFile(String locator, String value) {
+	public void uploadCommonFile(String locator, String value)
+		throws Exception {
+
 		throw new UnsupportedOperationException();
 	}
 
@@ -839,6 +832,5 @@ public abstract class BaseMobileDriverImpl
 		PropsValues.TEST_DEPENDENCIES_DIR_NAME;
 
 	private String _primaryTestSuiteName;
-	private final String _projectDirName;
 
 }
