@@ -96,6 +96,84 @@ public class TemplateHandlerRegistryUtil {
 		_serviceTracker.open();
 	}
 
+	private void _addTemplate(long companyId, TemplateHandler templateHandler)
+		throws Exception {
+
+		long classNameId = PortalUtil.getClassNameId(
+			templateHandler.getClassName());
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		Group group = GroupLocalServiceUtil.getCompanyGroup(companyId);
+
+		serviceContext.setScopeGroupId(group.getGroupId());
+
+		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
+
+		serviceContext.setUserId(userId);
+
+		List<Element> templateElements =
+			templateHandler.getDefaultTemplateElements();
+
+		for (Element templateElement : templateElements) {
+			String templateKey = templateElement.elementText("template-key");
+
+			DDMTemplate ddmTemplate = DDMTemplateManagerUtil.fetchTemplate(
+				group.getGroupId(), classNameId, templateKey);
+
+			if (ddmTemplate != null) {
+				continue;
+			}
+
+			Class<?> clazz = templateHandler.getClass();
+
+			ClassLoader classLoader = clazz.getClassLoader();
+
+			Map<Locale, String> nameMap = _getLocalizationMap(
+				classLoader, group.getGroupId(),
+				templateElement.elementText("name"));
+			Map<Locale, String> descriptionMap = _getLocalizationMap(
+				classLoader, group.getGroupId(),
+				templateElement.elementText("description"));
+
+			String type = templateElement.elementText("type");
+
+			if (type == null) {
+				type = DDMTemplateManager.TEMPLATE_TYPE_DISPLAY;
+			}
+
+			String language = templateElement.elementText("language");
+
+			String scriptFileName = templateElement.elementText("script-file");
+
+			String script = StringUtil.read(classLoader, scriptFileName);
+
+			boolean cacheable = GetterUtil.getBoolean(
+				templateElement.elementText("cacheable"));
+
+			DDMTemplateManagerUtil.addTemplate(
+				userId, group.getGroupId(), classNameId, 0,
+				PortalUtil.getClassNameId(_PORTLET_DISPLAY_TEMPLATE_CLASS_NAME),
+				templateKey, nameMap, descriptionMap, type, null, language,
+				script, cacheable, false, null, null, serviceContext);
+		}
+	}
+
+	private Map<Locale, String> _getLocalizationMap(
+		ClassLoader classLoader, long groupId, String key) {
+
+		Map<Locale, String> map = new HashMap<>();
+
+		for (Locale locale : LanguageUtil.getAvailableLocales(groupId)) {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", locale, classLoader);
+
+			map.put(locale, LanguageUtil.get(resourceBundle, key));
+		}
+
+		return map;
+	}
+
 	private static final String _PORTLET_DISPLAY_TEMPLATE_CLASS_NAME =
 		"com.liferay.portlet.display.template.PortletDisplayTemplate";
 
@@ -126,7 +204,9 @@ public class TemplateHandlerRegistryUtil {
 				templateHandler.getClassName(), templateHandler);
 
 			try {
-				_addTemplate(templateHandler);
+				long companyId = PortalUtil.getDefaultCompanyId();
+
+				_addTemplate(companyId, templateHandler);
 			}
 			catch (Exception e) {
 				_log.error(
@@ -154,89 +234,6 @@ public class TemplateHandlerRegistryUtil {
 			registry.ungetService(serviceReference);
 
 			_templateHandlers.remove(templateHandler.getClassName());
-		}
-
-		private void _addTemplate(TemplateHandler templateHandler)
-			throws Exception {
-
-			long classNameId = PortalUtil.getClassNameId(
-				templateHandler.getClassName());
-
-			ServiceContext serviceContext = new ServiceContext();
-
-			long companyId = PortalUtil.getDefaultCompanyId();
-
-			Group group = GroupLocalServiceUtil.getCompanyGroup(companyId);
-
-			serviceContext.setScopeGroupId(group.getGroupId());
-
-			long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
-
-			serviceContext.setUserId(userId);
-
-			List<Element> templateElements =
-				templateHandler.getDefaultTemplateElements();
-
-			for (Element templateElement : templateElements) {
-				String templateKey = templateElement.elementText(
-					"template-key");
-
-				DDMTemplate ddmTemplate = DDMTemplateManagerUtil.fetchTemplate(
-					group.getGroupId(), classNameId, templateKey);
-
-				if (ddmTemplate != null) {
-					continue;
-				}
-
-				Class<?> clazz = templateHandler.getClass();
-
-				ClassLoader classLoader = clazz.getClassLoader();
-
-				Map<Locale, String> nameMap = _getLocalizationMap(
-					classLoader, group.getGroupId(),
-					templateElement.elementText("name"));
-				Map<Locale, String> descriptionMap = _getLocalizationMap(
-					classLoader, group.getGroupId(),
-					templateElement.elementText("description"));
-
-				String type = templateElement.elementText("type");
-
-				if (type == null) {
-					type = DDMTemplateManager.TEMPLATE_TYPE_DISPLAY;
-				}
-
-				String language = templateElement.elementText("language");
-
-				String scriptFileName = templateElement.elementText(
-					"script-file");
-
-				String script = StringUtil.read(classLoader, scriptFileName);
-
-				boolean cacheable = GetterUtil.getBoolean(
-					templateElement.elementText("cacheable"));
-
-				DDMTemplateManagerUtil.addTemplate(
-					userId, group.getGroupId(), classNameId, 0,
-					PortalUtil.getClassNameId(
-						_PORTLET_DISPLAY_TEMPLATE_CLASS_NAME),
-					templateKey, nameMap, descriptionMap, type, null, language,
-					script, cacheable, false, null, null, serviceContext);
-			}
-		}
-
-		private Map<Locale, String> _getLocalizationMap(
-			ClassLoader classLoader, long groupId, String key) {
-
-			Map<Locale, String> map = new HashMap<>();
-
-			for (Locale locale : LanguageUtil.getAvailableLocales(groupId)) {
-				ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-					"content.Language", locale, classLoader);
-
-				map.put(locale, LanguageUtil.get(resourceBundle, key));
-			}
-
-			return map;
 		}
 
 	}
