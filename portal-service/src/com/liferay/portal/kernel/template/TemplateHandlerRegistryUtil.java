@@ -52,6 +52,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @ProviderType
 public class TemplateHandlerRegistryUtil {
 
+	public static void addTemplates(long companyId) throws Exception {
+		for (TemplateHandler templateHandler : getTemplateHandlers()) {
+			_instance._addTemplate(companyId, templateHandler);
+		}
+	}
+
 	public static long[] getClassNameIds() {
 		long[] classNameIds = new long[_instance._templateHandlers.size()];
 
