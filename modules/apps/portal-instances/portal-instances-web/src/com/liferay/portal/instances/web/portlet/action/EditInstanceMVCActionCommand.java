@@ -23,6 +23,7 @@ import com.liferay.portal.instances.web.constants.PortalInstancesPortletKeys;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.model.Company;
@@ -135,6 +136,8 @@ public class EditInstanceMVCActionCommand extends BaseMVCActionCommand {
 				(ServletContext)actionRequest.getAttribute(WebKeys.CTX);
 
 			PortalInstances.initCompany(servletContext, company.getWebId());
+
+			TemplateHandlerRegistryUtil.addTemplates(company.getCompanyId());
 		}
 		else {
 
