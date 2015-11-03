@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 
 import java.net.URL;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +35,7 @@ public class JenkinsResultsParserUtil {
 
 	public static String fixJSON(String json) {
 		json = json.replaceAll("\t", "&#09;");
-		json = json.replaceAll("\\\"", "&#34; ");
+		json = json.replaceAll("\\\"", "&#34;");
 		json = json.replaceAll("'", "&#39;");
 		json = json.replaceAll("\\(", "&#40;");
 		json = json.replaceAll("\\)", "&#41;");
@@ -50,21 +52,11 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static String fixURL(String url) {
-		if (url.contains("(")) {
-			url = url.replace("(", "%28");
-		}
-
-		if (url.contains(")")) {
-			url = url.replace(")", "%29");
-		}
-
-		if (url.contains("[")) {
-			url = url.replace("[", "%5B");
-		}
-
-		if (url.contains("]")) {
-			url = url.replace("]", "%5D");
-		}
+		url = url.replace("//", "/");
+		url = url.replace("(", "%28");
+		url = url.replace(")", "%29");
+		url = url.replace("[", "%5B");
+		url = url.replace("]", "%5D");
 
 		return url;
 	}
@@ -137,7 +129,14 @@ public class JenkinsResultsParserUtil {
 		return "";
 	}
 
+	public static String getJobVariant(String json) throws Exception {
+		return getJobVariant(new JSONObject(json));
+	}
+
 	public static String getLocalURL(String remoteURL) {
+		remoteURL = remoteURL.replace(
+			"${user.dir}", System.getProperty("user.dir"));
+
 		Matcher matcher = _localURLPattern1.matcher(remoteURL);
 
 		if (matcher.find()) {
@@ -168,15 +167,21 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static JSONObject toJSONObject(String url) throws Exception {
-		return new JSONObject(toString(fixURL(url)));
+		return new JSONObject(toString(url));
 	}
 
 	public static String toString(String url) throws IOException {
+		url = fixURL(url);
+
+		if (_toStringCache.containsKey(url)) {
+			return _toStringCache.get(url);
+		}
+
 		System.out.println("Downloading " + url);
 
 		StringBuilder sb = new StringBuilder();
 
-		URL urlObject = new URL(fixURL(url));
+		URL urlObject = new URL(url);
 
 		InputStreamReader inputStreamReader = new InputStreamReader(
 			urlObject.openStream());
@@ -192,6 +197,8 @@ public class JenkinsResultsParserUtil {
 
 		bufferedReader.close();
 
+		_toStringCache.put(url, sb.toString());
+
 		return sb.toString();
 	}
 
@@ -199,5 +206,6 @@ public class JenkinsResultsParserUtil {
 		"https://test.liferay.com/([0-9]+)/");
 	private static final Pattern _localURLPattern2 = Pattern.compile(
 		"https://(test-[0-9]+-[0-9]+).liferay.com/");
+	private static final Map<String, String> _toStringCache = new HashMap<>();
 
 }

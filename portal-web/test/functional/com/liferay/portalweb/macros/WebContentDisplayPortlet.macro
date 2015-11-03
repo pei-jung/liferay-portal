@@ -146,7 +146,7 @@
 			</then>
 			<else>
 				<execute function="Pause" locator1="2000" />
-				<execute function="SikuliClick" locator1="Button#CLOSE_IFRAME" />
+				<execute function="Click" locator1="Button#CLOSE_IFRAME" />
 
 				<execute function="SelectFrame" value1="relative=top" />
 				<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
@@ -282,7 +282,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="WCD#RELATED_ASSETS" value1="${relatedAssetTitle}" />
 
-		<execute function="Type#typeAlloyEditor" locator1="PGWebcontentdisplay#COMMENT_EDITOR" value1="Hello!" />
+		<execute function="Type#typeAlloyEditor" locator1="Comments#COMMENT_FIELD" value1="Hello!" />
 
 		<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
 

@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>CATEGORY_ALERT</td>
+	<td>//div[contains(@id,'categorization')]/div[contains(@class,'alert-danger')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CHECKOUT_SUCCESS</td>
 	<td>//div[contains(@class,'lfr-asset-column-details')]/div[contains(@class,'alert-success')]</td>
 	<td></td>
@@ -116,6 +121,11 @@
 <tr>
 	<td>INFO_NO_PAGES_FOUND</td>
 	<td>//div[@class='alert alert-info' and contains(.,'No pages were found that matched the keywords')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>INFO_NO_RESULTS_FOUND</td>
+	<td>//div[contains(@id,'EmptyResultsMessage') and contains(@class,'alert-info')]</td>
 	<td></td>
 </tr>
 <tr>

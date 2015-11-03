@@ -40,7 +40,7 @@
 </tr>
 <tr>
 	<td>CUSTOM_FIELD</td>
-	<td>//input[contains(@name,'ExpandoAttribute')] | //textarea[contains(@name,'ExpandoAttribute')]</td>
+	<td>//input[@type='text' and contains(@name,'ExpandoAttribute')] | //textarea[contains(@name,'ExpandoAttribute')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -146,6 +146,11 @@
 <tr>
 	<td>GOOGLE_ANALYTICS_ID</td>
 	<td>//input[contains(@id,'googleAnalyticsId')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>IMAGE_URL</td>
+	<td>//div[label[contains(.,'Image URL')]]//input[@type='text']</td>
 	<td></td>
 </tr>
 <tr>
