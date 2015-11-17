@@ -20,7 +20,13 @@
 ConfigurationModel configurationModel = (ConfigurationModel)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_MODEL);
 String ddmFormHTML = (String)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML);
 
+String configurationCategory = ParamUtil.getString(request, "configurationCategory");
+int cur = ParamUtil.getInteger(request, "cur");
+
 PortletURL portletURL = renderResponse.createRenderURL();
+
+portletURL.setParameter("configurationCategory", configurationCategory);
+portletURL.setParameter("cur", String.valueOf(cur));
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(portletURL.toString());

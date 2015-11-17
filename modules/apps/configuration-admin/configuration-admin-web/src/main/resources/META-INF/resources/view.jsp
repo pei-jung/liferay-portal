@@ -21,6 +21,8 @@ List<String> configurationCategories = (List<String>)request.getAttribute(Config
 String configurationCategory = (String)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_CATEGORY);
 ConfigurationModelIterator configurationModelIterator = (ConfigurationModelIterator)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_MODEL_ITERATOR);
 ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAttribute(ConfigurationAdminWebKeys.FACTORY_CONFIGURATION_MODEL);
+
+int cur = ParamUtil.getInteger(request, "cur");
 %>
 
 <c:if test="<%= factoryConfigurationModel != null %>">
@@ -51,9 +53,15 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 	</aui:nav>
 </aui:nav-bar>
 
+<%
+PortletURL iteratorURL = renderResponse.createRenderURL();
+iteratorURL.setParameter("configurationCategory", configurationCategory);
+%>
+
 <div class="container-fluid-1280">
 	<liferay-ui:search-container
 		emptyResultsMessage="no-configurations-were-found"
+		iteratorURL="<%= iteratorURL %>"
 		total="<%= configurationModelIterator.getTotal() %>"
 	>
 		<liferay-ui:search-container-results
@@ -66,12 +74,16 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 			modelVar="configurationModel"
 		>
 			<portlet:renderURL var="editURL">
+				<portlet:param name="configurationCategory" value="<%= configurationCategory %>" />
+				<portlet:param name="cur" value="<%= String.valueOf(cur) %>" />
 				<portlet:param name="mvcPath" value="/edit_configuration.jsp" />
 				<portlet:param name="factoryPid" value="<%= configurationModel.getFactoryPid() %>" />
 				<portlet:param name="pid" value="<%= configurationModel.getID() %>" />
 			</portlet:renderURL>
 
 			<portlet:renderURL var="viewFactoryInstancesURL">
+				<portlet:param name="configurationCategory" value="<%= configurationCategory %>" />
+				<portlet:param name="cur" value="<%= String.valueOf(cur) %>" />
 				<portlet:param name="factoryPid" value="<%= configurationModel.getFactoryPid() %>" />
 				<portlet:param name="viewType" value="factoryInstances" />
 			</portlet:renderURL>
