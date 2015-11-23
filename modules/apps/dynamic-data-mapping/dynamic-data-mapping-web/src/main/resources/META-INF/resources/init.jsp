@@ -76,7 +76,7 @@ page import="com.liferay.portal.LocaleException" %><%@
 page import="com.liferay.portal.PortletPreferencesException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.configuration.Filter" %><%@
-page import="com.liferay.portal.kernel.dao.search.RowChecker" %><%@
+page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.editor.EditorModeUtil" %><%@
 page import="com.liferay.portal.kernel.json.JSONArray" %><%@
@@ -119,8 +119,7 @@ page import="com.liferay.portlet.PortletPreferencesFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.portlet.display.template.PortletDisplayTemplate" %><%@
-page import="com.liferay.registry.Registry" %><%@
-page import="com.liferay.registry.RegistryUtil" %><%@
+page import="com.liferay.portlet.display.template.PortletDisplayTemplateUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.util.ContentUtil" %>
 
@@ -232,11 +231,5 @@ private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String
 	_addFormTemplateFieldAttributes(structure, jsonArray);
 
 	return jsonArray;
-}
-
-private PortletDisplayTemplate _getPortletDisplayTemplate() {
-	Registry registry = RegistryUtil.getRegistry();
-
-	return registry.getService(PortletDisplayTemplate.class);
 }
 %>
