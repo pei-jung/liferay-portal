@@ -5,3 +5,4 @@ Export-Package: com.liferay.users.admin.web.*
 Include-Resource:\
 	classes,\
 	META-INF/resources=src/main/resources/META-INF/resources
+Web-ContextPath: /users-admin-web
