@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -38,7 +39,6 @@ import com.liferay.portlet.asset.service.AssetEntryLocalService;
 import com.liferay.portlet.asset.service.AssetVocabularyLocalService;
 import com.liferay.portlet.asset.util.AssetVocabularySettingsHelper;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -127,14 +127,11 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 	}
 
 	protected List<String> getArticleTypes() throws Exception {
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"select distinct type_ from JournalArticle");
 
 			rs = ps.executeQuery();
@@ -148,19 +145,16 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 			return types;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
 	protected boolean hasSelectedArticleTypes() throws Exception {
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"select count(*) from JournalArticle where type_ != 'general'");
 
 			rs = ps.executeQuery();
@@ -176,7 +170,7 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 			return false;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
@@ -185,13 +179,10 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 			Map<String, Long> journalArticleTypesToAssetCategoryIds)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
 			StringBundler sb = new StringBundler(10);
 
 			sb.append("select JournalArticle.resourcePrimKey, ");
@@ -205,7 +196,7 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 			sb.append("JournalArticle.companyId = ? and ");
 			sb.append("tempJournalArticle.id_ is null");
 
-			ps = con.prepareStatement(sb.toString());
+			ps = connection.prepareStatement(sb.toString());
 
 			ps.setLong(1, companyId);
 
@@ -231,7 +222,7 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
@@ -246,37 +237,49 @@ public class UpgradeJournalArticleType extends UpgradeProcess {
 			return;
 		}
 
-		List<Company> companies = _companyLocalService.getCompanies();
+		Locale localeThreadLocalDefaultLocale =
+			LocaleThreadLocal.getDefaultLocale();
 
-		for (Company company : companies) {
-			Set<Locale> locales = LanguageUtil.getAvailableLocales(
-				company.getGroupId());
+		try {
+			List<Company> companies = _companyLocalService.getCompanies();
 
-			Locale defaultLocale = LocaleUtil.fromLanguageId(
-				UpgradeProcessUtil.getDefaultLanguageId(
-					company.getCompanyId()));
+			for (Company company : companies) {
+				LocaleThreadLocal.setDefaultLocale(company.getLocale());
 
-			Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
-				locales, defaultLocale, "type");
+				Set<Locale> locales = LanguageUtil.getAvailableLocales(
+					company.getGroupId());
 
-			AssetVocabulary assetVocabulary = addAssetVocabulary(
-				company.getGroupId(), company.getCompanyId(), "type", nameMap,
-				new HashMap<Locale, String>());
+				Locale defaultLocale = LocaleUtil.fromLanguageId(
+					UpgradeProcessUtil.getDefaultLanguageId(
+						company.getCompanyId()));
 
-			Map<String, Long> journalArticleTypesToAssetCategoryIds =
-				new HashMap<>();
+				Map<Locale, String> nameMap =
+					LocalizationUtil.getLocalizationMap(
+						locales, defaultLocale, "type");
 
-			for (String type : types) {
-				AssetCategory assetCategory = addAssetCategory(
-					company.getGroupId(), company.getCompanyId(), type,
-					assetVocabulary.getVocabularyId());
+				AssetVocabulary assetVocabulary = addAssetVocabulary(
+					company.getGroupId(), company.getCompanyId(), "type",
+					nameMap, new HashMap<Locale, String>());
 
-				journalArticleTypesToAssetCategoryIds.put(
-					type, assetCategory.getCategoryId());
+				Map<String, Long> journalArticleTypesToAssetCategoryIds =
+					new HashMap<>();
+
+				for (String type : types) {
+					AssetCategory assetCategory = addAssetCategory(
+						company.getGroupId(), company.getCompanyId(), type,
+						assetVocabulary.getVocabularyId());
+
+					journalArticleTypesToAssetCategoryIds.put(
+						type, assetCategory.getCategoryId());
+				}
+
+				updateArticles(
+					company.getCompanyId(),
+					journalArticleTypesToAssetCategoryIds);
 			}
-
-			updateArticles(
-				company.getCompanyId(), journalArticleTypesToAssetCategoryIds);
+		}
+		finally {
+			LocaleThreadLocal.setDefaultLocale(localeThreadLocalDefaultLocale);
 		}
 	}
 
