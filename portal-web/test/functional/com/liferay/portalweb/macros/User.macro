@@ -1177,8 +1177,15 @@
 			<equals arg1="${trivialPassword}" arg2="true" />
 			<then>
 				<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="That password is too trivial." />
+				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="That password uses common words. Please enter a password that is harder to guess (i.e. contains a mix of numbers and letters)." />
 			</then>
+			<elseif>
+				<isset var="regex" />
+				<then>
+					<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
+					<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="That password does not comply with the regular expression ${regex}. Please enter a different password." />
+				</then>
+			</elseif>
 			<else>
 				<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
 				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="That password is invalid. Please enter in a different password." />
@@ -1699,16 +1706,16 @@
 	</command>
 
 	<command name="tearDownCP">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#deactivateCP">
 			<var name="userFirstName" value="userfn*" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#deleteCP" />
