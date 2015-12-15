@@ -538,7 +538,7 @@
 		<execute macro="SitePage#addCP">
 			<var name="page" value="Public Pages" />
 			<var name="siteName" value="Organization Name" />
-			<var name="sitePageName" value="Public Page" />
+			<var name="sitePageName" value="Organization Page" />
 			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
@@ -1057,8 +1057,10 @@
 			<var name="wikiPageUsername" value="${userFirstName} ${userLastName}" />
 		</execute>
 
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
+		<execute macro="UserBar#gotoMyAccount" />
+
+		<execute macro="ProductMenu#gotoUserMyAccount">
+			<var name="portlet" value="My Submissions" />
 		</execute>
 
 		<var name="key_workflowAssetTitle" value="${wikiPageTitle}" />

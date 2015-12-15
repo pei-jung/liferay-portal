@@ -199,6 +199,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>LEXICON_SELECT_ALL</td>
+	<td>//div[contains(@class,'collapse on')]//input</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MAILING</td>
 	<td>//label[contains(.,'Mailing')]/input[@type='checkbox']</td>
 	<td></td>
@@ -250,7 +255,7 @@
 </tr>
 <tr>
 	<td>SELECT_ALL</td>
-	<td>//input[contains(@id,'allRowIds') or contains(@name,'allRowIds')]</td>
+	<td>//*[@data-qa-id='selectAllCheckbox'] | //input[contains(@id,'allRowIds') or contains(@name,'allRowIds') or contains(@class,'select-all-checkboxes')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -295,7 +300,7 @@
 </tr>
 <tr>
 	<td>SITE_OWNER</td>
-	<td>xpath=(//input[contains(@name,'rowIds')])[2]</td>
+	<td>//tr[contains(.,'Site Owner')]//input[@type='checkbox']</td>
 	<td></td>
 </tr>
 <tr>

@@ -720,6 +720,10 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 
 	@Override
 	public void unregister(MessageListener messageListener) {
+		if (!_schedulerEngineEnabled) {
+			return;
+		}
+
 		synchronized (_serviceRegistrations) {
 			ServiceRegistration<SchedulerEventMessageListener>
 				serviceRegistration = _serviceRegistrations.remove(
@@ -981,7 +985,7 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 		_props = props;
 	}
 
-	@Reference(target = "(isProxy=true)", unbind = "-")
+	@Reference(target = "(scheduler.engine.proxy=true)", unbind = "-")
 	protected void setSchedulerEngine(SchedulerEngine schedulerEngine) {
 		_schedulerEngine = schedulerEngine;
 	}
