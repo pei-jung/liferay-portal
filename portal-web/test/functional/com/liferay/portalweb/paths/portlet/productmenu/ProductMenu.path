@@ -10,7 +10,7 @@
 <tbody>
 <tr>
 	<td>TOGGLE</td>
-	<td>//a[contains(@class,'sidenav-toggler')]/span</td>
+	<td>//*[@data-qa-id='productMenu']</td>
 	<td></td>
 </tr>
 <tr>
@@ -64,6 +64,11 @@
 	<td></td>
 </tr>
 <tr>
+<td>EDIT_PAGE</td>
+	<td>//div[@class='list-group-item']//a[contains(@title,'Edit ${key_page}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PORTLET</td>
 	<td>//div[a[@aria-expanded='true']]//a[contains(@id,'Portlet') and contains(@data-title,'${key_portlet}')]</td>
 	<td></td>
@@ -110,7 +115,7 @@
 </tr>
 <tr>
 	<td>USER_PROFILE</td>
-	<td>//div[contains(@class,'nameplate')]//a[contains(.,'Profile')]</td>
+	<td>//div[contains(@class,'list-group')]//a[contains(.,'Profile')]</td>
 	<td></td>
 </tr>
 <tr>

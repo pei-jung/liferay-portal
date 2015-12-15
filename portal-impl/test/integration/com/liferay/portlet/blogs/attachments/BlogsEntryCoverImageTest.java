@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -77,13 +78,21 @@ public class BlogsEntryCoverImageTest extends BaseBlogsEntryImageTestCase {
 			user.getUserId(), imageTitle, serviceContext);
 
 		ImageSelector imageSelector = new ImageSelector(
-			fileEntry.getFileEntryId(), StringPool.BLANK, IMAGE_CROP_REGION);
+			FileUtil.getBytes(fileEntry.getContentStream()),
+			fileEntry.getTitle(), fileEntry.getMimeType(), IMAGE_CROP_REGION);
 
 		return addBlogsEntry(imageSelector);
 	}
 
 	@Override
-	protected long getImageFileEntry(BlogsEntry blogsEntry) {
+	protected void addImage(long entryId, ImageSelector imageSelector)
+		throws Exception {
+
+		BlogsEntryLocalServiceUtil.addCoverImage(entryId, imageSelector);
+	}
+
+	@Override
+	protected long getImageFileEntryId(BlogsEntry blogsEntry) {
 		return blogsEntry.getCoverImageFileEntryId();
 	}
 
@@ -116,7 +125,8 @@ public class BlogsEntryCoverImageTest extends BaseBlogsEntryImageTestCase {
 			user.getUserId(), imageTitle, serviceContext);
 
 		ImageSelector imageSelector = new ImageSelector(
-			fileEntry.getFileEntryId(), StringPool.BLANK, IMAGE_CROP_REGION);
+			FileUtil.getBytes(fileEntry.getContentStream()),
+			fileEntry.getTitle(), fileEntry.getMimeType(), IMAGE_CROP_REGION);
 
 		return updateBlogsEntry(blogsEntryId, imageSelector);
 	}

@@ -16,7 +16,7 @@ package com.liferay.portal.kernel.upgrade;
 
 import com.liferay.portal.kernel.dao.db.BaseDBProcess;
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBProcessContext;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
@@ -133,37 +133,37 @@ public abstract class UpgradeProcess
 	}
 
 	protected long increment() {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.increment();
 	}
 
 	protected long increment(String name) {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.increment(name);
 	}
 
 	protected boolean isSupportsAlterColumnName() {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.isSupportsAlterColumnName();
 	}
 
 	protected boolean isSupportsAlterColumnType() {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.isSupportsAlterColumnType();
 	}
 
 	protected boolean isSupportsStringCaseSensitiveQuery() {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.isSupportsStringCaseSensitiveQuery();
 	}
 
 	protected boolean isSupportsUpdateWithInnerJoin() {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.isSupportsUpdateWithInnerJoin();
 	}

@@ -100,7 +100,7 @@ public class SchedulerProxyMessagingConfigurator {
 		Dictionary<String, Object> schedulerEngineDictionary =
 			new HashMapDictionary<>();
 
-		schedulerEngineDictionary.put("isProxy", Boolean.TRUE);
+		schedulerEngineDictionary.put("scheduler.engine.proxy", Boolean.TRUE);
 
 		_schedulerEngineServiceRegistration = bundleContext.registerService(
 			SchedulerEngine.class, schedulerEngineProxy,

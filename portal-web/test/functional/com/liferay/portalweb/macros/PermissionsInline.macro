@@ -135,7 +135,7 @@
 	<command name="gotoConfigurationPG">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="${portletName}" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -278,9 +278,11 @@
 			</then>
 		</if>
 
-		<execute function="Click" locator1="ControlMenu#EDIT_COG" />
+		<execute function="Click" locator1="ControlMenu#EDIT" />
 
-		<execute function="Click" locator1="SitePages#TOOLBAR_PERMISSIONS" />
+		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
+
+		<execute function="Click" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
 	</command>
@@ -299,7 +301,9 @@
 
 		<execute function="Click" locator1="SitePages#PAGE_TREE_PAGE_EDIT_COG" />
 
-		<execute function="AssertClick" locator1="SitePages#TOOLBAR_PERMISSIONS" value1="Permissions" />
+		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
+
+		<execute function="Click" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
 	</command>
