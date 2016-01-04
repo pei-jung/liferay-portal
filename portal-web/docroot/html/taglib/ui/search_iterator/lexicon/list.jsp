@@ -18,8 +18,26 @@
 
 <%@ include file="/html/taglib/ui/search_iterator/lexicon/top.jspf" %>
 
-<table class="table table-list">
+<%
+List<ResultRowSplitterEntry> resultRowSplitterEntries = new ArrayList<ResultRowSplitterEntry>();
 
+if (resultRowSplitter != null) {
+	resultRowSplitterEntries = resultRowSplitter.split(searchContainer.getResultRows());
+}
+else if (!resultRows.isEmpty()) {
+	resultRowSplitterEntries.add(new ResultRowSplitterEntry(StringPool.BLANK, resultRows));
+}
+
+List<com.liferay.portal.kernel.dao.search.ResultRow> firstResultRows = Collections.emptyList();
+
+if (!resultRowSplitterEntries.isEmpty()) {
+	ResultRowSplitterEntry firstResultRowSplitterEntry = resultRowSplitterEntries.get(0);
+
+	firstResultRows = firstResultRowSplitterEntry.getResultRows();
+}
+%>
+
+<table class="table table-list">
 	<c:if test="<%= headerNames != null %>">
 		<thead>
 			<tr>
@@ -27,8 +45,8 @@
 			<%
 			List entries = Collections.emptyList();
 
-			if (!resultRows.isEmpty()) {
-				com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)resultRows.get(0);
+			if (!firstResultRows.isEmpty()) {
+				com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)firstResultRows.get(0);
 
 				entries = row.getEntries();
 			}
@@ -103,138 +121,154 @@
 	</c:if>
 
 	<tbody>
+		<c:if test="<%= resultRowSplitterEntries.isEmpty() && (emptyResultsMessage != null) %>">
+			<tr>
+				<td>
+					<liferay-ui:empty-result-message message="<%= emptyResultsMessage %>" />
+				</td>
+			</tr>
+		</c:if>
 
-	<c:if test="<%= resultRows.isEmpty() && (emptyResultsMessage != null) %>">
-		<tr>
-			<td>
-				<liferay-ui:empty-result-message message="<%= emptyResultsMessage %>" />
-			</td>
-		</tr>
-	</c:if>
+		<%
+		for (ResultRowSplitterEntry resultRowSplitterEntry : resultRowSplitterEntries) {
+			List<com.liferay.portal.kernel.dao.search.ResultRow> curResultRows = resultRowSplitterEntry.getResultRows();
+		%>
 
-	<%
-	boolean allRowsIsChecked = true;
+			<c:if test="<%= Validator.isNotNull(resultRowSplitterEntry.getTitle()) %>">
+				<tr>
+					<td colspan="<%= (headerNames != null) ? headerNames.size() : StringPool.BLANK %>">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<liferay-ui:message key="<%= resultRowSplitterEntry.getTitle() %>" />
+							</div>
+						</div>
+					</td>
+				</tr>
+			</c:if>
 
-	for (int i = 0; i < resultRows.size(); i++) {
-		com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)resultRows.get(i);
+			<%
+			boolean allRowsIsChecked = true;
 
-		primaryKeysJSONArray.put(row.getPrimaryKey());
+			for (int i = 0; i < curResultRows.size(); i++) {
+				com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)curResultRows.get(i);
 
-		request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
+				primaryKeysJSONArray.put(row.getPrimaryKey());
 
-		List entries = row.getEntries();
+				request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
 
-		boolean rowIsChecked = false;
-		boolean rowIsDisabled = false;
+				List entries = row.getEntries();
 
-		if (rowChecker != null) {
-			rowIsChecked = rowChecker.isChecked(row.getObject());
-			rowIsDisabled = rowChecker.isDisabled(row.getObject());
+				boolean rowIsChecked = false;
+				boolean rowIsDisabled = false;
 
-			if (!rowIsChecked) {
-				allRowsIsChecked = false;
-			}
+				if (rowChecker != null) {
+					rowIsChecked = rowChecker.isChecked(row.getObject());
+					rowIsDisabled = rowChecker.isDisabled(row.getObject());
 
-			TextSearchEntry textSearchEntry = new TextSearchEntry();
+					if (!rowIsChecked) {
+						allRowsIsChecked = false;
+					}
 
-			textSearchEntry.setAlign(rowChecker.getAlign());
-			textSearchEntry.setColspan(rowChecker.getColspan());
-			textSearchEntry.setCssClass("checkbox-cell list-group-item-field");
-			textSearchEntry.setName(rowChecker.getRowCheckBox(request, rowIsChecked, rowIsDisabled, row.getPrimaryKey()));
-			textSearchEntry.setValign(rowChecker.getValign());
+					TextSearchEntry textSearchEntry = new TextSearchEntry();
 
-			row.addSearchEntry(0, textSearchEntry);
+					textSearchEntry.setAlign(rowChecker.getAlign());
+					textSearchEntry.setColspan(rowChecker.getColspan());
+					textSearchEntry.setCssClass("checkbox-cell list-group-item-field");
+					textSearchEntry.setName(rowChecker.getRowCheckBox(request, rowIsChecked, rowIsDisabled, row.getPrimaryKey()));
+					textSearchEntry.setValign(rowChecker.getValign());
 
-			String rowSelector = rowChecker.getRowSelector();
+					row.addSearchEntry(0, textSearchEntry);
 
-			if (Validator.isNull(rowSelector)) {
-				Map<String, Object> rowData = row.getData();
+					String rowSelector = rowChecker.getRowSelector();
 
-				if (rowData == null) {
-					rowData = new HashMap<String, Object>();
+					if (Validator.isNull(rowSelector)) {
+						Map<String, Object> rowData = row.getData();
+
+						if (rowData == null) {
+							rowData = new HashMap<String, Object>();
+						}
+
+						rowData.put("selectable", !rowIsDisabled);
+
+						row.setData(rowData);
+					}
 				}
 
-				rowData.put("selectable", !rowIsDisabled);
+				request.setAttribute("liferay-ui:search-container-row:rowId", id.concat(StringPool.UNDERLINE.concat(row.getRowId())));
 
-				row.setData(rowData);
-			}
-		}
+				Map<String, Object> data = row.getData();
 
-		request.setAttribute("liferay-ui:search-container-row:rowId", id.concat(StringPool.UNDERLINE.concat(row.getRowId())));
+				if (data == null) {
+					data = new HashMap<String, Object>();
+				}
+			%>
 
-		Map<String, Object> data = row.getData();
-
-		if (data == null) {
-			data = new HashMap<String, Object>();
-		}
-	%>
-
-		<tr class="panel <%= GetterUtil.getString(row.getClassName()) %> <%= row.getCssClass() %> <%= row.getState() %> <%= rowIsChecked ? "info" : StringPool.BLANK %>" data-qa-id="row" <%= AUIUtil.buildData(data) %>>
-
-		<%
-		for (int j = 0; j < entries.size(); j++) {
-			com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(j);
-
-			entry.setIndex(j);
-
-			request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY, entry);
-
-			String columnClassName = entry.getCssClass();
-		%>
-
-			<td class="<%= columnClassName %> text-<%= entry.getAlign() %> text-<%= entry.getValign() %>" colspan="<%= entry.getColspan() %>">
-
-			<c:choose>
-				<c:when test="<%= entry.isTruncate() %>">
-					<span class="truncate-text">
-
-						<%
-						entry.print(pageContext.getOut(), request, response);
-						%>
-
-					</span>
-				</c:when>
-				<c:otherwise>
+				<tr class="panel <%= GetterUtil.getString(row.getClassName()) %> <%= row.getCssClass() %> <%= row.getState() %> <%= rowIsChecked ? "info" : StringPool.BLANK %>" data-qa-id="row" <%= AUIUtil.buildData(data) %>>
 
 					<%
-					entry.print(pageContext.getOut(), request, response);
+					for (int j = 0; j < entries.size(); j++) {
+						com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(j);
+
+						entry.setIndex(j);
+
+						request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY, entry);
+
+						String columnClassName = entry.getCssClass();
 					%>
 
-				</c:otherwise>
-			</c:choose>
+						<td class="<%= columnClassName %> text-<%= entry.getAlign() %> text-<%= entry.getValign() %>" colspan="<%= entry.getColspan() %>">
 
-			</td>
+						<c:choose>
+							<c:when test="<%= entry.isTruncate() %>">
+								<span class="truncate-text">
 
-		<%
+									<%
+									entry.print(pageContext.getOut(), request, response);
+									%>
+
+								</span>
+							</c:when>
+							<c:otherwise>
+
+								<%
+								entry.print(pageContext.getOut(), request, response);
+								%>
+
+							</c:otherwise>
+						</c:choose>
+
+						</td>
+
+					<%
+					}
+					%>
+
+				</tr>
+
+			<%
+				request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+				request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
+
+				request.removeAttribute("liferay-ui:search-container-row:rowId");
+			}
 		}
 		%>
 
-		</tr>
+		<c:if test="<%= headerNames != null %>">
+			<tr class="lfr-template">
 
-	<%
-		request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-		request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
+				<%
+				for (int i = 0; i < headerNames.size(); i++) {
+				%>
 
-		request.removeAttribute("liferay-ui:search-container-row:rowId");
-	}
-	%>
+					<td class="table-cell"></td>
 
-	<c:if test="<%= headerNames != null %>">
-		<tr class="lfr-template">
+				<%
+				}
+				%>
 
-			<%
-			for (int i = 0; i < headerNames.size(); i++) {
-			%>
-
-				<td class="table-cell"></td>
-
-			<%
-			}
-			%>
-
-		</tr>
-	</c:if>
-
+			</tr>
+		</c:if>
 	</tbody>
 </table>
 

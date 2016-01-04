@@ -24,6 +24,7 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
+taglib uri="http://liferay.com/tld/trash" prefix="liferay-trash" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
@@ -102,7 +103,6 @@ page import="com.liferay.journal.web.portlet.action.ActionUtil" %><%@
 page import="com.liferay.journal.web.search.ArticleSearch" %><%@
 page import="com.liferay.journal.web.search.ArticleSearchTerms" %><%@
 page import="com.liferay.journal.web.search.EntriesChecker" %><%@
-page import="com.liferay.journal.web.search.FeedDisplayTerms" %><%@
 page import="com.liferay.journal.web.search.FeedSearch" %><%@
 page import="com.liferay.journal.web.search.FeedSearchTerms" %><%@
 page import="com.liferay.journal.web.search.JournalSearcher" %><%@
@@ -113,7 +113,6 @@ page import="com.liferay.portal.NoSuchWorkflowDefinitionLinkException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
-page import="com.liferay.portal.kernel.dao.search.RowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@

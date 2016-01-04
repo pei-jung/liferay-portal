@@ -54,7 +54,8 @@ public class PortletKeys {
 	public static final String FRIENDS_DIRECTORY =
 		"com_liferay_directory_web_portlet_FriendsDirectoryPortlet";
 
-	public static final String IMAGE_UPLOADER = "195";
+	public static final String IMAGE_UPLOADER =
+		"com_liferay_image_uploader_web_portlet_ImageUploaderPortlet";
 
 	public static final String ITEM_SELECTOR =
 		"com_liferay_item_selector_web_portlet_ItemSelectorPortlet";
@@ -131,7 +132,8 @@ public class PortletKeys {
 
 	public static final long PREFS_PLID_SHARED = 0;
 
-	public static final String RECENT_DOCUMENTS = "64";
+	public static final String RECENT_DOCUMENTS =
+		"com_liferay_recent_documents_web_portlet_RecentDocumentsPortlet";
 
 	public static final String REQUESTS = "121";
 

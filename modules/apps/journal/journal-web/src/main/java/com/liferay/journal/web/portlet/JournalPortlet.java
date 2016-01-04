@@ -232,12 +232,21 @@ public class JournalPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String[] deleteFeedIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "deleteFeedIds"));
+		long[] deleteFeedIds = null;
 
-		for (int i = 0; i < deleteFeedIds.length; i++) {
+		long deleteFeedId = ParamUtil.getLong(actionRequest, "deleteFeedId");
+
+		if (deleteFeedId > 0) {
+			deleteFeedIds = new long[] {deleteFeedId};
+		}
+		else {
+			deleteFeedIds = ParamUtil.getLongValues(actionRequest, "rowIds");
+		}
+
+		for (long curDeleteFeedId : deleteFeedIds) {
 			_journalFeedService.deleteFeed(
-				themeDisplay.getScopeGroupId(), deleteFeedIds[i]);
+				themeDisplay.getScopeGroupId(),
+				String.valueOf(curDeleteFeedId));
 		}
 	}
 
@@ -917,10 +926,9 @@ public class JournalPortlet extends MVCPortlet {
 		throws Exception {
 
 		long[] ddmStructureIds = StringUtil.split(
-				ParamUtil.getString(
-						actionRequest,
-						"ddmStructuresSearchContainerPrimaryKeys"),
-				0L);
+			ParamUtil.getString(
+				actionRequest, "ddmStructuresSearchContainerPrimaryKeys"),
+			0L);
 		int restrinctionType = ParamUtil.getInteger(
 			actionRequest, "restrictionType");
 

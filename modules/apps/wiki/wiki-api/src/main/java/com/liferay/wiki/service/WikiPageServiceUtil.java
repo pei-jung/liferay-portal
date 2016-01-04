@@ -128,17 +128,6 @@ public class WikiPageServiceUtil {
 		getService().deletePage(nodeId, title);
 	}
 
-	/**
-	* @deprecated As of 6.2.0 replaced by {@link #discardDraft(long, String,
-	double)}
-	*/
-	@Deprecated
-	public static void deletePage(long nodeId, java.lang.String title,
-		double version)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deletePage(nodeId, title, version);
-	}
-
 	public static void deletePageAttachment(long nodeId,
 		java.lang.String title, java.lang.String fileName)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -419,13 +408,6 @@ public class WikiPageServiceUtil {
 
 	public static WikiPageService getService() {
 		return _serviceTracker.getService();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(WikiPageService service) {
 	}
 
 	private static ServiceTracker<WikiPageService, WikiPageService> _serviceTracker =

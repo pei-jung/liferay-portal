@@ -105,7 +105,7 @@
 </tr>
 <tr>
 	<td>ENABLE_FULLSCREEN</td>
-	<td>//input[@id='_86_enableFullscreen']</td>
+	<td>//input[contains(@id,'enableFullscreen')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -156,6 +156,11 @@
 <tr>
 	<td>ENABLE_SOCIAL_BOOKMARKS</td>
 	<td>//label[contains(.,'Enable Social Bookmarks')]/input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENABLE_VIEW_COUNT</td>
+	<td>//label[contains(.,'Enable View Count')]/input[@type='checkbox']</td>
 	<td></td>
 </tr>
 <tr>

@@ -1,4 +1,37 @@
 <definition>
+	<command name="_tearDownWorkflow">
+		<var name="key_listEntry" value="Knowledge Base Article" />
+		<var name="noWorkflow" value="No Workflow" />
+
+		<if>
+			<condition function="IsElementPresent" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+			<then>
+				<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+				<execute function="Click" locator1="MenuItem#EDIT" />
+
+				<var name="key_workflowResourceValue" value="Knowledge Base Article" />
+
+				<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_SELECT" value1="${noWorkflow}"  />
+
+				<execute macro="Button#clickSave" />
+			</then>
+		</if>
+
+		<for list="Blogs Entry,Calendar Event,Comments,Message Boards Message,Page Revision,Wiki Page" param="workflowResourceValue">
+			<var name="key_listEntry" value="${workflowResourceValue}" />
+
+			<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+
+			<execute function="Click" locator1="MenuItem#EDIT" />
+
+			<var name="key_workflowResourceValue" value="${workflowResourceValue}" />
+
+			<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_SELECT" value1="${noWorkflow}" />
+
+			<execute macro="Button#clickSave" />
+		</for>
+	</command>
+
 	<command name="approveTaskByActions">
 		<execute macro="Workflow#viewTaskAssignedToMe">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
@@ -212,11 +245,23 @@
 	</command>
 
 	<command name="configureWorkflow">
-		<execute function="Select" locator1="WorkflowConfiguration#${workflowResourceKey}" value1="${workflowDefinition}" />
+		<var name="key_listEntry" value="${workflowResourceValue}" />
+
+		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+
+		<execute function="Click" locator1="MenuItem#EDIT" />
+
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${workflowResourceValue}" />
+
+		<var name="key_workflowResourceValue" value="${workflowResourceValue}" />
+
+		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_SELECT" value1="${workflowDefinition}" />
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="AssertTextEquals" locator1="WorkflowConfiguration#RESOURCE_TABLE_WORKFLOW" value1="${workflowDefinition}" />
 	</command>
 
 	<command name="configureWorkflowViaFolderInfo">
@@ -288,6 +333,8 @@
 
 	<command name="gotoPreviewEdit">
 		<execute function="AssertClick" locator1="WorkflowSubmissionsTask#PREVIEW_EDIT" value1="Edit" />
+
+		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
 	</command>
 
 	<command name="gotoPreviewView">
@@ -445,20 +492,24 @@
 	</command>
 
 	<command name="tearDownPortalWorkflow">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Configuration" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Configuration" />
 		</execute>
 
-		<var name="noWorkflow" value="Default: No Workflow" />
+		<execute macro="Workflow#_tearDownWorkflow" />
 
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_CALENDAR_EVENT_SELECT" value1="${defaultWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_PAGE_REVISION_SELECT" value1="${noWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_USER_SELECT" value1="${noWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_BLOGS_ENTRY_SELECT" value1="${noWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_COMMENTS_SELECT" value1="${noWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_MESSAGE_BOARDS_MESSAGE_SELECT" value1="${noWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_WIKI_PAGE_SELECT" value1="${noWorkflow}" />
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<var name="key_listEntry" value="User" />
+		<var name="noWorkflow" value="No Workflow" />
+
+		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+
+		<execute function="Click" locator1="MenuItem#EDIT" />
+
+		<var name="key_workflowResourceValue" value="User" />
+
+		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_SELECT" value1="${noWorkflow}" />
+
+		<execute macro="Button#clickSave" />
 	</command>
 
 	<command name="tearDownSiteWorkflow">
@@ -466,22 +517,7 @@
 			<var name="portletName" value="Workflow Configuration" />
 		</execute>
 
-		<var name="defaultWorkflow" value="Default: No Workflow" />
-
-		<if>
-			<condition function="IsElementPresent" locator1="WorkflowConfiguration#RESOURCE_TABLE_KNOWLEDGE_BASE_ARTICLE_SELECT" />
-			<then>
-				<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_KNOWLEDGE_BASE_ARTICLE_SELECT" value1="${defaultWorkflow}" />
-			</then>
-		</if>
-
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_CALENDAR_EVENT_SELECT" value1="${defaultWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_PAGE_REVISION_SELECT" value1="${defaultWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_BLOGS_ENTRY_SELECT" value1="${defaultWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_COMMENTS_SELECT" value1="${defaultWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_MESSAGE_BOARDS_MESSAGE_SELECT" value1="${defaultWorkflow}" />
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_WIKI_PAGE_SELECT" value1="${defaultWorkflow}" />
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Workflow#_tearDownWorkflow" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -495,8 +531,8 @@
 	</command>
 
 	<command name="tearDownSpecificWorkflowDefinition">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<var name="key_workflowDefinitionTitle" value="${workflowDefinitionTitle}" />
@@ -514,8 +550,8 @@
 	</command>
 
 	<command name="tearDownWorkflowDefinitionDraftsViaKDCP">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Kaleo Designer" />
+		<execute macro="ProductMenu#gotoControlPanelApps">
+			<var name="portlet" value="Kaleo Designer" />
 		</execute>
 
 		<while>
@@ -534,8 +570,8 @@
 	</command>
 
 	<command name="tearDownWorkflowDefinitionsViaWorkflowCP">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<while>

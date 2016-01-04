@@ -31,12 +31,13 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
  */
 @ConfigurationAdmin(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.security.sso.openid.module.configuration.OpenIdConfiguration"
+	id = "com.liferay.portal.security.sso.openid.module.configuration.OpenIdConfiguration",
+	localization = "content/Language", name = "%open.id.configuration.name"
 )
 public interface OpenIdConfiguration {
 
 	@Meta.AD(
-		deflt = "true",
+		deflt = "false",
 		description = "Set this to true to enable OpenId authentication.",
 		required = false
 	)

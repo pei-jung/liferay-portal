@@ -133,21 +133,28 @@ public final class CommandLoggerHandler {
 		_commandLogLoggerElement = new LoggerElement("commandLog");
 
 		_commandLogLoggerElement.setAttribute("data-logid", "01");
-		_commandLogLoggerElement.setClassName("collapse command-log");
+		_commandLogLoggerElement.setClassName("collapse command-log running");
 		_commandLogLoggerElement.setName("ul");
 		_commandLogLoggerElement.setWrittenToLogger(true);
-
-		_xmlLogLoggerElement.addClassName("running");
 	}
 
 	public static void stopRunning() throws Exception {
-		_xmlLogLoggerElement.removeClassName("running");
-
-		_commandLogLoggerElement = null;
+		_commandLogLoggerElement.removeClassName("running");
 	}
 
 	public static void warnCommand(Element element) throws Exception {
-		failCommand(element);
+		if (!_isCurrentCommand(element)) {
+			return;
+		}
+
+		_commandElement = null;
+
+		_warningLineGroupLoggerElement(_lineGroupLoggerElement);
+
+		LoggerElement xmlLoggerElement = XMLLoggerHandler.getXMLLoggerElement(
+			PoshiRunnerStackTraceUtil.getSimpleStackTrace());
+
+		_updateStatus(xmlLoggerElement, "warning");
 	}
 
 	private static void _failLineGroupLoggerElement(
@@ -546,6 +553,29 @@ public final class CommandLoggerHandler {
 				loggerElement.getID() + "')");
 	}
 
+	private static void _warningLineGroupLoggerElement(
+			LoggerElement lineGroupLoggerElement)
+		throws Exception {
+
+		lineGroupLoggerElement.addClassName("warning");
+
+		lineGroupLoggerElement.addChildLoggerElement(
+			_getErrorContainerLoggerElement());
+
+		LoggerElement childContainerLoggerElement =
+			lineGroupLoggerElement.loggerElement("ul");
+
+		List<LoggerElement> runLineLoggerElements =
+			childContainerLoggerElement.loggerElements("li");
+
+		if (!runLineLoggerElements.isEmpty()) {
+			LoggerElement runLineLoggerElement = runLineLoggerElements.get(
+				runLineLoggerElements.size() - 1);
+
+			runLineLoggerElement.addClassName("warning-line");
+		}
+	}
+
 	private static void _writeWebPage(int errorLinkId) throws Exception {
 		String testClassCommandName =
 			PoshiRunnerContext.getTestCaseCommandName();
@@ -556,7 +586,7 @@ public final class CommandLoggerHandler {
 		WebDriverHelper.saveWebPage(
 			PoshiRunnerGetterUtil.getCanonicalPath(".") + "/test-results/" +
 				testClassCommandName + "/web-pages/index" + errorLinkId +
-				".html",
+					".html",
 			_htmlSource);
 	}
 
@@ -567,7 +597,5 @@ public final class CommandLoggerHandler {
 	private static int _functionLinkId;
 	private static String _htmlSource;
 	private static LoggerElement _lineGroupLoggerElement;
-	private static final LoggerElement _xmlLogLoggerElement = new LoggerElement(
-		"xml-log");
 
 }

@@ -61,13 +61,43 @@ public class DDMFormFactoryHelper {
 
 		Class<?> returnType = _method.getReturnType();
 
+		if (returnType.isArray()) {
+			returnType = returnType.getComponentType();
+		}
+
 		if (returnType.isAssignableFrom(boolean.class) ||
 			returnType.isAssignableFrom(Boolean.class)) {
 
 			return "boolean";
 		}
+		else if (returnType.isAssignableFrom(double.class) ||
+				 returnType.isAssignableFrom(Double.class)) {
 
-		return "string";
+			return "double";
+		}
+		else if (returnType.isAssignableFrom(float.class) ||
+				 returnType.isAssignableFrom(Float.class)) {
+
+			return "float";
+		}
+		else if (returnType.isAssignableFrom(int.class) ||
+				 returnType.isAssignableFrom(Integer.class)) {
+
+			return "integer";
+		}
+		else if (returnType.isAssignableFrom(long.class) ||
+				 returnType.isAssignableFrom(Long.class)) {
+
+			return "long";
+		}
+		else if (returnType.isAssignableFrom(short.class) ||
+				 returnType.isAssignableFrom(Short.class)) {
+
+			return "short";
+		}
+		else {
+			return "string";
+		}
 	}
 
 	public LocalizedValue getDDMFormFieldLabel() {
@@ -120,11 +150,14 @@ public class DDMFormFactoryHelper {
 
 		String predefinedValue = _ddmFormField.predefinedValue();
 
-		if (Validator.isNull(predefinedValue)) {
-			return localizedValue;
-		}
+		String fieldType = getDDMFormFieldType();
 
-		localizedValue.addString(_defaultLocale, predefinedValue);
+		if (Validator.isNotNull(predefinedValue)) {
+			localizedValue.addString(_defaultLocale, predefinedValue);
+		}
+		else if (fieldType.equals("checkbox")) {
+			localizedValue.addString(_defaultLocale, Boolean.FALSE.toString());
+		}
 
 		return localizedValue;
 	}
@@ -213,6 +246,16 @@ public class DDMFormFactoryHelper {
 		Class<?> returnType = _method.getReturnType();
 
 		if (returnType.isAssignableFrom(LocalizedValue.class)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isDDMFormFieldRepeatable() {
+		Class<?> returnType = _method.getReturnType();
+
+		if (returnType.isArray()) {
 			return true;
 		}
 

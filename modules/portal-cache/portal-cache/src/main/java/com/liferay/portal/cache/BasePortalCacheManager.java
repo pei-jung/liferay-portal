@@ -104,9 +104,7 @@ public abstract class BasePortalCacheManager<K extends Serializable, V>
 		if (previousPortalCache != null) {
 			portalCache = previousPortalCache;
 		}
-		else if (isPortalCacheBootstrapLoaderEnabled() &&
-				 (portalCacheConfiguration != null)) {
-
+		else if (portalCacheConfiguration != null) {
 			Properties portalCacheBootstrapLoaderProperties =
 				portalCacheConfiguration.
 					getPortalCacheBootstrapLoaderProperties();
@@ -150,10 +148,6 @@ public abstract class BasePortalCacheManager<K extends Serializable, V>
 		return _clusterAware;
 	}
 
-	public boolean isPortalCacheBootstrapLoaderEnabled() {
-		return _portalCacheBootstrapLoaderEnabled;
-	}
-
 	public boolean isTransactionalPortalCacheEnabled() {
 		return _transactionalPortalCacheEnabled;
 	}
@@ -185,12 +179,6 @@ public abstract class BasePortalCacheManager<K extends Serializable, V>
 
 	public void setMpiOnly(boolean mpiOnly) {
 		_mpiOnly = mpiOnly;
-	}
-
-	public void setPortalCacheBootstrapLoaderEnabled(
-		boolean portalCacheBootstrapLoaderEnabled) {
-
-		_portalCacheBootstrapLoaderEnabled = portalCacheBootstrapLoaderEnabled;
 	}
 
 	public void setPortalCacheManagerName(String portalCacheManagerName) {
@@ -330,6 +318,13 @@ public abstract class BasePortalCacheManager<K extends Serializable, V>
 				portalCacheConfiguration.
 					getPortalCacheListenerPropertiesSet()) {
 
+			PortalCacheListener<K, V> portalCacheListener =
+				portalCacheListenerFactory.create(properties);
+
+			if (portalCacheListener == null) {
+				continue;
+			}
+
 			PortalCacheListenerScope portalCacheListenerScope =
 				(PortalCacheListenerScope)properties.remove(
 					PortalCacheConfiguration.PORTAL_CACHE_LISTENER_SCOPE);
@@ -337,9 +332,6 @@ public abstract class BasePortalCacheManager<K extends Serializable, V>
 			if (portalCacheListenerScope == null) {
 				portalCacheListenerScope = PortalCacheListenerScope.ALL;
 			}
-
-			PortalCacheListener<K, V> portalCacheListener =
-				portalCacheListenerFactory.create(properties);
 
 			portalCache.registerPortalCacheListener(
 				portalCacheListener, portalCacheListenerScope);
@@ -350,7 +342,6 @@ public abstract class BasePortalCacheManager<K extends Serializable, V>
 	private boolean _clusterAware;
 	private PortalCacheConfiguration _defaultPortalCacheConfiguration;
 	private boolean _mpiOnly;
-	private boolean _portalCacheBootstrapLoaderEnabled;
 	private PortalCacheManagerConfiguration _portalCacheManagerConfiguration;
 	private String _portalCacheManagerName;
 	private boolean _transactionalPortalCacheEnabled;

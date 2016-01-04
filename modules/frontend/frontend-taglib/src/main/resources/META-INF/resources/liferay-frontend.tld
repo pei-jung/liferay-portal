@@ -52,6 +52,71 @@
 		</attribute>
 	</tag>
 	<tag>
+		<name>diff</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.DiffTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>diffResults</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>sourceName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>targetName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>diff-version-comparator</name>
+		<tag-class>com.liferay.frontend.taglib.servlet.taglib.DiffVersionComparatorTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>availableLocales</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>diffHtmlResults</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>diffVersionsInfo</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>languageId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>portletURL</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>resourceURL</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>sourceVersion</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>targetVersion</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
 		<name>email-notification-settings</name>
 		<tag-class>com.liferay.frontend.taglib.servlet.taglib.EmailNotificationSettingsTag</tag-class>
 		<body-content>JSP</body-content>
@@ -342,6 +407,11 @@
 		<attribute>
 			<description>A title for the card</description>
 			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>url</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

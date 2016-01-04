@@ -14,6 +14,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ACTIVE_NAV_ITEM_LINK</td>
+	<td>//div[contains(@class,'navbar-default')]//li[contains(@class,'active')]/a/span[contains(.,'${key_navItem}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD</td>
 	<td>//div[contains(@class,'navbar-default')]//a/span[contains(.,'Add')]</td>
 	<td></td>
@@ -79,6 +84,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>NAV_ITEM_LINK</td>
+	<td>//div[contains(@class,'navbar-default')]//a/span[contains(.,'${key_navItem}')] | //*[@data-qa-id='navigation']//a[contains(.,'${key_navItem}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ORGANIZATIONS</td>
 	<td>//ul[contains(@class,'nav') and contains(@class,'navbar-nav')]/li/a[contains(.,'Organizations')]</td>
 	<td></td>
@@ -89,8 +99,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SCOPE</td>
+	<td>//ul[contains(@class,'navbar-nav')]/li/a[contains(.,'Scope')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_BUTTON</td>
+	<td>//*[@data-qa-id='searchButton']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SEARCH_TOGGLE_ADVANCED</td>
 	<td>//a[contains(@id,'searchtoggleAdvanced')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETUP</td>
+	<td>//ul[contains(@class,'navbar-nav')]/li/a[contains(.,'Setup')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SHARING</td>
+	<td>//ul[contains(@class,'navbar-nav')]/li/a[contains(.,'Sharing')]</td>
 	<td></td>
 </tr>
 <tr>

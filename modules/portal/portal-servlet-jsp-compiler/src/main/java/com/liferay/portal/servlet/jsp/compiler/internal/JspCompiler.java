@@ -14,13 +14,11 @@
 
 package com.liferay.portal.servlet.jsp.compiler.internal;
 
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -33,29 +31,42 @@ import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 
 import org.apache.felix.utils.log.Logger;
 import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.ErrorDispatcher;
+import org.apache.jasper.compiler.JavacErrorDetail;
 import org.apache.jasper.compiler.Jsr199JavaCompiler;
+import org.apache.jasper.compiler.Node.Nodes;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
-
-import org.phidias.compile.BundleJavaManager;
-import org.phidias.compile.ResourceResolver;
 
 /**
  * @author Raymond Augé
@@ -64,14 +75,82 @@ import org.phidias.compile.ResourceResolver;
 public class JspCompiler extends Jsr199JavaCompiler {
 
 	@Override
+	public JavacErrorDetail[] compile(String className, Nodes pageNodes)
+		throws JasperException {
+
+		classFiles = new ArrayList<>();
+
+		JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+
+		if (javaCompiler == null) {
+			errDispatcher.jspError("jsp.error.nojdk");
+
+			throw new JasperException("Unable to find Java compiler");
+		}
+
+		DiagnosticCollector<JavaFileObject> diagnosticCollector =
+			new DiagnosticCollector<>();
+
+		StandardJavaFileManager standardJavaFileManager =
+			javaCompiler.getStandardFileManager(
+				diagnosticCollector, null, null);
+
+		try {
+			standardJavaFileManager.setLocation(
+				StandardLocation.CLASS_PATH, cpath);
+		}
+		catch (IOException ioe) {
+			throw new JasperException(ioe);
+		}
+
+		try (JavaFileManager javaFileManager = getJavaFileManager(
+				standardJavaFileManager)) {
+
+			CompilationTask compilationTask = javaCompiler.getTask(
+				null, javaFileManager, diagnosticCollector, options, null,
+				Arrays.asList(
+					new StringJavaFileObject(
+						className.substring(className.lastIndexOf('.') + 1),
+						charArrayWriter.toString())));
+
+			if (compilationTask.call()) {
+				for (BytecodeFile bytecodeFile : classFiles) {
+					rtctxt.setBytecode(
+						bytecodeFile.getClassName(),
+						bytecodeFile.getBytecode());
+				}
+
+				return null;
+			}
+		}
+		catch (IOException ioe) {
+			throw new JasperException(ioe);
+		}
+
+		List<JavacErrorDetail> javacErrorDetails = new ArrayList<>();
+
+		for (Diagnostic<? extends JavaFileObject> diagnostic :
+				diagnosticCollector.getDiagnostics()) {
+
+			javacErrorDetails.add(
+				ErrorDispatcher.createJavacError(
+					javaFileName, pageNodes,
+					new StringBuilder(diagnostic.getMessage(null)),
+					(int)diagnostic.getLineNumber()));
+		}
+
+		return javacErrorDetails.toArray(
+			new JavacErrorDetail[javacErrorDetails.size()]);
+	}
+
+	@Override
 	public void init(
 		JspCompilationContext jspCompilationContext,
 		ErrorDispatcher errorDispatcher, boolean suppressLogging) {
 
-		_jspBundle = FrameworkUtil.getBundle(
-			com.liferay.portal.servlet.jsp.compiler.JspServlet.class);
+		Bundle jspBundle = _jspBundleWiring.getBundle();
 
-		_logger = new Logger(_jspBundle.getBundleContext());
+		_logger = new Logger(jspBundle.getBundleContext());
 
 		ServletContext servletContext =
 			jspCompilationContext.getServletContext();
@@ -88,10 +167,50 @@ public class JspCompiler extends Jsr199JavaCompiler {
 
 		_allParticipatingBundles = jspBundleClassloader.getBundles();
 
-		_bundle = _allParticipatingBundles[0];
+		Bundle bundle = _allParticipatingBundles[0];
 
-		_resourceResolver = new JspResourceResolver(
-			_bundle, _jspBundle, _logger);
+		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+
+		_classLoader = bundleWiring.getClassLoader();
+
+		for (BundleWire bundleWire : bundleWiring.getRequiredWires(null)) {
+			BundleWiring providedBundleWiring = bundleWire.getProviderWiring();
+
+			_bundleWiringPackageNames.put(
+				providedBundleWiring,
+				_collectPackageNames(providedBundleWiring));
+		}
+
+		_bundleWiringPackageNames.putAll(_jspBundleWiringPackageNames);
+
+		if (options.contains(BundleJavaFileManager.OPT_VERBOSE)) {
+			StringBundler sb = new StringBundler(
+				_bundleWiringPackageNames.size() * 4 + 6);
+
+			sb.append("JSP compiler for bundle ");
+			sb.append(bundle.getSymbolicName());
+			sb.append(StringPool.DASH);
+			sb.append(bundle.getVersion());
+			sb.append(" has dependent bundle wirings: ");
+
+			for (BundleWiring curBundleWiring :
+					_bundleWiringPackageNames.keySet()) {
+
+				Bundle currentBundle = curBundleWiring.getBundle();
+
+				sb.append(currentBundle.getSymbolicName());
+				sb.append(StringPool.DASH);
+				sb.append(currentBundle.getVersion());
+				sb.append(StringPool.COMMA_AND_SPACE);
+			}
+
+			sb.setIndex(sb.index() - 1);
+
+			_logger.log(Logger.LOG_INFO, sb.toString());
+		}
+
+		_javaFileObjectResolver = new JspJavaFileObjectResolver(
+			bundleWiring, _jspBundleWiring, _bundleWiringPackageNames, _logger);
 
 		jspCompilationContext.setClassLoader(jspBundleClassloader);
 
@@ -99,21 +218,6 @@ public class JspCompiler extends Jsr199JavaCompiler {
 		initTLDMappings(servletContext);
 
 		super.init(jspCompilationContext, errorDispatcher, suppressLogging);
-	}
-
-	protected void addBundleWirings(BundleJavaManager bundleJavaManager) {
-		BundleWiring bundleWiring = _jspBundle.adapt(BundleWiring.class);
-
-		bundleJavaManager.addBundleWiring(bundleWiring);
-
-		List<BundleWire> requiredBundleWires = bundleWiring.getRequiredWires(
-			null);
-
-		for (BundleWire bundleWire : requiredBundleWires) {
-			BundleWiring providedBundleWiring = bundleWire.getProviderWiring();
-
-			bundleJavaManager.addBundleWiring(providedBundleWiring);
-		}
 	}
 
 	protected void addDependenciesToClassPath() {
@@ -175,7 +279,8 @@ public class JspCompiler extends Jsr199JavaCompiler {
 	}
 
 	protected void collectTLDMappings(
-		Map<String, String[]> tldMappings, Bundle bundle) {
+			Map<String, String[]> tldMappings, Bundle bundle)
+		throws IOException {
 
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 
@@ -190,7 +295,7 @@ public class JspCompiler extends Jsr199JavaCompiler {
 		for (String resourcePath : resourcePaths) {
 			URL url = bundle.getResource(resourcePath);
 
-			String uri = getTldUri(url);
+			String uri = TldURIUtil.getTldURI(url);
 
 			if (uri != null) {
 				tldMappings.put(uri, new String[] {"/" + resourcePath, null});
@@ -209,71 +314,18 @@ public class JspCompiler extends Jsr199JavaCompiler {
 			try {
 				standardJavaFileManager.setLocation(
 					StandardLocation.CLASS_PATH, _classPath);
-
-				BundleJavaManager bundleJavaManager = new BundleJavaManager(
-					_bundle, standardJavaFileManager, options, true);
-
-				addBundleWirings(bundleJavaManager);
-
-				bundleJavaManager.setResourceResolver(_resourceResolver);
-
-				javaFileManager = bundleJavaManager;
 			}
 			catch (IOException ioe) {
 				_logger.log(Logger.LOG_ERROR, ioe.getMessage(), ioe);
 			}
+
+			javaFileManager = new BundleJavaFileManager(
+				_classLoader, _systemPackageNames, standardJavaFileManager,
+				_logger, options.contains(BundleJavaFileManager.OPT_VERBOSE),
+				_javaFileObjectResolver);
 		}
 
 		return super.getJavaFileManager(javaFileManager);
-	}
-
-	protected String getTldUri(URL url) {
-		try (InputStream inputStream = url.openStream();
-			InputStreamReader inputStreamReader = new InputStreamReader(
-				inputStream);
-			BufferedReader bufferedReader = new BufferedReader(
-				inputStreamReader)) {
-
-			StringBuilder sb = null;
-
-			String line = null;
-
-			while ((line = bufferedReader.readLine()) != null) {
-				if (sb == null) {
-					int x = line.indexOf("<uri>");
-
-					if (x < 0) {
-						continue;
-					}
-
-					x += 5;
-
-					int y = line.indexOf("</uri>", x);
-
-					if (y >= 0) {
-						return line.substring(x, y);
-					}
-
-					sb = new StringBuilder(line.substring(x));
-				}
-				else {
-					int y = line.indexOf("</uri>");
-
-					if (y >= 0) {
-						sb.append(line.substring(0, y));
-
-						return sb.toString();
-					}
-
-					sb.append(line);
-				}
-			}
-
-			return null;
-		}
-		catch (IOException ioe) {
-			return ReflectionUtil.throwException(ioe);
-		}
 	}
 
 	protected void initClassPath(ServletContext servletContext) {
@@ -363,17 +415,69 @@ public class JspCompiler extends Jsr199JavaCompiler {
 			url.toString(), "Unknown protocol " + protocol);
 	}
 
+	private static Set<String> _collectPackageNames(BundleWiring bundleWiring) {
+		Set<String> packageNames = new HashSet<>();
+
+		for (BundleCapability bundleCapability :
+				bundleWiring.getCapabilities(
+					BundleRevision.PACKAGE_NAMESPACE)) {
+
+			Map<String, Object> attributes = bundleCapability.getAttributes();
+
+			Object packageName = attributes.get(
+				BundleRevision.PACKAGE_NAMESPACE);
+
+			if (packageName != null) {
+				packageNames.add((String)packageName);
+			}
+		}
+
+		return packageNames;
+	}
+
 	private static final String[] _JSP_COMPILER_DEPENDENCIES = {
 		"com.liferay.portal.kernel.exception.PortalException",
 		"com.liferay.portal.util.PortalImpl", "javax.portlet.PortletException",
 		"javax.servlet.ServletException"
 	};
 
+	private static final BundleWiring _jspBundleWiring;
+	private static final Map<BundleWiring, Set<String>>
+		_jspBundleWiringPackageNames = new LinkedHashMap<>();
+	private static final Set<String> _systemPackageNames;
+
+	static {
+		Bundle jspBundle = FrameworkUtil.getBundle(JspCompiler.class);
+
+		_jspBundleWiring = jspBundle.adapt(BundleWiring.class);
+
+		for (BundleWire bundleWire : _jspBundleWiring.getRequiredWires(null)) {
+			BundleWiring providedBundleWiring = bundleWire.getProviderWiring();
+
+			_jspBundleWiringPackageNames.put(
+				providedBundleWiring,
+				_collectPackageNames(providedBundleWiring));
+		}
+
+		BundleContext bundleContext = jspBundle.getBundleContext();
+
+		Bundle systemBundle = bundleContext.getBundle(0);
+
+		if (systemBundle == null) {
+			throw new ExceptionInInitializerError(
+				"Unable to access to system bundle");
+		}
+
+		_systemPackageNames = _collectPackageNames(
+			systemBundle.adapt(BundleWiring.class));
+	}
+
 	private Bundle[] _allParticipatingBundles;
-	private Bundle _bundle;
+	private final Map<BundleWiring, Set<String>> _bundleWiringPackageNames =
+		new LinkedHashMap<>();
+	private ClassLoader _classLoader;
 	private final List<File> _classPath = new ArrayList<>();
-	private Bundle _jspBundle;
+	private JavaFileObjectResolver _javaFileObjectResolver;
 	private Logger _logger;
-	private ResourceResolver _resourceResolver;
 
 }

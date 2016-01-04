@@ -452,12 +452,12 @@
 						if (typeof parentWindow.location.href == 'undefined') {
 							break;
 						}
+
+						parentThemeDisplay = parentWindow.themeDisplay;
 					}
 					catch (e) {
 						break;
 					}
-
-					parentThemeDisplay = parentWindow.themeDisplay;
 
 					if (!parentThemeDisplay || window.name === 'simulationDeviceIframe') {
 						break;
@@ -680,14 +680,14 @@
 			return value;
 		},
 
-		openInDialog: function(event) {
+		openInDialog: function(event, config) {
 			event.preventDefault();
 
 			var currentTarget = Util.getDOM(event.currentTarget);
 
 			currentTarget = $(currentTarget);
 
-			var config = currentTarget.data();
+			config = A.mix(currentTarget.data(), config);
 
 			if (!config.uri) {
 				config.uri = currentTarget.data('href') || currentTarget.attr('href');

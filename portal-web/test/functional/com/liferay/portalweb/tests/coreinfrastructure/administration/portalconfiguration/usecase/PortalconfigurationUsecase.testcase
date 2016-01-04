@@ -31,8 +31,8 @@
 	</tear-down>
 
 	<command name="AddPortalInstance" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -49,16 +49,16 @@
 	<command name="DefaultPortalLandingPage" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Portal Settings" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instance Settings" />
 		</execute>
 
 		<execute macro="PortalSettings#editDefaultLandingPageCP">
 			<var name="defaultLandingPage" value="/web/guest/landing" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="SitePage#addCP">
@@ -78,8 +78,8 @@
 	</command>
 
 	<command name="DeletePortalInstance" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -94,8 +94,8 @@
 	</command>
 
 	<command name="PermissionCheckPortalInstances" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -154,8 +154,8 @@
 	</command>
 
 	<command name="ViewDeactivatedPortalInstance" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -199,7 +199,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language" />
+			<var name="portletName" value="Language Selector" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -249,8 +249,8 @@
 
 		<execute macro="User#loginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#deactivatePortalInstance">
@@ -265,8 +265,8 @@
 	</command>
 
 	<command name="ViewVirtualHostPrivateSitePage" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Portal Settings" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instance Settings" />
 		</execute>
 
 		<execute macro="PortalSettings#editVirtualHostCP">

@@ -78,8 +78,8 @@
 			<var name="url" value="http://localhost:8080" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<while>

@@ -118,7 +118,12 @@
 			</else>
 		</if>
 
-		<execute function="AssertClick" locator1="DockbarAddpanelapplications#APPLICATIONS_TAB" value1="Applications" />
+		<execute function="AssertElementNotPresent" locator1="ControlMenuAddPanel#LOADING_ANIMATION" />
+
+		<execute macro="Panel#expandSidebarPanel">
+			<var name="panelHeading" value="Applications" />
+		</execute>
+
 		<execute function="Type#sendKeysApplicationSearch" locator1="NavBar#APPLICATION_SEARCH_FIELD" value1="${portletName}" />
 
 		<execute macro-desktop="Portlet#_clickAddPortlet" macro-mobile="Portlet#_mobileClickAddPortlet">
@@ -155,9 +160,12 @@
 	</command>
 
 	<command name="configureCustomTitleViaLookandfeelPG">
-		<execute function="Check" locator1="BasePortlet#PORTLET_CONFIGURATION_USE_CUSTOM_TITLE_CHECKBOX" />
+		<execute function="Check#checkToggleSwitch" locator1="BasePortlet#PORTLET_CONFIGURATION_USE_CUSTOM_TITLE_CHECKBOX" />
+
 		<execute function="Type" locator1="BasePortlet#PORTLET_CONFIGURATION_CUSTOM_TITLE_FIELD" value1="${portletName} Custom" />
+
 		<execute function="AssertClick" locator1="BasePortlet#PORTLET_CONFIGURATION_SAVE_BUTTON" value1="Save" />
+
 		<execute function="AssertTextEquals" locator1="BasePortlet#PORTLET_CONFIGURATION_SUCCESS_MESSAGE" value1="Your request processed successfully." />
 	</command>
 
@@ -248,13 +256,19 @@
 			<elseif>
 				<equals arg1="${portletOption}" arg2="Export / Import" />
 				<then>
-					<execute function="AssertClick" locator1="BasePortlet#OPTIONS_MENULIST_EXPORT_IMPORT" value1="Export / Import" />
+					<execute function="AssertClick" locator1="MenuItem#EXPORT_IMPORT" value1="Export / Import" />
 				</then>
 			</elseif>
 			<else>
 				<fail message="Invalid var portletOption. Must be (Look and Feel|Configuration|Export / Import)." />
 			</else>
 		</if>
+	</command>
+
+	<command name="maximize">
+		<execute function="Click#makeVisibleClickAt" locator1="BasePortlet#OPTIONS_ICON" />
+
+		<execute function="AssertClick" locator1="BasePortlet#MAXIMIZE" value1="Maximize" />
 	</command>
 
 	<command name="shutdownServer">
@@ -415,7 +429,7 @@
 	</command>
 
 	<command name="viewPortletOptionsMenulist">
-		<execute function="Click#mouseOverClick" locator1="BasePortlet#OPTIONS_ICON" />
+		<execute function="Click#makeVisibleClickAt" locator1="BasePortlet#OPTIONS_ICON" />
 
 		<execute function="AssertTextEquals" locator1="BasePortlet#OPTIONS_MENULIST_LOOK_AND_FEEL" value1="Look and Feel" />
 		<execute function="AssertTextEquals" locator1="BasePortlet#OPTIONS_MENULIST_CONFIGURATION" value1="Configuration" />

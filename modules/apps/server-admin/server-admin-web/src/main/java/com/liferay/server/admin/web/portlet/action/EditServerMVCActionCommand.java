@@ -47,7 +47,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.scripting.ScriptingException;
 import com.liferay.portal.kernel.scripting.ScriptingHelperUtil;
 import com.liferay.portal.kernel.scripting.ScriptingUtil;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -403,8 +403,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 				int status = message.getInteger("status");
 
-				if ((status ==
-						BackgroundTaskConstants.STATUS_CANCELLED) ||
+				if ((status == BackgroundTaskConstants.STATUS_CANCELLED) ||
 					(status == BackgroundTaskConstants.STATUS_FAILED) ||
 					(status == BackgroundTaskConstants.STATUS_SUCCESSFUL)) {
 
@@ -426,6 +425,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 					countDownLatch.countDown();
 				}
 			}
+
 		};
 
 		MessageBusUtil.registerMessageListener(
@@ -452,8 +452,8 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		long[] companyIds = PortalInstances.getCompanyIds();
 
 		for (long companyId : companyIds) {
-			SearchEngineUtil.indexQuerySuggestionDictionaries(companyId);
-			SearchEngineUtil.indexSpellCheckerDictionaries(companyId);
+			IndexWriterHelperUtil.indexQuerySuggestionDictionaries(companyId);
+			IndexWriterHelperUtil.indexSpellCheckerDictionaries(companyId);
 		}
 	}
 

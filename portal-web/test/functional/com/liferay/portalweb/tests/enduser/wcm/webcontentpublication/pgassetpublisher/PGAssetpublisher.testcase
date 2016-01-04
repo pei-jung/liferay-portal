@@ -374,8 +374,8 @@
 	</command>
 
 	<command name="ConfigureAPPortletScopeMultipleSites" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -395,9 +395,7 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureAddSiteScopes">
-			<var name="addSite" value="true" />
-			<var name="defaultSite" value="true" />
-			<var name="siteName" value="Test Site" />
+			<var name="otherSite" value="Test Site" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -651,8 +649,8 @@
 	</command>
 
 	<command name="FindSiteAPViaSearchScopeSelector" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">

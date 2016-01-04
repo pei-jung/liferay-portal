@@ -386,12 +386,17 @@
 			<var name="entryTitle" value="${entryTitle}" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="PGBlogsEntry#ENTRY_TITLE" value1="${entryTitle}" />
-		<execute function="AssertTextEquals" locator1="PGBlogsEntry#ENTRY_CONTENT" value1="${entryContent}" />
+		<var name="key_entryTitle" value="${entryTitle}" />
+
+		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
+
+		<var name="key_entryContent" value="${entryContent}" />
+
+		<execute function="AssertTextEquals" locator1="BlogsEntry#CONTENT" value1="${entryContent}" />
 
 		<execute function="Pause" locator1="3000" />
 
-		<execute function="Copy" locator1="PGBlogsEntry#COMMENTS_TRACKBACK_URL" />
+		<execute function="Copy" locator1="BlogsEntry#COMMENTS_TRACKBACK_URL" />
 
 		<if>
 			<equals arg1="virtualHosts" arg2="true" />
@@ -418,8 +423,10 @@
 
 		<execute macro="BlogsNavigator#gotoAddEntry" />
 
-		<execute function="Type" locator1="AlloyEditor#TITLE_FIELD" value1="${entryTitle2}" />
-		<execute function="Type" locator1="AlloyEditor#CONTENT_FIELD" value1="${entryContent2}" />
+		<execute macro="BlogsEntry#addEntryContent">
+			<var name="entryContent" value="${entryContent2}" />
+			<var name="entryTitle" value="${entryTitle2}" />
+		</execute>
 
 		<execute macro="BlogsNavigator#gotoAbstractField" />
 
@@ -753,10 +760,10 @@
 		<execute function="Type" locator1="PGBlogsAdd#SUBTITLE_FIELD" value1="${entrySubtitle}" />
 	</command>
 
-	<command name="flag">
+	<command name="flagPG">
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="AssertClick" locator1="BlogsEntry#FLAG" value1="Flag" />
+		<execute function="AssertClick" locator1="BlogsEntry#FLAG_LINK" value1="Flag" />
 
 		<execute function="AssertTextEquals" locator1="ReportContent#HEADER" value1="Report Inappropriate Content" />
 		<execute function="AssertTextEquals" locator1="ReportContent#WARNING" value1="You are about to report a violation of our Terms of Use. All reports are strictly confidential." />
@@ -769,22 +776,6 @@
 		<execute function="AssertTextEquals" locator1="ReportContent#SUCCESS_MESSAGE" value1="Although we cannot disclose our final decision, we do review every report and appreciate your effort to make sure Liferay is a safe environment for everyone." />
 
 		<execute function="Click" locator1="Button#CLOSE_IFRAME" />
-	</command>
-
-	<command name="flagPG">
-		<execute function="AssertClick" locator1="PGBlogs#ENTRY_FLAG" value1="Flag" />
-
-		<execute function="AssertTextEquals" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_HEADER" value1="Report Inappropriate Content" />
-		<execute function="AssertTextEquals" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_WARNING" value1="You are about to report a violation of our Terms of Use. All reports are strictly confidential." />
-		<execute function="AssertTextEquals" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_WARNING_TERMS_OF_USE_LINK" value1="Terms of Use" />
-
-		<execute function="Select" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_REASON_SELECT" value1="${flagReason}" />
-
-		<execute function="AssertClick" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_SAVE_BUTTON" value1="Save" />
-
-		<execute function="AssertTextEquals" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_SUCCESS_MESSAGE" value1="Although we cannot disclose our final decision, we do review every report and appreciate your effort to make sure Liferay is a safe environment for everyone." />
-
-		<execute function="Click" locator1="PGBlogs#REPORT_INAPPROPRIATE_CONTENT_CLOSE_BUTTON" />
 	</command>
 
 	<command name="gotoDraftEditPG">
@@ -967,11 +958,12 @@
 	</command>
 
 	<command name="removeViewPermissionsPG">
+		<var name="key_assetEntry" value="${entryTitle}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 		<var method="StringUtil#replace('${roleName}', ' ', '-')" name="key_roleName" />
 		<var method="StringUtil#lowerCase('${key_roleName}')" name="key_roleName" />
 
-		<execute function="Click" locator1="Blogs#PAGE_VIEW_ENTRY_OPTIONS_DROPDOWN" />
+		<execute function="Click" locator1="Icon#DESCRIPTIVE_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
@@ -1629,7 +1621,6 @@
 
 		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 		<execute function="AssertTextEquals" locator1="AssetRelatedAssets#HEADER" value1="Related Assets:" />
-		<execute function="AssertElementPresent" locator1="BlogsEntry#RELATED_ASSETS_LINK_IMAGE" />
 		<execute function="AssertTextEquals" locator1="BlogsEntry#RELATED_ASSETS_TITLE" value1="${assetTitle}" />
 	</command>
 
@@ -1787,36 +1778,44 @@
 	</command>
 
 	<command name="viewViewCountPG">
-		<execute function="Click#clickAtNavigation" locator1="link=${pageName}" />
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="${pageName}" />
+		</execute>
 
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="AssertClick" locator1="PGBlogs#ENTRY_TITLE" value1="${entryTitle}" />
+		<execute function="AssertClick" locator1="BlogsEntry#TITLE_LINK" value1="${entryTitle}" />
 
-		<execute function="Click#clickAtNavigation" locator1="link=${pageName}" />
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="${pageName}" />
+		</execute>
 
-		<execute function="AssertClick" locator1="PGBlogs#ENTRY_TITLE" value1="${entryTitle}" />
+		<execute function="AssertClick" locator1="BlogsEntry#TITLE_LINK" value1="${entryTitle}" />
 
-		<var locator="PGBlogsEntry#ENTRY_STATS_VIEW_COUNT" name="entryViewCount" />
-		<var method="selenium#getFirstNumber('${entryViewCount}')" name="entryViewCount" />
+		<var locator="BlogsEntry#ENTRY_VIEW_COUNT" name="entryViewCount" />
+
+		<var method="StringUtil#extractLast('${entryViewCount}',',')" name="entryViewCount" />
+		<var method="StringUtil#extractDigits('${entryViewCount}')" name="entryViewCount" />
 
 		<if>
 			<equals arg1="${entryViewCount}" arg2="1" />
 			<then>
-				<execute function="AssertTextEquals" locator1="PGBlogsEntry#ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} View," />
+				<execute function="AssertTextEquals#assertPartialText" locator1="BlogsEntry#ENTRY_VIEW_COUNT" value1="${entryViewCount} View" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="PGBlogsEntry#ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} Views," />
+				<execute function="AssertTextEquals#assertPartialText" locator1="BlogsEntry#ENTRY_VIEW_COUNT" value1="${entryViewCount} Views" />
 			</else>
 		</if>
 
-		<execute function="Click#clickAtNavigation" locator1="link=${pageName}" />
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="${pageName}" />
+		</execute>
 
-		<execute function="AssertClick" locator1="PGBlogs#ENTRY_TITLE" value1="${entryTitle}" />
+		<execute function="AssertClick" locator1="BlogsEntry#TITLE_LINK" value1="${entryTitle}" />
 
 		<var method="MathUtil#sum('${entryViewCount}', '1')" name="entryViewCount" />
 
-		<execute function="AssertTextEquals" locator1="PGBlogsEntry#ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} Views," />
+		<execute function="AssertTextEquals#assertPartialText" locator1="BlogsEntry#ENTRY_VIEW_COUNT" value1="${entryViewCount} Views" />
 	</command>
 
 	<command name="viewViewPermissionsPG">
@@ -1865,6 +1864,7 @@
 	</command>
 
 	<command name="viewWithTrackbackURLPG">
+		<var name="key_entryContent" value="${entryContent}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 
 		<execute function="AssertTextEquals" locator1="PGBlogs#ENTRY_TITLE" value1="${entryTitle}" />

@@ -126,17 +126,6 @@ public class WikiPageServiceWrapper implements WikiPageService,
 		_wikiPageService.deletePage(nodeId, title);
 	}
 
-	/**
-	* @deprecated As of 6.2.0 replaced by {@link #discardDraft(long, String,
-	double)}
-	*/
-	@Deprecated
-	@Override
-	public void deletePage(long nodeId, java.lang.String title, double version)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_wikiPageService.deletePage(nodeId, title, version);
-	}
-
 	@Override
 	public void deletePageAttachment(long nodeId, java.lang.String title,
 		java.lang.String fileName)
@@ -447,22 +436,6 @@ public class WikiPageServiceWrapper implements WikiPageService,
 		return _wikiPageService.updatePage(nodeId, title, version, content,
 			summary, minorEdit, format, parentTitle, redirectTitle,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public WikiPageService getWrappedWikiPageService() {
-		return _wikiPageService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedWikiPageService(WikiPageService wikiPageService) {
-		_wikiPageService = wikiPageService;
 	}
 
 	@Override

@@ -211,15 +211,6 @@
 							'liferay-translation-manager'
 						]
 					},
-					'liferay-diff-version-comparator': {
-						path: 'diff_version_comparator.js',
-						requires: [
-							'aui-io-request',
-							'autocomplete-base',
-							'autocomplete-filters',
-							'liferay-portlet-base'
-						]
-					},
 					'liferay-dynamic-select': {
 						path: 'dynamic_select.js',
 						requires: [
@@ -475,33 +466,6 @@
 						path: 'logo_selector.js',
 						requires: [
 							'aui-base'
-						]
-					},
-					'liferay-management-bar': {
-						path: 'management_bar.js',
-						requires: [
-							'aui-component',
-							'liferay-portlet-base'
-						]
-					},
-					'liferay-map-base': {
-						path: 'map_base.js',
-						requires: [
-							'aui-base'
-						]
-					},
-					'liferay-map-google': {
-						path: 'map_google.js',
-						requires: [
-							'liferay-map-base'
-						]
-					},
-					'liferay-map-openstreet': {
-						path: 'map_openstreet.js',
-						requires: [
-							'jsonp',
-							'liferay-map-base',
-							'timers'
 						]
 					},
 					'liferay-menu': {

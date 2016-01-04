@@ -44,6 +44,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>VERTICAL_ELLIPSIS</td>
+	<td>//tr[contains(.,'${key_threadSubject}')]//span/*[name()='svg'][contains(@class,'icon-ellipsis')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VERTICAL_ELLIPSIS_GENERIC</td>
+	<td>//tr//span/*[name()='svg'][contains(@class,'icon-ellipsis')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -362,12 +372,7 @@
 </tr>
 <tr>
 	<td>THREAD_TABLE_ACTIONS</td>
-	<td>//div[contains(@id,'mbThreadsSearchContainer')]//tr[contains(.,'${key_threadSubject}')]//a[contains(@class,'btn')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>THREAD_TABLE_ACTIONS_GENERIC</td>
-	<td>//div[contains(@id,'mbThreadsSearchContainer')]//tr[1]//a[contains(@class,'btn')]</td>
+	<td>//div[contains(@id,'mbThreadsSearchContainer')]/div/table/tbody/tr[contains(.,'${key_threadSubject}')]/td[7]/div/a/span</td>
 	<td></td>
 </tr>
 <tr>

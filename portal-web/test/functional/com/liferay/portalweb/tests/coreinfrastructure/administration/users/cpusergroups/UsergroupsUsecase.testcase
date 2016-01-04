@@ -55,16 +55,16 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addCP">
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -72,8 +72,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -81,8 +81,8 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="LAR#exportUserGroups">
@@ -93,21 +93,22 @@
 	<command name="UserGroupPrivatePageInheritance" priority="4">
 		<property name="custom.properties" value="layout.user.private.layouts.auto.create=false${line.separator}user.groups.copy.layouts.to.user.personal.site=true" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addCP">
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addPageCP">
-			<var name="page" value="Private Pages" />
+			<var name="page" value="Dashboard" />
 			<var name="sitePageName" value="Test User Group Page 1" />
+			<var name="sitePagePrivacy" value="Private" />
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
@@ -138,20 +139,21 @@
 		<execute function="AssertClick" locator1="NavTab#ALL_USERS" value1="All Users" />
 
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="userfn" />
+
 		<execute function="AssertClick" locator1="NavBar#BASIC_SEARCH_BUTTON" value1="Search" />
 
 		<var name="key_userScreenName" value="usersn" />
 
 		<execute function="Click" locator1="UsersAndOrganizations#USER_TABLE_ACTIONS" />
+
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_PAGES" value1="Manage Pages" />
 
-		<execute function="SelectFrame" locator1="BasePortlet#IFRAME" />
+		<var name="key_page" value="Test User Group Page 1" />
 
-		<execute function="AssertClick" locator1="CPUsersandorganizationsManagepages#NAVIGATION_MY_DASHBOARD" value1="My Dashboard" />
-		<execute function="AssertTextNotEquals" locator1="CPUsersandorganizationsManagepages#PAGE_TREE_PAGE_EDIT_COG" value1="Test User Group Page 1" />
+		<execute function="AssertElementNotPresent" locator1="ProductMenu#PAGES" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -166,10 +168,9 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="UserBar#gotoMyDashboard" />
+		<execute macro="UserBar#gotoDashboard" />
 
-		<execute function="Click" locator1="Home#PAGE_NAVIGATION_BAR" />
-		<execute function="AssertTextEquals" locator1="Home#PAGE_2" value1="Test User Group Page 1" />
+		<execute function="AssertTextEquals" locator1="Home#PAGE_1" value1="Test User Group Page 1" />
 
 		<execute macro="User#logoutUserPG" />
 
@@ -181,8 +182,8 @@
 	</command>
 
 	<command name="UserGroupSiteOwnerPermissions" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionCP">
@@ -216,32 +217,32 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addCP">
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignAllMembersCP">
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="SitePage#addCP">
@@ -286,8 +287,8 @@
 			<var name="userEmailAddress" value="userea3@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<var name="key_siteName" value="Site Name" />
@@ -327,8 +328,8 @@
 			<var name="userEmailAddress" value="userea5@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<var name="key_siteName" value="Site Name" />
@@ -342,8 +343,8 @@
 			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#addCP">
@@ -351,8 +352,8 @@
 			<var name="roleType" value="Regular" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionCP">
@@ -364,8 +365,8 @@
 			<var name="roleUser" value="Test UserGroup Role" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#assignMembersUserGroupsCP">
@@ -380,8 +381,8 @@
 			<var name="userEmailAddress" value="userea1@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<var name="key_siteName" value="Site Name" />
@@ -395,8 +396,8 @@
 			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#removeMemberCP">
@@ -426,16 +427,16 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addCP">
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -443,8 +444,8 @@
 			<var name="userScreenName" value="test" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addSiteCP">
@@ -452,7 +453,7 @@
 			<var name="userGroupSite" value="Community Site" />
 		</execute>
 
-		<execute macro="UserBar#gotoMyProfile" />
+		<execute macro="UserBar#gotoProfile" />
 
 		<var name="key_pageName" value="Welcome" />
 
@@ -460,7 +461,7 @@
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_2" value1="Home" />
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_3" value1="Wiki" />
 
-		<execute macro="UserBar#gotoMyDashboard" />
+		<execute macro="UserBar#gotoDashboard" />
 
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_1" value1="Welcome" />
 		<execute function="AssertElementNotPresent" locator1="Home#PAGE_TEMPLATE_2" value1="Home" />
@@ -473,7 +474,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="UserBar#gotoMyProfile" />
+		<execute macro="UserBar#gotoProfile" />
 
 		<var name="key_pageName" value="Welcome" />
 
@@ -481,7 +482,7 @@
 		<execute function="AssertElementNotPresent" locator1="Home#PAGE_TEMPLATE_2" value1="Home" />
 		<execute function="AssertElementNotPresent" locator1="Home#PAGE_TEMPLATE_3" value1="Wiki" />
 
-		<execute macro="UserBar#gotoMyDashboard" />
+		<execute macro="UserBar#gotoDashboard" />
 
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_1" value1="Welcome" />
 		<execute function="AssertElementNotPresent" locator1="Home#PAGE_TEMPLATE_2" value1="Home" />
@@ -494,8 +495,8 @@
 			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -510,7 +511,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="UserBar#gotoMyProfile" />
+		<execute macro="UserBar#gotoProfile" />
 
 		<var name="key_pageName" value="Welcome" />
 
@@ -518,7 +519,7 @@
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_2" value1="Home" />
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_3" value1="Wiki" />
 
-		<execute macro="UserBar#gotoMyDashboard" />
+		<execute macro="UserBar#gotoDashboard" />
 
 		<execute function="AssertElementPresent" locator1="Home#PAGE_TEMPLATE_1" value1="Welcome" />
 		<execute function="AssertElementNotPresent" locator1="Home#PAGE_TEMPLATE_2" value1="Home" />
@@ -531,8 +532,8 @@
 			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#removeMemberCP">
@@ -542,8 +543,8 @@
 	</command>
 
 	<command name="ViewUserGroupPermissionsNoAsUser" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#addCP">
@@ -551,8 +552,8 @@
 			<var name="roleType" value="Regular" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionCmdCP">
@@ -561,8 +562,8 @@
 			<var name="roleName" value="Roles Regrole Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionCmdCP">
@@ -649,16 +650,16 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addCP">
 			<var name="userGroupName" value="UG UserGroup Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -666,8 +667,8 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#assignMemberCP">
@@ -682,8 +683,8 @@
 			<var name="userEmailAddress" value="userea1@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<var name="key_userGroupName" value="UG UserGroup Name" />
@@ -700,8 +701,8 @@
 	</command>
 
 	<command name="ViewUserGroupSiteRolePermissions" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#addCP">
@@ -709,8 +710,8 @@
 			<var name="roleType" value="Site" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<execute macro="UserGroup#addCP">

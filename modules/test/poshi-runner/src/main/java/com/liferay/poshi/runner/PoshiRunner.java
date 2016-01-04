@@ -67,7 +67,7 @@ public class PoshiRunner {
 				for (Element commandElement : commandElements) {
 					classCommandNames.add(
 						className + "#" +
-						commandElement.attributeValue("name"));
+							commandElement.attributeValue("name"));
 				}
 			}
 		}
@@ -136,9 +136,9 @@ public class PoshiRunner {
 				PoshiRunnerStackTraceUtil.emptyStackTrace();
 			}
 			finally {
-				LoggerUtil.stopLogger();
-
 				CommandLoggerHandler.stopRunning();
+
+				LoggerUtil.stopLogger();
 
 				SeleniumUtil.stopSelenium();
 			}

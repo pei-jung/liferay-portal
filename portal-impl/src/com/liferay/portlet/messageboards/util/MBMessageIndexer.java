@@ -31,17 +31,18 @@ import com.liferay.portal.kernel.search.BaseRelatedEntryIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.RelatedEntryIndexer;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.security.permission.ActionKeys;
@@ -177,6 +178,14 @@ public class MBMessageIndexer
 			addRelatedClassNames(contextBooleanFilter, searchContext);
 		}
 
+		String classNameId = GetterUtil.getString(
+			searchContext.getAttribute(Field.CLASS_NAME_ID));
+
+		if (Validator.isNotNull(classNameId)) {
+			contextBooleanFilter.addRequiredTerm(
+				Field.CLASS_NAME_ID, classNameId);
+		}
+
 		long threadId = GetterUtil.getLong(
 			(String)searchContext.getAttribute("threadId"));
 
@@ -304,7 +313,7 @@ public class MBMessageIndexer
 
 		Document document = getDocument(mbMessage);
 
-		SearchEngineUtil.updateDocument(
+		IndexWriterHelperUtil.updateDocument(
 			getSearchEngineId(), mbMessage.getCompanyId(), document,
 			isCommitImmediately());
 	}

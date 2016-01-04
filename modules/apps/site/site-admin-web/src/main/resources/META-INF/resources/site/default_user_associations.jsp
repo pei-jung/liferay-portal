@@ -55,15 +55,14 @@ for (long defaultTeamId : defaultTeamIds) {
 
 <liferay-util:buffer var="removeRoleIcon">
 	<liferay-ui:icon
-		iconCssClass="icon-remove"
+		icon="times"
+		markupView="lexicon"
 		message="remove"
 	/>
 </liferay-util:buffer>
 
 <aui:input name="siteRolesRoleIds" type="hidden" value="<%= ListUtil.toString(defaultSiteRoles, Role.ROLE_ID_ACCESSOR) %>" />
 <aui:input name="teamsTeamIds" type="hidden" value="<%= ListUtil.toString(defaultTeams, TeamImpl.TEAM_ID_ACCESSOR) %>" />
-
-<h3><liferay-ui:message key="default-user-associations" /></h3>
 
 <h3><liferay-ui:message key="site-roles" /> <liferay-ui:icon-help message="default-site-roles-assignment-help" /></h3>
 
@@ -98,7 +97,7 @@ for (long defaultTeamId : defaultTeamIds) {
 </liferay-ui:search-container>
 
 <aui:button-row>
-	<aui:button cssClass="modify-link" id="selectSiteRoleLink" value="select" />
+	<aui:button cssClass="btn-lg modify-link" id="selectSiteRoleLink" value="select" />
 </aui:button-row>
 
 <h3><liferay-ui:message key="teams" /> <liferay-ui:icon-help message="default-teams-assignment-help" /></h3>
@@ -133,7 +132,7 @@ for (long defaultTeamId : defaultTeamIds) {
 </liferay-ui:search-container>
 
 <aui:button-row>
-	<aui:button cssClass="modify-link" id="selectTeamLink" value="select" />
+	<aui:button cssClass="btn-lg modify-link" id="selectTeamLink" value="select" />
 </aui:button-row>
 
 <aui:script use="liferay-search-container">

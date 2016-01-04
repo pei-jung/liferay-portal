@@ -372,6 +372,12 @@ public class MDRRuleLocalServiceUtil {
 		return getService().getRules(ruleGroupId, start, end);
 	}
 
+	public static java.util.List<com.liferay.mobile.device.rules.model.MDRRule> getRules(
+		long ruleGroupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.mobile.device.rules.model.MDRRule> obc) {
+		return getService().getRules(ruleGroupId, start, end, obc);
+	}
+
 	public static int getRulesCount(long ruleGroupId) {
 		return getService().getRulesCount(ruleGroupId);
 	}
@@ -412,13 +418,6 @@ public class MDRRuleLocalServiceUtil {
 
 	public static MDRRuleLocalService getService() {
 		return _serviceTracker.getService();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(MDRRuleLocalService service) {
 	}
 
 	private static ServiceTracker<MDRRuleLocalService, MDRRuleLocalService> _serviceTracker =

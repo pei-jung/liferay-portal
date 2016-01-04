@@ -23,7 +23,10 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
  */
 @ConfigurationAdmin(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.scripting.ruby.configuration.RubyScriptingConfiguration"
+	id = "com.liferay.portal.scripting.ruby.configuration.RubyScriptingConfiguration",
+	localization = "content/Language",
+	name = "%ruby.scripting.configuration.name"
+
 )
 public interface RubyScriptingConfiguration {
 
@@ -39,7 +42,7 @@ public interface RubyScriptingConfiguration {
 	@Meta.AD(
 		deflt =
 			"classpath:/META-INF/jruby.home/lib/ruby/2.0," +
-			"classpath:/META-INF/jruby.home/lib/ruby/shared,",
+				"classpath:/META-INF/jruby.home/lib/ruby/shared,",
 		required = false
 	)
 	public String loadPaths();

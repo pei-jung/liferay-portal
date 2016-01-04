@@ -22,72 +22,39 @@
 		<execute macro="AssetPublisherPortlet#gotoConfigurationPG" />
 
 		<if>
-			<equals arg1="${addGlobalSite}" arg2="true" />
+			<isset var="globalSite" />
 			<then>
-				<execute function="AssertClick" locator1="Configuration#SOURCE_SCOPE_SELECT" value1="Select" />
-				<execute function="AssertClick" locator1="MenuItem#GLOBAL" value1="Global" />
-
-				<var name="key_siteName" value="${globalSite}" />
-
-				<execute function="AssertTextEquals#assertPartialText" locator1="APConfiguration#SOURCE_SCOPE_NAME" value1="Global" />
+				<execute function="Click" locator1="Configuration#SOURCE_SCOPE_SELECT" />
+				<execute function="Click" locator1="MenuItem#GLOBAL" />
 			</then>
 		</if>
 
 		<if>
-			<equals arg1="${addOtherSite}" arg2="true" />
+			<isset var="otherSite" />
 			<then>
-				<execute function="AssertClick" locator1="Configuration#SOURCE_SCOPE_SELECT" value1="Select" />
-				<execute function="AssertClick" locator1="MenuItem#OTHER_SITE" value1="Other Site..." />
-				<execute function="SelectFrame" value1="relative=top" />
+				<execute function="Click" locator1="Configuration#SOURCE_SCOPE_SELECT" />
+				<execute function="Click" locator1="MenuItem#OTHER_SITE" />
 
+				<execute function="SelectFrame" value1="relative=top" />
 				<execute function="SelectFrame" locator1="IFrame#SELECT_SITES" />
 
-				<var name="key_siteName" value="${otherSiteName}" />
+				<var name="key_siteName" value="${otherSite}" />
 
 				<execute function="Click" locator1="SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK" />
-
-				<execute function="SelectFrame" />
-				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-				<execute function="AssertTextEquals#assertPartialText" locator1="APConfiguration#SOURCE_SCOPE_NAME" value1="${otherSiteName}" />
 			</then>
 		</if>
 
 		<if>
-			<equals arg1="${addSite}" arg2="true" />
+			<isset var="defaultSite" />
 			<then>
-				<execute function="AssertClick" locator1="Configuration#SOURCE_SCOPE_SELECT" value1="Select" />
-				<execute function="AssertClick" locator1="MenuItem#OTHER_SITE" value1="Other Site..." />
-				<execute function="SelectFrame" value1="relative=top" />
+				<execute function="Click" locator1="Configuration#SOURCE_SCOPE_SELECT" />
 
-				<execute function="SelectFrame" locator1="IFrame#SELECT_SITES" />
-
-				<var name="key_siteName" value="${siteName}" />
-
-				<execute function="Click" locator1="SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK" />
-
-				<execute function="SelectFrame" />
-				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-				<execute function="AssertTextEquals#assertPartialText" locator1="APConfiguration#SOURCE_SCOPE_NAME" value1="${siteName}" />
+				<execute function="Click" locator1="APConfiguration#SOURCE_CURRENT_SCOPE_NAME" />
 			</then>
 		</if>
 
-		<if>
-			<equals arg1="${defaultSite}" arg2="true" />
-			<then>
-				<var name="key_siteName" value="Liferay" />
-
-				<execute function="AssertTextEquals" locator1="APConfiguration#SOURCE_CURRENT_SCOPE_NAME" value1="Current Site (Liferay)" />
-			</then>
-			<else>
-				<var name="key_siteName" value="${siteName}" />
-
-				<execute function="AssertTextEquals" locator1="APConfiguration#SOURCE_CURRENT_SCOPE_NAME" value1="Current Site (${siteName})" />
-
-				<var name="key_siteName" value="Liferay" />
-
-				<execute function="AssertTextEquals#assertPartialText" locator1="APConfiguration#SOURCE_SCOPE_NAME" value1="Liferay" />
-			</else>
-		</if>
+		<execute function="SelectFrameTop" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
@@ -363,7 +330,6 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
-		<execute function="AssertSelectedLabel" locator1="APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT" value1="${selectedAsset}" />
 	</command>
 
 	<command name="configureShowMetadataFieldsPG">
@@ -391,6 +357,8 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="configureSiteScopePG">
@@ -417,6 +385,8 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="APConfiguration#SOURCE_SCOPE_NAME" value1="${siteName}" />
 		<execute function="AssertTextEquals" locator1="APConfiguration#SOURCE_SCOPE_TYPE" value1="${siteScopeType}" />
 		<execute function="AssertElementPresent" locator1="APConfiguration#SOURCE_SCOPE_DELETE" />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="configureSiteScopeRemoveSitePG">
@@ -436,21 +406,8 @@
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
 		<execute function="AssertTextNotPresent" locator1="APConfiguration#SOURCE_SCOPE_NAME" value1="${siteName}" />
 		<execute function="AssertTextNotPresent" locator1="APConfiguration#SOURCE_SCOPE_TYPE" value1="${siteScopeType}" />
-	</command>
 
-	<command name="configureToggleSiteScope">
-		<execute macro="AssetPublisherPortlet#gotoConfigurationPG" />
-
-		<var name="key_siteName" value="${removeSite1Scope}" />
-
-		<execute function="Click" locator1="APConfiguration#SOURCE_SCOPE_DELETE" />
-
-		<var name="key_siteName" value="${removeSite2Scope}" />
-
-		<execute function="Click" locator1="APConfiguration#SOURCE_SCOPE_DELETE" />
-
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="deleteArchivedSetupPG">
@@ -465,7 +422,8 @@
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no archived setups." />
+
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no archived setups." />
 	</command>
 
 	<command name="enableRSSSubscription">
@@ -473,6 +431,8 @@
 		<execute function="AssertClick" locator1="NavTab#SUBSCRIPTIONS" value1="Subscriptions" />
 		<execute function="AssertTextEquals" locator1="APConfiguration#SUBSCRIPTIONS_ENABLE_RSS_SUBSCRIPTION_LABEL" value1="Enable RSS Subscription" />
 		<execute function="Check" locator1="APConfiguration#SUBSCRIPTIONS_ENABLE_RSS_SUBSCRIPTION" />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="gotoConfigurationPG">
@@ -482,10 +442,29 @@
 		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Source" />
+		</execute>
 	</command>
 
 	<command name="rate4StarsPG">
 		<execute function="Click#clickNoMouseOver" locator1="Ratings#YOUR_RATING_STAR_EMPTY_4" />
+	</command>
+
+	<command name="removeSiteScope">
+		<execute macro="AssetPublisherPortlet#gotoConfigurationPG" />
+
+		<for list="${removeSiteScopes}" param="removeSiteScope">
+			<var name="key_siteName" value="${removeSiteScope}" />
+
+			<execute function="Click" locator1="APConfiguration#SOURCE_SCOPE_DELETE" />
+		</for>
+
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="restoreArchivedSetupPG">
@@ -509,14 +488,18 @@
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertClick" locator1="Configuration#ARCHIVE_RESTORE" value1="Archive/Restore Setup" />
 
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no archived setups." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no archived setups." />
+
 		<execute function="Type" locator1="TextInput#NAME" value1="${archiveName}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
 		<var name="key_archiveName" value="${archiveName}" />
 
 		<execute function="AssertTextEquals" locator1="APConfigurationArchivedsetup#ARCHIVED_SETUPS_TABLE_NAME" value1="${archiveName}" />
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewAssetDetailsPG">
@@ -558,7 +541,7 @@
 
 		<execute function="AssertTextNotEquals" locator1="APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT" value1="${assetType}" />
 
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewConfigureAPDisplayTemplateFullContentBookmarksPG">
@@ -585,7 +568,6 @@
 
 		<execute function="AssertElementNotPresent" locator1="Link#READ_MORE" />
 		<execute function="AssertTextNotPresent" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="${bookmarkDescription}" />
-		<execute function="AssertElementPresent" locator1="AP#ASSET_ABSTRACT_BOOKMARK_TITLE_LIST_DISPLAY_TEMPLATE_BOOKMARK_ICON" />
 	</command>
 
 	<command name="viewConfigureAPMoveToAvailablePG">
@@ -621,6 +603,8 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewConfigureSiteScopeContentSharingPG">
@@ -744,6 +728,8 @@
 		<execute function="AssertElementPresent" locator1="APConfiguration#FILTER_DROPDOWN" />
 		<execute function="AssertElementPresent" locator1="APConfiguration#CUSTOM_USER_DROPDOWN" />
 		<execute function="AssertElementPresent" locator1="APConfiguration#ORDERING_AND_GROUPING_DROPDOWN" />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewEditLinkPG">
@@ -780,6 +766,8 @@
 				</for>
 			</else>
 		</if>
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewManualAssetSelectionConfigurationPG">
@@ -798,6 +786,8 @@
 		<execute function="AssertElementNotPresent" locator1="APConfiguration#CUSTOM_USER_DROPDOWN_COLLAPSED" />
 		<execute function="AssertElementNotPresent" locator1="APConfiguration#ORDERING_AND_GROUPING_DROPDOWN" />
 		<execute function="AssertElementNotPresent" locator1="APConfiguration#ORDERING_AND_GROUPING_DROPDOWN_COLLAPSED" />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewMultipleAssetOrderPGViaAP">
@@ -869,7 +859,6 @@
 			<isset var="relatedAssetTitle" />
 			<then>
 				<execute function="AssertTextEquals" locator1="AssetRelatedAssets#HEADER" value1="Related Assets:" />
-				<execute function="AssertElementPresent" locator1="AssetRelatedAssets#IMAGE" />
 				<execute function="AssertTextEquals" locator1="AssetRelatedAssets#ASSET_TITLE" value1="${relatedAssetTitle}" />
 			</then>
 		</if>
@@ -878,7 +867,6 @@
 			<isset var="relatedAssetTitleHidden" />
 			<then>
 				<execute function="AssertTextEquals" locator1="AssetRelatedAssets#HEADER" value1="Related Assets:" />
-				<execute function="AssertElementNotPresent" locator1="AssetRelatedAssets#IMAGE" />
 				<execute function="AssertTextNotPresent" value1="${relatedAssetTitleHidden}" />
 			</then>
 		</if>
@@ -918,6 +906,8 @@
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No assets selected." />
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewSelectedPG">
@@ -938,6 +928,8 @@
 				<execute function="AssertSelectedLabel" locator1="APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT" value1="${selectedAssetConfiguration}" />
 			</else>
 		</if>
+
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="viewTagFocusPG">

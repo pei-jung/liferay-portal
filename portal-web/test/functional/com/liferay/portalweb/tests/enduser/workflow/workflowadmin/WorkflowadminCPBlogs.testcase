@@ -21,7 +21,7 @@
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 	</set-up>
 
@@ -50,8 +50,8 @@
 	<command name="ApproveBlogsEntriesCPJoinXORNodeWorkflowDefinition" priority="4">
 		<description message="This is a use case for LPS-35577." />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -65,7 +65,7 @@
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Join Xor (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />

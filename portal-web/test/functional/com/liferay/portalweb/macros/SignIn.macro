@@ -123,8 +123,8 @@
 			</then>
 		</if>
 
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />

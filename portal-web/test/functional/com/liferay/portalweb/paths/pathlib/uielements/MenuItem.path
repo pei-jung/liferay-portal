@@ -189,6 +189,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CATEGORY</td>
+	<td>//div[contains(@class,'open')]//a[contains(.,'Category')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CHECKIN</td>
 	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Checkin')]</td>
 	<td></td>
@@ -235,7 +240,7 @@
 </tr>
 <tr>
 	<td>DEFINE_PERMISSIONS</td>
-	<td>//a[@role='menuitem' and contains(.,'Define Permissions')]</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Define Permissions')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -569,6 +574,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>RESET_DEFAULT_VALUES</td>
+	<td>//div[contains(@class,'open')]//a[contains(.,'Reset Default Values')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>RESUBMIT</td>
 	<td>//div[contains(@class,'open')]//a[contains(.,'Resubmit')]</td>
 	<td></td>
@@ -605,7 +615,7 @@
 </tr>
 <tr>
 	<td>SCOPE_SELECTION</td>
-	<td>//ul[contains(@class,'lfr-menu-list')]/li/a[contains(.,'${key_scopeSelection}')]</td>
+	<td>//ul[contains(@class,'dropdown-menu')]/li/a[contains(.,'${key_scopeSelection}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -664,6 +674,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SPREADSHEET_VIEW</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Spreadsheet View')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>STRUCTURE_NAME</td>
 	<td>//ul[contains(@class,'dropdown-menu-left-side-bottom')]/li/a[contains(.,'${key_structureName}')]</td>
 	<td></td>
@@ -671,6 +686,11 @@
 <tr>
 	<td>STRUCTURES</td>
 	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Structures')] | //a[@role='menuitem' and .='Structures']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SUBCATEGORY</td>
+	<td>//div[contains(@class,'open')]//a[contains(.,'Subcategory')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -686,6 +706,11 @@
 <tr>
 	<td>TEMPLATES</td>
 	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[contains(.,'Templates')] | //a[@role='menuitem' and .='Templates']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>THREAD</td>
+	<td>//div[contains(@class,'open')]//a[contains(.,'Thread')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -716,6 +741,11 @@
 <tr>
 	<td>USER_GROUP</td>
 	<td>//li[contains(@class,'open')]//a[@title='User Group']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_GROUP_PAGES_PERMISSIONS</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'User Group Pages Permissions')]</td>
 	<td></td>
 </tr>
 <tr>

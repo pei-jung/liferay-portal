@@ -56,7 +56,9 @@
 			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
-		<execute function="AssertClick" locator1="MessageBoards#POST_NEW_THREAD_BUTTON" value1="Post New Thread" />
+		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+
+		<execute function="AssertClick" locator1="MenuItem#THREAD" value1="Thread" />
 
 		<execute function="Type" locator1="TextInput#SUBJECT" value1="Message Boards Subject" />
 		<execute function="Type#typeCKEditorWaitForCKEditor" locator1="CKEditor#BODY_FIELD" value1="Message Boards Body" />
@@ -346,7 +348,7 @@
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureScopePG">
-			<var name="scopeName" value="Message Boards Page 2" />
+			<var name="scopeName" value="Message Boards Page 2 (Create New)" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -923,8 +925,8 @@
 	</command>
 
 	<command name="ViewCorrectViewPermissionsInMessageBoardsQuickReplyInPrivateSite" priority="3">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -932,8 +934,8 @@
 			<var name="siteName" value="Blank Site Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="SitePage#addCP">
@@ -1009,8 +1011,8 @@
 			<var name="portletName" value="${portletName}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -1020,8 +1022,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -1029,8 +1031,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -1040,8 +1042,8 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -1345,13 +1347,13 @@
 		<execute function="Click" locator1="MessageBoards#CATEGORY_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
 		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_TABLE_CATEGORY" value1="${categoryName}" />
-		<execute function="AssertTextEquals" locator1="PGMessageboardsCategory#SUBSCRIBE_LINK" value1="Subscribe" />
+		<execute function="AssertTextEquals" locator1="Link#SUBSCRIBE" value1="Subscribe" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute function="Click" locator1="MessageBoards#THREAD_TABLE_ACTIONS" />
+		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#UNSUBSCRIBE" value1="Unsubscribe" />
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_TABLE_THREAD" value1="${threadSubject}" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE" value1="Unsubscribe" />
@@ -1380,13 +1382,13 @@
 		<execute function="Click" locator1="MessageBoards#CATEGORY_TABLE_ACTIONS" />
 		<execute function="AssertElementNotPresent" locator1="MenuItem#SUBSCRIBE" />
 		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_TABLE_CATEGORY" value1="${categoryName}" />
-		<execute function="AssertElementNotPresent" locator1="PGMessageboardsCategory#SUBSCRIBE_LINK" value1="Subscribe" />
+		<execute function="AssertElementNotPresent" locator1="Link#SUBSCRIBE" value1="Subscribe" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute function="Click" locator1="MessageBoards#THREAD_TABLE_ACTIONS" />
+		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
 		<execute function="AssertElementNotPresent" locator1="MenuItem#UNSUBSCRIBE" />
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_TABLE_THREAD" value1="${threadSubject}" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE" value1="Unsubscribe" />

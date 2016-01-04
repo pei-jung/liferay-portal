@@ -15,14 +15,17 @@
 package com.liferay.dynamic.data.lists.form.web.display.context;
 
 import com.liferay.dynamic.data.lists.constants.DDLActionKeys;
+import com.liferay.dynamic.data.lists.constants.DDLWebKeys;
 import com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfiguration;
 import com.liferay.dynamic.data.lists.form.web.display.context.util.DDLFormAdminRequestHelper;
 import com.liferay.dynamic.data.lists.form.web.display.context.util.DDLFormWebRequestHelper;
 import com.liferay.dynamic.data.lists.form.web.search.RecordSetSearchTerms;
 import com.liferay.dynamic.data.lists.form.web.util.DDLFormPortletUtil;
+import com.liferay.dynamic.data.lists.model.DDLFormRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetServiceUtil;
@@ -48,7 +51,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -70,6 +72,8 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
@@ -179,6 +183,16 @@ public class DDLFormAdminDisplayContext {
 		return portletURL;
 	}
 
+	public String getPreviewFormURL() throws PortalException {
+		String publishedFormURL = getPublishedFormURL();
+
+		if (Validator.isNull(publishedFormURL)) {
+			return publishedFormURL;
+		}
+
+		return publishedFormURL.concat("/preview");
+	}
+
 	public String getPublishedFormURL() throws PortalException {
 		if (_recordSet == null) {
 			return StringPool.BLANK;
@@ -206,8 +220,17 @@ public class DDLFormAdminDisplayContext {
 
 		long recordSetId = ParamUtil.getLong(_renderRequest, "recordSetId");
 
-		_recordSet = DDLRecordSetLocalServiceUtil.fetchDDLRecordSet(
-			recordSetId);
+		if (recordSetId > 0) {
+			_recordSet = DDLRecordSetLocalServiceUtil.fetchDDLRecordSet(
+				recordSetId);
+		}
+		else {
+			DDLRecord ddlRecord = getRecord();
+
+			if (ddlRecord != null) {
+				_recordSet = ddlRecord.getRecordSet();
+			}
+		}
 
 		return _recordSet;
 	}
@@ -324,15 +347,16 @@ public class DDLFormAdminDisplayContext {
 		return false;
 	}
 
-	public boolean isRecordSetPublished() throws PortalException {
+	public boolean isFormPublished() throws PortalException {
 		DDLRecordSet recordSet = getRecordSet();
 
 		if (recordSet == null) {
 			return false;
 		}
 
-		return GetterUtil.getBoolean(
-			recordSet.getSettingsProperty("published", "false"));
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsModel();
+
+		return recordSetSettings.published();
 	}
 
 	public boolean isShowAddRecordSetButton() {
@@ -396,7 +420,24 @@ public class DDLFormAdminDisplayContext {
 	protected DDLRecord getRecord() throws PortalException {
 		long recordId = ParamUtil.getLong(_renderRequest, "recordId");
 
-		return DDLRecordLocalServiceUtil.fetchDDLRecord(recordId);
+		if (recordId > 0) {
+			return DDLRecordLocalServiceUtil.fetchDDLRecord(recordId);
+		}
+
+		HttpServletRequest httpServletRequest =
+			_ddlFormAdminRequestHelper.getRequest();
+
+		Object record = httpServletRequest.getAttribute(
+			DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD);
+
+		if (record instanceof DDLFormRecord) {
+			DDLFormRecord formRecord = (DDLFormRecord)record;
+
+			return formRecord.getDDLRecord();
+		}
+		else {
+			return (DDLRecord)record;
+		}
 	}
 
 	protected String serialize(

@@ -53,17 +53,17 @@
 	</tear-down>
 
 	<command name="AddBlogsEntriesWithPortalScopeWorkflowAndAssertWorkflowScope" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Configuration" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Configuration" />
 		</execute>
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -230,8 +230,8 @@
 	</command>
 
 	<command name="AddBlogsEntriesWithSiteScopeWorkflowAndAssertWorkflowScope" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -244,7 +244,7 @@
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -323,8 +323,8 @@
 	</command>
 
 	<command name="AddDDLRecordWithDoubleApproverDefinition" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -382,9 +382,7 @@
 			<var name="fieldName" value="Boolean" />
 		</execute>
 
-		<execute macro="DDLRecord#publishCP">
-			<var name="workflowDefinition" value="Legal and Marketing Approval (Version 1)" />
-		</execute>
+		<execute macro="DDLRecord#submitForPublication" />
 
 		<execute macro="Page#gotoMyAccount">
 			<var name="portletName" value="My Workflow Tasks" />
@@ -499,8 +497,8 @@
 	</command>
 
 	<command name="AddDocumentsAndMediaWithScriptedAssignmentDefinition" priority="3">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -514,8 +512,8 @@
 			<var name="workflowDefinitionVersionNumber" value="1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="Organization#addCP">
@@ -523,16 +521,16 @@
 			<var name="orgType" value="Regular Organization" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="Organization#addSiteCP">
 			<var name="orgName" value="Organization Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="SitePage#addCP">
@@ -542,8 +540,8 @@
 			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -553,8 +551,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -562,8 +560,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editUserOrganizationCP">
@@ -571,8 +569,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#assignOrgRoleCP">
@@ -580,8 +578,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -591,8 +589,8 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -600,8 +598,8 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editUserSiteCP">
@@ -609,8 +607,8 @@
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#assignSiteRoleCP">
@@ -671,8 +669,10 @@
 			<var name="userLoginFullName" value="userfn1 userln1" />
 		</execute>
 
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
+		<execute macro="UserBar#gotoMyAccount" />
+
+		<execute macro="ProductMenu#gotoUserMyAccount">
+			<var name="portlet" value="My Workflow Tasks" />
 		</execute>
 
 		<execute macro="Workflow#viewTaskAssignedToMyRoles">
@@ -691,8 +691,10 @@
 			<var name="userLoginFullName" value="userfn2 userln2" />
 		</execute>
 
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
+		<execute macro="UserBar#gotoMyAccount" />
+
+		<execute macro="ProductMenu#gotoUserMyAccount">
+			<var name="portlet" value="My Workflow Tasks" />
 		</execute>
 
 		<execute macro="Workflow#viewTaskAssignedToMyRoles">
@@ -711,8 +713,10 @@
 			<var name="userLoginFullName" value="userfn1 userln1" />
 		</execute>
 
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
+		<execute macro="UserBar#gotoMyAccount" />
+
+		<execute macro="ProductMenu#gotoUserMyAccount">
+			<var name="portlet" value="My Workflow Tasks" />
 		</execute>
 
 		<execute macro="Workflow#assignToMeTaskByActions">
@@ -732,8 +736,10 @@
 			<var name="userLoginFullName" value="userfn2 userln2" />
 		</execute>
 
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
+		<execute macro="UserBar#gotoMyAccount" />
+
+		<execute macro="ProductMenu#gotoUserMyAccount">
+			<var name="portlet" value="My Workflow Tasks" />
 		</execute>
 
 		<execute macro="Workflow#assignToMeTaskByActions">
@@ -783,8 +789,8 @@
 	</command>
 
 	<command name="AddWebContentWithCategorySpecificDefinition" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -982,7 +988,7 @@
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_WIKI_PAGE_SELECT" />
+			<var name="workflowResourceValue" value="Wiki Page" />
 		</execute>
 
 		<execute macro="Page#addPG">
@@ -997,8 +1003,8 @@
 			<var name="portletName" value="${portletName}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -1008,8 +1014,8 @@
 			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -1017,8 +1023,8 @@
 			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editUserSiteCP">
@@ -1037,7 +1043,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoAllPagesPG" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
 		<execute macro="WikiPage#addPageWithWorkflowPG">
 			<var name="wikiPageContent" value="${wikiPageContent}" />
@@ -1049,7 +1055,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoDraftPagesPG" />
+		<execute macro="WikiNavigator#gotoDraftPagesPG" />
 
 		<execute macro="WikiPage#viewPageWithWorkflowPG">
 			<var name="wikiPageStatus" value="Pending" />
@@ -1094,7 +1100,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoDraftPagesPG" />
+		<execute macro="WikiNavigator#gotoDraftPagesPG" />
 
 		<execute macro="WikiPage#viewPageWithWorkflowPG">
 			<var name="wikiPageStatus" value="Pending" />
@@ -1116,7 +1122,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoPG">
+		<execute macro="WikiNavigator#gotoPG">
 			<var name="wikiPageContent" value="${wikiPageContent}" />
 			<var name="wikiPageRevision" value="1.0" />
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
@@ -1139,7 +1145,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoPG">
+		<execute macro="WikiNavigator#gotoPG">
 			<var name="wikiPageContent" value="${wikiPageContent}" />
 			<var name="wikiPageRevision" value="1.0" />
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
@@ -1153,8 +1159,8 @@
 	</command>
 
 	<command name="DeactivateAndActivateUploadedDefinition" priority="3">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -1178,8 +1184,8 @@
 	<command name="DeactivateAndDeleteUploadedDefinition" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -1199,8 +1205,8 @@
 	</command>
 
 	<command name="UploadDefinition" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Workflow#uploadDefinition">
@@ -1224,7 +1230,7 @@
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
 		<execute macro="Page#addPG">
@@ -1299,7 +1305,7 @@
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -1337,8 +1343,8 @@
 			<var name="entryTitle" value="${entryTitle}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Definition" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Definition" />
 		</execute>
 
 		<execute macro="Page#gotoMyAccount">
@@ -1395,17 +1401,17 @@
 	<command name="ViewWorkflowSubmissionsFromDifferentUsers" priority="4">
 		<description message="This is a use case for LRQA-13519." />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Workflow Configuration" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Workflow Configuration" />
 		</execute>
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
+			<var name="workflowResourceValue" value="Blogs Entry" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionCP">
@@ -1414,8 +1420,8 @@
 			<var name="roleName" value="Site Member" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionCP">
@@ -1425,8 +1431,8 @@
 		</execute>
 
 		<for list="1,2" param="n">
-			<execute macro="Page#gotoCP">
-				<var name="portletName" value="Users and Organizations" />
+			<execute macro="ProductMenu#gotoControlPanelUsers">
+				<var name="portlet" value="Users and Organizations" />
 			</execute>
 
 			<execute macro="User#addCP">
@@ -1436,8 +1442,8 @@
 				<var name="userScreenName" value="usersn${n}" />
 			</execute>
 
-			<execute macro="Page#gotoCP">
-				<var name="portletName" value="Users and Organizations" />
+			<execute macro="ProductMenu#gotoControlPanelUsers">
+				<var name="portlet" value="Users and Organizations" />
 			</execute>
 
 			<execute macro="User#editUserSiteCP">
@@ -1445,8 +1451,8 @@
 				<var name="userScreenName" value="usersn${n}" />
 			</execute>
 
-			<execute macro="Page#gotoCP">
-				<var name="portletName" value="Users and Organizations" />
+			<execute macro="ProductMenu#gotoControlPanelUsers">
+				<var name="portlet" value="Users and Organizations" />
 			</execute>
 
 			<execute macro="User#editPasswordCP">
@@ -1630,8 +1636,8 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="SitePage#addCP">
