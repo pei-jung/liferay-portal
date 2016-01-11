@@ -149,7 +149,7 @@
 
 		<execute function="AssertClick" locator1="Button#ADD" value1="Add" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="assignMemberCP">
@@ -165,6 +165,9 @@
 
 		<execute function="Click" locator1="Button#ADD_USER" />
 
+		<execute function="AssertElementPresent" locator1="Button#ADD" />
+		<execute function="AssertVisible" locator1="Button#ADD" />
+
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute function="Type" locator1="TextInput#SEARCH" value1="${userScreenName}" />
@@ -174,6 +177,8 @@
 		<var name="key_userScreenName" value="${userScreenName}" />
 
 		<execute function="Check" locator1="UserGroupsAssignUsers#USER_TABLE_CHECKBOX" />
+
+		<execute function="Pause" locator1="5000" />
 
 		<execute function="SelectFrameTop" />
 
@@ -290,7 +295,7 @@
 
 		<execute function="Click" locator1="Toolbar#MANAGEMENT_BAR_TRASH_ICON_BUTTON" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No users were found." />
 	</command>
 

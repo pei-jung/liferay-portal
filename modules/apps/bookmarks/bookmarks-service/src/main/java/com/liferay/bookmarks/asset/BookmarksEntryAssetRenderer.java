@@ -148,12 +148,13 @@ public class BookmarksEntryAssetRenderer
 		portletURL.setParameter(
 			"folderId", String.valueOf(_entry.getFolderId()));
 		portletURL.setParameter("entryId", String.valueOf(_entry.getEntryId()));
+		portletURL.setParameter("showFolderSelector", Boolean.TRUE.toString());
 
 		return portletURL;
 	}
 
 	@Override
-	public PortletURL getURLView(
+	public String getURLView(
 			LiferayPortletResponse liferayPortletResponse,
 			WindowState windowState)
 		throws Exception {
@@ -169,7 +170,7 @@ public class BookmarksEntryAssetRenderer
 		portletURL.setParameter("entryId", String.valueOf(_entry.getEntryId()));
 		portletURL.setWindowState(windowState);
 
-		return portletURL;
+		return portletURL.toString();
 	}
 
 	@Override

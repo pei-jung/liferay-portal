@@ -15,21 +15,23 @@
 package com.liferay.configuration.admin.web.portlet.action;
 
 import com.liferay.configuration.admin.ExtendedAttributeDefinition;
-import com.liferay.configuration.admin.ExtendedMetaTypeService;
 import com.liferay.configuration.admin.web.constants.ConfigurationAdminPortletKeys;
 import com.liferay.configuration.admin.web.model.ConfigurationModel;
 import com.liferay.configuration.admin.web.util.AttributeDefinitionUtil;
-import com.liferay.configuration.admin.web.util.ConfigurationHelper;
+import com.liferay.configuration.admin.web.util.ConfigurationModelRetriever;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.theme.ThemeDisplay;
 
+import java.util.Map;
 import java.util.Properties;
 
 import javax.portlet.MimeResponse;
@@ -37,12 +39,8 @@ import javax.portlet.PortletException;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
-import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.AttributeDefinition;
 
@@ -64,16 +62,6 @@ import org.osgi.service.metatype.AttributeDefinition;
 public class ExportConfigurationMVCResourceCommand
 	implements MVCResourceCommand {
 
-	@Activate
-	public void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
-	}
-
-	@Deactivate
-	public void deactivate() {
-		_bundleContext = null;
-	}
-
 	@Override
 	public boolean serveResource(
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
@@ -83,13 +71,11 @@ public class ExportConfigurationMVCResourceCommand
 			return false;
 		}
 
-		String factoryPid = ParamUtil.getString(resourceRequest, "factoryPid");
-
-		String pid = ParamUtil.getString(resourceRequest, "pid", factoryPid);
+		String fileName = getFileName(resourceRequest);
 
 		try {
 			PortletResponseUtil.sendFile(
-				resourceRequest, resourceResponse, pid + ".cfg",
+				resourceRequest, resourceResponse, fileName,
 				getPropertiesAsBytes(resourceRequest, resourceResponse),
 				ContentTypes.TEXT_XML_UTF8);
 		}
@@ -98,6 +84,21 @@ public class ExportConfigurationMVCResourceCommand
 		}
 
 		return true;
+	}
+
+	protected String getFileName(ResourceRequest resourceRequest) {
+		String factoryPid = ParamUtil.getString(resourceRequest, "factoryPid");
+		String pid = ParamUtil.getString(resourceRequest, "pid");
+
+		String fileName = pid;
+
+		if (Validator.isNotNull(factoryPid) && !factoryPid.equals(pid)) {
+			String factoryInstanceId = pid.substring(factoryPid.length() + 1);
+
+			fileName = factoryPid + StringPool.DASH + factoryInstanceId;
+		}
+
+		return fileName + ".cfg";
 	}
 
 	protected Properties getProperties(
@@ -109,28 +110,34 @@ public class ExportConfigurationMVCResourceCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		ConfigurationHelper configurationHelper = new ConfigurationHelper(
-			_bundleContext, _configurationAdmin, _extendedMetaTypeService,
-			themeDisplay.getLanguageId());
+		Map<String, ConfigurationModel> configurationModels =
+			_configurationModelRetriever.getConfigurationModels(
+				themeDisplay.getLanguageId());
 
 		String factoryPid = ParamUtil.getString(resourceRequest, "factoryPid");
+		String pid = ParamUtil.getString(resourceRequest, "pid");
 
-		String pid = ParamUtil.getString(resourceRequest, "pid", factoryPid);
-
-		ConfigurationModel configurationModel =
-			configurationHelper.getConfigurationModel(pid);
+		ConfigurationModel configurationModel = configurationModels.get(pid);
 
 		if ((configurationModel == null) && Validator.isNotNull(factoryPid)) {
-			configurationModel = configurationHelper.getConfigurationModel(
-				factoryPid);
+			configurationModel = configurationModels.get(factoryPid);
+		}
+
+		if (configurationModel == null) {
+			return properties;
+		}
+
+		Configuration configuration =
+			_configurationModelRetriever.getConfiguration(pid);
+
+		if (configuration == null) {
+			return properties;
 		}
 
 		ExtendedAttributeDefinition[] attributeDefinitions =
 			configurationModel.getAttributeDefinitions(ConfigurationModel.ALL);
 
 		for (AttributeDefinition attributeDefinition : attributeDefinitions) {
-			Configuration configuration = configurationModel.getConfiguration();
-
 			String[] values = AttributeDefinitionUtil.getProperty(
 				attributeDefinition, configuration);
 
@@ -155,34 +162,30 @@ public class ExportConfigurationMVCResourceCommand
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("##\n## To apply the configuration, deploy this file to a ");
+		sb.append("Liferay installation with the file name ");
+		sb.append(getFileName(resourceRequest));
+		sb.append(".\n##\n\n");
+
 		Properties properties = getProperties(
 			resourceRequest, resourceResponse);
 
-		String propertiesString = PropertiesUtil.toString(properties);
+		sb.append(PropertiesUtil.toString(properties));
 
-		propertiesString =
-			"##\n## Deploy this file to a Liferay installation to apply the " +
-				"configuration.\n##\n"+ propertiesString;
+		String propertiesString = sb.toString();
 
 		return propertiesString.getBytes();
 	}
 
 	@Reference(unbind = "-")
-	protected void setConfigurationAdmin(
-		ConfigurationAdmin configurationAdmin) {
+	protected void setConfigurationModelRetriever(
+		ConfigurationModelRetriever configurationModelRetriever) {
 
-		_configurationAdmin = configurationAdmin;
+		_configurationModelRetriever = configurationModelRetriever;
 	}
 
-	@Reference(unbind = "-")
-	protected void setExtendedMetaTypeService(
-		ExtendedMetaTypeService extendedMetaTypeService) {
-
-		_extendedMetaTypeService = extendedMetaTypeService;
-	}
-
-	private BundleContext _bundleContext;
-	private volatile ConfigurationAdmin _configurationAdmin;
-	private volatile ExtendedMetaTypeService _extendedMetaTypeService;
+	private volatile ConfigurationModelRetriever _configurationModelRetriever;
 
 }

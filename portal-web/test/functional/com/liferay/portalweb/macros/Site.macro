@@ -174,11 +174,10 @@
 	<command name="addMemberCP">
 		<var name="key_cardText" value="${userScreenName}" />
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Users" />
-		</execute>
-
 		<execute function="Click" locator1="Button#PLUS" />
+
+		<execute function="AssertElementPresent" locator1="Button#ADD" />
+		<execute function="AssertVisible" locator1="Button#ADD" />
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
@@ -262,7 +261,9 @@
 	</command>
 
 	<command name="addVirtualHostsURLCP">
-		<execute function="AssertClick" locator1="NavListItem#SITE_URL" value1="Site URL" />
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Site URL" />
+		</execute>
 
 		<if>
 			<isset var="publicVirtualHosts" />
@@ -707,7 +708,7 @@
 					<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
 					<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-					<execute function="AssertTextEquals" locator1="Message#SUCCESS_1" value1="Your request was sent. You will receive a reply by email." />
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS_1" value1="Your request was sent. You will receive a reply by email." />
 
 					<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS_2" />
 
