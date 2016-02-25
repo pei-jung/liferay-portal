@@ -24,19 +24,19 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.model.UserGroupModel;
+import com.liferay.portal.kernel.model.UserGroupSoap;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.model.UserGroupModel;
-import com.liferay.portal.model.UserGroupSoap;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 
 import java.io.Serializable;
 
@@ -83,8 +83,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 			{ "parentUserGroupId", Types.BIGINT },
 			{ "name", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "addedByLDAPImport", Types.BOOLEAN },
-			{ "lastPublishDate", Types.TIMESTAMP }
+			{ "addedByLDAPImport", Types.BOOLEAN }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -101,10 +100,9 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("addedByLDAPImport", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table UserGroup (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,userGroupId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentUserGroupId LONG,name VARCHAR(75) null,description STRING null,addedByLDAPImport BOOLEAN,lastPublishDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table UserGroup (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,userGroupId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentUserGroupId LONG,name VARCHAR(75) null,description STRING null,addedByLDAPImport BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table UserGroup";
 	public static final String ORDER_BY_JPQL = " ORDER BY userGroup.name ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY UserGroup.name ASC";
@@ -112,13 +110,13 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
 	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
-				"value.object.entity.cache.enabled.com.liferay.portal.model.UserGroup"),
+				"value.object.entity.cache.enabled.com.liferay.portal.kernel.model.UserGroup"),
 			true);
 	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
-				"value.object.finder.cache.enabled.com.liferay.portal.model.UserGroup"),
+				"value.object.finder.cache.enabled.com.liferay.portal.kernel.model.UserGroup"),
 			true);
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
-				"value.object.column.bitmask.enabled.com.liferay.portal.model.UserGroup"),
+				"value.object.column.bitmask.enabled.com.liferay.portal.kernel.model.UserGroup"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long NAME_COLUMN_BITMASK = 2L;
@@ -150,7 +148,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		model.setName(soapModel.getName());
 		model.setDescription(soapModel.getDescription());
 		model.setAddedByLDAPImport(soapModel.getAddedByLDAPImport());
-		model.setLastPublishDate(soapModel.getLastPublishDate());
 
 		return model;
 	}
@@ -203,7 +200,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	public static final boolean FINDER_CACHE_ENABLED_USERS_USERGROUPS = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.finder.cache.enabled.Users_UserGroups"), true);
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
-				"lock.expiration.time.com.liferay.portal.model.UserGroup"));
+				"lock.expiration.time.com.liferay.portal.kernel.model.UserGroup"));
 
 	public UserGroupModelImpl() {
 	}
@@ -254,7 +251,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 		attributes.put("addedByLDAPImport", getAddedByLDAPImport());
-		attributes.put("lastPublishDate", getLastPublishDate());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -334,12 +330,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		if (addedByLDAPImport != null) {
 			setAddedByLDAPImport(addedByLDAPImport);
-		}
-
-		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
-
-		if (lastPublishDate != null) {
-			setLastPublishDate(lastPublishDate);
 		}
 	}
 
@@ -564,17 +554,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		_addedByLDAPImport = addedByLDAPImport;
 	}
 
-	@JSON
-	@Override
-	public Date getLastPublishDate() {
-		return _lastPublishDate;
-	}
-
-	@Override
-	public void setLastPublishDate(Date lastPublishDate) {
-		_lastPublishDate = lastPublishDate;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -624,7 +603,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		userGroupImpl.setName(getName());
 		userGroupImpl.setDescription(getDescription());
 		userGroupImpl.setAddedByLDAPImport(getAddedByLDAPImport());
-		userGroupImpl.setLastPublishDate(getLastPublishDate());
 
 		userGroupImpl.resetOriginalValues();
 
@@ -768,21 +746,12 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		userGroupCacheModel.addedByLDAPImport = getAddedByLDAPImport();
 
-		Date lastPublishDate = getLastPublishDate();
-
-		if (lastPublishDate != null) {
-			userGroupCacheModel.lastPublishDate = lastPublishDate.getTime();
-		}
-		else {
-			userGroupCacheModel.lastPublishDate = Long.MIN_VALUE;
-		}
-
 		return userGroupCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{mvccVersion=");
 		sb.append(getMvccVersion());
@@ -808,8 +777,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		sb.append(getDescription());
 		sb.append(", addedByLDAPImport=");
 		sb.append(getAddedByLDAPImport());
-		sb.append(", lastPublishDate=");
-		sb.append(getLastPublishDate());
 		sb.append("}");
 
 		return sb.toString();
@@ -817,10 +784,10 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(40);
 
 		sb.append("<model><model-name>");
-		sb.append("com.liferay.portal.model.UserGroup");
+		sb.append("com.liferay.portal.kernel.model.UserGroup");
 		sb.append("</model-name>");
 
 		sb.append(
@@ -871,10 +838,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 			"<column><column-name>addedByLDAPImport</column-name><column-value><![CDATA[");
 		sb.append(getAddedByLDAPImport());
 		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
-		sb.append(getLastPublishDate());
-		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -904,7 +867,6 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	private String _originalName;
 	private String _description;
 	private boolean _addedByLDAPImport;
-	private Date _lastPublishDate;
 	private long _columnBitmask;
 	private UserGroup _escapedModel;
 }

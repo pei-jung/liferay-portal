@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
+import com.liferay.portal.kernel.model.CacheField;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.plugin.Version;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -37,8 +39,6 @@ import com.liferay.portal.kernel.util.StringUtil_IW;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.Validator_IW;
-import com.liferay.portal.model.CacheField;
-import com.liferay.portal.model.ModelHintsUtil;
 import com.liferay.portal.tools.ArgumentsUtil;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.portal.xml.SAXReaderFactory;
@@ -1669,11 +1669,11 @@ public class ServiceBuilder {
 
 		if (returnTypeGenericsName.contains(
 				"com.liferay.portal.kernel.search.") ||
-			returnTypeGenericsName.contains("com.liferay.portal.model.Theme") ||
+			returnTypeGenericsName.contains("com.liferay.portal.kernel.model.Theme") ||
 			returnTypeGenericsName.contains(
 				"com.liferay.social.kernel.model.SocialActivityDefinition") ||
 			returnTypeGenericsName.equals("java.util.List<java.lang.Object>") ||
-			returnValueName.equals("com.liferay.portal.model.Lock") ||
+			returnValueName.equals("com.liferay.portal.kernel.lock.model.Lock") ||
 			returnValueName.equals(
 				"com.liferay.message.boards.kernel.model.MBMessageDisplay") ||
 			returnValueName.startsWith("java.io") ||
@@ -1961,7 +1961,7 @@ public class ServiceBuilder {
 						"package " + _apiPackagePath + ".exception;",
 						"package " + _apiPackagePath + ".exception;",
 						"package " + _apiPackagePath + ".exception;",
-						"com.liferay.portal.exception.NoSuchModelException"
+						"com.liferay.portal.kernel.exception.NoSuchModelException"
 					});
 
 				_write(exceptionFile, content);
@@ -1977,9 +1977,6 @@ public class ServiceBuilder {
 				if (exception.startsWith("NoSuch")) {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
-					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
 				}
 
 				content = StringUtil.replace(content, "\r\n", "\n");
@@ -1995,8 +1992,18 @@ public class ServiceBuilder {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
 					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
+
+					ToolsUtil.writeFileRaw(
+						exceptionFile, content, _modifiedFileNames);
+				}
+				else if (content.contains(
+							"portal.exception.NoSuchModelException")) {
+
+					content = StringUtil.replace(
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
 
 					ToolsUtil.writeFileRaw(
 						exceptionFile, content, _modifiedFileNames);

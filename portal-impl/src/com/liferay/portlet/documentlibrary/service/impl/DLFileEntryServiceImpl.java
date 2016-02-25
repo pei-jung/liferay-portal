@@ -28,10 +28,10 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryImpl;
 import com.liferay.portlet.documentlibrary.service.base.DLFileEntryServiceBaseImpl;
@@ -559,6 +559,26 @@ public class DLFileEntryServiceImpl extends DLFileEntryServiceBaseImpl {
 		return dlFileEntryLocalService.isFileEntryCheckedOut(fileEntryId);
 	}
 
+	@Override
+	public boolean isKeepFileVersionLabel(
+			long fileEntryId, boolean majorVersion,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		DLFileEntryPermission.check(
+			permissionChecker, fileEntryId, ActionKeys.VIEW);
+
+		return dlFileEntryLocalService.isKeepFileVersionLabel(
+			fileEntryId, majorVersion, serviceContext);
+	}
+
+	/**
+	 * As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long, boolean,
+	 *              ServiceContext)}
+	 */
+	@Deprecated
 	@Override
 	public boolean isKeepFileVersionLabel(
 			long fileEntryId, ServiceContext serviceContext)

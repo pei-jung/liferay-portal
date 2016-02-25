@@ -29,6 +29,15 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.model.Subscription;
+import com.liferay.portal.kernel.model.ThemeConstants;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -38,6 +47,15 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.SubscriptionLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
@@ -46,7 +64,6 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -55,24 +72,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.model.Subscription;
-import com.liferay.portal.model.ThemeConstants;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.OrganizationLocalServiceUtil;
-import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
-import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.SubscriptionLocalServiceUtil;
-import com.liferay.portal.service.UserGroupLocalServiceUtil;
-import com.liferay.portal.service.UserGroupRoleLocalServiceUtil;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.messageboards.MBGroupServiceSettings;
 import com.liferay.portlet.messageboards.service.permission.MBMessagePermission;
@@ -655,13 +654,12 @@ public class MBUtil {
 
 	public static String[] getThreadPriority(
 			MBGroupServiceSettings mbGroupServiceSettings, String languageId,
-			double value, ThemeDisplay themeDisplay)
+			double value)
 		throws Exception {
 
 		String[] priorities = mbGroupServiceSettings.getPriorities(languageId);
 
-		String[] priorityPair = _findThreadPriority(
-			value, themeDisplay, priorities);
+		String[] priorityPair = _findThreadPriority(value, priorities);
 
 		if (priorityPair == null) {
 			String defaultLanguageId = LocaleUtil.toLanguageId(
@@ -670,7 +668,7 @@ public class MBUtil {
 			priorities = mbGroupServiceSettings.getPriorities(
 				defaultLanguageId);
 
-			priorityPair = _findThreadPriority(value, themeDisplay, priorities);
+			priorityPair = _findThreadPriority(value, priorities);
 		}
 
 		return priorityPair;
@@ -978,7 +976,7 @@ public class MBUtil {
 	}
 
 	private static String[] _findThreadPriority(
-		double value, ThemeDisplay themeDisplay, String[] priorities) {
+		double value, String[] priorities) {
 
 		for (int i = 0; i < priorities.length; i++) {
 			String[] priority = StringUtil.split(
@@ -990,11 +988,6 @@ public class MBUtil {
 				double priorityValue = GetterUtil.getDouble(priority[2]);
 
 				if (value == priorityValue) {
-					if (!priorityImage.startsWith(Http.HTTP)) {
-						priorityImage =
-							themeDisplay.getPathThemeImages() + priorityImage;
-					}
-
 					return new String[] {priorityName, priorityImage};
 				}
 			}

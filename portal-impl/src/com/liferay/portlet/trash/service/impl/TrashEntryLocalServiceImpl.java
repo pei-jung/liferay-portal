@@ -18,6 +18,9 @@ import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.SystemEvent;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
@@ -32,9 +35,6 @@ import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.SystemEvent;
-import com.liferay.portal.model.User;
 import com.liferay.portlet.trash.service.base.TrashEntryLocalServiceBaseImpl;
 import com.liferay.trash.kernel.model.TrashEntry;
 import com.liferay.trash.kernel.model.TrashVersion;
@@ -168,8 +168,8 @@ public class TrashEntryLocalServiceImpl extends TrashEntryLocalServiceBaseImpl {
 				}
 
 			});
-		actionableDynamicQuery.setTransactionAttribute(
-			DefaultActionableDynamicQuery.REQUIRES_NEW_TRANSACTION_ATTRIBUTE);
+		actionableDynamicQuery.setTransactionConfig(
+			DefaultActionableDynamicQuery.REQUIRES_NEW_TRANSACTION_CONFIG);
 
 		actionableDynamicQuery.performActions();
 	}

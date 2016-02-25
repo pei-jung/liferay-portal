@@ -17,9 +17,8 @@ package com.liferay.sync.engine.service;
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.util.FileEventManager;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherManager;
 import com.liferay.sync.engine.model.ModelListener;
-import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.model.SyncSiteModelListener;
@@ -240,36 +239,31 @@ public class SyncSiteService {
 		_syncSitePersistence.registerModelListener(modelListener);
 	}
 
-	public static SyncSite setFilePathName(long syncSiteId, String name) {
+	public static SyncSite setFilePathName(
+		long syncSiteId, String targetFilePathName) {
 
 		// Sync site
 
 		SyncSite syncSite = fetchSyncSite(syncSiteId);
 
-		String filePathName = syncSite.getFilePathName();
+		String sourceFilePathName = syncSite.getFilePathName();
 
-		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
-			syncSite.getSyncAccountId());
-
-		syncSite.setFilePathName(
-			FileUtil.getFilePathName(syncAccount.getFilePathName(), name));
+		syncSite.setFilePathName(targetFilePathName);
 
 		update(syncSite);
 
 		// Sync file
 
-		SyncFile syncFile = SyncFileService.fetchSyncFile(filePathName);
+		SyncFile syncFile = SyncFileService.fetchSyncFile(sourceFilePathName);
 
-		syncFile.setName(name);
-		syncFile.setFilePathName(filePathName);
+		syncFile.setName(syncSite.getName());
+		syncFile.setFilePathName(targetFilePathName);
 
 		SyncFileService.update(syncFile);
 
 		// Sync files
 
-		SyncFileService.renameSyncFiles(
-			filePathName,
-			FileUtil.getFilePathName(syncAccount.getFilePathName(), name));
+		SyncFileService.renameSyncFiles(sourceFilePathName, targetFilePathName);
 
 		return syncSite;
 	}
@@ -340,7 +334,7 @@ public class SyncSiteService {
 
 		for (SyncFile syncFile : syncFiles) {
 			if (!syncFile.isSystem()) {
-				SyncFileService.deleteSyncFile(syncFile, false);
+				SyncFileService.deleteSyncFile(syncFile);
 			}
 		}
 
@@ -350,7 +344,7 @@ public class SyncSiteService {
 			return;
 		}
 
-		final Watcher watcher = WatcherRegistry.getWatcher(
+		final Watcher watcher = WatcherManager.getWatcher(
 			syncSite.getSyncAccountId());
 
 		final List<String> deletedFilePathNames =

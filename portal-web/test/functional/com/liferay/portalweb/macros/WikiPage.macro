@@ -11,7 +11,7 @@
 		<execute function="AssertClick" locator1="Wiki#LINK_EDIT" value1="Edit" />
 
 		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="${panelHeading}" />
+			<var name="panelHeading" value="Attachments" />
 		</execute>
 
 		<execute function="Click" locator1="Button#SELECT_FILES" />
@@ -618,6 +618,12 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${wikiPageTitle} was moved to the Recycle Bin. Undo" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="Wiki#ALL_PAGES_TABLE_REVISION" value1="1.0" />
 
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Recycle Bin" />
+		</execute>
+
 		<execute macro="RecycleBin#emptyCP" />
 	</command>
 
@@ -972,7 +978,9 @@
 		<var name="key_wikiPageRevision" value="1.0" />
 		<var name="key_wikiPageTitle" value="${wikiPage2Title}" />
 
-		<execute function="AssertClick" locator1="Wiki#HISTORY_VERSIONS_REVERT_LINK" value1="Revert" />
+		<execute function="Click" locator1="Wiki#HISTORY_VERSIONS_ACTIONS" />
+
+		<execute function="AssertClick" locator1="MenuItem#REVERT" value1="Revert" />
 
 		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
@@ -995,7 +1003,9 @@
 		<var name="key_wikiPageRevision" value="${wikiPageRevisionOld}" />
 		<var name="key_wikiPageTitle" value="${wikiPageTitle}" />
 
-		<execute function="AssertClick" locator1="Wiki#HISTORY_VERSIONS_REVERT_LINK" value1="Revert" />
+		<execute function="Click" locator1="Wiki#HISTORY_VERSIONS_ACTIONS" />
+
+		<execute function="AssertClick" locator1="MenuItem#REVERT" value1="Revert" />
 
 		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
@@ -1023,8 +1033,8 @@
 	<command name="searchPG">
 		<var name="key_wikiPageTitle" value="${wikiPageTitle}" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${searchTerm}" />
-		<execute function="AssertClick" locator1="NavBar#BASIC_SEARCH_BUTTON" value1="Search" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${searchTerm}" />
+		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
 	</command>
 
 	<command name="selectNewNode">
@@ -1110,9 +1120,11 @@
 		<var name="key_attachmentFileName" value="${attachmentFileName}" />
 		<var name="key_wikiPageTitle" value="${wikiPageTitle}" />
 
-		<execute function="AssertClick" locator1="Wiki#LINK_DETAILS" value1="Details" />
+		<execute function="AssertClick" locator1="Wiki#LINK_EDIT" value1="Edit" />
 
-		<execute function="AssertClick" locator1="Wiki#PAGE_TABS_ATTACHMENTS" value1="Attachments" />
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Attachments" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Wiki#ATTACHMENT_TABLE_FILE_NAME" value1="${attachmentFileName}" />
 
@@ -1126,9 +1138,7 @@
 			</else>
 		</if>
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertTextEquals" locator1="Wiki#ATTACHMENT_TABLE_REMOVE" value1="Remove" />
+		<execute function="AssertTextEquals" locator1="Wiki#ATTACHMENT_TABLE_MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
 	</command>
 
 	<command name="viewChildPagePG">
@@ -1203,33 +1213,20 @@
 		<execute function="AssertTextEquals" locator1="Portlet#H1_HEADER" value1="FrontPage" />
 		<execute function="AssertTextEquals" locator1="Wiki#BODY" value1="${wikiPageContent}" />
 
-		<if>
-			<equals arg1="${pageStaging}" arg2="true" />
-			<then>
-				<execute function="AssertElementPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
-				<execute function="AssertElementPresent" locator1="Comments#BE_THE_FIRST_LINK" />
-				<execute function="AssertElementPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
-			</then>
-			<else>
-				<execute function="AssertElementNotPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
-				<execute function="AssertElementNotPresent" locator1="Comments#BE_THE_FIRST_LINK" />
-				<execute function="AssertElementNotPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
-			</else>
-		</if>
-
+		<execute function="AssertElementPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
+		<execute function="AssertElementPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
 		<execute function="AssertElementPresent" locator1="Wiki#LINK_ATTACHMENTS" />
 		<execute function="AssertElementPresent" locator1="Wiki#ADT_SOCIAL_LAST_MODIFIED_MESSAGE" />
 		<execute function="AssertElementPresent" locator1="Icon#DETAILS" />
 		<execute function="AssertElementPresent" locator1="Icon#PRINT" />
 		<execute function="AssertElementPresent" locator1="SocialBookmarks#TWITTER" />
 		<execute function="AssertElementPresent" locator1="SocialBookmarks#GOOGLE_PLUS" />
-		<execute function="AssertElementNotPresent" locator1="Comments#PANEL_TOGGLE" />
 		<execute function="AssertElementPresent" locator1="Ratings#YOUR_RATING_LABEL" />
 		<execute function="AssertElementPresent" locator1="Ratings#AVERAGE_LABEL" />
 	</command>
 
 	<command name="viewDefaultPGViaWD">
-		<execute function="AssertTextEquals" locator1="Message#INFO_1" value1="This page is empty. Edit it to add some text." />
+		<execute function="AssertTextEquals" locator1="Wiki#FRONTPAGE_DEFAULT_MESSAGE" value1="This page is empty. Edit it to add some text." />
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="FrontPage" />
 		<execute function="AssertTextNotPresent" value1="${wikiPageContent}" />
 		<execute function="AssertElementNotPresent" locator1="Wiki#BODY" />
@@ -1240,7 +1237,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Wiki#PAGE_HEADER" value1="FrontPage" />
 		<execute function="AssertTextEquals" locator1="Wiki#BODY" value1="${wikiFrontPageContent}" />
-		<execute function="AssertElementNotPresent" locator1="Message#INFO_1" />
+		<execute function="AssertElementNotPresent" locator1="Wiki#FRONTPAGE_DEFAULT_MESSAGE" />
 		<execute function="AssertTextNotPresent" value1="This page is empty. Edit it to add some text." />
 	</command>
 
@@ -1248,7 +1245,6 @@
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="FrontPage" />
 		<execute function="AssertTextEquals" locator1="Wiki#BODY" value1="${wikiPageContent}" />
 		<execute function="AssertElementPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
-		<execute function="AssertElementPresent" locator1="Wiki#LINK_ATTACHMENTS" />
 		<execute function="AssertTextEquals" locator1="Wiki#LINK_EDIT" value1="Edit" />
 		<execute function="AssertTextEquals" locator1="Wiki#LINK_DETAILS" value1="Details" />
 		<execute function="AssertTextEquals" locator1="Wiki#LINK_PRINT" value1="Print" />
@@ -1259,7 +1255,7 @@
 	</command>
 
 	<command name="viewFrontPageDefaultCP">
-		<execute function="AssertTextEquals" locator1="Message#INFO_1" value1="This page is empty. Edit it to add some text." />
+		<execute function="AssertTextEquals" locator1="Wiki#FRONTPAGE_DEFAULT_MESSAGE" value1="This page is empty. Edit it to add some text." />
 		<execute function="AssertTextNotPresent" value1="${wikiFrontPageContent}" />
 	</command>
 

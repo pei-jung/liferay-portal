@@ -82,7 +82,7 @@ public class DLFileEntryServiceSoap {
 
 	public static void checkInFileEntry(long fileEntryId, boolean major,
 		java.lang.String changeLog,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			DLFileEntryServiceUtil.checkInFileEntry(fileEntryId, major,
@@ -97,7 +97,7 @@ public class DLFileEntryServiceSoap {
 
 	public static void checkInFileEntry(long fileEntryId,
 		java.lang.String lockUuid,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			DLFileEntryServiceUtil.checkInFileEntry(fileEntryId, lockUuid,
@@ -112,7 +112,7 @@ public class DLFileEntryServiceSoap {
 
 	public static com.liferay.document.library.kernel.model.DLFileEntrySoap checkOutFileEntry(
 		long fileEntryId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.document.library.kernel.model.DLFileEntry returnValue = DLFileEntryServiceUtil.checkOutFileEntry(fileEntryId,
@@ -129,7 +129,7 @@ public class DLFileEntryServiceSoap {
 
 	public static com.liferay.document.library.kernel.model.DLFileEntrySoap checkOutFileEntry(
 		long fileEntryId, java.lang.String owner, long expirationTime,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.document.library.kernel.model.DLFileEntry returnValue = DLFileEntryServiceUtil.checkOutFileEntry(fileEntryId,
@@ -146,7 +146,7 @@ public class DLFileEntryServiceSoap {
 
 	public static com.liferay.document.library.kernel.model.DLFileEntrySoap copyFileEntry(
 		long groupId, long repositoryId, long fileEntryId, long destFolderId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.document.library.kernel.model.DLFileEntry returnValue = DLFileEntryServiceUtil.copyFileEntry(groupId,
@@ -551,7 +551,29 @@ public class DLFileEntryServiceSoap {
 	}
 
 	public static boolean isKeepFileVersionLabel(long fileEntryId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		boolean majorVersion,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			boolean returnValue = DLFileEntryServiceUtil.isKeepFileVersionLabel(fileEntryId,
+					majorVersion, serviceContext);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long, boolean,
+	*              ServiceContext)}
+	*/
+	@Deprecated
+	public static boolean isKeepFileVersionLabel(long fileEntryId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			boolean returnValue = DLFileEntryServiceUtil.isKeepFileVersionLabel(fileEntryId,
@@ -568,7 +590,7 @@ public class DLFileEntryServiceSoap {
 
 	public static com.liferay.document.library.kernel.model.DLFileEntrySoap moveFileEntry(
 		long fileEntryId, long newFolderId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.document.library.kernel.model.DLFileEntry returnValue = DLFileEntryServiceUtil.moveFileEntry(fileEntryId,
@@ -601,7 +623,7 @@ public class DLFileEntryServiceSoap {
 
 	public static void revertFileEntry(long fileEntryId,
 		java.lang.String version,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			DLFileEntryServiceUtil.revertFileEntry(fileEntryId, version,

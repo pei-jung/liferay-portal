@@ -15,7 +15,7 @@
 package com.liferay.portal.kernel.util.comparator;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.model.PortletCategory;
+import com.liferay.portal.kernel.model.PortletCategory;
 
 import java.io.Serializable;
 
@@ -36,9 +36,20 @@ public class PortletCategoryComparator
 	public int compare(
 		PortletCategory portletCategory1, PortletCategory portletCategory2) {
 
-		String name1 = LanguageUtil.get(_locale, portletCategory1.getName());
+		String name1 = portletCategory1.getName();
 
-		String name2 = LanguageUtil.get(_locale, portletCategory2.getName());
+		if (name1.equals("category.highlighted")) {
+			return -1;
+		}
+
+		String name2 = portletCategory2.getName();
+
+		if (name2.equals("category.highlighted")) {
+			return 1;
+		}
+
+		name1 = LanguageUtil.get(_locale, name1);
+		name2 = LanguageUtil.get(_locale, name2);
 
 		return name1.compareTo(name2);
 	}

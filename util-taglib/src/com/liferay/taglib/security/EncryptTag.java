@@ -16,6 +16,7 @@ package com.liferay.taglib.security;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -24,7 +25,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.Company;
 import com.liferay.util.Encryptor;
 import com.liferay.util.EncryptorException;
 
@@ -41,7 +41,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, with no direct replacement
  */
+@Deprecated
 public class EncryptTag extends TagSupport {
 
 	@Override

@@ -19,8 +19,8 @@ import com.liferay.portal.kernel.repository.LocalRepository;
 import com.liferay.portal.kernel.repository.capabilities.ProcessorCapability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.repository.util.LocalRepositoryWrapper;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -74,8 +74,8 @@ public class LiferayProcessorLocalRepositoryWrapper
 
 	@Override
 	public void checkInFileEntry(
-			long userId, long fileEntryId, boolean major, String changeLog,
-			ServiceContext serviceContext)
+			long userId, long fileEntryId, boolean majorVersion,
+			String changeLog, ServiceContext serviceContext)
 		throws PortalException {
 
 		FileEntry fileEntry = getFileEntry(fileEntryId);
@@ -83,7 +83,7 @@ public class LiferayProcessorLocalRepositoryWrapper
 		_processorCapability.cleanUp(fileEntry.getLatestFileVersion(true));
 
 		super.checkInFileEntry(
-			userId, fileEntryId, major, changeLog, serviceContext);
+			userId, fileEntryId, majorVersion, changeLog, serviceContext);
 
 		_processorCapability.copy(fileEntry, fileEntry.getFileVersion());
 	}

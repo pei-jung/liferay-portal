@@ -16,17 +16,32 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.admin.kernel.util.PortalMyAccountApplicationType;
 import com.liferay.expando.kernel.model.CustomAttributesDisplay;
-import com.liferay.portal.exception.PortletIdException;
 import com.liferay.portal.kernel.application.type.ApplicationType;
 import com.liferay.portal.kernel.cluster.Clusterable;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.PortletIdException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.image.SpriteProcessor;
 import com.liferay.portal.kernel.image.SpriteProcessorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.model.EventDefinition;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletApp;
+import com.liferay.portal.kernel.model.PortletCategory;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.PortletFilter;
+import com.liferay.portal.kernel.model.PortletInfo;
+import com.liferay.portal.kernel.model.PortletInstance;
+import com.liferay.portal.kernel.model.PortletPreferences;
+import com.liferay.portal.kernel.model.PortletURLListener;
+import com.liferay.portal.kernel.model.PublicRenderParameter;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.plugin.PluginPackage;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
@@ -63,21 +78,6 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.QName;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
-import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.model.EventDefinition;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletApp;
-import com.liferay.portal.model.PortletCategory;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.PortletFilter;
-import com.liferay.portal.model.PortletInfo;
-import com.liferay.portal.model.PortletInstance;
-import com.liferay.portal.model.PortletPreferences;
-import com.liferay.portal.model.PortletURLListener;
-import com.liferay.portal.model.PublicRenderParameter;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.impl.EventDefinitionImpl;
 import com.liferay.portal.model.impl.PortletAppImpl;
 import com.liferay.portal.model.impl.PortletFilterImpl;
@@ -149,6 +149,8 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 	@Override
 	public void checkPortlet(Portlet portlet) throws PortalException {
 		initPortletDefaultPermissions(portlet);
+
+		initPortletModelDefaultPermissions(portlet);
 
 		initPortletAddToPagePermissions(portlet);
 	}
@@ -1124,48 +1126,82 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 	protected void initPortletDefaultPermissions(Portlet portlet)
 		throws PortalException {
 
-		long companyId = portlet.getCompanyId();
-		String rootPortletId = portlet.getRootPortletId();
-
 		int count = resourcePermissionLocalService.getResourcePermissionsCount(
-			companyId, rootPortletId, ResourceConstants.SCOPE_INDIVIDUAL,
-			rootPortletId);
+			portlet.getCompanyId(), portlet.getRootPortletId(),
+			ResourceConstants.SCOPE_INDIVIDUAL, portlet.getRootPortletId());
 
 		if (count > 0) {
 			return;
 		}
 
 		Role guestRole = roleLocalService.getRole(
-			companyId, RoleConstants.GUEST);
+			portlet.getCompanyId(), RoleConstants.GUEST);
 		List<String> guestActions =
 			ResourceActionsUtil.getPortletResourceGuestDefaultActions(
-				rootPortletId);
+				portlet.getRootPortletId());
 
 		resourcePermissionLocalService.setResourcePermissions(
-			companyId, rootPortletId, ResourceConstants.SCOPE_INDIVIDUAL,
-			rootPortletId, guestRole.getRoleId(),
-			guestActions.toArray(new String[0]));
+			portlet.getCompanyId(), portlet.getRootPortletId(),
+			ResourceConstants.SCOPE_INDIVIDUAL, portlet.getRootPortletId(),
+			guestRole.getRoleId(), guestActions.toArray(new String[0]));
 
 		Role ownerRole = roleLocalService.getRole(
-			companyId, RoleConstants.OWNER);
+			portlet.getCompanyId(), RoleConstants.OWNER);
 		List<String> ownerActionIds =
-			ResourceActionsUtil.getPortletResourceActions(rootPortletId);
+			ResourceActionsUtil.getPortletResourceActions(
+				portlet.getRootPortletId());
 
 		resourcePermissionLocalService.setOwnerResourcePermissions(
-			companyId, rootPortletId, ResourceConstants.SCOPE_INDIVIDUAL,
-			rootPortletId, ownerRole.getRoleId(), 0,
-			ownerActionIds.toArray(new String[0]));
+			portlet.getCompanyId(), portlet.getRootPortletId(),
+			ResourceConstants.SCOPE_INDIVIDUAL, portlet.getRootPortletId(),
+			ownerRole.getRoleId(), 0, ownerActionIds.toArray(new String[0]));
 
 		Role siteMemberRole = roleLocalService.getRole(
-			companyId, RoleConstants.SITE_MEMBER);
+			portlet.getCompanyId(), RoleConstants.SITE_MEMBER);
 		List<String> groupActionIds =
 			ResourceActionsUtil.getPortletResourceGroupDefaultActions(
-				rootPortletId);
+				portlet.getRootPortletId());
 
 		resourcePermissionLocalService.setResourcePermissions(
-			companyId, rootPortletId, ResourceConstants.SCOPE_INDIVIDUAL,
-			rootPortletId, siteMemberRole.getRoleId(),
-			groupActionIds.toArray(new String[0]));
+			portlet.getCompanyId(), portlet.getRootPortletId(),
+			ResourceConstants.SCOPE_INDIVIDUAL, portlet.getRootPortletId(),
+			siteMemberRole.getRoleId(), groupActionIds.toArray(new String[0]));
+	}
+
+	protected void initPortletModelDefaultPermissions(Portlet portlet)
+		throws PortalException {
+
+		List<String> modelResources = new ArrayList<>();
+
+		modelResources.add(
+			ResourceActionsUtil.getPortletRootModelResource(
+				portlet.getRootPortletId()));
+		modelResources.addAll(
+			ResourceActionsUtil.getPortletModelResources(
+				portlet.getRootPortletId()));
+
+		for (String modelResource : modelResources) {
+			if (Validator.isBlank(modelResource)) {
+				continue;
+			}
+
+			if (resourceBlockLocalService.isSupported(modelResource)) {
+				continue;
+			}
+
+			int count =
+				resourcePermissionLocalService.getResourcePermissionsCount(
+					portlet.getCompanyId(), modelResource,
+					ResourceConstants.SCOPE_INDIVIDUAL, modelResource);
+
+			if (count > 0) {
+				continue;
+			}
+
+			resourceLocalService.addResources(
+				portlet.getCompanyId(), 0, 0, modelResource, modelResource,
+				false, false, true);
+		}
 	}
 
 	protected void readLiferayDisplay(

@@ -16,16 +16,33 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.exportimport.kernel.lar.MissingReferences;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
-import com.liferay.portal.exception.NoSuchLayoutException;
-import com.liferay.portal.exception.RequiredLayoutException;
-import com.liferay.portal.exception.SitemapChangeFrequencyException;
-import com.liferay.portal.exception.SitemapIncludeException;
-import com.liferay.portal.exception.SitemapPagePriorityException;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.RequiredLayoutException;
+import com.liferay.portal.kernel.exception.SitemapChangeFrequencyException;
+import com.liferay.portal.kernel.exception.SitemapIncludeException;
+import com.liferay.portal.kernel.exception.SitemapPagePriorityException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutFriendlyURL;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutReference;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.LayoutType;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntry;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
@@ -42,23 +59,6 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.comparator.LayoutComparator;
 import com.liferay.portal.kernel.util.comparator.LayoutPriorityComparator;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutFriendlyURL;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.LayoutReference;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.LayoutType;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.ResourcePermission;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.LayoutLocalServiceBaseImpl;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.Sites;
@@ -230,7 +230,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 				"privateLayout", String.valueOf(privateLayout));
 		}
 
-		validateTypeSettingsProperties(typeSettingsProperties);
+		validateTypeSettingsProperties(layout, typeSettingsProperties);
 
 		layout.setTypeSettingsProperties(typeSettingsProperties);
 
@@ -1428,7 +1428,21 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	public List<Layout> getScopeGroupLayouts(long parentGroupId)
 		throws PortalException {
 
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_ENABLED) {
+			return layoutFinder.findByScopeGroup(parentGroupId);
+		}
+
 		Group parentGroup = groupPersistence.findByPrimaryKey(parentGroupId);
+
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD >= 0) {
+			int count = groupLocalService.getGroupsCount(
+				parentGroup.getCompanyId(), Layout.class.getName(),
+				parentGroupId);
+
+			if (count >= PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD) {
+				return layoutFinder.findByScopeGroup(parentGroupId);
+			}
+		}
 
 		List<Group> groups = groupLocalService.getGroups(
 			parentGroup.getCompanyId(), Layout.class.getName(), parentGroupId);
@@ -1453,7 +1467,22 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 			long parentGroupId, boolean privateLayout)
 		throws PortalException {
 
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_ENABLED) {
+			return layoutFinder.findByScopeGroup(parentGroupId, privateLayout);
+		}
+
 		Group parentGroup = groupPersistence.findByPrimaryKey(parentGroupId);
+
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD >= 0) {
+			int count = groupLocalService.getGroupsCount(
+				parentGroup.getCompanyId(), Layout.class.getName(),
+				parentGroupId);
+
+			if (count >= PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD) {
+				return layoutFinder.findByScopeGroup(
+					parentGroupId, privateLayout);
+			}
+		}
 
 		List<Group> groups = groupLocalService.getGroups(
 			parentGroup.getCompanyId(), Layout.class.getName(), parentGroupId);
@@ -2346,10 +2375,10 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		typeSettingsProperties.fastLoad(typeSettings);
 
-		validateTypeSettingsProperties(typeSettingsProperties);
-
 		Layout layout = layoutPersistence.findByG_P_L(
 			groupId, privateLayout, layoutId);
+
+		validateTypeSettingsProperties(layout, typeSettingsProperties);
 
 		layout.setModifiedDate(now);
 		layout.setTypeSettings(typeSettingsProperties.toString());
@@ -2893,7 +2922,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	}
 
 	protected void validateTypeSettingsProperties(
-			UnicodeProperties typeSettingsProperties)
+			Layout layout, UnicodeProperties typeSettingsProperties)
 		throws PortalException {
 
 		String sitemapChangeFrequency = typeSettingsProperties.getProperty(

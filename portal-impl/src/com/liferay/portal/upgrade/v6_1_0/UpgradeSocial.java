@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Tuple;
-import com.liferay.portal.model.User;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.social.kernel.model.SocialActivityCounterConstants;
 import com.liferay.social.kernel.model.SocialActivityCounterDefinition;
@@ -536,7 +535,8 @@ public class UpgradeSocial extends UpgradeProcess {
 			}
 		}
 
-		long classNameId = PortalUtil.getClassNameId(User.class);
+		long classNameId = PortalUtil.getClassNameId(
+			"com.liferay.portal.model.User");
 		long classPK = rs.getLong("userId");
 		String name = SocialActivityCounterConstants.NAME_PARTICIPATION;
 		int ownerType = SocialActivityCounterConstants.TYPE_ACTOR;

@@ -14,13 +14,17 @@
 
 package com.liferay.portal.service.persistence.test;
 
-import com.liferay.portal.exception.NoSuchUserGroupException;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.NoSuchUserGroupException;
+import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.persistence.UserGroupPersistence;
+import com.liferay.portal.kernel.service.persistence.UserGroupUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
@@ -32,10 +36,6 @@ import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.service.UserGroupLocalServiceUtil;
-import com.liferay.portal.service.persistence.UserGroupPersistence;
-import com.liferay.portal.service.persistence.UserGroupUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
 
@@ -140,8 +140,6 @@ public class UserGroupPersistenceTest {
 
 		newUserGroup.setAddedByLDAPImport(RandomTestUtil.randomBoolean());
 
-		newUserGroup.setLastPublishDate(RandomTestUtil.nextDate());
-
 		_userGroups.add(_persistence.update(newUserGroup));
 
 		UserGroup existingUserGroup = _persistence.findByPrimaryKey(newUserGroup.getPrimaryKey());
@@ -170,9 +168,6 @@ public class UserGroupPersistenceTest {
 			newUserGroup.getDescription());
 		Assert.assertEquals(existingUserGroup.getAddedByLDAPImport(),
 			newUserGroup.getAddedByLDAPImport());
-		Assert.assertEquals(Time.getShortTimestamp(
-				existingUserGroup.getLastPublishDate()),
-			Time.getShortTimestamp(newUserGroup.getLastPublishDate()));
 	}
 
 	@Test
@@ -244,8 +239,7 @@ public class UserGroupPersistenceTest {
 			true, "uuid", true, "userGroupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "parentUserGroupId", true, "name", true,
-			"description", true, "addedByLDAPImport", true, "lastPublishDate",
-			true);
+			"description", true, "addedByLDAPImport", true);
 	}
 
 	@Test
@@ -482,8 +476,6 @@ public class UserGroupPersistenceTest {
 		userGroup.setDescription(RandomTestUtil.randomString());
 
 		userGroup.setAddedByLDAPImport(RandomTestUtil.randomBoolean());
-
-		userGroup.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_userGroups.add(_persistence.update(userGroup));
 

@@ -33,20 +33,20 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.increment.BufferedIncrement;
 import com.liferay.portal.kernel.lock.Lock;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.BaseLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.model.PersistedModel;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.service.BaseLocalService;
-import com.liferay.portal.service.PersistedModelLocalService;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -590,6 +590,16 @@ public interface DLFileEntryLocalService extends BaseLocalService,
 	public boolean isFileEntryCheckedOut(long fileEntryId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean isKeepFileVersionLabel(long fileEntryId,
+		boolean majorVersion, ServiceContext serviceContext)
+		throws PortalException;
+
+	/**
+	* As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long, boolean,
+	*              ServiceContext)}
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean isKeepFileVersionLabel(long fileEntryId,
 		ServiceContext serviceContext) throws PortalException;

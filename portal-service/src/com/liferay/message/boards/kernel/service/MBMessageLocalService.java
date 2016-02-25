@@ -29,8 +29,13 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.BaseLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Isolation;
@@ -38,11 +43,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.model.PersistedModel;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.service.BaseLocalService;
-import com.liferay.portal.service.PersistedModelLocalService;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -439,16 +439,15 @@ public interface MBMessageLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public MBMessageDisplay getMessageDisplay(long userId, MBMessage message,
-		int status, boolean includePrevAndNext) throws PortalException;
+		int status) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public MBMessageDisplay getMessageDisplay(long userId, MBMessage message,
-		int status, boolean includePrevAndNext, Comparator<MBMessage> comparator)
-		throws PortalException;
+		int status, Comparator<MBMessage> comparator) throws PortalException;
 
 	/**
 	* @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
-	MBMessage, int, boolean)}
+	MBMessage, int)}
 	*/
 	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -458,7 +457,7 @@ public interface MBMessageLocalService extends BaseLocalService,
 
 	/**
 	* @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
-	MBMessage, int, boolean, Comparator)} (
+	MBMessage, int, Comparator)} (
 	*/
 	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -468,11 +467,11 @@ public interface MBMessageLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public MBMessageDisplay getMessageDisplay(long userId, long messageId,
-		int status, boolean includePrevAndNext) throws PortalException;
+		int status) throws PortalException;
 
 	/**
 	* @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
-	long, int, boolean)}
+	long, int)}
 	*/
 	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

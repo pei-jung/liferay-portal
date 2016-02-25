@@ -18,6 +18,7 @@ import com.liferay.layouts.admin.kernel.util.SitemapURLProvider;
 import com.liferay.layouts.admin.kernel.util.SitemapUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Layout;
 
 import java.util.Locale;
 import java.util.Set;
@@ -70,7 +70,7 @@ public class LayoutSitemapURLProvider implements SitemapURLProvider {
 		Set<Locale> availableLocales = LanguageUtil.getAvailableLocales(
 			layout.getGroupId());
 
-		if (availableLocales.size() > 1) {
+		if (isAddAlternateURLs(availableLocales)) {
 			Locale defaultLocale = LocaleUtil.getSiteDefault();
 
 			for (Locale availableLocale : availableLocales) {
@@ -88,6 +88,18 @@ public class LayoutSitemapURLProvider implements SitemapURLProvider {
 						layoutFullURL, themeDisplay, layout));
 			}
 		}
+	}
+
+	protected boolean isAddAlternateURLs(Set<Locale> availableLocales) {
+		if (PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 0) {
+			return false;
+		}
+
+		if (availableLocales.size() == 1) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

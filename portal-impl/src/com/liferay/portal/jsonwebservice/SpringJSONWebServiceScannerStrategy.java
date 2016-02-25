@@ -16,8 +16,8 @@ package com.liferay.portal.jsonwebservice;
 
 import com.liferay.portal.kernel.bean.ClassLoaderBeanHandler;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceScannerStrategy;
+import com.liferay.portal.kernel.service.ServiceWrapper;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.service.ServiceWrapper;
 import com.liferay.portal.spring.aop.AdvisedSupportProxy;
 import com.liferay.portal.spring.aop.ServiceBeanAopProxy;
 
@@ -70,7 +70,7 @@ public class SpringJSONWebServiceScannerStrategy
 	}
 
 	/**
-	 * @see com.liferay.portal.json.web.service.extender.internal.ServiceJSONWebServiceScannerStrategy#getTargetClass(Object)
+	 * @see com.liferay.portal.remote.json.web.service.extender.internal.ServiceJSONWebServiceScannerStrategy#getTargetClass(Object)
 	 */
 	protected Class<?> getTargetClass(Object service) throws Exception {
 		while (ProxyUtil.isProxyClass(service.getClass())) {

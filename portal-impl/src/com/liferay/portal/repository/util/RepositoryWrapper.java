@@ -27,8 +27,8 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -156,24 +156,24 @@ public class RepositoryWrapper implements Repository {
 	@Deprecated
 	@Override
 	public void checkInFileEntry(
-			long fileEntryId, boolean major, String changeLog,
+			long fileEntryId, boolean majorVersion, String changeLog,
 			ServiceContext serviceContext)
 		throws PortalException {
 
 		_repository.checkInFileEntry(
 			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
 				getUserId(),
-			fileEntryId, major, changeLog, serviceContext);
+			fileEntryId, majorVersion, changeLog, serviceContext);
 	}
 
 	@Override
 	public void checkInFileEntry(
-			long userId, long fileEntryId, boolean major, String changeLog,
-			ServiceContext serviceContext)
+			long userId, long fileEntryId, boolean majorVersion,
+			String changeLog, ServiceContext serviceContext)
 		throws PortalException {
 
 		_repository.checkInFileEntry(
-			userId, fileEntryId, major, changeLog, serviceContext);
+			userId, fileEntryId, majorVersion, changeLog, serviceContext);
 	}
 
 	@Override

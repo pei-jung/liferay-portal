@@ -34,6 +34,9 @@ import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
@@ -50,6 +53,7 @@ import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.comparator.ModelResourceComparator;
+import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -65,10 +69,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutTypePortletConstants;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portlet.asset.service.permission.AssetCategoryPermission;
 import com.liferay.portlet.asset.service.permission.AssetVocabularyPermission;
 
@@ -467,6 +467,31 @@ public class AssetUtil {
 			allAssetCategoryIds, allAssetTagNames, redirect);
 	}
 
+	public static String getAddURLPopUp(
+		long groupId, long plid, PortletURL addPortletURL, String portletId,
+		boolean addDisplayPageParameter, Layout layout) {
+
+		addPortletURL.setParameter(
+			"hideDefaultSuccessMessage", Boolean.TRUE.toString());
+		addPortletURL.setParameter("groupId", String.valueOf(groupId));
+		addPortletURL.setParameter("showHeader", Boolean.FALSE.toString());
+
+		String addPortletURLString = addPortletURL.toString();
+
+		addPortletURLString = HttpUtil.addParameter(
+			addPortletURLString, "refererPlid", plid);
+
+		if (addDisplayPageParameter && (layout != null)) {
+			String namespace = PortalUtil.getPortletNamespace(portletId);
+
+			addPortletURLString = HttpUtil.addParameter(
+				addPortletURLString, namespace + "layoutUuid",
+				layout.getUuid());
+		}
+
+		return addPortletURLString;
+	}
+
 	public static List<AssetEntry> getAssetEntries(Hits hits) {
 		List<AssetEntry> assetEntries = new ArrayList<>();
 
@@ -510,6 +535,39 @@ public class AssetUtil {
 		sb.append(ListUtil.toString(categories, AssetCategory.NAME_ACCESSOR));
 
 		return sb.toString();
+	}
+
+	public static String getClassName(String className) {
+		int pos = className.indexOf(AssetUtil.CLASSNAME_SEPARATOR);
+
+		if (pos != -1) {
+			className = className.substring(0, pos);
+		}
+
+		return className;
+	}
+
+	public static String getClassNameMessage(String className, Locale locale) {
+		String message = null;
+
+		int pos = className.indexOf(AssetUtil.CLASSNAME_SEPARATOR);
+
+		if (pos != -1) {
+			message = className.substring(
+				pos + AssetUtil.CLASSNAME_SEPARATOR.length());
+
+			className = className.substring(0, pos);
+		}
+
+		AssetRendererFactory<?> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				className);
+
+		if (pos == -1) {
+			message = assetRendererFactory.getTypeName(locale);
+		}
+
+		return message;
 	}
 
 	public static String getDefaultAssetPublisherId(Layout layout) {

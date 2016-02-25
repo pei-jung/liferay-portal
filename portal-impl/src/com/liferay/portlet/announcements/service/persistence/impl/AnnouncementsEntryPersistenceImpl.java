@@ -34,11 +34,16 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.CompanyProvider;
+import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -48,11 +53,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.service.persistence.CompanyProvider;
-import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 
 import com.liferay.portlet.announcements.model.impl.AnnouncementsEntryImpl;
 import com.liferay.portlet.announcements.model.impl.AnnouncementsEntryModelImpl;
@@ -1613,7 +1613,7 @@ public class AnnouncementsEntryPersistenceImpl extends BasePersistenceImpl<Annou
 	public List<AnnouncementsEntry> filterFindByUuid_C(String uuid,
 		long companyId, int start, int end,
 		OrderByComparator<AnnouncementsEntry> orderByComparator) {
-		if (!InlineSQLHelperUtil.isEnabled()) {
+		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
 			return findByUuid_C(uuid, companyId, start, end, orderByComparator);
 		}
 
@@ -1725,7 +1725,7 @@ public class AnnouncementsEntryPersistenceImpl extends BasePersistenceImpl<Annou
 		String uuid, long companyId,
 		OrderByComparator<AnnouncementsEntry> orderByComparator)
 		throws NoSuchEntryException {
-		if (!InlineSQLHelperUtil.isEnabled()) {
+		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
 			return findByUuid_C_PrevAndNext(entryId, uuid, companyId,
 				orderByComparator);
 		}
@@ -2012,7 +2012,7 @@ public class AnnouncementsEntryPersistenceImpl extends BasePersistenceImpl<Annou
 	 */
 	@Override
 	public int filterCountByUuid_C(String uuid, long companyId) {
-		if (!InlineSQLHelperUtil.isEnabled()) {
+		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
 			return countByUuid_C(uuid, companyId);
 		}
 
@@ -5285,7 +5285,7 @@ public class AnnouncementsEntryPersistenceImpl extends BasePersistenceImpl<Annou
 	}
 
 	/**
-	 * Returns the announcements entry with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
+	 * Returns the announcements entry with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the announcements entry
 	 * @return the announcements entry

@@ -23,13 +23,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ObjectValuePair;
-import com.liferay.portal.service.BaseService;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -158,12 +158,12 @@ public interface MBMessageService extends BaseService {
 	public MBMessage getMessage(long messageId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public MBMessageDisplay getMessageDisplay(long messageId, int status,
-		boolean includePrevAndNext) throws PortalException;
+	public MBMessageDisplay getMessageDisplay(long messageId, int status)
+		throws PortalException;
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long, int,
-	boolean)}
+	* @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
+	int)}
 	*/
 	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

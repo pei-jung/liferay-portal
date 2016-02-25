@@ -16,13 +16,13 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.LayoutPrototypePermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.LayoutPrototypeServiceBaseImpl;
 
 import java.util.ArrayList;
@@ -87,22 +87,28 @@ public class LayoutPrototypeServiceImpl extends LayoutPrototypeServiceBaseImpl {
 	public LayoutPrototype fetchLayoutPrototype(long layoutPrototypeId)
 		throws PortalException {
 
-		LayoutPrototypePermissionUtil.check(
-			getPermissionChecker(), layoutPrototypeId, ActionKeys.VIEW);
+		LayoutPrototype layoutPrototype =
+			layoutPrototypeLocalService.fetchLayoutPrototype(layoutPrototypeId);
 
-		return layoutPrototypeLocalService.fetchLayoutPrototype(
-			layoutPrototypeId);
+		if (layoutPrototype != null) {
+			LayoutPrototypePermissionUtil.check(
+				getPermissionChecker(), layoutPrototypeId, ActionKeys.VIEW);
+		}
+
+		return layoutPrototype;
 	}
 
 	@Override
 	public LayoutPrototype getLayoutPrototype(long layoutPrototypeId)
 		throws PortalException {
 
+		LayoutPrototype layoutPrototype =
+			layoutPrototypeLocalService.getLayoutPrototype(layoutPrototypeId);
+
 		LayoutPrototypePermissionUtil.check(
 			getPermissionChecker(), layoutPrototypeId, ActionKeys.VIEW);
 
-		return layoutPrototypeLocalService.getLayoutPrototype(
-			layoutPrototypeId);
+		return layoutPrototype;
 	}
 
 	@Override

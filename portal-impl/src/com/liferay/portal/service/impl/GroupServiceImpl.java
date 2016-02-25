@@ -18,15 +18,23 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.exportimport.kernel.staging.StagingUtil;
-import com.liferay.portal.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicyUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.UserBag;
 import com.liferay.portal.kernel.security.permission.UserBagFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
@@ -40,14 +48,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.GroupServiceBaseImpl;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.ratings.kernel.transformer.RatingsDataTransformerUtil;
@@ -535,6 +535,17 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
+		boolean checkPermissions = true;
+
+		if (userId == getUserId()) {
+			checkPermissions = false;
+		}
+
+		if (checkPermissions) {
+			UserPermissionUtil.check(
+				getPermissionChecker(), userId, ActionKeys.VIEW);
+		}
+
 		if (user.isDefaultUser()) {
 			return Collections.emptyList();
 		}
@@ -555,6 +566,10 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 				userSiteGroups.add(user.getGroup());
 
 				if (userSiteGroups.size() == max) {
+					if (checkPermissions) {
+						return filterGroups(new ArrayList<>(userSiteGroups));
+					}
+
 					return new ArrayList<>(userSiteGroups);
 				}
 			}
@@ -587,6 +602,11 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 						if (userSiteGroups.add(group) &&
 							(userSiteGroups.size() == max)) {
 
+							if (checkPermissions) {
+								return filterGroups(
+									new ArrayList<>(userSiteGroups));
+							}
+
 							return new ArrayList<>(userSiteGroups);
 						}
 					}
@@ -599,11 +619,20 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 						if (userSiteGroups.add(group) &&
 							(userSiteGroups.size() == max)) {
 
+							if (checkPermissions) {
+								return filterGroups(
+									new ArrayList<>(userSiteGroups));
+							}
+
 							return new ArrayList<>(userSiteGroups);
 						}
 					}
 				}
 			}
+		}
+
+		if (checkPermissions) {
+			return filterGroups(new ArrayList<>(userSiteGroups));
 		}
 
 		return new ArrayList<>(userSiteGroups);
@@ -744,7 +773,7 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 	 *         search, add entries having &quot;usersGroups&quot; and
 	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.GroupFinder}.
+	 *         com.liferay.portal.kernel.service.persistence.GroupFinder}.
 	 * @param  start the lower bound of the range of groups to return
 	 * @param  end the upper bound of the range of groups to return (not
 	 *         inclusive)
@@ -784,7 +813,7 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 	 *         search, add entries having &quot;usersGroups&quot; and
 	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.GroupFinder}.
+	 *         com.liferay.portal.kernel.service.persistence.GroupFinder}.
 	 * @return the number of matching groups
 	 */
 	@Override

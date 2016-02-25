@@ -20,12 +20,20 @@ import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.exportimport.kernel.lar.UserIdStrategy;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
-import com.liferay.portal.exception.DuplicateUserGroupException;
-import com.liferay.portal.exception.RequiredUserGroupException;
-import com.liferay.portal.exception.UserGroupNameException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.DuplicateUserGroupException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.RequiredUserGroupException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.UserGroupNameException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.Team;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.model.UserGroupConstants;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
@@ -36,6 +44,7 @@ import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.exportimport.UserGroupImportTransactionThreadLocal;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -44,16 +53,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.Team;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.model.UserGroupConstants;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.UserGroupLocalServiceBaseImpl;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.users.admin.kernel.util.UsersAdminUtil;
@@ -484,21 +484,21 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *         user group's name or description (optionally <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.UserGroupFinder}
+	 *         com.liferay.portal.kernel.service.persistence.UserGroupFinder}
 	 * @param  start the lower bound of the range of user groups to return
 	 * @param  end the upper bound of the range of user groups to return (not
 	 *         inclusive)
 	 * @param  obc the comparator to order the user groups (optionally
 	 *         <code>null</code>)
 	 * @return the matching user groups ordered by comparator <code>obc</code>
-	 * @see    com.liferay.portal.service.persistence.UserGroupFinder
+	 * @see    com.liferay.portal.kernel.service.persistence.UserGroupFinder
 	 */
 	@Override
 	public List<UserGroup> search(
 		long companyId, String keywords, LinkedHashMap<String, Object> params,
 		int start, int end, OrderByComparator<UserGroup> obc) {
 
-		return userGroupFinder.findByKeywords(
+		return userGroupFinder.filterFindByKeywords(
 			companyId, keywords, params, start, end, obc);
 	}
 
@@ -575,7 +575,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.UserGroupFinder}
+	 *         com.liferay.portal.kernel.service.persistence.UserGroupFinder}
 	 * @param  andOperator whether every field must match its keywords or just
 	 *         one field
 	 * @param  start the lower bound of the range of user groups to return
@@ -584,7 +584,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * @param  obc the comparator to order the user groups (optionally
 	 *         <code>null</code>)
 	 * @return the matching user groups ordered by comparator <code>obc</code>
-	 * @see    com.liferay.portal.service.persistence.UserGroupFinder
+	 * @see    com.liferay.portal.kernel.service.persistence.UserGroupFinder
 	 */
 	@Override
 	public List<UserGroup> search(
@@ -592,7 +592,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		LinkedHashMap<String, Object> params, boolean andOperator, int start,
 		int end, OrderByComparator<UserGroup> obc) {
 
-		return userGroupFinder.findByC_N_D(
+		return userGroupFinder.filterFindByC_N_D(
 			companyId, name, description, params, andOperator, start, end, obc);
 	}
 
@@ -625,7 +625,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * @param  sort the field and direction by which to sort (optionally
 	 *         <code>null</code>)
 	 * @return the matching user groups ordered by sort
-	 * @see    com.liferay.portal.service.persistence.UserGroupFinder
+	 * @see    com.liferay.portal.kernel.service.persistence.UserGroupFinder
 	 */
 	@Override
 	public Hits search(
@@ -656,9 +656,9 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *         user group's name or description (optionally <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.UserGroupFinder}
+	 *         com.liferay.portal.kernel.service.persistence.UserGroupFinder}
 	 * @return the number of matching user groups
-	 * @see    com.liferay.portal.service.persistence.UserGroupFinder
+	 * @see    com.liferay.portal.kernel.service.persistence.UserGroupFinder
 	 */
 	@Override
 	public int searchCount(
@@ -671,7 +671,8 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 			!PropsValues.USER_GROUPS_SEARCH_WITH_INDEX ||
 			isUseCustomSQL(params)) {
 
-			return userGroupFinder.countByKeywords(companyId, keywords, params);
+			return userGroupFinder.filterCountByKeywords(
+				companyId, keywords, params);
 		}
 
 		String name = null;
@@ -711,11 +712,11 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). For more
 	 *         information see {@link
-	 *         com.liferay.portal.service.persistence.UserGroupFinder}
+	 *         com.liferay.portal.kernel.service.persistence.UserGroupFinder}
 	 * @param  andOperator whether every field must match its keywords or just
 	 *         one field
 	 * @return the number of matching user groups
-	 * @see    com.liferay.portal.service.persistence.UserGroupFinder
+	 * @see    com.liferay.portal.kernel.service.persistence.UserGroupFinder
 	 */
 	@Override
 	public int searchCount(
@@ -729,7 +730,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 			!PropsValues.USER_GROUPS_SEARCH_WITH_INDEX ||
 			isUseCustomSQL(params)) {
 
-			return userGroupFinder.countByC_N_D(
+			return userGroupFinder.filterCountByC_N_D(
 				companyId, name, description, params, andOperator);
 		}
 

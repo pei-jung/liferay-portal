@@ -16,7 +16,6 @@ package com.liferay.portal.upgrade.v6_2_0;
 
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.model.Company;
 import com.liferay.portal.upgrade.v6_2_0.util.GroupTable;
 
 import java.sql.SQLException;
@@ -38,7 +37,8 @@ public class UpgradeGroup extends UpgradeProcess {
 				GroupTable.TABLE_SQL_CREATE, GroupTable.TABLE_SQL_ADD_INDEXES);
 		}
 
-		long classNameId = PortalUtil.getClassNameId(Company.class.getName());
+		long classNameId = PortalUtil.getClassNameId(
+			"com.liferay.portal.model.Company");
 
 		runSQL(
 			"update Group_ set site = TRUE where classNameId = " + classNameId);

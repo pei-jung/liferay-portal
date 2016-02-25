@@ -29,17 +29,17 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
+import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
+import com.liferay.portal.kernel.service.persistence.CompanyPersistence;
+import com.liferay.portal.kernel.service.persistence.SubscriptionPersistence;
+import com.liferay.portal.kernel.service.persistence.UserPersistence;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.model.PersistedModel;
-import com.liferay.portal.service.BaseLocalServiceImpl;
-import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.service.persistence.CompanyPersistence;
-import com.liferay.portal.service.persistence.SubscriptionPersistence;
-import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.liferay.shopping.model.ShoppingOrder;
@@ -399,7 +399,7 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	 *
 	 * @return the company local service
 	 */
-	public com.liferay.portal.service.CompanyLocalService getCompanyLocalService() {
+	public com.liferay.portal.kernel.service.CompanyLocalService getCompanyLocalService() {
 		return companyLocalService;
 	}
 
@@ -409,7 +409,7 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	 * @param companyLocalService the company local service
 	 */
 	public void setCompanyLocalService(
-		com.liferay.portal.service.CompanyLocalService companyLocalService) {
+		com.liferay.portal.kernel.service.CompanyLocalService companyLocalService) {
 		this.companyLocalService = companyLocalService;
 	}
 
@@ -432,11 +432,30 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the resource local service.
+	 *
+	 * @return the resource local service
+	 */
+	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
+		return resourceLocalService;
+	}
+
+	/**
+	 * Sets the resource local service.
+	 *
+	 * @param resourceLocalService the resource local service
+	 */
+	public void setResourceLocalService(
+		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
+		this.resourceLocalService = resourceLocalService;
+	}
+
+	/**
 	 * Returns the subscription local service.
 	 *
 	 * @return the subscription local service
 	 */
-	public com.liferay.portal.service.SubscriptionLocalService getSubscriptionLocalService() {
+	public com.liferay.portal.kernel.service.SubscriptionLocalService getSubscriptionLocalService() {
 		return subscriptionLocalService;
 	}
 
@@ -446,7 +465,7 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	 * @param subscriptionLocalService the subscription local service
 	 */
 	public void setSubscriptionLocalService(
-		com.liferay.portal.service.SubscriptionLocalService subscriptionLocalService) {
+		com.liferay.portal.kernel.service.SubscriptionLocalService subscriptionLocalService) {
 		this.subscriptionLocalService = subscriptionLocalService;
 	}
 
@@ -474,7 +493,7 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	 *
 	 * @return the user local service
 	 */
-	public com.liferay.portal.service.UserLocalService getUserLocalService() {
+	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
 		return userLocalService;
 	}
 
@@ -484,7 +503,7 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	 * @param userLocalService the user local service
 	 */
 	public void setUserLocalService(
-		com.liferay.portal.service.UserLocalService userLocalService) {
+		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
 		this.userLocalService = userLocalService;
 	}
 
@@ -698,16 +717,18 @@ public abstract class ShoppingOrderLocalServiceBaseImpl
 	protected ShoppingOrderFinder shoppingOrderFinder;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.service.CompanyLocalService.class)
-	protected com.liferay.portal.service.CompanyLocalService companyLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.CompanyLocalService.class)
+	protected com.liferay.portal.kernel.service.CompanyLocalService companyLocalService;
 	@ServiceReference(type = CompanyPersistence.class)
 	protected CompanyPersistence companyPersistence;
-	@ServiceReference(type = com.liferay.portal.service.SubscriptionLocalService.class)
-	protected com.liferay.portal.service.SubscriptionLocalService subscriptionLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
+	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.SubscriptionLocalService.class)
+	protected com.liferay.portal.kernel.service.SubscriptionLocalService subscriptionLocalService;
 	@ServiceReference(type = SubscriptionPersistence.class)
 	protected SubscriptionPersistence subscriptionPersistence;
-	@ServiceReference(type = com.liferay.portal.service.UserLocalService.class)
-	protected com.liferay.portal.service.UserLocalService userLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
+	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
 	@ServiceReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
 	@BeanReference(type = com.liferay.shopping.service.ShoppingItemLocalService.class)

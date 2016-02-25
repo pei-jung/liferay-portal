@@ -17,10 +17,10 @@ package com.liferay.portlet.rolesadmin.search;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 
 import javax.portlet.RenderResponse;
 
@@ -50,6 +50,13 @@ public class OrganizationRoleChecker extends EmptyOnClickRowChecker {
 
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isDisabled(Object obj) {
+		Organization organization = (Organization)obj;
+
+		return isChecked(organization);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

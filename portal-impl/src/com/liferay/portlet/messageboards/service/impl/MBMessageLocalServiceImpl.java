@@ -33,7 +33,6 @@ import com.liferay.message.boards.kernel.model.MBThread;
 import com.liferay.message.boards.kernel.model.MBThreadConstants;
 import com.liferay.message.boards.kernel.util.comparator.MessageCreateDateComparator;
 import com.liferay.message.boards.kernel.util.comparator.MessageThreadComparator;
-import com.liferay.message.boards.kernel.util.comparator.ThreadLastPostDateComparator;
 import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -41,6 +40,12 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
 import com.liferay.portal.kernel.portlet.PortletProvider;
@@ -56,6 +61,7 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
@@ -80,13 +86,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.ModelHintsUtil;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.LayoutURLUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -1025,9 +1024,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 			}
 		}
 
-		return getMessageDisplay(
-			userId, message, status, MBThreadConstants.THREAD_VIEW_COMBINATION,
-			false, comparator);
+		return getMessageDisplay(userId, message, status, comparator);
 	}
 
 	/**
@@ -1172,17 +1169,17 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 	@Override
 	public MBMessageDisplay getMessageDisplay(
-			long userId, long messageId, int status, boolean includePrevAndNext)
+			long userId, long messageId, int status)
 		throws PortalException {
 
 		MBMessage message = getMessage(messageId);
 
-		return getMessageDisplay(userId, message, status, includePrevAndNext);
+		return getMessageDisplay(userId, message, status);
 	}
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
-	 *             long, int, boolean)}
+	 *             long, int)}
 	 */
 	@Deprecated
 	@Override
@@ -1199,19 +1196,17 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 	@Override
 	public MBMessageDisplay getMessageDisplay(
-			long userId, MBMessage message, int status,
-			boolean includePrevAndNext)
+			long userId, MBMessage message, int status)
 		throws PortalException {
 
 		return getMessageDisplay(
-			userId, message, status, includePrevAndNext,
-			new MessageThreadComparator());
+			userId, message, status, new MessageThreadComparator());
 	}
 
 	@Override
 	public MBMessageDisplay getMessageDisplay(
 			long userId, MBMessage message, int status,
-			boolean includePrevAndNext, Comparator<MBMessage> comparator)
+			Comparator<MBMessage> comparator)
 		throws PortalException {
 
 		MBCategory category = null;
@@ -1249,43 +1244,13 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 				StringPool.BLANK, 0);
 		}
 
-		MBThread previousThread = null;
-		MBThread nextThread = null;
-
-		if (message.isApproved() && includePrevAndNext) {
-			ThreadLastPostDateComparator threadLastPostDateComparator =
-				new ThreadLastPostDateComparator(false);
-
-			MBThread[] prevAndNextThreads = null;
-
-			if (status == WorkflowConstants.STATUS_ANY) {
-				prevAndNextThreads =
-					mbThreadPersistence.filterFindByG_C_NotS_PrevAndNext(
-						message.getThreadId(), message.getGroupId(),
-						message.getCategoryId(),
-						WorkflowConstants.STATUS_IN_TRASH,
-						threadLastPostDateComparator);
-			}
-			else {
-				prevAndNextThreads =
-					mbThreadPersistence.filterFindByG_C_S_PrevAndNext(
-						message.getThreadId(), message.getGroupId(),
-						message.getCategoryId(), status,
-						threadLastPostDateComparator);
-			}
-
-			previousThread = prevAndNextThreads[0];
-			nextThread = prevAndNextThreads[2];
-		}
-
 		return new MBMessageDisplayImpl(
-			message, parentMessage, category, thread, previousThread,
-			nextThread, status, this, comparator);
+			message, parentMessage, category, thread, status, this, comparator);
 	}
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
-	 *             MBMessage, int, boolean)}
+	 *             MBMessage, int)}
 	 */
 	@Deprecated
 	@Override
@@ -1301,7 +1266,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
-	 *             MBMessage, int, boolean, Comparator)} (
+	 *             MBMessage, int, Comparator)} (
 	 */
 	@Deprecated
 	@Override
@@ -1311,13 +1276,12 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		throws PortalException {
 
 		MBMessageDisplay messageDisplay = getMessageDisplay(
-			userId, message, status, includePrevAndNext, comparator);
+			userId, message, status, comparator);
 
 		return new MBMessageDisplayImpl(
 			messageDisplay.getMessage(), messageDisplay.getParentMessage(),
-			messageDisplay.getCategory(), messageDisplay.getThread(),
-			messageDisplay.getPreviousThread(), messageDisplay.getNextThread(),
-			status, threadView, this, comparator);
+			messageDisplay.getCategory(), messageDisplay.getThread(), null,
+			null, status, threadView, this, comparator);
 	}
 
 	@Override

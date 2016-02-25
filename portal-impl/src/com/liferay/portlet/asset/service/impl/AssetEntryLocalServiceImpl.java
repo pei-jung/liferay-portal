@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.increment.BufferedIncrement;
 import com.liferay.portal.kernel.increment.NumberIncrement;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
@@ -46,12 +48,9 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.User;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.asset.service.base.AssetEntryLocalServiceBaseImpl;
 import com.liferay.portlet.asset.service.permission.AssetCategoryPermission;
-import com.liferay.portlet.asset.service.permission.AssetTagPermission;
 import com.liferay.portlet.asset.util.AssetEntryValidator;
 import com.liferay.portlet.asset.util.AssetSearcher;
 import com.liferay.social.kernel.model.SocialActivityConstants;
@@ -664,8 +663,6 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		// Tags
 
 		if (tagNames != null) {
-			tagNames = checkTags(className, classPK, tagNames);
-
 			long siteGroupId = PortalUtil.getSiteGroupId(groupId);
 
 			Group siteGroup = groupLocalService.getGroup(siteGroupId);
@@ -938,31 +935,6 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		}
 
 		return categoryIds;
-	}
-
-	protected String[] checkTags(
-		String className, long classPK, String[] tagNames) {
-
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		if (permissionChecker == null) {
-			return tagNames;
-		}
-
-		List<AssetTag> oldTags = assetTagLocalService.getTags(
-			className, classPK);
-
-		for (AssetTag tag : oldTags) {
-			if (!ArrayUtil.contains(tagNames, tag.getName()) &&
-				!AssetTagPermission.contains(
-					permissionChecker, tag, ActionKeys.VIEW)) {
-
-				tagNames = ArrayUtil.append(tagNames, tag.getName());
-			}
-		}
-
-		return tagNames;
 	}
 
 	protected AssetEntryQuery getAssetEntryQuery(

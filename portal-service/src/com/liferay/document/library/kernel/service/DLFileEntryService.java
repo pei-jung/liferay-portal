@@ -27,12 +27,12 @@ import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.service.BaseService;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -208,6 +208,16 @@ public interface DLFileEntryService extends BaseService {
 	public boolean isFileEntryCheckedOut(long fileEntryId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean isKeepFileVersionLabel(long fileEntryId,
+		boolean majorVersion, ServiceContext serviceContext)
+		throws PortalException;
+
+	/**
+	* As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long, boolean,
+	*              ServiceContext)}
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean isKeepFileVersionLabel(long fileEntryId,
 		ServiceContext serviceContext) throws PortalException;

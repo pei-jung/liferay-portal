@@ -16,8 +16,10 @@ package com.liferay.shopping.service.impl;
 
 import com.liferay.portal.kernel.comment.CommentManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -25,8 +27,6 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.SubscriptionSender;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.shopping.configuration.ShoppingGroupServiceOverriddenConfiguration;
@@ -146,6 +146,13 @@ public class ShoppingOrderLocalServiceImpl
 				userId, groupId, ShoppingOrder.class.getName(), orderId,
 				order.getUserName());
 		}
+
+		// Resources
+
+		resourceLocalService.addResources(
+			order.getCompanyId(), order.getGroupId(), order.getUserId(),
+			ShoppingOrder.class.getName(), order.getOrderId(), false, true,
+			false);
 
 		return order;
 	}

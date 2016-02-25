@@ -15,15 +15,15 @@
 package com.liferay.sites.kernel.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -31,9 +31,9 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -52,6 +52,13 @@ public class SitesUtil {
 		throws PortalException {
 
 		getSites().addMergeFailFriendlyURLLayout(layout);
+	}
+
+	public static void addPortletBreadcrumbEntries(
+			Group group, HttpServletRequest request, PortletURL portletURL)
+		throws Exception {
+
+		getSites().addPortletBreadcrumbEntries(group, request, portletURL);
 	}
 
 	public static void addPortletBreadcrumbEntries(
@@ -116,17 +123,17 @@ public class SitesUtil {
 	}
 
 	public static Object[] deleteLayout(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws Exception {
-
-		return getSites().deleteLayout(actionRequest, actionResponse);
-	}
-
-	public static Object[] deleteLayout(
 			HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		return getSites().deleteLayout(request, response);
+	}
+
+	public static Object[] deleteLayout(
+			PortletRequest portletRequest, PortletResponse portletResponse)
+		throws Exception {
+
+		return getSites().deleteLayout(portletRequest, portletResponse);
 	}
 
 	public static void deleteLayout(

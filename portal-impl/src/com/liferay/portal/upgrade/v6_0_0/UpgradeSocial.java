@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.upgrade.util.UpgradeColumn;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTable;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTableFactoryUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.model.Layout;
 import com.liferay.portal.upgrade.v6_0_0.util.SocialActivityTable;
 import com.liferay.portal.upgrade.v6_0_0.util.SocialRelationTable;
 import com.liferay.portal.upgrade.v6_0_0.util.SocialRequestTable;
@@ -177,7 +176,9 @@ public class UpgradeSocial extends UpgradeProcess {
 
 		long classNameId = (Long)group[0];
 
-		if (classNameId != PortalUtil.getClassNameId(Layout.class.getName())) {
+		if (classNameId != PortalUtil.getClassNameId(
+				"com.liferay.portal.model.Layout")) {
+
 			return;
 		}
 

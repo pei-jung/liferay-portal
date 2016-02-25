@@ -19,10 +19,17 @@ import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSe
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.MissingReferences;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
-import com.liferay.portal.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCachable;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutReference;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.Plugin;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
@@ -31,6 +38,7 @@ import com.liferay.portal.kernel.scheduler.Trigger;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
@@ -42,14 +50,6 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutReference;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.Plugin;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.LayoutServiceBaseImpl;
 
 import java.io.File;
@@ -818,6 +818,9 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		Layout layout = layoutLocalService.getLayout(
 			groupId, privateLayout, layoutId);
 
+		LayoutPermissionUtil.check(
+			getPermissionChecker(), layout, ActionKeys.VIEW);
+
 		return layout.getName(languageId);
 	}
 
@@ -836,8 +839,29 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		long companyId, String portletId, String preferencesKey,
 		String preferencesValue) {
 
-		return layoutLocalService.getLayouts(
+		LayoutReference[] layoutReferences = layoutLocalService.getLayouts(
 			companyId, portletId, preferencesKey, preferencesValue);
+
+		List<LayoutReference> filteredLayoutReferences = new ArrayList<>(
+			layoutReferences.length);
+
+		for (LayoutReference layoutReference : layoutReferences) {
+			try {
+				if (LayoutPermissionUtil.contains(
+						getPermissionChecker(),
+						layoutReference.getLayoutSoap().getPlid(),
+						ActionKeys.VIEW)) {
+
+					filteredLayoutReferences.add(layoutReference);
+				}
+			}
+			catch (PortalException pe) {
+				continue;
+			}
+		}
+
+		return filteredLayoutReferences.toArray(
+			new LayoutReference[filteredLayoutReferences.size()]);
 	}
 
 	@Override
@@ -1774,6 +1798,9 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 	public Layout updateParentLayoutIdAndPriority(
 			long plid, long parentPlid, int priority)
 		throws PortalException {
+
+		LayoutPermissionUtil.check(
+			getPermissionChecker(), plid, ActionKeys.UPDATE);
 
 		return layoutLocalService.updateParentLayoutIdAndPriority(
 			plid, parentPlid, priority);

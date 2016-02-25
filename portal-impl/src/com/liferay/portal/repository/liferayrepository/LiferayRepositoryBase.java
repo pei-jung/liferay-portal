@@ -14,8 +14,6 @@
 
 package com.liferay.portal.repository.liferayrepository;
 
-import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppHelperLocalService;
@@ -35,13 +33,13 @@ import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.capabilities.CapabilityProvider;
+import com.liferay.portal.kernel.service.RepositoryLocalService;
+import com.liferay.portal.kernel.service.RepositoryService;
+import com.liferay.portal.kernel.service.ResourceLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.SortedArrayList;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.service.RepositoryLocalService;
-import com.liferay.portal.service.RepositoryService;
-import com.liferay.portal.service.ResourceLocalService;
-import com.liferay.portal.service.ServiceContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,35 +101,6 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 		Class<T> capabilityClass) {
 
 		return false;
-	}
-
-	protected void addFileEntryResources(
-			DLFileEntry dlFileEntry, ServiceContext serviceContext)
-		throws PortalException {
-
-		if (serviceContext.isAddGroupPermissions() ||
-			serviceContext.isAddGuestPermissions()) {
-
-			resourceLocalService.addResources(
-				dlFileEntry.getCompanyId(), dlFileEntry.getGroupId(),
-				dlFileEntry.getUserId(), DLFileEntry.class.getName(),
-				dlFileEntry.getFileEntryId(), false,
-				serviceContext.isAddGroupPermissions(),
-				serviceContext.isAddGuestPermissions());
-		}
-		else {
-			if (serviceContext.isDeriveDefaultPermissions()) {
-				serviceContext.deriveDefaultPermissions(
-					dlFileEntry.getRepositoryId(),
-					DLFileEntryConstants.getClassName());
-			}
-
-			resourceLocalService.addModelResources(
-				dlFileEntry.getCompanyId(), dlFileEntry.getGroupId(),
-				dlFileEntry.getUserId(), DLFileEntry.class.getName(),
-				dlFileEntry.getFileEntryId(),
-				serviceContext.getModelPermissions());
-		}
 	}
 
 	protected HashMap<String, DDMFormValues> getDDMFormValuesMap(

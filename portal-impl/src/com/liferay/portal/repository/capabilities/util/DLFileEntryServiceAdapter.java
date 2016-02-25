@@ -24,9 +24,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.DocumentRepository;
 import com.liferay.portal.kernel.repository.LocalRepository;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -125,16 +125,17 @@ public class DLFileEntryServiceAdapter {
 	}
 
 	public boolean isKeepFileVersionLabel(
-			long fileEntryId, ServiceContext serviceContext)
+			long fileEntryId, boolean majorVersion,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		if (_dlFileEntryService != null) {
 			return _dlFileEntryService.isKeepFileVersionLabel(
-				fileEntryId, serviceContext);
+				fileEntryId, majorVersion, serviceContext);
 		}
 		else {
 			return _dlFileEntryLocalService.isKeepFileVersionLabel(
-				fileEntryId, serviceContext);
+				fileEntryId, majorVersion, serviceContext);
 		}
 	}
 

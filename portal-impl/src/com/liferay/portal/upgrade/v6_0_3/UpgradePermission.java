@@ -15,15 +15,11 @@
 package com.liferay.portal.upgrade.v6_0_3;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.util.PortalInstances;
 
 import java.sql.Connection;
@@ -75,14 +71,16 @@ public class UpgradePermission extends UpgradeProcess {
 	protected void addSingleApproverWorkflowRoles(long companyId)
 		throws Exception {
 
-		long classNameId = PortalUtil.getClassNameId(Role.class.getName());
+		long classNameId = PortalUtil.getClassNameId(
+			"com.liferay.portal.model.Role");
 		long roleId = increment();
 
 		addRole(
 			roleId, companyId, classNameId, roleId,
 			_ROLE_COMMUNITY_CONTENT_REVIEWER, RoleConstants.TYPE_SITE);
 
-		classNameId = PortalUtil.getClassNameId(Organization.class.getName());
+		classNameId = PortalUtil.getClassNameId(
+			"com.liferay.portal.model.Organization");
 		roleId = increment();
 
 		addRole(
@@ -90,7 +88,8 @@ public class UpgradePermission extends UpgradeProcess {
 			_ROLE_ORGANIZATION_CONTENT_REVIEWER,
 			RoleConstants.TYPE_ORGANIZATION);
 
-		classNameId = PortalUtil.getClassNameId(Company.class.getName());
+		classNameId = PortalUtil.getClassNameId(
+			"com.liferay.portal.model.Company");
 		roleId = increment();
 
 		addRole(
@@ -201,14 +200,16 @@ public class UpgradePermission extends UpgradeProcess {
 			while (rs.next()) {
 				long userId = rs.getLong("userId");
 
-				if (className.equals(Company.class.getName())) {
+				if (className.equals("com.liferay.portal.model.Company")) {
 					addUserRole(userId, portalContentReviewerRoleId);
 				}
-				else if (className.equals(Group.class.getName())) {
+				else if (className.equals("com.liferay.portal.model.Group")) {
 					addUserGroupRole(
 						userId, groupId, communityContentReviewerRoleId);
 				}
-				else if (className.equals(Organization.class.getName())) {
+				else if (className.equals(
+							"com.liferay.portal.model.Organization")) {
+
 					addUserGroupRole(
 						userId, groupId, organizationContentReviewerRoleId);
 				}

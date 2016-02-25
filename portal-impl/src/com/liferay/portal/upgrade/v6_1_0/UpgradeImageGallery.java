@@ -27,6 +27,8 @@ import com.liferay.portal.kernel.image.Hook;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Image;
+import com.liferay.portal.kernel.service.ImageLocalServiceUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
@@ -37,9 +39,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.Image;
-import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.util.PropsValues;
 
@@ -441,7 +440,9 @@ public class UpgradeImageGallery extends UpgradeProcess {
 				"select groupId from Group_ where classNameId = ? and " +
 					"classPK = ?");
 
-			ps.setLong(1, PortalUtil.getClassNameId(Company.class.getName()));
+			ps.setLong(
+				1,
+				PortalUtil.getClassNameId("com.liferay.portal.model.Company"));
 			ps.setLong(2, companyId);
 
 			rs = ps.executeQuery();
