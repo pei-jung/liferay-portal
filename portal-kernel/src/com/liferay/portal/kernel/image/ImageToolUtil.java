@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.image;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.exception.ImageResolutionException;
 import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
@@ -149,20 +150,26 @@ public class ImageToolUtil {
 		return getImageTool().getDefaultUserMalePortrait();
 	}
 
-	public static Image getImage(byte[] bytes) throws IOException {
+	public static Image getImage(byte[] bytes)
+		throws ImageResolutionException, IOException {
+
 		return getImageTool().getImage(bytes);
 	}
 
-	public static Image getImage(File file) throws IOException {
+	public static Image getImage(File file)
+		throws ImageResolutionException, IOException {
+
 		return getImageTool().getImage(file);
 	}
 
-	public static Image getImage(InputStream is) throws IOException {
+	public static Image getImage(InputStream is)
+		throws ImageResolutionException, IOException {
+
 		return getImageTool().getImage(is);
 	}
 
 	public static Image getImage(InputStream is, boolean cleanUpStream)
-		throws IOException {
+		throws ImageResolutionException, IOException {
 
 		return getImageTool().getImage(is, cleanUpStream);
 	}
@@ -184,9 +191,15 @@ public class ImageToolUtil {
 	 *
 	 * @param  bytes the bytes to read
 	 * @return the {@link com.liferay.portal.kernel.image.ImageBag}
+	 * @throws ImageResolutionException if the image's dimensions were larger
+	 *         than those specified by portal properties
+	 *         <code>image.tool.image.max.height</code> and
+	 *         <code>image.tool.image.max.width</code>
 	 * @throws IOException if an IO exception occurred
 	 */
-	public static ImageBag read(byte[] bytes) throws IOException {
+	public static ImageBag read(byte[] bytes)
+		throws ImageResolutionException, IOException {
+
 		return getImageTool().read(bytes);
 	}
 
@@ -197,13 +210,21 @@ public class ImageToolUtil {
 	 *
 	 * @param  file the file to read
 	 * @return the {@link com.liferay.portal.kernel.image.ImageBag}
+	 * @throws ImageResolutionException if the image's dimensions were larger
+	 *         than those specified by portal properties
+	 *         <code>image.tool.image.max.height</code> and
+	 *         <code>image.tool.image.max.width</code>
 	 * @throws IOException if an IO exception occurred
 	 */
-	public static ImageBag read(File file) throws IOException {
+	public static ImageBag read(File file)
+		throws ImageResolutionException, IOException {
+
 		return getImageTool().read(file);
 	}
 
-	public static ImageBag read(InputStream inputStream) throws IOException {
+	public static ImageBag read(InputStream inputStream)
+		throws ImageResolutionException, IOException {
+
 		return getImageTool().read(inputStream);
 	}
 

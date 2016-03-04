@@ -5,8 +5,6 @@ AUI.add(
 
 		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
 
-		var FormBuilderUtil = Liferay.DDL.FormBuilderUtil;
-
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
 		var CSS_FIELD_CONTENT_TOOLBAR = A.getClassName('form', 'builder', 'field', 'content', 'toolbar');
@@ -123,13 +121,7 @@ AUI.add(
 			saveSettings: function() {
 				var instance = this;
 
-				var builder = instance.get('builder');
-
 				instance.setAttrs(instance.getSettings());
-
-				instance.render();
-
-				builder.appendChild(instance);
 
 				instance.fire(
 					'field:saveSettings',
@@ -160,7 +152,6 @@ AUI.add(
 				var instance = this;
 
 				instance._modalEventHandlers = [
-					settingsModal.on('xyChange', instance._onModalXYChange),
 					settingsModal.on('visibleChange', A.bind('_onModalVisibleChange', instance))
 				];
 			},
@@ -198,10 +189,6 @@ AUI.add(
 				}
 			},
 
-			_onModalXYChange: function(event) {
-				event.newVal = FormBuilderUtil.normalizeModalXY(event.newVal);
-			},
-
 			_renderFormBuilderField: function() {
 				var instance = this;
 
@@ -234,11 +221,6 @@ AUI.add(
 				var settingsModalBoundingBox = settingsModal.get('boundingBox');
 
 				settingsModalBoundingBox.addClass(CSS_FIELD_SETTINGS_MODAL);
-
-				var portletNode = A.one('#p_p_id' + instance.get('portletNamespace'));
-
-				settingsModal.set('centered', portletNode);
-				settingsModal.set('zIndex', Liferay.zIndex.OVERLAY);
 
 				instance._bindModalUI(settingsModal);
 

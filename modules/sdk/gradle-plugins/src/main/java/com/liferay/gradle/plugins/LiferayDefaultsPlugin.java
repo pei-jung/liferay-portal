@@ -67,10 +67,8 @@ import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.DependencyResolveDetails;
+import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.ModuleDependency;
-import org.gradle.api.artifacts.ModuleVersionSelector;
-import org.gradle.api.artifacts.ResolutionStrategy;
 import org.gradle.api.artifacts.dsl.ArtifactHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.maven.Conf2ScopeMapping;
@@ -153,10 +151,10 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 	protected void addDependenciesPortalTest(Project project) {
 		GradleUtil.addDependency(
-			project, PORTAL_TEST_CONFIGURATION_NAME, "com.liferay",
+			project, PORTAL_TEST_CONFIGURATION_NAME, "com.liferay.portal",
 			"com.liferay.portal.test", "default");
 		GradleUtil.addDependency(
-			project, PORTAL_TEST_CONFIGURATION_NAME, "com.liferay",
+			project, PORTAL_TEST_CONFIGURATION_NAME, "com.liferay.portal",
 			"com.liferay.portal.test.internal", "default");
 	}
 
@@ -573,59 +571,51 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 			bundleDefaultInstructions);
 	}
 
+	protected void configureConfiguration(Configuration configuration) {
+		DependencySet dependencySet = configuration.getDependencies();
+
+		dependencySet.all(
+			new Action<Dependency>() {
+
+				@Override
+				public void execute(Dependency dependency) {
+					if (!(dependency instanceof ModuleDependency)) {
+						return;
+					}
+
+					ModuleDependency moduleDependency =
+						(ModuleDependency)dependency;
+
+					String group = moduleDependency.getGroup();
+					String name = moduleDependency.getName();
+
+					if (group.equals("com.liferay") &&
+						(name.equals(
+							"com.liferay.arquillian.extension.junit.bridge") ||
+						 name.equals("com.liferay.jasper.jspc"))) {
+
+						moduleDependency.exclude(
+							Collections.singletonMap(
+								"group", "com.liferay.portal"));
+					}
+				}
+
+			});
+	}
+
 	protected void configureConfigurations(Project project) {
 		ConfigurationContainer configurationContainer =
 			project.getConfigurations();
 
-		final LiferayExtension liferayExtension = GradleUtil.getExtension(
-			project, LiferayExtension.class);
+		configurationContainer.all(
+			new Action<Configuration>() {
 
-		Action<Configuration> action = new Action<Configuration>() {
+				@Override
+				public void execute(Configuration configuration) {
+					configureConfiguration(configuration);
+				}
 
-			@Override
-			public void execute(Configuration configuration) {
-				ResolutionStrategy resolutionStrategy =
-					configuration.getResolutionStrategy();
-
-				resolutionStrategy.eachDependency(
-					new Action<DependencyResolveDetails>() {
-
-						@Override
-						public void execute(
-							DependencyResolveDetails dependencyResolveDetails) {
-
-							ModuleVersionSelector moduleVersionSelector =
-								dependencyResolveDetails.getRequested();
-
-							String group = moduleVersionSelector.getGroup();
-
-							if (group.equals("com.liferay.portal")) {
-								String name = moduleVersionSelector.getName();
-
-								if (name.equals("portal-service")) {
-									name = "portal-kernel";
-								}
-
-								name = name.replace('-', '.');
-
-								dependencyResolveDetails.useTarget(
-									"com.liferay:com.liferay." + name + ":" +
-										liferayExtension.getPortalVersion());
-							}
-							else if (GradleUtil.isPortal(
-										moduleVersionSelector)) {
-
-								dependencyResolveDetails.useVersion(
-									liferayExtension.getPortalVersion());
-							}
-						}
-
-					});
-			}
-
-		};
-
-		configurationContainer.all(action);
+			});
 	}
 
 	@Override
@@ -1205,6 +1195,7 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		return bundleInstructions.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Map<String, String> getBundleInstructions(Project project) {
 		BundleExtension bundleExtension = GradleUtil.getExtension(
 			project, BundleExtension.class);

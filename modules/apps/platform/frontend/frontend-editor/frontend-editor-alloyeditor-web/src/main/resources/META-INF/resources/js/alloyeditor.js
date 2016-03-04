@@ -68,8 +68,14 @@ AUI.add(
 
 						var editorConfig = instance.get('editorConfig');
 
-						instance._alloyEditor = AlloyEditor.editable(editorConfig.srcNode, editorConfig);
-						instance._srcNode = A.one('#' + editorConfig.srcNode);
+						var srcNode = editorConfig.srcNode;
+
+						if (Lang.isString(srcNode)) {
+							srcNode = A.one('#' + srcNode);
+						}
+
+						instance._alloyEditor = AlloyEditor.editable(srcNode.attr('id'), editorConfig);
+						instance._srcNode = srcNode;
 					},
 
 					bindUI: function() {
@@ -115,6 +121,8 @@ AUI.add(
 						(new A.EventHandle(instance._eventHandles)).detach();
 
 						instance.instanceReady = false;
+
+						window[instance.get('namespace')].instanceReady = false;
 					},
 
 					focus: function() {
@@ -133,6 +141,12 @@ AUI.add(
 						}
 
 						return data;
+					},
+
+					getEditor: function() {
+						var instance = this;
+
+						return instance._alloyEditor;
 					},
 
 					getHTML: function() {
@@ -228,6 +242,8 @@ AUI.add(
 						}
 
 						instance.instanceReady = true;
+
+						window[instance.get('namespace')].instanceReady = true;
 					},
 
 					_onKey: function(event) {

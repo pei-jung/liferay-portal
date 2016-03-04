@@ -29,7 +29,6 @@ import com.liferay.dynamic.data.mapping.exception.TemplateNameException;
 import com.liferay.dynamic.data.mapping.exception.TemplateScriptException;
 import com.liferay.dynamic.data.mapping.exception.TemplateSmallImageNameException;
 import com.liferay.dynamic.data.mapping.exception.TemplateSmallImageSizeException;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
@@ -168,49 +167,40 @@ public class DDMPortlet extends MVCPortlet {
 	}
 
 	@Override
-	public void render(RenderRequest request, RenderResponse response)
+	public void render(
+			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
 		try {
-			setDDMTemplateRequestAttribute(request);
+			setDDMDisplayContextRequestAttribute(renderRequest);
 
-			setDDMStructureRequestAttribute(request);
+			setDDMTemplateRequestAttribute(renderRequest);
 
-			DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
-				request, _ddmFormJSONDeserializer, ddmWebConfiguration);
-
-			request.setAttribute(
-				WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
+			setDDMStructureRequestAttribute(renderRequest);
 		}
-		catch (NoSuchStructureException nsse) {
+		catch (NoSuchStructureException | NoSuchTemplateException e) {
 
 			// Let this slide because the user can manually input a structure
-			// key for a new structure that does not yet exist
-
-		}
-		catch (NoSuchTemplateException nste) {
-
-			// Let this slide because the user can manually input a template key
-			// for a new template that does not yet exist
+			// or template key for a new model that does not yet exist
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(nste, nste);
+				_log.debug(e, e);
 			}
 		}
 		catch (Exception e) {
 			if (e instanceof PortletPreferencesException ||
 				e instanceof PrincipalException) {
 
-				SessionErrors.add(request, e.getClass());
+				SessionErrors.add(renderRequest, e.getClass());
 
-				include("/error.jsp", request, response);
+				include("/error.jsp", renderRequest, renderResponse);
 			}
 			else {
 				throw new PortletException(e);
 			}
 		}
 
-		super.render(request, response);
+		super.render(renderRequest, renderResponse);
 	}
 
 	@Activate
@@ -220,11 +210,15 @@ public class DDMPortlet extends MVCPortlet {
 			DDMWebConfiguration.class, properties);
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDMFormJSONDeserializer(
-		DDMFormJSONDeserializer ddmFormJSONDeserializer) {
+	protected void setDDMDisplayContextRequestAttribute(
+			RenderRequest renderRequest)
+		throws PortalException {
 
-		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
+		DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
+			renderRequest, ddmWebConfiguration);
+
+		renderRequest.setAttribute(
+			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
 	}
 
 	@Reference(unbind = "-")
@@ -281,7 +275,5 @@ public class DDMPortlet extends MVCPortlet {
 	protected volatile DDMWebConfiguration ddmWebConfiguration;
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMPortlet.class);
-
-	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
 
 }

@@ -15,6 +15,8 @@ AUI.add(
 
 		var CSS_PAGES = A.getClassName('form', 'builder', 'pages', 'lexicon');
 
+		var TPL_REQURIED_FIELDS = '<label class="hide required-warning">{message}</label>';
+
 		var FormBuilder = A.Component.create(
 			{
 				ATTRS: {
@@ -76,19 +78,16 @@ AUI.add(
 
 						var boundingBox = instance.get('boundingBox');
 
+						var settingsModal = instance.getFieldSettingModal();
+
 						instance._eventHandlers = [
-							boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a')
+							boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a'),
+							instance.after('form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
+							instance.after('render', instance._afterFormBuilderRender, instance),
+							instance.after(instance._afterRemoveField, instance, 'removeField'),
+							settingsModal.after('hide', A.bind(instance._afterFieldSettingsModalHide, instance)),
+							settingsModal.after('save', A.bind(instance._afterFieldSettingsModalSave, instance))
 						];
-					},
-
-					renderUI: function() {
-						var instance = this;
-
-						FormBuilder.superclass.renderUI.apply(instance, arguments);
-
-						instance._renderFields();
-						instance._renderPages();
-						instance._syncRowsLastColumnUI();
 					},
 
 					destructor: function() {
@@ -99,6 +98,8 @@ AUI.add(
 						visitor.set('fieldHandler', instance.destroyField);
 
 						visitor.visit();
+
+						(new A.EventHandle(instance._eventHandlers)).detach();
 					},
 
 					createField: function(fieldType) {
@@ -147,12 +148,65 @@ AUI.add(
 						return FieldTypes.get(field.get('type'));
 					},
 
+					getFieldSettingModal: function() {
+						var instance = this;
+
+						if (!instance._fieldSettingsModal) {
+							instance._fieldSettingsModal = new Liferay.DDL.FormBuilderFieldSettingsModal(
+								{
+									portletNamespace: instance.get('portletNamespace')
+								}
+							);
+						}
+
+						return instance._fieldSettingsModal;
+					},
+
+					showFieldSettingsPanel: function(field, typeName) {
+						var instance = this;
+
+						var settingsModal = instance.getFieldSettingModal();
+
+						settingsModal.show(field, typeName);
+					},
+
 					_afterActivePageNumberChange: function() {
 						var instance = this;
 
 						FormBuilder.superclass._afterActivePageNumberChange.apply(instance, arguments);
 
+						instance._syncRequiredFieldsWarning();
 						instance._syncRowsLastColumnUI();
+					},
+
+					_afterFieldListChange: function() {
+						var instance = this;
+
+						instance._syncRequiredFieldsWarning();
+					},
+
+					_afterFormBuilderRender: function() {
+						var instance = this;
+
+						instance._renderFields();
+						instance._renderPages();
+						instance._renderRequiredFieldsWarning();
+						instance._syncRequiredFieldsWarning();
+						instance._syncRowsLastColumnUI();
+					},
+
+					_afterFieldSettingsModalSave: function(event) {
+						var instance = this;
+
+						FormBuilder.superclass._afterFieldSettingsModalSave.apply(instance, arguments);
+
+						var field = event.field;
+
+						instance.appendChild(field);
+
+						var row = instance.getFieldRow(field);
+
+						instance.getActiveLayout().normalizeColsHeight(new A.NodeList(row));
 					},
 
 					_afterLayoutColsChange: function(event) {
@@ -176,7 +230,14 @@ AUI.add(
 
 						FormBuilder.superclass._afterLayoutsChange.apply(instance, arguments);
 
+						instance._syncRequiredFieldsWarning();
 						instance._syncRowsLastColumnUI();
+					},
+
+					_afterRemoveField: function(field) {
+						var instance = this;
+
+						instance.removeChild(field);
 					},
 
 					_afterSelectFieldType: function(event) {
@@ -289,6 +350,28 @@ AUI.add(
 						pages._uiSetActivePageNumber(pages.get('activePageNumber'));
 					},
 
+					_renderRequiredFieldsWarning: function() {
+						var instance = this;
+
+						var pageManager = instance._getPageManagerInstance();
+
+						if (!instance._requiredFieldsWarningNode) {
+							instance._requiredFieldsWarningNode = A.Node.create(
+								Lang.sub(
+									TPL_REQURIED_FIELDS,
+									{
+										message: Lang.sub(
+											Liferay.Language.get('all-fields-marked-with-x-are-required'),
+											['<i class="icon-asterisk text-warning"></i>']
+										)
+									}
+								)
+							);
+						}
+
+						instance._requiredFieldsWarningNode.appendTo(pageManager.get('pageHeader'));
+					},
+
 					_setFieldToolbarConfig: function() {
 						var instance = this;
 
@@ -314,6 +397,33 @@ AUI.add(
 								return !item.get('system');
 							}
 						);
+					},
+
+					_syncRequiredFieldsWarning: function() {
+						var instance = this;
+
+						var boundingBox = instance.get('boundingBox');
+
+						var hasRequiredField = false;
+
+						var visitor = instance.get('visitor');
+
+						visitor.set('pages', instance.get('layouts'));
+
+						visitor.set(
+							'fieldHandler',
+							function(field) {
+								var fieldVisible = boundingBox.contains(field.get('container'));
+
+								if (fieldVisible && field.get('required')) {
+									hasRequiredField = true;
+								}
+							}
+						);
+
+						visitor.visit();
+
+						instance._requiredFieldsWarningNode.toggle(hasRequiredField);
 					},
 
 					_syncRowLastColumnUI: function(row) {
@@ -366,6 +476,7 @@ AUI.add(
 								strings: {
 									addField: Liferay.Language.get('choose-a-field-type')
 								},
+								topFixed: true,
 								visible: false
 							}
 						);
@@ -402,6 +513,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-form-builder', 'aui-form-builder-pages', 'liferay-ddl-form-builder-field-support', 'liferay-ddl-form-builder-field-types-modal', 'liferay-ddl-form-builder-layout-deserializer', 'liferay-ddl-form-builder-layout-visitor', 'liferay-ddl-form-builder-pages-manager', 'liferay-ddl-form-builder-util', 'liferay-ddm-form-field-types', 'liferay-ddm-form-renderer']
+		requires: ['aui-form-builder', 'aui-form-builder-pages', 'liferay-ddl-form-builder-field-settings-modal', 'liferay-ddl-form-builder-field-support', 'liferay-ddl-form-builder-field-types-modal', 'liferay-ddl-form-builder-layout-deserializer', 'liferay-ddl-form-builder-layout-visitor', 'liferay-ddl-form-builder-pages-manager', 'liferay-ddl-form-builder-util', 'liferay-ddm-form-field-types', 'liferay-ddm-form-renderer']
 	}
 );

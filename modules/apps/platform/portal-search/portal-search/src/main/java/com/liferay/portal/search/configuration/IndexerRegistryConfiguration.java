@@ -25,12 +25,15 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 @Meta.OCD(
 	id = "com.liferay.portal.search.configuration.IndexerRegistryConfiguration",
 	localization = "content/Language",
-	name = "%indexer.registry.configuration.name"
+	name = "indexer.registry.configuration.name"
 )
 public interface IndexerRegistryConfiguration {
 
 	@Meta.AD(deflt = "true", required = false)
 	public boolean buffered();
+
+	@Meta.AD(deflt = "DEFAULT", required = false)
+	public String bufferedExecutionMode();
 
 	@Meta.AD(deflt = "200", required = false)
 	public int maxBufferSize();

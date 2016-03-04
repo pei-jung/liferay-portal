@@ -139,6 +139,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>NO_ENTRIES</td>
+	<td>//div[contains(@id,'Empty') and contains(.,'No entries were found')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>NO_TOP_POSTERS</td>
 	<td>//p[contains(.,'There are no top posters.')]</td>
 	<td></td>
@@ -160,7 +165,7 @@
 </tr>
 <tr>
 	<td>RECYCLE_BIN_INFO</td>
-	<td>//div[contains(@class,'tooltip-help-content') and contains(@class,'tooltip-content')]</td>
+	<td>//div[contains(@class,'tooltip-content')]</td>
 	<td></td>
 </tr>
 <tr>

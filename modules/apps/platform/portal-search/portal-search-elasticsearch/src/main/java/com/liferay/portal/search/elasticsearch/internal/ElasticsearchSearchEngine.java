@@ -29,13 +29,13 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
+import com.liferay.portal.search.elasticsearch.index.IndexNameBuilder;
 import com.liferay.portal.search.elasticsearch.internal.util.LogUtil;
 
 import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequestBuilder;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
@@ -51,6 +51,7 @@ import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.settings.Settings;
@@ -191,7 +192,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		IndicesAdminClient indicesAdminClient = adminClient.indices();
 
 		CloseIndexRequestBuilder closeIndexRequestBuilder =
-			indicesAdminClient.prepareClose(String.valueOf(companyId));
+			indicesAdminClient.prepareClose(
+				indexNameBuilder.getIndexName(companyId));
 
 		try {
 			CloseIndexResponse closeIndexResponse =
@@ -210,7 +212,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			clusterAdminClient.prepareRestoreSnapshot(
 				_BACKUP_REPOSITORY_NAME, backupName);
 
-		restoreSnapshotRequestBuilder.setIndices(String.valueOf(companyId));
+		restoreSnapshotRequestBuilder.setIndices(
+			indexNameBuilder.getIndexName(companyId));
 		restoreSnapshotRequestBuilder.setWaitForCompletion(true);
 
 		try {
@@ -314,18 +317,6 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setElasticsearchConnectionManager(
-		ElasticsearchConnectionManager elasticsearchConnectionManager) {
-
-		_elasticsearchConnectionManager = elasticsearchConnectionManager;
-	}
-
-	@Reference(unbind = "-")
-	protected void setIndexFactory(IndexFactory indexFactory) {
-		_indexFactory = indexFactory;
-	}
-
 	protected void validateBackupName(String backupName)
 		throws SearchException {
 
@@ -363,12 +354,18 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		}
 	}
 
+	@Reference
+	protected IndexNameBuilder indexNameBuilder;
+
 	private static final String _BACKUP_REPOSITORY_NAME = "liferay_backup";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchSearchEngine.class);
 
+	@Reference
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
+
+	@Reference
 	private IndexFactory _indexFactory;
 
 }

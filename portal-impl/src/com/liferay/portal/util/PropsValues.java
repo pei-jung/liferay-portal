@@ -190,6 +190,8 @@ public class PropsValues {
 
 	public static final boolean BLOGS_ENTRY_PREVIOUS_AND_NEXT_NAVIGATION_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.BLOGS_ENTRY_PREVIOUS_AND_NEXT_NAVIGATION_ENABLED));
 
+	public static final long BLOGS_IMAGE_MAX_SIZE = GetterUtil.getLong(PropsUtil.get(PropsKeys.BLOGS_IMAGE_MAX_SIZE));
+
 	public static final int BLOGS_LINKBACK_EXCERPT_LENGTH = GetterUtil.getInteger(PropsUtil.get(PropsKeys.BLOGS_LINKBACK_EXCERPT_LENGTH));
 
 	public static final int BLOGS_PAGE_ABSTRACT_LENGTH = GetterUtil.getInteger(PropsUtil.get(PropsKeys.BLOGS_PAGE_ABSTRACT_LENGTH));
@@ -621,6 +623,10 @@ public class PropsValues {
 	public static String IMAGE_HOOK_IMPL = GetterUtil.getString(PropsUtil.get(PropsKeys.IMAGE_HOOK_IMPL));
 
 	public static final boolean IMAGE_IO_USE_DISK_CACHE = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.IMAGE_IO_USE_DISK_CACHE));
+
+	public static final long IMAGE_TOOL_IMAGE_MAX_HEIGHT = GetterUtil.getLong(PropsUtil.get(PropsKeys.IMAGE_TOOL_IMAGE_MAX_HEIGHT));
+
+	public static final long IMAGE_TOOL_IMAGE_MAX_WIDTH = GetterUtil.getLong(PropsUtil.get(PropsKeys.IMAGE_TOOL_IMAGE_MAX_WIDTH));
 
 	public static final boolean IMAGEMAGICK_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.IMAGEMAGICK_ENABLED));
 

@@ -258,8 +258,6 @@
 	</command>
 
 	<command name="DisableShowCurrentSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
 		</execute>
@@ -365,7 +363,7 @@
 	<command name="DisableShowPage" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 		</execute>
 
@@ -525,7 +523,7 @@
 	</command>
 
 	<command name="DisplayTemplateWithHorizontalStyle" priority="4">
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 		</execute>
 
@@ -571,7 +569,7 @@
 	</command>
 
 	<command name="DisplayTemplateWithVerticalStyle" priority="4">
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 		</execute>
 
@@ -617,7 +615,7 @@
 	</command>
 
 	<command name="EnableShowGuestSite" priority="4">
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 		</execute>
 

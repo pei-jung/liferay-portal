@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.application.type.ApplicationType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -50,12 +49,10 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.JavaConstants;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -63,8 +60,9 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.QName;
 import com.liferay.portal.kernel.xml.SAXReader;
-import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.model.impl.PublicRenderParameterImpl;
+import com.liferay.portal.osgi.web.servlet.context.helper.ServletContextHelperFactory;
+import com.liferay.portal.osgi.web.servlet.context.helper.ServletContextHelperRegistration;
 import com.liferay.portal.osgi.web.servlet.jsp.compiler.JspServlet;
 import com.liferay.portal.util.WebAppPool;
 import com.liferay.portlet.PortletBagFactory;
@@ -81,11 +79,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -101,7 +96,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -111,7 +105,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.wiring.BundleWiring;
@@ -334,10 +327,6 @@ public class PortletTracker
 				bundlePortletApp.getServletContextName(), bundleClassLoader,
 				serviceRegistrations);
 
-			checkResourceBundles(
-				bundle.getBundleContext(), bundleClassLoader, portletModel,
-				serviceRegistrations);
-
 			List<Company> companies = _companyLocalService.getCompanies();
 
 			deployPortlet(serviceReference, portletModel, companies);
@@ -380,58 +369,6 @@ public class PortletTracker
 		portletModel.setStrutsPath(portletId);
 
 		return portletModel;
-	}
-
-	protected void checkResourceBundles(
-		BundleContext bundleContext, ClassLoader classLoader,
-		com.liferay.portal.kernel.model.Portlet portletModel,
-		ServiceRegistrations serviceRegistrations) {
-
-		if (Validator.isBlank(portletModel.getResourceBundle())) {
-			return;
-		}
-
-		for (Locale locale : LanguageUtil.getAvailableLocales()) {
-			try {
-				ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-					portletModel.getResourceBundle(), locale, classLoader);
-
-				Dictionary<String, Object> properties =
-					new HashMapDictionary<>();
-
-				properties.put(
-					"javax.portlet.name", portletModel.getPortletId());
-				properties.put("language.id", LocaleUtil.toLanguageId(locale));
-
-				ServiceRegistration<ResourceBundle> serviceRegistration =
-					bundleContext.registerService(
-						ResourceBundle.class, resourceBundle, properties);
-
-				serviceRegistrations.addServiceRegistration(
-					serviceRegistration);
-			}
-			catch (MissingResourceException mre) {
-				if (_log.isInfoEnabled()) {
-					_log.info(
-						"Portlet " + portletModel.getPortletName() + " does " +
-							"not have translations for available locale " +
-								locale);
-				}
-			}
-
-			Dictionary<String, Object> properties = new HashMapDictionary<>();
-
-			properties.put("javax.portlet.name", portletModel.getPortletId());
-			properties.put("language.id", LocaleUtil.toLanguageId(locale));
-			properties.put("service.ranking", Integer.MIN_VALUE);
-
-			ServiceRegistration<ResourceBundle> serviceRegistration =
-				bundleContext.registerService(
-					ResourceBundle.class,
-					LanguageResources.getResourceBundle(locale), properties);
-
-			serviceRegistrations.addServiceRegistration(serviceRegistration);
-		}
 	}
 
 	protected void checkWebResources(
@@ -1040,56 +977,31 @@ public class PortletTracker
 			_portletLocalService.getPortletById(
 				CompanyConstants.SYSTEM, PortletKeys.PORTAL);
 
-		bundlePortletApp = new BundlePortletApp(
-			bundle, portalPortletModel, _httpServiceEndpoint);
+		ServletContextHelperRegistration servletContextHelperRegistration =
+			getServletContextHelperRegistration(bundle, serviceRegistrations);
 
-		createContext(bundle, bundlePortletApp, serviceRegistrations);
+		ServiceReference<ServletContextHelper> serviceReference =
+			servletContextHelperRegistration.getServiceReference();
+
+		String servletContextName = GetterUtil.getString(
+			serviceReference.getProperty(
+				HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_NAME));
+		String contextPath = GetterUtil.getString(
+			serviceReference.getProperty(
+				HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_PATH));
+
+		bundlePortletApp = new BundlePortletApp(
+			bundle, portalPortletModel, servletContextName,
+			_httpServiceEndpoint + contextPath);
+
+		bundlePortletApp.setServletContext(
+			servletContextHelperRegistration.getServletContext());
 
 		serviceRegistrations.setBundlePortletApp(bundlePortletApp);
 
 		serviceRegistrations.doConfiguration(classLoader);
 
-		BundleContext bundleContext = bundle.getBundleContext();
-
-		Dictionary<String, Object> properties = new HashMapDictionary<>();
-
-		properties.put(
-			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT,
-			bundlePortletApp.getServletContextName());
-		properties.put(
-			HttpWhiteboardConstants.HTTP_WHITEBOARD_LISTENER,
-			Boolean.TRUE.toString());
-
-		serviceRegistrations.addServiceRegistration(
-			bundleContext.registerService(
-				ServletContextListener.class, bundlePortletApp, properties));
-
 		return bundlePortletApp;
-	}
-
-	protected void createContext(
-		Bundle bundle, PortletApp portletApp,
-		ServiceRegistrations serviceRegistrations) {
-
-		ServletContextHelper servletContextHelper =
-			new BundlePortletServletContextHelper(bundle);
-
-		BundleContext bundleContext = bundle.getBundleContext();
-
-		Dictionary<String, Object> properties = new HashMapDictionary<>();
-
-		properties.put(
-			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_NAME,
-			portletApp.getServletContextName());
-		properties.put(
-			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_PATH,
-			"/" + portletApp.getServletContextName());
-		properties.put(Constants.SERVICE_RANKING, 1000);
-		properties.put("rtl.required", Boolean.TRUE.toString());
-
-		serviceRegistrations.addServiceRegistration(
-			bundleContext.registerService(
-				ServletContextHelper.class, servletContextHelper, properties));
 	}
 
 	protected ServiceRegistration<?> createDefaultServlet(
@@ -1257,7 +1169,7 @@ public class PortletTracker
 			bundle);
 
 		if (serviceRegistrations == null) {
-			serviceRegistrations = new ServiceRegistrations();
+			serviceRegistrations = new ServiceRegistrations(bundle);
 
 			ServiceRegistrations oldServiceRegistrations =
 				_serviceRegistrations.putIfAbsent(bundle, serviceRegistrations);
@@ -1268,6 +1180,21 @@ public class PortletTracker
 		}
 
 		return serviceRegistrations;
+	}
+
+	protected ServletContextHelperRegistration
+		getServletContextHelperRegistration(
+			Bundle bundle, ServiceRegistrations serviceRegistrations) {
+
+		BundleContext bundleContext = bundle.getBundleContext();
+
+		ServiceReference<ServletContextHelperRegistration>
+			serviceReference = bundleContext.getServiceReference(
+				ServletContextHelperRegistration.class);
+
+		serviceRegistrations.addServiceReference(serviceReference);
+
+		return bundleContext.getService(serviceReference);
 	}
 
 	protected void readResourceActions(
@@ -1310,6 +1237,13 @@ public class PortletTracker
 
 		if (!httpServiceEndpoints.isEmpty()) {
 			_httpServiceEndpoint = httpServiceEndpoints.get(0);
+		}
+
+		if ((_httpServiceEndpoint.length() > 0) &&
+			_httpServiceEndpoint.endsWith("/")) {
+
+			_httpServiceEndpoint = _httpServiceEndpoint.substring(
+				0, _httpServiceEndpoint.length() - 1);
 		}
 	}
 
@@ -1413,6 +1347,9 @@ public class PortletTracker
 	private ServiceTracker<Portlet, com.liferay.portal.kernel.model.Portlet>
 		_serviceTracker;
 
+	@Reference
+	private ServletContextHelperFactory _servletContextHelperFactory;
+
 	private static class JspServletWrapper extends HttpServlet {
 
 		@Override
@@ -1513,8 +1450,12 @@ public class PortletTracker
 
 	private class ServiceRegistrations {
 
+		public ServiceRegistrations(Bundle bundle) {
+			_bundle = bundle;
+		}
+
 		public synchronized void addServiceReference(
-			ServiceReference<Portlet> serviceReference) {
+			ServiceReference<?> serviceReference) {
 
 			_serviceReferences.add(serviceReference);
 		}
@@ -1530,7 +1471,7 @@ public class PortletTracker
 		}
 
 		public synchronized void removeServiceReference(
-			ServiceReference<Portlet> serviceReference) {
+			ServiceReference<?> serviceReference) {
 
 			_serviceReferences.remove(serviceReference);
 
@@ -1556,8 +1497,18 @@ public class PortletTracker
 				serviceRegistration.unregister();
 			}
 
-			_bundlePortletApp = null;
+			if (!_serviceReferences.isEmpty()) {
+				BundleContext bundleContext = _bundle.getBundleContext();
 
+				for (ServiceReference<?> serviceReference :
+						_serviceReferences) {
+
+					bundleContext.ungetService(serviceReference);
+				}
+			}
+
+			_bundlePortletApp = null;
+			_serviceReferences.clear();
 			_serviceRegistrations.clear();
 		}
 
@@ -1578,9 +1529,10 @@ public class PortletTracker
 			return _bundlePortletApp;
 		}
 
+		private final Bundle _bundle;
 		private BundlePortletApp _bundlePortletApp;
 		private Configuration _configuration;
-		private final List<ServiceReference<Portlet>> _serviceReferences =
+		private final List<ServiceReference<?>> _serviceReferences =
 			new ArrayList<>();
 		private final List<ServiceRegistration<?>> _serviceRegistrations =
 			new ArrayList<>();

@@ -66,6 +66,12 @@ AUI.add(
 
 						instance._processesResourceURL = config.processesResourceURL;
 
+						var eventHandles = [
+							Liferay.on(instance.ns('viewBackgroundTaskDetails'), instance._onViewBackgroundTaskDetails, instance)
+						];
+
+						instance._eventHandles = eventHandles;
+
 						instance._laterTimeout = A.later(RENDER_INTERVAL_IN_PROGRESS, instance, instance._renderProcesses);
 					},
 
@@ -78,10 +84,6 @@ AUI.add(
 
 						if (instance._globalConfigurationDialog) {
 							instance._globalConfigurationDialog.destroy();
-						}
-
-						if (instance._rangeDialog) {
-							instance._rangeDialog.destroy();
 						}
 
 						if (instance._remoteDialog) {
@@ -181,9 +183,7 @@ AUI.add(
 							rangeLink.on(
 								STR_CLICK,
 								function(event) {
-									var rangeDialog = instance._getRangeDialog();
-
-									rangeDialog.show();
+									instance._updateDateRange();
 								}
 							);
 						}
@@ -442,64 +442,6 @@ AUI.add(
 						return globalConfigurationDialog;
 					},
 
-					_getRangeDialog: function() {
-						var instance = this;
-
-						var rangeDialog = instance._rangeDialog;
-
-						if (!rangeDialog) {
-							var updateDateRange = A.bind('_updateDateRange', instance);
-
-							var rangeNode = instance.byId('range');
-
-							rangeNode.show();
-
-							rangeDialog = Liferay.Util.Window.getWindow(
-								{
-									dialog: {
-										bodyContent: rangeNode,
-										centered: true,
-										modal: true,
-										render: instance.get('form'),
-										toolbars: {
-											footer: [
-												{
-													label: Liferay.Language.get('ok'),
-													on: {
-														click: updateDateRange
-													},
-													primary: true
-												},
-												{
-													label: Liferay.Language.get('cancel'),
-													on: {
-														click: function(event) {
-															event.domEvent.preventDefault();
-
-															rangeDialog.hide();
-														}
-													}
-												}
-											]
-										}
-									},
-									title: Liferay.Language.get('date-range')
-								}
-							);
-
-							rangeDialog.get('boundingBox').delegate(
-								'key',
-								updateDateRange,
-								'enter',
-								'input[type="text"]'
-							);
-
-							instance._rangeDialog = rangeDialog;
-						}
-
-						return rangeDialog;
-					},
-
 					_getRemoteDialog: function() {
 						var instance = this;
 
@@ -633,7 +575,6 @@ AUI.add(
 						instance._refreshDeletions();
 						instance._setContentOptionsLabels();
 						instance._setGlobalConfigurationLabels();
-						instance._setRangeLabels();
 						instance._setRemoteLabels();
 					},
 
@@ -651,6 +592,35 @@ AUI.add(
 						var node = instance.get(nodeName);
 
 						return (node && node.attr(STR_CHECKED));
+					},
+
+					_onViewBackgroundTaskDetails: function(config) {
+						var instance = this;
+
+						var node = instance.byId(instance.ns(config.nodeId));
+
+						var bodyNode = node.cloneNode(true);
+
+						bodyNode.show();
+
+						var title = config.title;
+
+						if (title) {
+							title = title.trim();
+						}
+
+						if (!title) {
+							title = Liferay.Language.get("process-details");
+						}
+
+						Liferay.Util.openWindow(
+							{
+								dialog: {
+									bodyContent: bodyNode
+								},
+								title: title
+							}
+						);
 					},
 
 					_refreshDeletions: function() {
@@ -740,35 +710,6 @@ AUI.add(
 						}
 
 						var processesNode = instance.get('processesNode');
-
-						if (processesNode) {
-							new A.TogglerDelegate(
-								{
-									animated: true,
-									closeAllOnExpand: true,
-									container: processesNode,
-									content: '.background-task-status-message',
-									expanded: false,
-									header: '.details-link',
-									on: {
-										'toggler:expandedChange': function(event) {
-											var header = event.target.get('header');
-
-											var persistId = 0;
-
-											if (!header.hasClass('toggler-header-collapsed')) {
-												persistId = header.getData('persist-id');
-											}
-
-											Liferay.Store('com.liferay.exportimport.web_backgroundTaskIds', persistId);
-										}
-									},
-									transition: {
-										duration: 0.3
-									}
-								}
-							);
-						}
 
 						if (processesNode && instance._processesResourceURL) {
 							A.io.request(
@@ -943,27 +884,6 @@ AUI.add(
 						return val;
 					},
 
-					_setRangeLabels: function() {
-						var instance = this;
-
-						var selectedRange = STR_EMPTY;
-
-						if (instance._isChecked('rangeAllNode')) {
-							selectedRange = Liferay.Language.get('all');
-						}
-						else if (instance._isChecked('rangeLastPublishNode')) {
-							selectedRange = Liferay.Language.get('from-last-publish-date');
-						}
-						else if (instance._isChecked('rangeDateRangeNode')) {
-							selectedRange = Liferay.Language.get('date-range');
-						}
-						else if (instance._isChecked('rangeLastNode')) {
-							selectedRange = Liferay.Language.get('last');
-						}
-
-						instance._setLabels('rangeLink', 'selectedRange', selectedRange);
-					},
-
 					_setRemoteLabels: function() {
 						var instance = this;
 
@@ -1002,10 +922,6 @@ AUI.add(
 
 					_updateDateRange: function(event) {
 						var instance = this;
-
-						event.preventDefault();
-
-						var rangeDialog = instance._rangeDialog;
 
 						var endsInPast = true;
 						var endsLater = true;
@@ -1056,8 +972,6 @@ AUI.add(
 							instance._reloadForm();
 
 							A.all('.datepicker-popover, .timepicker-popover').hide();
-
-							rangeDialog.hide();
 						}
 						else {
 							var message;

@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `09adf28`.*
+*This document has been reviewed through commit `929b6ad`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -3972,7 +3972,31 @@ You should change the entry from `site_administration.pages` to
 
 #### Why was this change made?
 
-This change standardizes naming conventions and separates concepts in Product
-Menu
+This change standardizes naming conventions and separates concepts in the
+Product Menu.
+
+---------------------------------------
+
+### FlagsEntryService addEntry method throws PortalException
+- **Date:** 2016-Mar-4
+- **JIRA Ticket:** LPS-63109
+
+#### What changed?
+
+Method `FlagsEntryService.addEntry` throws PortalException if the
+reporterEmailAddress is not a valid email address.
+
+#### Who is affected?
+
+Any caller of the method `FlagsEntryService.addEntry`.
+
+#### How should I update my code?
+
+Consider if the `PortalException` should be catch or not and adapt the code
+accordingly, catching or throwing the exception.
+
+#### Why was this change made?
+
+To prevent providing incorrect email address when adding flag entries.
 
 ---------------------------------------
