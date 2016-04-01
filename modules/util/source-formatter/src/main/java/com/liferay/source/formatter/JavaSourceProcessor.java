@@ -990,8 +990,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		newContent = formatAssertEquals(fileName, newContent);
 
-		newContent = formatReturnStatements(fileName, newContent);
-
 		newContent = fixMissingEmptyLineAfterSettingVariable(newContent);
 
 		newContent = getCombinedLinesContent(
@@ -2773,41 +2771,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			fileName, content, className, packagePath);
 	}
 
-	protected String formatReturnStatements(String fileName, String content) {
-		Matcher matcher = _returnPattern.matcher(content);
-
-		while (matcher.find()) {
-			String returnStatement = matcher.group();
-
-			if (returnStatement.contains(" {\n") ||
-				(!returnStatement.contains("|\n") &&
-				 !returnStatement.contains("&\n"))) {
-
-				continue;
-			}
-
-			String tabs = matcher.group(1);
-
-			StringBundler sb = new StringBundler(11);
-
-			sb.append(content.substring(0, matcher.end(1)));
-			sb.append("if (");
-			sb.append(matcher.group(2));
-			sb.append(") {\n\n");
-			sb.append(tabs);
-			sb.append("\treturn true;\n");
-			sb.append(tabs);
-			sb.append("}\n\n");
-			sb.append(tabs);
-			sb.append("return false;\n");
-			sb.append(content.substring(matcher.end()));
-
-			return sb.toString();
-		}
-
-		return content;
-	}
-
 	protected String getCombinedLinesContent(String content, Pattern pattern) {
 		Matcher matcher = pattern.matcher(content);
 
@@ -2875,7 +2838,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 			combinedLine += trimmedLine;
 
-			String nextLine = getNextLine(content, lineCount);
+			String nextLine = getLine(content, lineCount + 1);
 
 			if (nextLine == null) {
 				return null;
@@ -3059,7 +3022,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 					line.endsWith(StringPool.OPEN_PARENTHESIS)) {
 
 					for (int i = 0;; i++) {
-						String nextLine = getNextLine(content, lineCount + i);
+						String nextLine = getLine(content, lineCount + i + 1);
 
 						if (Validator.isNull(nextLine) ||
 							nextLine.endsWith(") {")) {
@@ -3089,7 +3052,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				line.endsWith(StringPool.OPEN_PARENTHESIS)) {
 
 				for (int i = 0;; i++) {
-					String nextLine = getNextLine(content, lineCount + i);
+					String nextLine = getLine(content, lineCount + i + 1);
 
 					if (nextLine.endsWith(StringPool.SEMICOLON)) {
 						return getCombinedLinesContent(
@@ -3237,7 +3200,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			(previousLineTabCount == lineTabCount) &&
 			!trimmedPreviousLine.equals("},")) {
 
-			String nextLine = getNextLine(content, lineCount);
+			String nextLine = getLine(content, lineCount + 1);
 
 			int nextLineTabCount = getLeadingTabCount(nextLine);
 
@@ -3317,7 +3280,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 						_MAX_LINE_LENGTH)) {
 
 				for (int i = 0;; i++) {
-					String nextLine = getNextLine(content, lineCount + i);
+					String nextLine = getLine(content, lineCount + i + 1);
 
 					if (nextLine.endsWith(StringPool.SEMICOLON)) {
 						return getCombinedLinesContent(
@@ -3620,20 +3583,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		}
 	}
 
-	protected int getLineStartPos(String content, int lineCount) {
-		int x = 0;
-
-		for (int i = 1; i < lineCount; i++) {
-			x = content.indexOf(CharPool.NEW_LINE, x + 1);
-
-			if (x == -1) {
-				return x;
-			}
-		}
-
-		return x + 1;
-	}
-
 	protected String getModuleClassContent(String fullClassName)
 		throws Exception {
 
@@ -3787,23 +3736,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		return getModuleClassContent(superClassFullClassName);
 	}
 
-	protected String getNextLine(String content, int lineCount) {
-		int nextLineStartPos = getLineStartPos(content, lineCount + 1);
-
-		if (nextLineStartPos == -1) {
-			return null;
-		}
-
-		int nextLineEndPos = content.indexOf(
-			CharPool.NEW_LINE, nextLineStartPos);
-
-		if (nextLineEndPos == -1) {
-			return content.substring(nextLineStartPos);
-		}
-
-		return content.substring(nextLineStartPos, nextLineEndPos);
-	}
-
 	protected Collection<String> getPluginJavaFiles() throws Exception {
 		Collection<String> fileNames = new TreeSet<>();
 
@@ -3904,7 +3836,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 						content, "\n" + line + "\n",
 						"\n" + firstLine + "\n" + secondLine + "\n");
 				}
-				else if (Validator.isNotNull(getNextLine(content, lineCount))) {
+				else if (Validator.isNotNull(getLine(content, lineCount + 1))) {
 					return StringUtil.replace(
 						content, "\n" + line + "\n",
 						"\n" + firstLine + "\n" + secondLine + "\n" +
@@ -4309,7 +4241,5 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	private Pattern _throwsSystemExceptionPattern = Pattern.compile(
 		"(\n\t+.*)throws(.*) SystemException(.*)( \\{|;\n)");
 	private List<String> _upgradeServiceUtilExcludes;
-	private Pattern _returnPattern = Pattern.compile(
-		"\n(\t+)return (.*?);\n", Pattern.DOTALL);
 
 }

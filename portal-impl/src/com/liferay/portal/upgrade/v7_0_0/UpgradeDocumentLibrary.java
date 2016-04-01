@@ -146,6 +146,17 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #hasFileEntry(long, long,
+	 *             long, String, String)}
+	 */
+	@Deprecated
+	protected boolean hasFileEntry(long groupId, long folderId, String fileName)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
+	}
+
 	protected void updateFileEntryFileNames() throws Exception {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
 			runSQL("alter table DLFileEntry add fileName VARCHAR(255) null");
