@@ -990,8 +990,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		newContent = formatAssertEquals(fileName, newContent);
 
-		newContent = formatReturnStatements(fileName, newContent);
-
 		newContent = fixMissingEmptyLineAfterSettingVariable(newContent);
 
 		newContent = getCombinedLinesContent(
@@ -1041,6 +1039,9 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		if (portalSource) {
 			fileNames = getPortalJavaFiles();
 
+			_checkRegistryInTestClasses = GetterUtil.getBoolean(
+				System.getProperty(
+					"source.formatter.check.registry.in.test.classes"));
 			_checkUnprocessedExceptions = GetterUtil.getBoolean(
 				System.getProperty(
 					"source.formatter.check.unprocessed.exceptions"));
@@ -2626,13 +2627,23 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				fileName, absolutePath, content, className, packagePath);
 		}
 
-		if (!absolutePath.contains("/modules/core/") &&
-			!absolutePath.contains("/test/") &&
-			!absolutePath.contains("/testIntegration/") &&
-			content.contains("import com.liferay.registry.Registry")) {
+		// LPS-62989
 
-			processErrorMessage(
-				fileName, "Do not use Registry in modules: " + fileName);
+		if (!absolutePath.contains("/modules/core/jaxws-osgi-bridge") &&
+			!absolutePath.contains("/modules/core/portal-bootstrap") &&
+			!absolutePath.contains("/modules/core/registry-") &&
+			(_checkRegistryInTestClasses ||
+			 (!absolutePath.contains("/test/") &&
+			  !absolutePath.contains("/testIntegration/")))) {
+
+			Matcher matcher = _registryImportPattern.matcher(content);
+
+			if (matcher.find()) {
+				processErrorMessage(
+					fileName,
+					"Do not use com.liferay.registry classes in modules: " +
+						fileName);
+			}
 		}
 
 		// LPS-60186
@@ -2773,41 +2784,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			fileName, content, className, packagePath);
 	}
 
-	protected String formatReturnStatements(String fileName, String content) {
-		Matcher matcher = _returnPattern.matcher(content);
-
-		while (matcher.find()) {
-			String returnStatement = matcher.group();
-
-			if (returnStatement.contains(" {\n") ||
-				(!returnStatement.contains("|\n") &&
-				 !returnStatement.contains("&\n"))) {
-
-				continue;
-			}
-
-			String tabs = matcher.group(1);
-
-			StringBundler sb = new StringBundler(11);
-
-			sb.append(content.substring(0, matcher.end(1)));
-			sb.append("if (");
-			sb.append(matcher.group(2));
-			sb.append(") {\n\n");
-			sb.append(tabs);
-			sb.append("\treturn true;\n");
-			sb.append(tabs);
-			sb.append("}\n\n");
-			sb.append(tabs);
-			sb.append("return false;\n");
-			sb.append(content.substring(matcher.end()));
-
-			return sb.toString();
-		}
-
-		return content;
-	}
-
 	protected String getCombinedLinesContent(String content, Pattern pattern) {
 		Matcher matcher = pattern.matcher(content);
 
@@ -2875,7 +2851,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 			combinedLine += trimmedLine;
 
-			String nextLine = getNextLine(content, lineCount);
+			String nextLine = getLine(content, lineCount + 1);
 
 			if (nextLine == null) {
 				return null;
@@ -3059,7 +3035,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 					line.endsWith(StringPool.OPEN_PARENTHESIS)) {
 
 					for (int i = 0;; i++) {
-						String nextLine = getNextLine(content, lineCount + i);
+						String nextLine = getLine(content, lineCount + i + 1);
 
 						if (Validator.isNull(nextLine) ||
 							nextLine.endsWith(") {")) {
@@ -3089,7 +3065,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				line.endsWith(StringPool.OPEN_PARENTHESIS)) {
 
 				for (int i = 0;; i++) {
-					String nextLine = getNextLine(content, lineCount + i);
+					String nextLine = getLine(content, lineCount + i + 1);
 
 					if (nextLine.endsWith(StringPool.SEMICOLON)) {
 						return getCombinedLinesContent(
@@ -3237,7 +3213,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			(previousLineTabCount == lineTabCount) &&
 			!trimmedPreviousLine.equals("},")) {
 
-			String nextLine = getNextLine(content, lineCount);
+			String nextLine = getLine(content, lineCount + 1);
 
 			int nextLineTabCount = getLeadingTabCount(nextLine);
 
@@ -3317,7 +3293,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 						_MAX_LINE_LENGTH)) {
 
 				for (int i = 0;; i++) {
-					String nextLine = getNextLine(content, lineCount + i);
+					String nextLine = getLine(content, lineCount + i + 1);
 
 					if (nextLine.endsWith(StringPool.SEMICOLON)) {
 						return getCombinedLinesContent(
@@ -3620,20 +3596,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		}
 	}
 
-	protected int getLineStartPos(String content, int lineCount) {
-		int x = 0;
-
-		for (int i = 1; i < lineCount; i++) {
-			x = content.indexOf(CharPool.NEW_LINE, x + 1);
-
-			if (x == -1) {
-				return x;
-			}
-		}
-
-		return x + 1;
-	}
-
 	protected String getModuleClassContent(String fullClassName)
 		throws Exception {
 
@@ -3787,23 +3749,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		return getModuleClassContent(superClassFullClassName);
 	}
 
-	protected String getNextLine(String content, int lineCount) {
-		int nextLineStartPos = getLineStartPos(content, lineCount + 1);
-
-		if (nextLineStartPos == -1) {
-			return null;
-		}
-
-		int nextLineEndPos = content.indexOf(
-			CharPool.NEW_LINE, nextLineStartPos);
-
-		if (nextLineEndPos == -1) {
-			return content.substring(nextLineStartPos);
-		}
-
-		return content.substring(nextLineStartPos, nextLineEndPos);
-	}
-
 	protected Collection<String> getPluginJavaFiles() throws Exception {
 		Collection<String> fileNames = new TreeSet<>();
 
@@ -3904,7 +3849,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 						content, "\n" + line + "\n",
 						"\n" + firstLine + "\n" + secondLine + "\n");
 				}
-				else if (Validator.isNotNull(getNextLine(content, lineCount))) {
+				else if (Validator.isNotNull(getLine(content, lineCount + 1))) {
 					return StringUtil.replace(
 						content, "\n" + line + "\n",
 						"\n" + firstLine + "\n" + secondLine + "\n" +
@@ -4070,6 +4015,20 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	}
 
 	protected boolean isAnnotationParameter(String content, String line) {
+		int x = -1;
+
+		while (true) {
+			x = line.indexOf(StringPool.COMMA_AND_SPACE, x + 1);
+
+			if (x == -1) {
+				break;
+			}
+
+			if (!ToolsUtil.isInsideQuotes(line, x)) {
+				return false;
+			}
+		}
+
 		Matcher matcher = _annotationPattern.matcher(content);
 
 		while (matcher.find()) {
@@ -4228,6 +4187,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	private Pattern _catchExceptionPattern = Pattern.compile(
 		"\n(\t+)catch \\((.+Exception) (.+)\\) \\{\n");
 	private List<String> _checkJavaFieldTypesExcludes;
+	private boolean _checkRegistryInTestClasses;
 	private List<String> _checkTabsExcludes;
 	private boolean _checkUnprocessedExceptions;
 	private final Pattern _classPattern = Pattern.compile(
@@ -4295,6 +4255,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	private Pattern _referenceMethodPattern = Pattern.compile(
 		"\n\t@Reference([\\s\\S]*?)\\s+((protected|public) void (\\w+?))\\(" +
 			"\\s*([ ,<>\\w]+)\\s+\\w+\\) \\{\\s+([\\s\\S]*?)\\s*?\n\t\\}\n");
+	private Pattern _registryImportPattern = Pattern.compile(
+		"\nimport (com\\.liferay\\.registry\\..+);");
 	private List<String> _secureDeserializationExcludes;
 	private List<String> _secureRandomExcludes;
 	private List<String> _secureXmlExcludes;
@@ -4309,7 +4271,5 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	private Pattern _throwsSystemExceptionPattern = Pattern.compile(
 		"(\n\t+.*)throws(.*) SystemException(.*)( \\{|;\n)");
 	private List<String> _upgradeServiceUtilExcludes;
-	private Pattern _returnPattern = Pattern.compile(
-		"\n(\t+)return (.*?);\n", Pattern.DOTALL);
 
 }
