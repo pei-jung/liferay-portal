@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Portal OSGi Web WAB Generator
 Bundle-SymbolicName: com.liferay.portal.osgi.web.wab.generator
-Bundle-Version: 2.1.1
+Bundle-Version: 2.1.2
 Export-Package: com.liferay.portal.osgi.web.wab.generator
 Import-Package:\
 	!com.liferay.util.xml,\
@@ -8,6 +8,5 @@ Import-Package:\
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: WAB
 -liferay-includeresource:\
-	@com.liferay.util.java-*.jar!/com/liferay/util/xml/XMLUtil.class,\
 	@biz.aQute.bndlib-*.jar,\
 	@com.liferay.ant.bnd-*.jar!/com/liferay/ant/bnd/jsp/JspAnalyzerPlugin*.class

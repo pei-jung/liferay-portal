@@ -485,6 +485,12 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 				javaClassContent, javaClassLineCount, null, null, null, null);
 		}
 
+		JSPSourceTabCalculator jspSourceTabCalculator =
+			new JSPSourceTabCalculator();
+
+		newContent = jspSourceTabCalculator.calculateTabs(
+			fileName, newContent, (JSPSourceProcessor)this);
+
 		if (!content.equals(newContent)) {
 			_jspContents.put(fileName, newContent);
 		}
@@ -710,6 +716,8 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 
 				if (!trimmedLine.startsWith(StringPool.DOUBLE_SLASH) &&
 					!trimmedLine.startsWith(StringPool.STAR)) {
+
+					line = formatIncorrectSyntax(line, "\t ", "\t", false);
 
 					line = formatWhitespace(line, javaSource);
 
@@ -1931,11 +1939,11 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 	private final Pattern _emptyJavaSourceTagPattern = Pattern.compile(
 		"\n\t*<%\n+\t*%>\n");
 	private final Pattern _emptyLineInNestedTagsPattern1 = Pattern.compile(
-		"\n(\t*)<[a-z-]*:.*[^/]>\n\n(\t*)<[a-z-]*:.*>\n");
+		"\n(\t*)<\\w.*[^/]>\n\n(\t*)<\\w.*>\n");
 	private final Pattern _emptyLineInNestedTagsPattern2 = Pattern.compile(
-		"\n(\t*)/>\n\n(\t*)</[a-z-]*:[a-z-]*>\n");
+		"\n(\t*)/>\n\n(\t*)</\\w.*>(\n|$)");
 	private final Pattern _emptyLineInNestedTagsPattern3 = Pattern.compile(
-		"\n(\t*)</[a-z-]*:[a-z-]*>\n\n(\t*)</[a-z-]*:[a-z-]*>\n");
+		"\n(\t*)<\\w.*>\n\n(\t*)</\\w.*>(\n|$)");
 	private final Pattern _ifTagPattern = Pattern.compile(
 		"^<c:if test=('|\")<%= (.+) %>('|\")>$");
 	private final List<String> _importClassNames = new ArrayList<>();
@@ -1958,7 +1966,7 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 	private final Pattern _missingEmptyLineBetweenDefineOjbectsPattern =
 		Pattern.compile("<.*:defineObjects />\n<.*:defineObjects />\n");
 	private final Pattern _missingEmptyLineBetweenTagsPattern = Pattern.compile(
-		"\n(\t*)</[a-z-]+:([a-z-]+)>\n(\t*)<[a-z-]+");
+		"\n(\t*)</[-\\w]+:([-\\w]+)>\n(\t*)<[-\\w]+");
 	private boolean _moveFrequentlyUsedImportsToCommonInit;
 	private final Pattern _multilineTagPattern = Pattern.compile(
 		"[\n\t]<[-\\w]+:[-\\w]+\n.*?\n\t*/?>(\n|$)", Pattern.DOTALL);
