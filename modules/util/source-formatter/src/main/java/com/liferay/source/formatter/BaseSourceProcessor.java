@@ -120,6 +120,19 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	@Override
+	public void processErrorMessage(String fileName, String message) {
+		List<String> errorMessages = _errorMessagesMap.get(fileName);
+
+		if (errorMessages == null) {
+			errorMessages = new ArrayList<>();
+		}
+
+		errorMessages.add(message);
+
+		_errorMessagesMap.put(fileName, errorMessages);
+	}
+
+	@Override
 	public void setSourceFormatterArgs(
 		SourceFormatterArgs sourceFormatterArgs) {
 
@@ -1758,6 +1771,23 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return level;
 	}
 
+	protected String getLine(String content, int lineCount) {
+		int nextLineStartPos = getLineStartPos(content, lineCount);
+
+		if (nextLineStartPos == -1) {
+			return null;
+		}
+
+		int nextLineEndPos = content.indexOf(
+			CharPool.NEW_LINE, nextLineStartPos);
+
+		if (nextLineEndPos == -1) {
+			return content.substring(nextLineStartPos);
+		}
+
+		return content.substring(nextLineStartPos, nextLineEndPos);
+	}
+
 	protected int getLineCount(String content, int pos) {
 		return StringUtil.count(content, 0, pos, CharPool.NEW_LINE) + 1;
 	}
@@ -1787,6 +1817,20 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return lineLength;
+	}
+
+	protected int getLineStartPos(String content, int lineCount) {
+		int x = 0;
+
+		for (int i = 1; i < lineCount; i++) {
+			x = content.indexOf(CharPool.NEW_LINE, x + 1);
+
+			if (x == -1) {
+				return x;
+			}
+		}
+
+		return x + 1;
 	}
 
 	protected String getMainReleaseVersion() {
@@ -2176,18 +2220,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 	protected void printError(String fileName, String message) {
 		_sourceFormatterHelper.printError(fileName, message);
-	}
-
-	protected void processErrorMessage(String fileName, String message) {
-		List<String> errorMessages = _errorMessagesMap.get(fileName);
-
-		if (errorMessages == null) {
-			errorMessages = new ArrayList<>();
-		}
-
-		errorMessages.add(message);
-
-		_errorMessagesMap.put(fileName, errorMessages);
 	}
 
 	protected void processFormattedFile(

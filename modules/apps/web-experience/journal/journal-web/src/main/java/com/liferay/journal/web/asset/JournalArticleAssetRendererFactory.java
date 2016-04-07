@@ -114,7 +114,6 @@ public class JournalArticleAssetRendererFactory
 			getJournalArticleAssetRenderer(article);
 
 		journalArticleAssetRenderer.setAssetRendererType(type);
-		journalArticleAssetRenderer.setServletContext(_servletContext);
 
 		return journalArticleAssetRenderer;
 	}
@@ -263,6 +262,7 @@ public class JournalArticleAssetRendererFactory
 			_fieldsToDDMFormValuesConverter);
 		journalArticleAssetRenderer.setJournalContent(_journalContent);
 		journalArticleAssetRenderer.setJournalConverter(_journalConverter);
+		journalArticleAssetRenderer.setServletContext(_servletContext);
 
 		return journalArticleAssetRenderer;
 	}
