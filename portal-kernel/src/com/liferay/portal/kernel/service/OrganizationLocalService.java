@@ -213,8 +213,7 @@ public interface OrganizationLocalService extends BaseLocalService,
 	public Organization addOrganization(long userId, long parentOrganizationId,
 		java.lang.String name, java.lang.String type, long regionId,
 		long countryId, long statusId, java.lang.String comments, boolean site,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Creates a new organization with the primary key. Does not add the organization to the database.
@@ -342,9 +341,7 @@ public interface OrganizationLocalService extends BaseLocalService,
 		long parentOrganizationId, java.lang.String name,
 		java.lang.String type, long regionId, long countryId, long statusId,
 		java.lang.String comments, boolean logo, byte[] logoBytes,
-		boolean site,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		boolean site, ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Updates the organization.
@@ -367,15 +364,14 @@ public interface OrganizationLocalService extends BaseLocalService,
 	attributes for the organization.
 	* @return the organization
 	* @deprecated As of 7.0.0, replaced by {@link #updateOrganization(long,
-	long, long, String, String, long, long, long, String, boolean,
-	byte[], boolean, ServiceContext)}
+	long, long, String, String, long, long, long, String,
+	boolean, byte[], boolean, ServiceContext)}
 	*/
 	@java.lang.Deprecated
 	public Organization updateOrganization(long companyId, long organizationId,
 		long parentOrganizationId, java.lang.String name,
 		java.lang.String type, long regionId, long countryId, long statusId,
-		java.lang.String comments, boolean site,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		java.lang.String comments, boolean site, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -1066,7 +1062,7 @@ public interface OrganizationLocalService extends BaseLocalService,
 	public void addGroupOrganization(long groupId, long organizationId);
 
 	public void addGroupOrganizations(long groupId,
-		List<Organization> Organizations);
+		List<Organization> organizations);
 
 	public void addGroupOrganizations(long groupId, long[] organizationIds);
 
@@ -1095,7 +1091,7 @@ public interface OrganizationLocalService extends BaseLocalService,
 	public void addUserOrganization(long userId, long organizationId);
 
 	public void addUserOrganizations(long userId,
-		List<Organization> Organizations);
+		List<Organization> organizations);
 
 	public void addUserOrganizations(long userId, long[] organizationIds);
 
@@ -1108,7 +1104,7 @@ public interface OrganizationLocalService extends BaseLocalService,
 	public void deleteGroupOrganization(long groupId, long organizationId);
 
 	public void deleteGroupOrganizations(long groupId,
-		List<Organization> Organizations);
+		List<Organization> organizations);
 
 	public void deleteGroupOrganizations(long groupId, long[] organizationIds);
 
@@ -1124,7 +1120,7 @@ public interface OrganizationLocalService extends BaseLocalService,
 	public void deleteUserOrganization(long userId, long organizationId);
 
 	public void deleteUserOrganizations(long userId,
-		List<Organization> Organizations);
+		List<Organization> organizations);
 
 	public void deleteUserOrganizations(long userId, long[] organizationIds);
 

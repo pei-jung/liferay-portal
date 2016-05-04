@@ -456,8 +456,8 @@ public abstract class AssetTagLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addAssetEntryAssetTags(long entryId, List<AssetTag> AssetTags) {
-		assetEntryPersistence.addAssetTags(entryId, AssetTags);
+	public void addAssetEntryAssetTags(long entryId, List<AssetTag> assetTags) {
+		assetEntryPersistence.addAssetTags(entryId, assetTags);
 	}
 
 	/**
@@ -491,8 +491,8 @@ public abstract class AssetTagLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteAssetEntryAssetTags(long entryId, List<AssetTag> AssetTags) {
-		assetEntryPersistence.removeAssetTags(entryId, AssetTags);
+	public void deleteAssetEntryAssetTags(long entryId, List<AssetTag> assetTags) {
+		assetEntryPersistence.removeAssetTags(entryId, assetTags);
 	}
 
 	/**
@@ -945,7 +945,7 @@ public abstract class AssetTagLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.asset.kernel.service.AssetTagLocalService.class)
+	@BeanReference(type = AssetTagLocalService.class)
 	protected AssetTagLocalService assetTagLocalService;
 	@BeanReference(type = AssetTagPersistence.class)
 	protected AssetTagPersistence assetTagPersistence;

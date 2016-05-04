@@ -177,7 +177,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	public boolean sendPassword(long companyId, java.lang.String emailAddress,
 		java.lang.String fromName, java.lang.String fromAddress,
 		java.lang.String subject, java.lang.String body,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.sendPassword(companyId, emailAddress,
 			fromName, fromAddress, subject, body, serviceContext);
@@ -391,7 +391,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		int birthdayMonth, int birthdayDay, int birthdayYear,
 		java.lang.String jobTitle, long[] groupIds, long[] organizationIds,
 		long[] roleIds, long[] userGroupIds, boolean sendEmail,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.addUser(creatorUserId, companyId,
 			autoPassword, password1, password2, autoScreenName, screenName,
@@ -459,7 +459,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		int birthdayMonth, int birthdayDay, int birthdayYear,
 		java.lang.String jobTitle, long[] groupIds, long[] organizationIds,
 		long[] roleIds, long[] userGroupIds, boolean sendEmail,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.addUserWithWorkflow(creatorUserId, companyId,
 			autoPassword, password1, password2, autoScreenName, screenName,
@@ -870,8 +870,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	@Override
 	public com.liferay.portal.kernel.model.User updateEmailAddress(
 		long userId, java.lang.String password, java.lang.String emailAddress1,
-		java.lang.String emailAddress2,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		java.lang.String emailAddress2, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.updateEmailAddress(userId, password,
 			emailAddress1, emailAddress2, serviceContext);
@@ -968,8 +967,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		java.lang.String lastName, long prefixId, long suffixId, boolean male,
 		int birthdayMonth, int birthdayDay, int birthdayYear,
 		java.lang.String jobTitle, boolean updateUserInformation,
-		boolean sendEmail,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean sendEmail, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.updateIncompleteUser(creatorUserId, companyId,
 			autoPassword, password1, password2, autoScreenName, screenName,
@@ -1244,8 +1242,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public com.liferay.portal.kernel.model.User updateStatus(long userId,
-		int status,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		int status, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.updateStatus(userId, status, serviceContext);
 	}
@@ -1330,8 +1327,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		java.lang.String twitterSn, java.lang.String jobTitle, long[] groupIds,
 		long[] organizationIds, long[] roleIds,
 		java.util.List<com.liferay.portal.kernel.model.UserGroupRole> userGroupRoles,
-		long[] userGroupIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long[] userGroupIds, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.updateUser(userId, oldPassword, newPassword1,
 			newPassword2, passwordReset, reminderQueryQuestion,
@@ -1415,8 +1411,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		java.lang.String twitterSn, java.lang.String jobTitle, long[] groupIds,
 		long[] organizationIds, long[] roleIds,
 		java.util.List<com.liferay.portal.kernel.model.UserGroupRole> userGroupRoles,
-		long[] userGroupIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long[] userGroupIds, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userLocalService.updateUser(userId, oldPassword, newPassword1,
 			newPassword2, passwordReset, reminderQueryQuestion,
@@ -2728,9 +2723,9 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void addGroupUsers(long groupId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users)
+		java.util.List<com.liferay.portal.kernel.model.User> users)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_userLocalService.addGroupUsers(groupId, Users);
+		_userLocalService.addGroupUsers(groupId, users);
 	}
 
 	/**
@@ -2758,9 +2753,9 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void addOrganizationUsers(long organizationId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users)
+		java.util.List<com.liferay.portal.kernel.model.User> users)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_userLocalService.addOrganizationUsers(organizationId, Users);
+		_userLocalService.addOrganizationUsers(organizationId, users);
 	}
 
 	/**
@@ -2800,9 +2795,9 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void addRoleUsers(long roleId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users)
+		java.util.List<com.liferay.portal.kernel.model.User> users)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_userLocalService.addRoleUsers(roleId, Users);
+		_userLocalService.addRoleUsers(roleId, users);
 	}
 
 	/**
@@ -2830,9 +2825,9 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void addTeamUsers(long teamId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users)
+		java.util.List<com.liferay.portal.kernel.model.User> users)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_userLocalService.addTeamUsers(teamId, Users);
+		_userLocalService.addTeamUsers(teamId, users);
 	}
 
 	/**
@@ -2860,9 +2855,9 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void addUserGroupUsers(long userGroupId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users)
+		java.util.List<com.liferay.portal.kernel.model.User> users)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_userLocalService.addUserGroupUsers(userGroupId, Users);
+		_userLocalService.addUserGroupUsers(userGroupId, users);
 	}
 
 	/**
@@ -2991,8 +2986,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void completeUserRegistration(
-		com.liferay.portal.kernel.model.User user,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.model.User user, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_userLocalService.completeUserRegistration(user, serviceContext);
 	}
@@ -3010,8 +3004,8 @@ public class UserLocalServiceWrapper implements UserLocalService,
 
 	@Override
 	public void deleteGroupUsers(long groupId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users) {
-		_userLocalService.deleteGroupUsers(groupId, Users);
+		java.util.List<com.liferay.portal.kernel.model.User> users) {
+		_userLocalService.deleteGroupUsers(groupId, users);
 	}
 
 	@Override
@@ -3032,8 +3026,8 @@ public class UserLocalServiceWrapper implements UserLocalService,
 
 	@Override
 	public void deleteOrganizationUsers(long organizationId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users) {
-		_userLocalService.deleteOrganizationUsers(organizationId, Users);
+		java.util.List<com.liferay.portal.kernel.model.User> users) {
+		_userLocalService.deleteOrganizationUsers(organizationId, users);
 	}
 
 	@Override
@@ -3073,8 +3067,8 @@ public class UserLocalServiceWrapper implements UserLocalService,
 
 	@Override
 	public void deleteRoleUsers(long roleId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users) {
-		_userLocalService.deleteRoleUsers(roleId, Users);
+		java.util.List<com.liferay.portal.kernel.model.User> users) {
+		_userLocalService.deleteRoleUsers(roleId, users);
 	}
 
 	@Override
@@ -3095,8 +3089,8 @@ public class UserLocalServiceWrapper implements UserLocalService,
 
 	@Override
 	public void deleteTeamUsers(long teamId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users) {
-		_userLocalService.deleteTeamUsers(teamId, Users);
+		java.util.List<com.liferay.portal.kernel.model.User> users) {
+		_userLocalService.deleteTeamUsers(teamId, users);
 	}
 
 	@Override
@@ -3125,8 +3119,8 @@ public class UserLocalServiceWrapper implements UserLocalService,
 
 	@Override
 	public void deleteUserGroupUsers(long userGroupId,
-		java.util.List<com.liferay.portal.kernel.model.User> Users) {
-		_userLocalService.deleteUserGroupUsers(userGroupId, Users);
+		java.util.List<com.liferay.portal.kernel.model.User> users) {
+		_userLocalService.deleteUserGroupUsers(userGroupId, users);
 	}
 
 	@Override
@@ -3146,8 +3140,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	@Override
 	public void sendEmailAddressVerification(
 		com.liferay.portal.kernel.model.User user,
-		java.lang.String emailAddress,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		java.lang.String emailAddress, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_userLocalService.sendEmailAddressVerification(user, emailAddress,
 			serviceContext);
@@ -3208,7 +3201,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void unsetGroupUsers(long groupId, long[] userIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_userLocalService.unsetGroupUsers(groupId, userIds, serviceContext);
 	}
@@ -3313,7 +3306,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void updateGroups(long userId, long[] newGroupIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_userLocalService.updateGroups(userId, newGroupIds, serviceContext);
 	}
@@ -3329,7 +3322,7 @@ public class UserLocalServiceWrapper implements UserLocalService,
 	*/
 	@Override
 	public void updateOrganizations(long userId, long[] newOrganizationIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_userLocalService.updateOrganizations(userId, newOrganizationIds,
 			serviceContext);

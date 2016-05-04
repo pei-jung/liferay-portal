@@ -509,8 +509,8 @@ public abstract class DLFolderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	@Override
 	public void addDLFileEntryTypeDLFolders(long fileEntryTypeId,
-		List<DLFolder> DLFolders) {
-		dlFileEntryTypePersistence.addDLFolders(fileEntryTypeId, DLFolders);
+		List<DLFolder> dlFolders) {
+		dlFileEntryTypePersistence.addDLFolders(fileEntryTypeId, dlFolders);
 	}
 
 	/**
@@ -548,8 +548,8 @@ public abstract class DLFolderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	@Override
 	public void deleteDLFileEntryTypeDLFolders(long fileEntryTypeId,
-		List<DLFolder> DLFolders) {
-		dlFileEntryTypePersistence.removeDLFolders(fileEntryTypeId, DLFolders);
+		List<DLFolder> dlFolders) {
+		dlFileEntryTypePersistence.removeDLFolders(fileEntryTypeId, dlFolders);
 	}
 
 	/**
@@ -1422,7 +1422,7 @@ public abstract class DLFolderLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.document.library.kernel.service.DLFolderLocalService.class)
+	@BeanReference(type = DLFolderLocalService.class)
 	protected DLFolderLocalService dlFolderLocalService;
 	@BeanReference(type = DLFolderPersistence.class)
 	protected DLFolderPersistence dlFolderPersistence;

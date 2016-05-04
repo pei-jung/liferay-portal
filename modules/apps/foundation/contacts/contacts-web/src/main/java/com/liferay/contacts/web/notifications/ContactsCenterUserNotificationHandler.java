@@ -25,13 +25,20 @@ import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalService;
+import com.liferay.portal.kernel.util.AggregateResourceBundleLoader;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.language.LanguageResources;
 import com.liferay.social.kernel.model.SocialRelationConstants;
 import com.liferay.social.kernel.model.SocialRequest;
 import com.liferay.social.kernel.model.SocialRequestConstants;
 import com.liferay.social.kernel.service.SocialRequestLocalService;
+
+import java.util.ResourceBundle;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletURL;
@@ -77,6 +84,12 @@ public class ContactsCenterUserNotificationHandler
 			return null;
 		}
 
+		if (socialRequest.getStatus() !=
+				SocialRequestConstants.STATUS_PENDING) {
+
+			return StringPool.BLANK;
+		}
+
 		String title = StringPool.BLANK;
 
 		if (socialRequest.getType() ==
@@ -85,9 +98,14 @@ public class ContactsCenterUserNotificationHandler
 			String creatorUserName = getUserNameLink(
 				socialRequest.getUserId(), serviceContext);
 
-			title = serviceContext.translate(
+			ResourceBundle resourceBundle =
+				_resourceBundleLoader.loadResourceBundle(
+					LocaleUtil.toLanguageId(serviceContext.getLocale()));
+
+			title = ResourceBundleUtil.getString(
+				resourceBundle, serviceContext.getLocale(),
 				"request-social-networking-summary-add-connection",
-				creatorUserName);
+				new Object[] {creatorUserName});
 		}
 
 		LiferayPortletResponse liferayPortletResponse =
@@ -166,6 +184,18 @@ public class ContactsCenterUserNotificationHandler
 			return StringPool.BLANK;
 		}
 	}
+
+	@Reference(
+		target = "(bundle.symbolic.name=com.liferay.contacts.web)", unbind = "-"
+	)
+	protected void setResourceBundleLoader(
+		ResourceBundleLoader resourceBundleLoader) {
+
+		_resourceBundleLoader = new AggregateResourceBundleLoader(
+			resourceBundleLoader, LanguageResources.RESOURCE_BUNDLE_LOADER);
+	}
+
+	private ResourceBundleLoader _resourceBundleLoader;
 
 	@Reference
 	private SocialRequestLocalService _socialRequestLocalService;

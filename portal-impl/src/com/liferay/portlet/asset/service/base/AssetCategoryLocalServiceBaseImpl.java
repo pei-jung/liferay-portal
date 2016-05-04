@@ -466,8 +466,8 @@ public abstract class AssetCategoryLocalServiceBaseImpl
 	 */
 	@Override
 	public void addAssetEntryAssetCategories(long entryId,
-		List<AssetCategory> AssetCategories) {
-		assetEntryPersistence.addAssetCategories(entryId, AssetCategories);
+		List<AssetCategory> assetCategories) {
+		assetEntryPersistence.addAssetCategories(entryId, assetCategories);
 	}
 
 	/**
@@ -503,8 +503,8 @@ public abstract class AssetCategoryLocalServiceBaseImpl
 	 */
 	@Override
 	public void deleteAssetEntryAssetCategories(long entryId,
-		List<AssetCategory> AssetCategories) {
-		assetEntryPersistence.removeAssetCategories(entryId, AssetCategories);
+		List<AssetCategory> assetCategories) {
+		assetEntryPersistence.removeAssetCategories(entryId, assetCategories);
 	}
 
 	/**
@@ -1034,7 +1034,7 @@ public abstract class AssetCategoryLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.asset.kernel.service.AssetCategoryLocalService.class)
+	@BeanReference(type = AssetCategoryLocalService.class)
 	protected AssetCategoryLocalService assetCategoryLocalService;
 	@BeanReference(type = AssetCategoryPersistence.class)
 	protected AssetCategoryPersistence assetCategoryPersistence;

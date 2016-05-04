@@ -50,6 +50,7 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.search.FacetedSearcher;
 import com.liferay.portal.kernel.search.Hits;
@@ -66,7 +67,6 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -230,7 +230,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			company = companyPersistence.create(companyId);
 
 			try {
-				company.setKey(Base64.objectToString(Encryptor.generateKey()));
+				company.setKey(Encryptor.serializeKey(Encryptor.generateKey()));
 			}
 			catch (EncryptorException ee) {
 				throw new SystemException(ee);
@@ -476,7 +476,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		}
 
 		try {
-			company.setKey(Base64.objectToString(Encryptor.generateKey()));
+			company.setKey(Encryptor.serializeKey(Encryptor.generateKey()));
 		}
 		catch (EncryptorException ee) {
 			throw new SystemException(ee);
@@ -1329,6 +1329,15 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 		roleActionableDynamicQuery.performActions();
 
+		// User groups
+
+		DeleteUserGroupActionableDynamicQuery
+			deleteUserGroupActionableDynamicQuery =
+				new DeleteUserGroupActionableDynamicQuery(
+					company.getCompanyId());
+
+		deleteUserGroupActionableDynamicQuery.performActions();
+
 		// Password policy
 
 		passwordPolicyLocalService.deleteNondefaultPasswordPolicies(companyId);
@@ -1720,6 +1729,34 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		private ActionableDynamicQuery _actionableDynamicQuery;
 		private long _parentOrganizationId =
 			OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID;
+
+	}
+
+	protected class DeleteUserGroupActionableDynamicQuery {
+
+		protected DeleteUserGroupActionableDynamicQuery(long companyId) {
+			_actionableDynamicQuery =
+				userGroupLocalService.getActionableDynamicQuery();
+
+			_actionableDynamicQuery.setCompanyId(companyId);
+			_actionableDynamicQuery.setPerformActionMethod(
+				new ActionableDynamicQuery.PerformActionMethod<UserGroup>() {
+
+					@Override
+					public void performAction(UserGroup userGroup)
+						throws PortalException {
+
+						userGroupLocalService.deleteUserGroup(userGroup);
+					}
+
+				});
+		}
+
+		protected void performActions() throws PortalException {
+			_actionableDynamicQuery.performActions();
+		}
+
+		private ActionableDynamicQuery _actionableDynamicQuery;
 
 	}
 

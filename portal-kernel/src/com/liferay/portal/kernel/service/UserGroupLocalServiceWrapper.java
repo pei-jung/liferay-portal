@@ -160,7 +160,7 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	@Override
 	public com.liferay.portal.kernel.model.UserGroup addUserGroup(long userId,
 		long companyId, java.lang.String name, java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userGroupLocalService.addUserGroup(userId, companyId, name,
 			description, serviceContext);
@@ -324,8 +324,7 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	@Override
 	public com.liferay.portal.kernel.model.UserGroup updateUserGroup(
 		long companyId, long userGroupId, java.lang.String name,
-		java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		java.lang.String description, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _userGroupLocalService.updateUserGroup(companyId, userGroupId,
 			name, description, serviceContext);
@@ -817,8 +816,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 
 	@Override
 	public void addGroupUserGroups(long groupId,
-		java.util.List<com.liferay.portal.kernel.model.UserGroup> UserGroups) {
-		_userGroupLocalService.addGroupUserGroups(groupId, UserGroups);
+		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups) {
+		_userGroupLocalService.addGroupUserGroups(groupId, userGroups);
 	}
 
 	@Override
@@ -839,8 +838,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 
 	@Override
 	public void addTeamUserGroups(long teamId,
-		java.util.List<com.liferay.portal.kernel.model.UserGroup> UserGroups) {
-		_userGroupLocalService.addTeamUserGroups(teamId, UserGroups);
+		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups) {
+		_userGroupLocalService.addTeamUserGroups(teamId, userGroups);
 	}
 
 	@Override
@@ -861,8 +860,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 
 	@Override
 	public void addUserUserGroups(long userId,
-		java.util.List<com.liferay.portal.kernel.model.UserGroup> UserGroups) {
-		_userGroupLocalService.addUserUserGroups(userId, UserGroups);
+		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups) {
+		_userGroupLocalService.addUserUserGroups(userId, userGroups);
 	}
 
 	@Override
@@ -941,8 +940,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 
 	@Override
 	public void deleteGroupUserGroups(long groupId,
-		java.util.List<com.liferay.portal.kernel.model.UserGroup> UserGroups) {
-		_userGroupLocalService.deleteGroupUserGroups(groupId, UserGroups);
+		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups) {
+		_userGroupLocalService.deleteGroupUserGroups(groupId, userGroups);
 	}
 
 	@Override
@@ -963,8 +962,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 
 	@Override
 	public void deleteTeamUserGroups(long teamId,
-		java.util.List<com.liferay.portal.kernel.model.UserGroup> UserGroups) {
-		_userGroupLocalService.deleteTeamUserGroups(teamId, UserGroups);
+		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups) {
+		_userGroupLocalService.deleteTeamUserGroups(teamId, userGroups);
 	}
 
 	@Override
@@ -991,8 +990,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 
 	@Override
 	public void deleteUserUserGroups(long userId,
-		java.util.List<com.liferay.portal.kernel.model.UserGroup> UserGroups) {
-		_userGroupLocalService.deleteUserUserGroups(userId, UserGroups);
+		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups) {
+		_userGroupLocalService.deleteUserUserGroups(userId, userGroups);
 	}
 
 	@Override

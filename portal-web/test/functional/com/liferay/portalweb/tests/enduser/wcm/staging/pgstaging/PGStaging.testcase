@@ -1,4 +1,5 @@
 <definition component-name="portal-staging">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Staging" />
 
 	<set-up>
@@ -999,18 +1000,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_BLOGS" />
 			<var name="permissionNavigationValue" value="Blogs" />
 			<var name="roleName" value="Organization User" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#removePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Manage Pages" />
-			<var name="permissionNavigationKey" value="SITE_ADMIN_PAGES_SITE_PAGES" />
-			<var name="permissionNavigationValue" value="Site Pages" />
-			<var name="roleName" value="Organization User" />
+			<var name="roleType" value="Organization" />
 		</execute>
 	</command>
 
@@ -1191,6 +1181,49 @@
 		</execute>
 
 		<execute function="Pause" locator1="5000" />
+	</command>
+
+	<command name="PublishPrivatePage" priority="5">
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesPublishing">
+			<var name="portlet" value="Staging" />
+		</execute>
+
+		<execute macro="Staging#activateStagingCP">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Navigator#gotoStagedView" />
+
+		<execute macro="Page#add">
+			<var name="pageName" value="Private Staging Page" />
+			<var name="sitePagePrivacy" value="Private" />
+		</execute>
+
+		<execute macro="Staging#gotoPublishToLive" />
+
+		<execute macro="Staging#configurePublishToLive">
+			<var name="checkPageName" value="Private Pages" />
+		</execute>
+
+		<execute macro="Staging#publishToLive" />
+
+		<execute macro="ProductMenu#gotoPrivatePages" />
+
+		<execute macro="Page#view">
+			<var name="pageName" value="Private Staging Page" />
+		</execute>
 	</command>
 
 	<command name="PublishWCIncludingTextsAndImages" priority="3">

@@ -16,6 +16,10 @@ package com.liferay.portal.upgrade;
 
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ReleaseInfo;
+import com.liferay.portal.upgrade.v7_0_1.UpgradeCompany;
+import com.liferay.portal.upgrade.v7_0_1.UpgradeMessageBoards;
+import com.liferay.portal.upgrade.v7_0_1.UpgradeModules;
+import com.liferay.portal.upgrade.v7_0_1.UpgradeSchema;
 
 /**
  * @author Brian Wing Shun Chan
@@ -29,6 +33,12 @@ public class UpgradeProcess_7_0_1 extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
+		upgrade(UpgradeSchema.class);
+
+		upgrade(UpgradeCompany.class);
+		upgrade(UpgradeMessageBoards.class);
+		upgrade(UpgradeModules.class);
+
 		clearIndexesCache();
 	}
 

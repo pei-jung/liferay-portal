@@ -909,6 +909,10 @@ public class PortletImpl extends PortletBaseImpl {
 	public FriendlyURLMapper getFriendlyURLMapperInstance() {
 		PortletBag portletBag = PortletBagPool.get(getRootPortletId());
 
+		if (portletBag == null) {
+			return null;
+		}
+
 		FriendlyURLMapperTracker friendlyURLMapperTracker =
 			portletBag.getFriendlyURLMapperTracker();
 
@@ -922,7 +926,18 @@ public class PortletImpl extends PortletBaseImpl {
 	 */
 	@Override
 	public String getFriendlyURLMapping() {
-		return _friendlyURLMapping;
+		if (Validator.isNotNull(_friendlyURLMapping)) {
+			return _friendlyURLMapping;
+		}
+
+		FriendlyURLMapper friendlyURLMapperInstance =
+			getFriendlyURLMapperInstance();
+
+		if (friendlyURLMapperInstance == null) {
+			return null;
+		}
+
+		return friendlyURLMapperInstance.getMapping();
 	}
 
 	/**
@@ -2060,9 +2075,7 @@ public class PortletImpl extends PortletBaseImpl {
 	 * @return the user notification handler instances of the portlet
 	 */
 	@Override
-	public List<UserNotificationHandler>
-		getUserNotificationHandlerInstances() {
-
+	public List<UserNotificationHandler> getUserNotificationHandlerInstances() {
 		if (_userNotificationHandlerClasses.isEmpty()) {
 			return null;
 		}

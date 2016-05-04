@@ -161,8 +161,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 	*/
 	public UserGroup addUserGroup(long userId, long companyId,
 		java.lang.String name, java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Creates a new user group with the primary key. Does not add the user group to the database.
@@ -284,8 +283,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 	*/
 	public UserGroup updateUserGroup(long companyId, long userGroupId,
 		java.lang.String name, java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public BaseModelSearchResult<UserGroup> searchUserGroups(long companyId,
@@ -654,7 +652,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 
 	public void addGroupUserGroup(long groupId, long userGroupId);
 
-	public void addGroupUserGroups(long groupId, List<UserGroup> UserGroups);
+	public void addGroupUserGroups(long groupId, List<UserGroup> userGroups);
 
 	public void addGroupUserGroups(long groupId, long[] userGroupIds);
 
@@ -662,7 +660,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 
 	public void addTeamUserGroup(long teamId, long userGroupId);
 
-	public void addTeamUserGroups(long teamId, List<UserGroup> UserGroups);
+	public void addTeamUserGroups(long teamId, List<UserGroup> userGroups);
 
 	public void addTeamUserGroups(long teamId, long[] userGroupIds);
 
@@ -670,7 +668,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 
 	public void addUserUserGroup(long userId, long userGroupId);
 
-	public void addUserUserGroups(long userId, List<UserGroup> UserGroups);
+	public void addUserUserGroups(long userId, List<UserGroup> userGroups);
 
 	public void addUserUserGroups(long userId, long[] userGroupIds);
 
@@ -718,7 +716,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 
 	public void deleteGroupUserGroup(long groupId, long userGroupId);
 
-	public void deleteGroupUserGroups(long groupId, List<UserGroup> UserGroups);
+	public void deleteGroupUserGroups(long groupId, List<UserGroup> userGroups);
 
 	public void deleteGroupUserGroups(long groupId, long[] userGroupIds);
 
@@ -726,7 +724,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 
 	public void deleteTeamUserGroup(long teamId, long userGroupId);
 
-	public void deleteTeamUserGroups(long teamId, List<UserGroup> UserGroups);
+	public void deleteTeamUserGroups(long teamId, List<UserGroup> userGroups);
 
 	public void deleteTeamUserGroups(long teamId, long[] userGroupIds);
 
@@ -736,7 +734,7 @@ public interface UserGroupLocalService extends BaseLocalService,
 
 	public void deleteUserUserGroup(long userId, long userGroupId);
 
-	public void deleteUserUserGroups(long userId, List<UserGroup> UserGroups);
+	public void deleteUserUserGroups(long userId, List<UserGroup> userGroups);
 
 	public void deleteUserUserGroups(long userId, long[] userGroupIds);
 

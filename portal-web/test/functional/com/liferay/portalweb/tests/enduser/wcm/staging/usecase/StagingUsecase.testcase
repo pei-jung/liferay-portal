@@ -1,4 +1,5 @@
 <definition component-name="portal-staging" extends="PGStaging" ignore-command-names="ActivateDeactivateRemoteStaging,ActivateDeactivateStagingLocalLiveDM,ActivateRemoteStaging,ActivateStaging,ActivateStagingSiteWithPublicAndPrivatePage,AddDMDocumentStagingLocalLive,AddEventRepeatDaily,AddPageVariation,AddPageWithPageVersioningEnabled,AddSitePagesVariation,AssertEditWebContentStaging,AssertExportApplications,AssertNoEditLink,BlogsOrganizationWorkflowStaging,DeactivateStaging,DeleteDMDocument,LayoutScope,StagingPublishPortlet,PublishWCViaRemoteStaging,PublishWCIncludingTextsAndImages,PublishWCWithPagesVariationViaRemoteStaging">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Staging" />
 
 	<var name="siteName" value="Site Name" />
@@ -565,6 +566,97 @@
 
 		<execute macro="Portlet#viewSpecificPG">
 			<var name="portletName" value="${portletName} Custom" />
+		</execute>
+	</command>
+
+	<command name="PublishRenamedTags" priority="4">
+		<execute macro="Navigator#gotoSitePage">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="Web Content Display" />
+		</execute>
+
+		<execute macro="WebContent#addPGViaWCD">
+			<var name="webContentContent" value="WebContent Content" />
+			<var name="webContentTitle" value="WebContent Title" />
+		</execute>
+
+		<execute macro="Navigator#gotoSitePage">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
+
+		<execute macro="WebContent#addTagPGViaWCD">
+			<var name="tagName" value="tag name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesPublishing">
+			<var name="portlet" value="Staging" />
+		</execute>
+
+		<execute macro="Staging#activateStagingCP">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Navigator#gotoStagedSitePage">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Staging#gotoPublishToLive" />
+
+		<execute macro="Staging#publishToLive" />
+
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Tags" />
+		</execute>
+
+		<execute macro="Tag#viewCP">
+			<var name="tagName" value="tag name" />
+		</execute>
+
+		<execute macro="Navigator#gotoStagedSitePage">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Tags" />
+		</execute>
+
+		<execute macro="Tag#editCP">
+			<var name="tagName" value="tag name" />
+			<var name="tagNameEdit" value="tag name edit" />
+		</execute>
+
+		<execute macro="Navigator#gotoStagedSitePage">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Staging#gotoPublishToLive" />
+
+		<execute macro="Staging#publishToLive" />
+
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Tags" />
+		</execute>
+
+		<execute macro="Tag#viewCP">
+			<var name="tagName" value="tag name edit" />
 		</execute>
 	</command>
 
@@ -3595,7 +3687,7 @@
 		<execute function="AssertElementNotPresent" locator1="PagesConfiguration#CONTENT_CHOOSE_CONTENT_CONTENT_CHECKBOX" />
 
 		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Public Pages" />
+			<var name="pageName" value="Staging Test Page" />
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -3721,7 +3813,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#HISTORY_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#STAGING_BAR_VERTICAL_ELLIPSIS" />
 
 		<execute function="Click" locator1="Staging#HISTORY_BUTTON" />
 

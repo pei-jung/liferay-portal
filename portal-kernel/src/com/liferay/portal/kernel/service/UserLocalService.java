@@ -183,8 +183,7 @@ public interface UserLocalService extends BaseLocalService,
 	public boolean sendPassword(long companyId, java.lang.String emailAddress,
 		java.lang.String fromName, java.lang.String fromAddress,
 		java.lang.String subject, java.lang.String body,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Sends a password notification email to the user matching the email
@@ -357,8 +356,7 @@ public interface UserLocalService extends BaseLocalService,
 		int birthdayMonth, int birthdayDay, int birthdayYear,
 		java.lang.String jobTitle, long[] groupIds, long[] organizationIds,
 		long[] roleIds, long[] userGroupIds, boolean sendEmail,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Adds a user with workflow.
@@ -416,8 +414,7 @@ public interface UserLocalService extends BaseLocalService,
 		int birthdayMonth, int birthdayDay, int birthdayYear,
 		java.lang.String jobTitle, long[] groupIds, long[] organizationIds,
 		long[] roleIds, long[] userGroupIds, boolean sendEmail,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Creates a new user with the primary key. Does not add the user to the database.
@@ -731,8 +728,7 @@ public interface UserLocalService extends BaseLocalService,
 	*/
 	public User updateEmailAddress(long userId, java.lang.String password,
 		java.lang.String emailAddress1, java.lang.String emailAddress2,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Updates whether the user has verified email address.
@@ -810,8 +806,7 @@ public interface UserLocalService extends BaseLocalService,
 		java.lang.String lastName, long prefixId, long suffixId, boolean male,
 		int birthdayMonth, int birthdayDay, int birthdayYear,
 		java.lang.String jobTitle, boolean updateUserInformation,
-		boolean sendEmail,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean sendEmail, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -1010,8 +1005,7 @@ public interface UserLocalService extends BaseLocalService,
 	* @return the user
 	*/
 	public User updateStatus(long userId, int status,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Updates the user in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -1088,8 +1082,7 @@ public interface UserLocalService extends BaseLocalService,
 		java.lang.String twitterSn, java.lang.String jobTitle, long[] groupIds,
 		long[] organizationIds, long[] roleIds,
 		List<UserGroupRole> userGroupRoles, long[] userGroupIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Updates the user.
@@ -1161,8 +1154,7 @@ public interface UserLocalService extends BaseLocalService,
 		java.lang.String twitterSn, java.lang.String jobTitle, long[] groupIds,
 		long[] organizationIds, long[] roleIds,
 		List<UserGroupRole> userGroupRoles, long[] userGroupIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public BaseModelSearchResult<User> searchUsers(long companyId,
@@ -2175,7 +2167,7 @@ public interface UserLocalService extends BaseLocalService,
 	/**
 	* @throws PortalException
 	*/
-	public void addGroupUsers(long groupId, List<User> Users)
+	public void addGroupUsers(long groupId, List<User> users)
 		throws PortalException;
 
 	/**
@@ -2191,7 +2183,7 @@ public interface UserLocalService extends BaseLocalService,
 	/**
 	* @throws PortalException
 	*/
-	public void addOrganizationUsers(long organizationId, List<User> Users)
+	public void addOrganizationUsers(long organizationId, List<User> users)
 		throws PortalException;
 
 	/**
@@ -2216,7 +2208,7 @@ public interface UserLocalService extends BaseLocalService,
 	/**
 	* @throws PortalException
 	*/
-	public void addRoleUsers(long roleId, List<User> Users)
+	public void addRoleUsers(long roleId, List<User> users)
 		throws PortalException;
 
 	/**
@@ -2232,7 +2224,7 @@ public interface UserLocalService extends BaseLocalService,
 	/**
 	* @throws PortalException
 	*/
-	public void addTeamUsers(long teamId, List<User> Users)
+	public void addTeamUsers(long teamId, List<User> users)
 		throws PortalException;
 
 	/**
@@ -2248,7 +2240,7 @@ public interface UserLocalService extends BaseLocalService,
 	/**
 	* @throws PortalException
 	*/
-	public void addUserGroupUsers(long userGroupId, List<User> Users)
+	public void addUserGroupUsers(long userGroupId, List<User> users)
 		throws PortalException;
 
 	/**
@@ -2334,14 +2326,13 @@ public interface UserLocalService extends BaseLocalService,
 	<code>sendEmail</code> to <code>true</code>.
 	*/
 	public void completeUserRegistration(User user,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	public void deleteGroupUser(long groupId, User user);
 
 	public void deleteGroupUser(long groupId, long userId);
 
-	public void deleteGroupUsers(long groupId, List<User> Users);
+	public void deleteGroupUsers(long groupId, List<User> users);
 
 	public void deleteGroupUsers(long groupId, long[] userIds);
 
@@ -2349,7 +2340,7 @@ public interface UserLocalService extends BaseLocalService,
 
 	public void deleteOrganizationUser(long organizationId, long userId);
 
-	public void deleteOrganizationUsers(long organizationId, List<User> Users);
+	public void deleteOrganizationUsers(long organizationId, List<User> users);
 
 	public void deleteOrganizationUsers(long organizationId, long[] userIds);
 
@@ -2372,7 +2363,7 @@ public interface UserLocalService extends BaseLocalService,
 	public void deleteRoleUser(long roleId, long userId)
 		throws PortalException;
 
-	public void deleteRoleUsers(long roleId, List<User> Users);
+	public void deleteRoleUsers(long roleId, List<User> users);
 
 	public void deleteRoleUsers(long roleId, long[] userIds);
 
@@ -2380,7 +2371,7 @@ public interface UserLocalService extends BaseLocalService,
 
 	public void deleteTeamUser(long teamId, long userId);
 
-	public void deleteTeamUsers(long teamId, List<User> Users);
+	public void deleteTeamUsers(long teamId, List<User> users);
 
 	public void deleteTeamUsers(long teamId, long[] userIds);
 
@@ -2396,7 +2387,7 @@ public interface UserLocalService extends BaseLocalService,
 	public void deleteUserGroupUser(long userGroupId, long userId)
 		throws PortalException;
 
-	public void deleteUserGroupUsers(long userGroupId, List<User> Users);
+	public void deleteUserGroupUsers(long userGroupId, List<User> users);
 
 	public void deleteUserGroupUsers(long userGroupId, long[] userIds);
 
@@ -2410,8 +2401,7 @@ public interface UserLocalService extends BaseLocalService,
 	remote host, and agent for the user.
 	*/
 	public void sendEmailAddressVerification(User user,
-		java.lang.String emailAddress,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		java.lang.String emailAddress, ServiceContext serviceContext)
 		throws PortalException;
 
 	public void setGroupUsers(long groupId, long[] userIds);
@@ -2450,8 +2440,7 @@ public interface UserLocalService extends BaseLocalService,
 	<code>null</code>)
 	*/
 	public void unsetGroupUsers(long groupId, long[] userIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Removes the users from the organization.
@@ -2527,8 +2516,7 @@ public interface UserLocalService extends BaseLocalService,
 	<code>null</code>)
 	*/
 	public void updateGroups(long userId, long[] newGroupIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Sets the organizations that the user is in, removing and adding
@@ -2540,8 +2528,7 @@ public interface UserLocalService extends BaseLocalService,
 	user indexing is enabled.
 	*/
 	public void updateOrganizations(long userId, long[] newOrganizationIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Verifies the email address of the ticket.

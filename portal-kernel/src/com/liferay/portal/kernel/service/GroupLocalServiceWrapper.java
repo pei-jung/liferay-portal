@@ -163,7 +163,7 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 		long liveGroupId, java.lang.String name, java.lang.String description,
 		int type, boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean site, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _groupLocalService.addGroup(userId, parentGroupId, className,
 			classPK, liveGroupId, name, description, type, manualMembership,
@@ -178,7 +178,7 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int type, boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean site, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _groupLocalService.addGroup(userId, parentGroupId, className,
 			classPK, liveGroupId, nameMap, descriptionMap, type,
@@ -194,8 +194,7 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int type, boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean site, boolean inheritContent,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean active, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _groupLocalService.addGroup(userId, parentGroupId, className,
 			classPK, liveGroupId, nameMap, descriptionMap, type,
@@ -628,8 +627,7 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 		long parentGroupId, java.lang.String name,
 		java.lang.String description, int type, boolean manualMembership,
 		int membershipRestriction, java.lang.String friendlyURL,
-		boolean inheritContent, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean inheritContent, boolean active, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _groupLocalService.updateGroup(groupId, parentGroupId, name,
 			description, type, manualMembership, membershipRestriction,
@@ -643,7 +641,7 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int type, boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean inheritContent, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _groupLocalService.updateGroup(groupId, parentGroupId, nameMap,
 			descriptionMap, type, manualMembership, membershipRestriction,
@@ -2347,8 +2345,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void addOrganizationGroups(long organizationId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.addOrganizationGroups(organizationId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.addOrganizationGroups(organizationId, groups);
 	}
 
 	@Override
@@ -2369,8 +2367,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void addRoleGroups(long roleId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.addRoleGroups(roleId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.addRoleGroups(roleId, groups);
 	}
 
 	@Override
@@ -2402,8 +2400,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void addUserGroupGroups(long userGroupId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.addUserGroupGroups(userGroupId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.addUserGroupGroups(userGroupId, groups);
 	}
 
 	@Override
@@ -2413,8 +2411,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void addUserGroups(long userId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.addUserGroups(userId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.addUserGroups(userId, groups);
 	}
 
 	@Override
@@ -2482,8 +2480,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void deleteOrganizationGroups(long organizationId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.deleteOrganizationGroups(organizationId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.deleteOrganizationGroups(organizationId, groups);
 	}
 
 	@Override
@@ -2504,8 +2502,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void deleteRoleGroups(long roleId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.deleteRoleGroups(roleId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.deleteRoleGroups(roleId, groups);
 	}
 
 	@Override
@@ -2537,8 +2535,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void deleteUserGroupGroups(long userGroupId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.deleteUserGroupGroups(userGroupId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.deleteUserGroupGroups(userGroupId, groups);
 	}
 
 	@Override
@@ -2548,8 +2546,8 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 
 	@Override
 	public void deleteUserGroups(long userId,
-		java.util.List<com.liferay.portal.kernel.model.Group> Groups) {
-		_groupLocalService.deleteUserGroups(userId, Groups);
+		java.util.List<com.liferay.portal.kernel.model.Group> groups) {
+		_groupLocalService.deleteUserGroups(userId, groups);
 	}
 
 	@Override

@@ -171,8 +171,7 @@ public interface RoleLocalService extends BaseLocalService,
 	public Role addRole(long userId, java.lang.String className, long classPK,
 		java.lang.String name, Map<Locale, java.lang.String> titleMap,
 		Map<Locale, java.lang.String> descriptionMap, int type,
-		java.lang.String subtype,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		java.lang.String subtype, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -352,8 +351,7 @@ public interface RoleLocalService extends BaseLocalService,
 	public Role updateRole(long roleId, java.lang.String name,
 		Map<Locale, java.lang.String> titleMap,
 		Map<Locale, java.lang.String> descriptionMap, java.lang.String subtype,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getGroupRolesCount(long groupId);
@@ -668,8 +666,8 @@ public interface RoleLocalService extends BaseLocalService,
 	* @param userId the primary key of the user
 	* @param groups the groups (optionally <code>null</code>)
 	* @return the union of all the user's roles within the groups
-	* @see com.liferay.portal.kernel.service.persistence.RoleFinder#findByU_G(long,
-	List)
+	* @see com.liferay.portal.kernel.service.persistence.RoleFinder#findByU_G(
+	long, List)
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Role> getUserRelatedRoles(long userId, List<Group> groups);
@@ -680,8 +678,8 @@ public interface RoleLocalService extends BaseLocalService,
 	* @param userId the primary key of the user
 	* @param groupId the primary key of the group
 	* @return the user's roles within the group
-	* @see com.liferay.portal.kernel.service.persistence.RoleFinder#findByU_G(long,
-	long)
+	* @see com.liferay.portal.kernel.service.persistence.RoleFinder#findByU_G(
+	long, long)
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Role> getUserRelatedRoles(long userId, long groupId);
@@ -692,8 +690,8 @@ public interface RoleLocalService extends BaseLocalService,
 	* @param userId the primary key of the user
 	* @param groupIds the primary keys of the groups
 	* @return the union of all the user's roles within the groups
-	* @see com.liferay.portal.kernel.service.persistence.RoleFinder#findByU_G(long,
-	long[])
+	* @see com.liferay.portal.kernel.service.persistence.RoleFinder#findByU_G(
+	long, long[])
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Role> getUserRelatedRoles(long userId, long[] groupIds);
@@ -911,18 +909,24 @@ public interface RoleLocalService extends BaseLocalService,
 
 	public void addGroupRole(long groupId, long roleId);
 
-	public void addGroupRoles(long groupId, List<Role> Roles);
+	public void addGroupRoles(long groupId, List<Role> roles);
 
 	public void addGroupRoles(long groupId, long[] roleIds);
-
-	public void addUserRole(long userId, Role role);
-
-	public void addUserRole(long userId, long roleId);
 
 	/**
 	* @throws PortalException
 	*/
-	public void addUserRoles(long userId, List<Role> Roles)
+	public void addUserRole(long userId, Role role) throws PortalException;
+
+	/**
+	* @throws PortalException
+	*/
+	public void addUserRole(long userId, long roleId) throws PortalException;
+
+	/**
+	* @throws PortalException
+	*/
+	public void addUserRoles(long userId, List<Role> roles)
 		throws PortalException;
 
 	/**
@@ -948,23 +952,42 @@ public interface RoleLocalService extends BaseLocalService,
 
 	public void clearGroupRoles(long groupId);
 
-	public void clearUserRoles(long userId);
+	/**
+	* @throws PortalException
+	*/
+	public void clearUserRoles(long userId) throws PortalException;
 
 	public void deleteGroupRole(long groupId, Role role);
 
 	public void deleteGroupRole(long groupId, long roleId);
 
-	public void deleteGroupRoles(long groupId, List<Role> Roles);
+	public void deleteGroupRoles(long groupId, List<Role> roles);
 
 	public void deleteGroupRoles(long groupId, long[] roleIds);
 
-	public void deleteUserRole(long userId, Role role);
+	/**
+	* @throws PortalException
+	*/
+	public void deleteUserRole(long userId, Role role)
+		throws PortalException;
 
-	public void deleteUserRole(long userId, long roleId);
+	/**
+	* @throws PortalException
+	*/
+	public void deleteUserRole(long userId, long roleId)
+		throws PortalException;
 
-	public void deleteUserRoles(long userId, List<Role> Roles);
+	/**
+	* @throws PortalException
+	*/
+	public void deleteUserRoles(long userId, List<Role> roles)
+		throws PortalException;
 
-	public void deleteUserRoles(long userId, long[] roleIds);
+	/**
+	* @throws PortalException
+	*/
+	public void deleteUserRoles(long userId, long[] roleIds)
+		throws PortalException;
 
 	public void setGroupRoles(long groupId, long[] roleIds);
 
