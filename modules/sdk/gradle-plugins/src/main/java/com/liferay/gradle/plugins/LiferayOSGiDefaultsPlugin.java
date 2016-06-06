@@ -17,6 +17,9 @@ package com.liferay.gradle.plugins;
 import aQute.bnd.osgi.Constants;
 import aQute.bnd.version.Version;
 
+import com.liferay.gradle.plugins.cache.CacheExtension;
+import com.liferay.gradle.plugins.cache.CachePlugin;
+import com.liferay.gradle.plugins.cache.task.TaskCache;
 import com.liferay.gradle.plugins.extensions.LiferayExtension;
 import com.liferay.gradle.plugins.extensions.LiferayOSGiExtension;
 import com.liferay.gradle.plugins.js.module.config.generator.ConfigJSModulesTask;
@@ -53,6 +56,7 @@ import java.io.File;
 
 import java.nio.charset.StandardCharsets;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -286,6 +290,11 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 
 					GradleUtil.setProjectSnapshotVersion(project);
 
+					if (GradleUtil.hasPlugin(project, CachePlugin.class)) {
+						configureTaskUpdateVersionForCachePlugin(
+							updateVersionTask);
+					}
+
 					// setProjectSnapshotVersion must be called before
 					// configureTaskUploadArchives, because the latter one needs
 					// to know if we are publishing a snapshot or not.
@@ -467,6 +476,14 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 					}
 
 				});
+
+			String ignoreFailures = GradleUtil.getTaskPrefixedProperty(
+				baselineTask, "ignoreFailures");
+
+			if (Validator.isNotNull(ignoreFailures)) {
+				baselineTask.setIgnoreFailures(
+					Boolean.parseBoolean(ignoreFailures));
+			}
 
 			baselineTask.setNewJarFile(
 				new Callable<File>() {
@@ -869,7 +886,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 
 		replaceRegexTask.setDescription(
 			"Updates the project version in external files.");
-		replaceRegexTask.setIgnoreUnmatched(true);
 
 		replaceRegexTask.setReplacement(
 			new Callable<Object>() {
@@ -1088,11 +1104,14 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 
 		Map<String, Object> bundleDefaultInstructions = new HashMap<>();
 
-		bundleDefaultInstructions.put("-check", "all");
+		bundleDefaultInstructions.put("-check", "exports");
 		bundleDefaultInstructions.put(Constants.BUNDLE_VENDOR, "Liferay, Inc.");
 		bundleDefaultInstructions.put(
 			Constants.DONOTCOPY,
 			"(" + LiferayOSGiExtension.DONOTCOPY_DEFAULT + "|.touch" + ")");
+		bundleDefaultInstructions.put(
+			Constants.FIXUPMESSAGES + ".deprecated",
+			"annotations are deprecated");
 		bundleDefaultInstructions.put(Constants.SOURCES, "false");
 
 		if (publishing) {
@@ -1819,6 +1838,31 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 		args.put("include", "**/*.gradle");
 
 		updateFileVersionsTask.match(regex, project.fileTree(args));
+	}
+
+	protected void configureTaskUpdateVersionForCachePlugin(
+		ReplaceRegexTask updateVersionTask) {
+
+		Project project = updateVersionTask.getProject();
+
+		CacheExtension cacheExtension = GradleUtil.getExtension(
+			project, CacheExtension.class);
+
+		for (TaskCache taskCache : cacheExtension.getTasks()) {
+			String regex = "\"" + project.getName() + "@(.+?)\\/";
+
+			Map<String, Object> args = new HashMap<>();
+
+			args.put("dir", taskCache.getCacheDir());
+			args.put(
+				"includes", Arrays.asList("config.json", "**/*.js"));
+
+			FileTree fileTree = project.fileTree(args);
+
+			updateVersionTask.match(regex, fileTree);
+
+			updateVersionTask.finalizedBy(taskCache.getRefreshDigestTaskName());
+		}
 	}
 
 	protected void configureTaskUploadArchives(
