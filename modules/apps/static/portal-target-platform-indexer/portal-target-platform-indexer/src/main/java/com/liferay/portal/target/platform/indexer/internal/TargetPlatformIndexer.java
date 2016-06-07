@@ -60,8 +60,12 @@ import org.osgi.service.repository.ContentNamespace;
  */
 public class TargetPlatformIndexer implements Indexer {
 
-	public TargetPlatformIndexer(Bundle systemBundle, String... dirNames) {
+	public TargetPlatformIndexer(
+		Bundle systemBundle, List<File> additionalJarFiles,
+		String... dirNames) {
+
 		_systemBundle = systemBundle;
+		_additionalJarFiles = additionalJarFiles;
 		_dirNames = dirNames;
 
 		_config.put("compressed", "false");
@@ -86,8 +90,14 @@ public class TargetPlatformIndexer implements Indexer {
 			_processSystemBundle(tempDir, jarFiles);
 
 			for (String dirName : _dirNames) {
+				Path path = Paths.get(dirName);
+
+				if (Files.notExists(path)) {
+					continue;
+				}
+
 				try (DirectoryStream<Path> directoryStream =
-						Files.newDirectoryStream(Paths.get(dirName))) {
+						Files.newDirectoryStream(path, "*.jar")) {
 
 					Iterator<Path> iterator = directoryStream.iterator();
 
@@ -95,6 +105,18 @@ public class TargetPlatformIndexer implements Indexer {
 						_addBundle(tempPath, iterator.next(), jarFiles);
 					}
 				}
+			}
+
+			for (File additionalJarFile : _additionalJarFiles) {
+				Path tempJarPath = tempPath.resolve(
+					additionalJarFile.getName());
+
+				Files.copy(
+					additionalJarFile.toPath(), tempJarPath,
+					StandardCopyOption.COPY_ATTRIBUTES,
+					StandardCopyOption.REPLACE_EXISTING);
+
+				jarFiles.add(tempJarPath.toFile());
 			}
 
 			ResourceIndexer resourceIndexer = new RepoIndex();
@@ -221,6 +243,7 @@ public class TargetPlatformIndexer implements Indexer {
 		_ignoredNamespaces.add(PackageNamespace.PACKAGE_NAMESPACE);
 	}
 
+	private final List<File> _additionalJarFiles;
 	private final Map<String, String> _config = new HashMap<>();
 	private final String[] _dirNames;
 	private final Parameters _packagesParamters = new Parameters();
