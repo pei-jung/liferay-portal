@@ -19,13 +19,22 @@ import com.liferay.portal.kernel.process.ProcessCallable;
 import com.liferay.portal.kernel.process.ProcessException;
 import com.liferay.portal.target.platform.indexer.TargetPlatformIndexerUtil;
 
+import java.io.File;
+
+import java.util.List;
+
 /**
  * @author Shuyang Zhou
  */
 public class TargetPlatformIndexerProcessCallable
 	implements ProcessCallable<byte[]> {
 
-	public TargetPlatformIndexerProcessCallable(String... dirNames) {
+	public TargetPlatformIndexerProcessCallable(
+		List<File> additionalJarFiles, long stopWaitTimeout,
+		String... dirNames) {
+
+		_additionalJarFiles = additionalJarFiles;
+		_stopWaitTimeout = stopWaitTimeout;
 		_dirNames = dirNames;
 	}
 
@@ -36,7 +45,8 @@ public class TargetPlatformIndexerProcessCallable
 				new UnsyncByteArrayOutputStream();
 
 			TargetPlatformIndexerUtil.indexTargetPlatform(
-				unsyncByteArrayOutputStream, _dirNames);
+				unsyncByteArrayOutputStream, _additionalJarFiles,
+				_stopWaitTimeout, _dirNames);
 
 			return unsyncByteArrayOutputStream.toByteArray();
 		}
@@ -52,6 +62,8 @@ public class TargetPlatformIndexerProcessCallable
 
 	private static final long serialVersionUID = 1L;
 
+	private final List<File> _additionalJarFiles;
 	private final String[] _dirNames;
+	private final long _stopWaitTimeout;
 
 }

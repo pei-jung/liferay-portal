@@ -16,9 +16,13 @@ package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.model.UserGroupConstants;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,9 +66,14 @@ public class UserGroupSearchContainerResultsTag<R> extends IncludeTag {
 		SearchContainer<R> searchContainer =
 			searchContainerTag.getSearchContainer();
 
-		request.setAttribute(
-			"liferay-ui:user-group-search-container-results:useIndexer",
-			_useIndexer);
+		if (Validator.isNotNull(_searchTerms.getKeywords())) {
+			setUseIndexer(true);
+		}
+
+		if (_hasFinderParam(_userGroupParams)) {
+			setUseIndexer(false);
+		}
+
 		request.setAttribute(
 			"liferay-ui:user-group-search-container-results:searchContainer",
 			searchContainer);
@@ -72,8 +81,26 @@ public class UserGroupSearchContainerResultsTag<R> extends IncludeTag {
 			"liferay-ui:user-group-search-container-results:searchTerms",
 			_searchTerms);
 		request.setAttribute(
+			"liferay-ui:user-group-search-container-results:useIndexer",
+			_useIndexer);
+		request.setAttribute(
 			"liferay-ui:user-group-search-container-results:userGroupParams",
 			_userGroupParams);
+	}
+
+	private boolean _hasFinderParam(LinkedHashMap<String, Object> params) {
+		Set<String> paramKeys = params.keySet();
+
+		for (String paramKey : paramKeys) {
+			if (ArrayUtil.contains(
+					UserGroupConstants.PARAMS_USER_GROUP_FINDER_PARAMS,
+					paramKey)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static final String _PAGE =
