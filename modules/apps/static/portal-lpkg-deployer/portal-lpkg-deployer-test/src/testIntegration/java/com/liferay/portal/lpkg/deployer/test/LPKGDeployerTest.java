@@ -15,6 +15,7 @@
 package com.liferay.portal.lpkg.deployer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.lpkg.StaticLPKGResolver;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -141,19 +142,34 @@ public class LPKGDeployerTest {
 
 			Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
 
+			String symbolicName = lpkgBundle.getSymbolicName();
+
 			while (enumeration.hasMoreElements()) {
 				ZipEntry zipEntry = enumeration.nextElement();
 
 				String name = zipEntry.getName();
 
 				if (name.endsWith(".jar")) {
-					Bundle bundle = bundleContext.getBundle(
-						StringPool.SLASH + name);
+					if (symbolicName.equals(
+							StaticLPKGResolver.
+								getStaticLPKGBundleSymbolicName())) {
 
-					Assert.assertNotNull(
-						"No matching app bundle for /" + name, bundle);
+						Bundle bundle = bundleContext.getBundle(
+							"reference:" + StringPool.SLASH + name);
 
-					actualAppBundles.add(bundle);
+						Assert.assertNotNull(
+							"No matching static bundle for reference:/" + name,
+							bundle);
+					}
+					else {
+						Bundle bundle = bundleContext.getBundle(
+							StringPool.SLASH + name);
+
+						Assert.assertNotNull(
+							"No matching app bundle for /" + name, bundle);
+
+						actualAppBundles.add(bundle);
+					}
 				}
 
 				if (name.endsWith(".war")) {
@@ -194,13 +210,15 @@ public class LPKGDeployerTest {
 				}
 			}
 
-			Collections.sort(actualAppBundles);
+			if (!symbolicName.equals("static")) {
+				Collections.sort(actualAppBundles);
 
-			Assert.assertEquals(
-				"LPKG bundle " + lpkgBundle + " expects app bundles " +
-					expectedAppBundles + " but has actual app bundles " +
-						actualAppBundles,
-				expectedAppBundles, actualAppBundles);
+				Assert.assertEquals(
+					"LPKG bundle " + lpkgBundle + " expects app bundles " +
+						expectedAppBundles + " but has actual app bundles " +
+							actualAppBundles,
+					expectedAppBundles, actualAppBundles);
+			}
 		}
 	}
 

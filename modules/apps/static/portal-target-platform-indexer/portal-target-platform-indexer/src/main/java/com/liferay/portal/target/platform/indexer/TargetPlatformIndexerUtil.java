@@ -17,6 +17,7 @@ package com.liferay.portal.target.platform.indexer;
 import com.liferay.portal.target.platform.indexer.internal.PathUtil;
 import com.liferay.portal.target.platform.indexer.internal.TargetPlatformIndexer;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.jar.Attributes;
@@ -32,6 +34,7 @@ import java.util.jar.Manifest;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 
@@ -41,7 +44,8 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class TargetPlatformIndexerUtil {
 
 	public static void indexTargetPlatform(
-			OutputStream outputStream, String... dirNames)
+			OutputStream outputStream, List<File> additionalJarFiles,
+			long stopWaitTimeout, String... dirNames)
 		throws Exception {
 
 		Framework framework = null;
@@ -80,12 +84,22 @@ public class TargetPlatformIndexerUtil {
 			Bundle systemBundle = bundleContext.getBundle(0);
 
 			TargetPlatformIndexer targetPlatformIndexer =
-				new TargetPlatformIndexer(systemBundle, dirNames);
+				new TargetPlatformIndexer(
+					systemBundle, additionalJarFiles, dirNames);
 
 			targetPlatformIndexer.index(outputStream);
 		}
 		finally {
 			framework.stop();
+
+			FrameworkEvent frameworkEvent = framework.waitForStop(
+				stopWaitTimeout);
+
+			if (frameworkEvent.getType() == FrameworkEvent.WAIT_TIMEDOUT) {
+				throw new Exception(
+					"OSGi framework event " + frameworkEvent +
+						" triggered after a " + stopWaitTimeout + "ms timeout");
+			}
 
 			PathUtil.deltree(tempPath);
 		}
