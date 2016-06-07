@@ -16,6 +16,7 @@ package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.LinkedHashMap;
@@ -61,6 +62,10 @@ public class UserGroupSearchContainerResultsTag<R> extends IncludeTag {
 
 		SearchContainer<R> searchContainer =
 			searchContainerTag.getSearchContainer();
+
+		if (Validator.isNotNull(_searchTerms.getKeywords())) {
+			setUseIndexer(true);
+		}
 
 		request.setAttribute(
 			"liferay-ui:user-group-search-container-results:searchContainer",
