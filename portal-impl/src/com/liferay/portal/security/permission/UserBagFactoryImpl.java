@@ -86,7 +86,7 @@ public class UserBagFactoryImpl implements UserBagFactory {
 			}
 
 			userBag = new UserBagImpl(
-				userId, userGroups, userOrgs, userOrgGroups, userRoles);
+				userId, allUserGroups, userOrgs, userOrgGroups, userRoles);
 
 			PermissionCacheUtil.putUserBag(userId, userBag);
 
