@@ -1270,8 +1270,8 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		boolean workflowAssetPreview = false;
 
 		if (request != null) {
-			workflowAssetPreview = (Boolean)request.getAttribute(
-				WebKeys.WORKFLOW_ASSET_PREVIEW);
+			workflowAssetPreview = GetterUtil.getBoolean(
+				request.getAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW));
 		}
 
 		if (!workflowAssetPreview && page.isApproved()) {
@@ -3128,7 +3128,9 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			nodeId = newNodeId;
 		}
 
-		validate(nodeId, content, format);
+		if (!format.equals(oldPage.getFormat())) {
+			validate(nodeId, content, format);
+		}
 
 		serviceContext.validateModifiedDate(
 			oldPage, PageVersionException.class);

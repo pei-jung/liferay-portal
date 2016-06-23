@@ -191,7 +191,7 @@ if (portletTitleBasedNavigation) {
 							<c:when test="<%= editTitle %>">
 								<aui:field-wrapper required="<%= true %>">
 									<div class="entry-title">
-										<h1><liferay-ui:input-editor editorName="alloyeditor" name="titleEditor" placeholder="title" showSource="<%= false %>" /></h1>
+										<h1><liferay-ui:input-editor contents="<%= title %>" editorName="alloyeditor" name="titleEditor" placeholder="title" showSource="<%= false %>" /></h1>
 									</div>
 								</aui:field-wrapper>
 							</c:when>
@@ -205,7 +205,20 @@ if (portletTitleBasedNavigation) {
 						<div>
 
 							<%
-							wikiEngineRenderer.renderEditPageHTML(selectedFormat, pageContext, node, wikiPage);
+							try {
+								wikiEngineRenderer.renderEditPageHTML(selectedFormat, pageContext, node, wikiPage);
+							}
+							catch (WikiFormatException wfe) {
+							%>
+
+								<div class="alert alert-danger">
+									<liferay-ui:message key="the-format-of-this-page-is-not-supported-the-page-content-will-be-shown-unformatted" />
+								</div>
+
+								<aui:input name="content" type="textarea" value="<%= wikiPage.getContent() %>" />
+
+							<%
+							}
 							%>
 
 						</div>
@@ -278,6 +291,14 @@ if (portletTitleBasedNavigation) {
 									%>
 
 										<aui:option label="<%= wikiEngineRenderer.getFormatLabel(format, locale) %>" selected="<%= selectedFormat.equals(format) %>" value="<%= format %>" />
+
+									<%
+									}
+
+									if (!formats.contains(selectedFormat)) {
+									%>
+
+										<aui:option label="<%= selectedFormat %>" selected="<%= true %>" value="<%= selectedFormat %>" />
 
 									<%
 									}
