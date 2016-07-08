@@ -17,6 +17,8 @@ package com.liferay.portlet.service.persistence;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceConstants;
@@ -32,6 +34,8 @@ import com.liferay.portal.kernel.service.persistence.GroupFinderUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.test.util.UserGroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ResourcePermissionTestUtil;
 import com.liferay.portal.kernel.test.util.ResourceTypePermissionTestUtil;
@@ -150,6 +154,37 @@ public class GroupFinderTest {
 
 		Assert.assertTrue(
 			"The method findByC_C_N_D should have returned the group " +
+				_group.getGroupId(),
+			exists);
+	}
+
+	@Test
+	public void testFindByC_C_PG_N_D() throws Exception {
+		UserGroup userGroup = UserGroupTestUtil.addUserGroup();
+
+		User user = UserTestUtil.addUser(userGroup.getGroupId());
+
+		LinkedHashMap<String, Object> groupParams = new LinkedHashMap<>();
+
+		groupParams.put("usersGroups", Long.valueOf(user.getUserId()));
+
+		List<Group> groups = GroupFinderUtil.findByC_C_PG_N_D(
+			user.getCompanyId(), null, GroupConstants.ANY_PARENT_GROUP_ID,
+			new String[] {null}, new String[] {null}, groupParams, true,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		boolean exists = false;
+
+		for (Group group : groups) {
+			if (group.getGroupId() == userGroup.getGroupId()) {
+				exists = true;
+
+				break;
+			}
+		}
+
+		Assert.assertTrue(
+			"The method findByC_C_PG_N_D should have returned the group " +
 				_group.getGroupId(),
 			exists);
 	}
