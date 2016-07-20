@@ -76,7 +76,7 @@
 		<echo file="${javac.destdir}/.touch"></echo>
 	</target>
 
-	<target depends="init-deploy,jar" if="copy.jar" name="deploy" unless="deploy.uptodate">
+	<target depends="init-deploy,jar" if="${copy.jar}" name="deploy" unless="deploy.uptodate">
 		<copy file="${jar.file}.jar" preservelastmodified="true" todir="${deploy.dir}" />
 	</target>
 
@@ -93,9 +93,7 @@
 		<property name="src.dir" value="${basedir}" />
 
 		<condition property="deploy.uptodate">
-			<uptodate targetfile="${deploy.dir}/${jar.file}.jar">
-				<srcfiles dir="${src.dir}" includes="bnd.bnd,build.xml,ivy.xml,src/**/*.*" />
-			</uptodate>
+			<uptodate srcfile="${jar.file}.jar" targetfile="${deploy.dir}/${jar.file}.jar" />
 		</condition>
 	</target>
 
