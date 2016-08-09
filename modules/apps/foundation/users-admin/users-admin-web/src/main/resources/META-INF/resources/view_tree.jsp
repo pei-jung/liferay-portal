@@ -305,42 +305,11 @@ if (organization != null) {
 
 <%@ include file="/add_menu.jspf" %>
 
-<aui:script use="liferay-item-selector-dialog">
-	var form = AUI.$(document.<portlet:namespace />fm);
-
-	<portlet:renderURL var="selectUsersURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-		<portlet:param name="mvcPath" value="/select_organization_users.jsp" />
-		<portlet:param name="organizationId" value="<%= String.valueOf(organizationId) %>" />
-	</portlet:renderURL>
-
+<aui:script>
 	$('#<portlet:namespace />assignUsers').on(
 		'click',
 		function(event) {
-			var itemSelectorDialog = new A.LiferayItemSelectorDialog(
-				{
-					eventName: '<portlet:namespace />selectUsers',
-					on: {
-						selectedItemChange: function(event) {
-							var data = event.newVal;
-
-							if (data) {
-								var editAssignmentURL = Liferay.PortletURL.createURL('<portlet:actionURL name="/users_admin/edit_organization_assignments" />');
-
-								editAssignmentURL.setParameter('addUserIds', data.selected);
-								editAssignmentURL.setParameter('removeUserIds', data.unselected);
-								editAssignmentURL.setParameter('organizationId', '<%= organizationId %>');
-								editAssignmentURL.setParameter('assignmentsRedirect', '<%= currentURL %>');
-
-								submitForm(form, editAssignmentURL.toString());
-							}
-						}
-					},
-					title: '<liferay-ui:message key="assign-users" />',
-					url: '<%= selectUsersURL %>'
-				}
-			);
-
-			itemSelectorDialog.open();
+			<portlet:namespace />openSelectUsersDialog('<%= organizationId %>');
 		}
 	);
 
@@ -349,12 +318,14 @@ if (organization != null) {
 	}
 
 	<portlet:namespace />doDeleteOrganizations = function(organizationIds) {
+		var form = AUI.$(document.<portlet:namespace />fm);
+
 		form.attr('method', 'post');
 		form.fm('deleteOrganizationIds').val(organizationIds);
 		form.fm('deleteUserIds').val(Liferay.Util.listCheckedExcept(form, '<portlet:namespace />allRowIds', '<portlet:namespace />rowIdsUser'));
 
 		submitForm(form, '<portlet:actionURL name="/users_admin/delete_users_and_organizations" />');
-	}
+	};
 </aui:script>
 
 <%!
