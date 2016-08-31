@@ -520,7 +520,12 @@
 		<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#IFRAME" />
 		<execute function="AssertClick" locator1="KnowledgeBaseConfiguration#NAVIGATION_TAB_DISPLAY_SETTINGS" value1="Display Settings" />
 
-		<execute function="Check#checkToggleSwitch" locator1="Checkbox#ENABLE_SOCIAL_BOOKMARKS" />
+		<if>
+			<condition function="IsNotVisible" locator1="Select#DISPLAY_STYLE" />
+			<then>
+				<execute function="Check#toggleSwitch" locator1="Checkbox#ENABLE_SOCIAL_BOOKMARKS" />
+			</then>
+		</if>
 
 		<if>
 			<isset var="enableSocialBookmarkSites" />
@@ -1380,7 +1385,19 @@
 
 				<execute function="SelectWindow" locator1="Google#PAGE_TITLE" />
 
-				<execute function="AssertLocation" value1="https://www.google.com/?gws_rd=ssl" />
+				<var method="selenium#getLocation()" name="url" />
+
+				<if>
+					<not>
+						<equals arg1="${url}" arg2="https://www.google.com/[#]gws_rd=ssl" />
+					</not>
+					<then>
+						<execute function="AssertLocation" value1="https://www.google.com/?gws_rd=ssl" />
+					</then>
+					<else>
+						<execute function="AssertLocation" value1="https://www.google.com/[#]gws_rd=ssl" />
+					</else>
+				</if>
 
 				<execute function="Close" locator1="Google#PAGE_TITLE" />
 			</then>

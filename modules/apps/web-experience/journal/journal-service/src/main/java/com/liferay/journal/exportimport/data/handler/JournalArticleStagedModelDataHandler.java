@@ -21,22 +21,20 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.exportimport.content.processor.ExportImportContentProcessorController;
+import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
-import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.journal.internal.exportimport.content.processor.JournalArticleExportImportContentProcessor;
 import com.liferay.journal.internal.exportimport.creation.strategy.JournalCreationStrategy;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
-import com.liferay.journal.model.JournalArticleImage;
 import com.liferay.journal.model.JournalArticleResource;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.model.JournalFolderConstants;
-import com.liferay.journal.service.JournalArticleImageLocalService;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalArticleResourceLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -886,15 +884,6 @@ public class JournalArticleStagedModelDataHandler
 		}
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	protected void exportArticleImage(
-		PortletDataContext portletDataContext, JournalArticleImage articleImage,
-		JournalArticle article, Element articleElement) {
-	}
-
 	protected JournalArticle fetchExistingArticle(
 		String articleResourceUuid, long groupId, String articleId,
 		String newArticleId, boolean preloaded) {
@@ -984,15 +973,6 @@ public class JournalArticleStagedModelDataHandler
 	protected void setJournalArticleExportImportContentProcessor(
 		JournalArticleExportImportContentProcessor
 			journalArticleExportImportContentProcessor) {
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	@Reference(unbind = "-")
-	protected void setJournalArticleImageLocalService(
-		JournalArticleImageLocalService journalArticleImageLocalService) {
 	}
 
 	@Reference(unbind = "-")
