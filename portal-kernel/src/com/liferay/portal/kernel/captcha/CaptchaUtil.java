@@ -14,7 +14,13 @@
 
 package com.liferay.portal.kernel.captcha;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.captcha.Captcha;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceTracker;
 
 import java.io.IOException;
 
@@ -28,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class CaptchaUtil {
 
 	public static void check(HttpServletRequest request)
@@ -45,7 +52,7 @@ public class CaptchaUtil {
 	public static Captcha getCaptcha() {
 		PortalRuntimePermission.checkGetBeanProperty(CaptchaUtil.class);
 
-		return _captcha;
+		return _instance._serviceTracker.getService();
 	}
 
 	public static String getTaglibPath() {
@@ -74,12 +81,16 @@ public class CaptchaUtil {
 		getCaptcha().serveImage(resourceRequest, resourceResponse);
 	}
 
-	public void setCaptcha(Captcha captcha) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private CaptchaUtil() {
+		Registry registry = RegistryUtil.getRegistry();
 
-		_captcha = captcha;
+		_serviceTracker = registry.trackServices(Captcha.class);
+
+		_serviceTracker.open();
 	}
 
-	private static Captcha _captcha;
+	private static final CaptchaUtil _instance = new CaptchaUtil();
+
+	private final ServiceTracker<Captcha, Captcha> _serviceTracker;
 
 }
