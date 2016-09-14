@@ -19,13 +19,10 @@ import com.liferay.document.library.kernel.antivirus.AntivirusScannerUtil;
 import com.liferay.document.library.kernel.antivirus.AntivirusScannerWrapper;
 import com.liferay.document.library.kernel.util.DLProcessor;
 import com.liferay.document.library.kernel.util.DLProcessorRegistryUtil;
-import com.liferay.portal.captcha.CaptchaImpl;
 import com.liferay.portal.kernel.bean.BeanLocatorException;
 import com.liferay.portal.kernel.bean.ClassLoaderBeanHandler;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
-import com.liferay.portal.kernel.captcha.Captcha;
-import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
@@ -183,7 +180,7 @@ public class HookHotDeployListener
 		"auth.token.ignore.actions", "auth.token.ignore.origins",
 		"auth.token.ignore.portlets", "auth.token.impl", "auth.pipeline.post",
 		"auth.pipeline.pre", "auto.login.hooks",
-		"captcha.check.portal.create_account", "captcha.engine.impl",
+		"captcha.check.portal.create_account",
 		"company.default.locale", "company.default.time.zone",
 		"company.settings.form.authentication",
 		"company.settings.form.configuration",
@@ -390,23 +387,6 @@ public class HookHotDeployListener
 		}
 
 		resetPortalProperties(servletContextName, portalProperties, false);
-
-		if (portalProperties.containsKey(PropsKeys.CAPTCHA_ENGINE_IMPL)) {
-			CaptchaImpl captchaImpl = null;
-
-			Captcha captcha = CaptchaUtil.getCaptcha();
-
-			if (captcha instanceof DoPrivilegedBean) {
-				DoPrivilegedBean doPrivilegedBean = (DoPrivilegedBean)captcha;
-
-				captchaImpl = (CaptchaImpl)doPrivilegedBean.getActualBean();
-			}
-			else {
-				captchaImpl = (CaptchaImpl)captcha;
-			}
-
-			captchaImpl.setCaptcha(null);
-		}
 
 		if (portalProperties.containsKey(PropsKeys.DL_FILE_ENTRY_PROCESSORS)) {
 			DLFileEntryProcessorContainer dlFileEntryProcessorContainer =
@@ -1407,30 +1387,6 @@ public class HookHotDeployListener
 			registerService(
 				servletContextName, authTokenClassName, AuthToken.class,
 				authToken);
-		}
-
-		if (portalProperties.containsKey(PropsKeys.CAPTCHA_ENGINE_IMPL)) {
-			String captchaClassName = portalProperties.getProperty(
-				PropsKeys.CAPTCHA_ENGINE_IMPL);
-
-			Captcha captcha = (Captcha)newInstance(
-				portletClassLoader, Captcha.class, captchaClassName);
-
-			CaptchaImpl captchaImpl = null;
-
-			Captcha currentCaptcha = CaptchaUtil.getCaptcha();
-
-			if (currentCaptcha instanceof DoPrivilegedBean) {
-				DoPrivilegedBean doPrivilegedBean =
-					(DoPrivilegedBean)currentCaptcha;
-
-				captchaImpl = (CaptchaImpl)doPrivilegedBean.getActualBean();
-			}
-			else {
-				captchaImpl = (CaptchaImpl)currentCaptcha;
-			}
-
-			captchaImpl.setCaptcha(captcha);
 		}
 
 		if (portalProperties.containsKey(
