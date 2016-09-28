@@ -266,14 +266,28 @@ public class ExportConfigurationMVCResourceCommand
 			// See http://goo.gl/JhYK7g
 
 			if (values.length == 1) {
-				value = values[0];
+				value = _escapeValue(values[0]);
 			}
 			else if (values.length > 1) {
-				value = StringUtil.merge(values, "\n");
+				StringBundler sb = new StringBundler();
+
+				sb.append(StringPool.OPEN_BRACKET);
+
+				for (int i = 0; i < values.length; i++) {
+					sb.append(_escapeValue(values[i]));
+
+					if (i < (values.length - 1)) {
+						sb.append(StringPool.COMMA);
+					}
+				}
+
+				sb.append(StringPool.CLOSE_BRACKET);
+
+				value = sb.toString();
 			}
 
 			if (value == null) {
-				value = StringPool.BLANK;
+				value = StringPool.DOUBLE_QUOTE;
 			}
 
 			properties.setProperty(attributeDefinition.getID(), value);
@@ -301,6 +315,23 @@ public class ExportConfigurationMVCResourceCommand
 		String propertiesString = sb.toString();
 
 		return propertiesString.getBytes();
+	}
+
+	private String _escapeValue(String value) {
+		String prefix = StringPool.BACK_SLASH;
+
+		String[] oldChars = {
+			StringPool.BACK_SLASH, StringPool.EQUAL, StringPool.QUOTE
+		};
+
+		String[] newChars = {
+			prefix.concat(StringPool.BACK_SLASH),
+			prefix.concat(StringPool.EQUAL), prefix.concat(StringPool.QUOTE)
+		};
+
+		value = StringUtil.replace(value, oldChars, newChars);
+
+		return StringUtil.quote(value, StringPool.QUOTE);
 	}
 
 	@Reference
