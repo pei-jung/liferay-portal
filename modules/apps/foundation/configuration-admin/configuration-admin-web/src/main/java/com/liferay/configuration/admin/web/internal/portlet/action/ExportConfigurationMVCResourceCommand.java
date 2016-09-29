@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
 
 import java.io.FileInputStream;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -266,32 +267,11 @@ public class ExportConfigurationMVCResourceCommand
 
 			// See https://goo.gl/XabU9z
 
-			int type = attributeDefinition.getType();
-
 			if (values.length > 0) {
-				if (type == AttributeDefinition.BOOLEAN) {
-					sb.append(CharPool.UPPER_CASE_B);
-				}
-				else if (type == AttributeDefinition.BYTE) {
-					sb.append(CharPool.UPPER_CASE_X);
-				}
-				else if (type == AttributeDefinition.CHARACTER) {
-					sb.append(CharPool.UPPER_CASE_C);
-				}
-				else if (type == AttributeDefinition.DOUBLE) {
-					sb.append(CharPool.UPPER_CASE_D);
-				}
-				else if (type == AttributeDefinition.FLOAT) {
-					sb.append(CharPool.UPPER_CASE_F);
-				}
-				else if (type == AttributeDefinition.INTEGER) {
-					sb.append(CharPool.UPPER_CASE_I);
-				}
-				else if (type == AttributeDefinition.LONG) {
-					sb.append(CharPool.UPPER_CASE_L);
-				}
-				else if (type == AttributeDefinition.SHORT) {
-					sb.append(CharPool.UPPER_CASE_S);
+				Character type = _types.get(attributeDefinition.getType());
+
+				if (type != null) {
+					sb.append(type);
 				}
 			}
 
@@ -352,5 +332,18 @@ public class ExportConfigurationMVCResourceCommand
 
 	@Reference
 	private ConfigurationModelRetriever _configurationModelRetriever;
+
+	private final Map<Integer, Character> _types = new HashMap<>();
+
+	{
+		_types.put(AttributeDefinition.BOOLEAN, CharPool.UPPER_CASE_B);
+		_types.put(AttributeDefinition.BYTE, CharPool.UPPER_CASE_X);
+		_types.put(AttributeDefinition.CHARACTER, CharPool.UPPER_CASE_C);
+		_types.put(AttributeDefinition.DOUBLE, CharPool.UPPER_CASE_D);
+		_types.put(AttributeDefinition.FLOAT, CharPool.UPPER_CASE_F);
+		_types.put(AttributeDefinition.INTEGER, CharPool.UPPER_CASE_I);
+		_types.put(AttributeDefinition.LONG, CharPool.UPPER_CASE_L);
+		_types.put(AttributeDefinition.SHORT, CharPool.UPPER_CASE_S);
+	}
 
 }
