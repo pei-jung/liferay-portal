@@ -267,7 +267,9 @@ public class ExportConfigurationMVCResourceCommand
 
 			// See https://goo.gl/XabU9z
 
-			if (values.length > 0) {
+			int length = values.length;
+
+			if (length > 0) {
 				Character type = _types.get(attributeDefinition.getType());
 
 				if (type != null) {
@@ -275,16 +277,16 @@ public class ExportConfigurationMVCResourceCommand
 				}
 			}
 
-			if (values.length == 1) {
+			if (length == 1) {
 				sb.append(_escapeValue(values[0]));
 			}
-			else if (values.length > 1) {
+			else if (length > 1) {
 				sb.append(StringPool.OPEN_BRACKET);
 
-				for (int i = 0; i < values.length; i++) {
+				for (int i = 0; i < length; i++) {
 					sb.append(_escapeValue(values[i]));
 
-					if (i < (values.length - 1)) {
+					if (i < (length - 1)) {
 						sb.append(StringPool.COMMA);
 					}
 				}
