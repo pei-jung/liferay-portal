@@ -22,6 +22,7 @@ import com.liferay.portal.configuration.metatype.definitions.ExtendedAttributeDe
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
@@ -261,16 +262,43 @@ public class ExportConfigurationMVCResourceCommand
 			String[] values = AttributeDefinitionUtil.getProperty(
 				attributeDefinition, configuration);
 
-			String value = null;
+			StringBundler sb = new StringBundler();
 
 			// See https://goo.gl/XabU9z
 
+			int type = attributeDefinition.getType();
+
+			if (values.length > 0) {
+				if (type == AttributeDefinition.BOOLEAN) {
+					sb.append(CharPool.UPPER_CASE_B);
+				}
+				else if (type == AttributeDefinition.BYTE) {
+					sb.append(CharPool.UPPER_CASE_X);
+				}
+				else if (type == AttributeDefinition.CHARACTER) {
+					sb.append(CharPool.UPPER_CASE_C);
+				}
+				else if (type == AttributeDefinition.DOUBLE) {
+					sb.append(CharPool.UPPER_CASE_D);
+				}
+				else if (type == AttributeDefinition.FLOAT) {
+					sb.append(CharPool.UPPER_CASE_F);
+				}
+				else if (type == AttributeDefinition.INTEGER) {
+					sb.append(CharPool.UPPER_CASE_I);
+				}
+				else if (type == AttributeDefinition.LONG) {
+					sb.append(CharPool.UPPER_CASE_L);
+				}
+				else if (type == AttributeDefinition.SHORT) {
+					sb.append(CharPool.UPPER_CASE_S);
+				}
+			}
+
 			if (values.length == 1) {
-				value = _escapeValue(values[0]);
+				sb.append(_escapeValue(values[0]));
 			}
 			else if (values.length > 1) {
-				StringBundler sb = new StringBundler();
-
 				sb.append(StringPool.OPEN_BRACKET);
 
 				for (int i = 0; i < values.length; i++) {
@@ -282,15 +310,13 @@ public class ExportConfigurationMVCResourceCommand
 				}
 
 				sb.append(StringPool.CLOSE_BRACKET);
-
-				value = sb.toString();
 			}
 
-			if (value == null) {
-				value = StringPool.DOUBLE_QUOTE;
+			if (sb.length() == 0) {
+				sb.append(StringPool.DOUBLE_QUOTE);
 			}
 
-			properties.setProperty(attributeDefinition.getID(), value);
+			properties.setProperty(attributeDefinition.getID(), sb.toString());
 		}
 
 		return properties;
