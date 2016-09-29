@@ -263,7 +263,7 @@ public class ExportConfigurationMVCResourceCommand
 
 			String value = null;
 
-			// See http://goo.gl/JhYK7g
+			// See https://goo.gl/XabU9z
 
 			if (values.length == 1) {
 				value = _escapeValue(values[0]);
@@ -301,7 +301,7 @@ public class ExportConfigurationMVCResourceCommand
 		throws Exception {
 
 		Properties properties = getProperties(languageId, factoryPid, pid);
-		
+
 		String propertiesString = PropertiesUtil.toString(properties);
 
 		return propertiesString.getBytes();
