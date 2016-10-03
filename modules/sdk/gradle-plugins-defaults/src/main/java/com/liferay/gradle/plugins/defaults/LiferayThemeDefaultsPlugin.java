@@ -233,7 +233,15 @@ public class LiferayThemeDefaultsPlugin implements Plugin<Project> {
 			ReplaceRegexTask.class);
 
 		replaceRegexTask.finalizedBy(writeParentThemesDigestTask);
-		replaceRegexTask.match("\\n\\t\"version\": \"(.+)\"", "package.json");
+
+		File npmShrinkwrapJsonFile = project.file("npm-shrinkwrap.json");
+
+		if (npmShrinkwrapJsonFile.exists()) {
+			replaceRegexTask.match(_JSON_VERSION_REGEX, npmShrinkwrapJsonFile);
+		}
+
+		replaceRegexTask.match(_JSON_VERSION_REGEX, "package.json");
+
 		replaceRegexTask.setDescription(
 			"Updates the project version in the package.json file.");
 		replaceRegexTask.setReplacement(
@@ -325,8 +333,8 @@ public class LiferayThemeDefaultsPlugin implements Plugin<Project> {
 	protected void applyConfigScripts(Project project) {
 		GradleUtil.applyScript(
 			project,
-			"com/liferay/gradle/plugins/defaults/dependencies/" +
-				"config-maven.gradle",
+			"com/liferay/gradle/plugins/defaults/dependencies" +
+				"/config-maven.gradle",
 			project);
 	}
 
@@ -489,5 +497,8 @@ public class LiferayThemeDefaultsPlugin implements Plugin<Project> {
 		"com.liferay.frontend.css.common";
 
 	private static final String _GROUP = "com.liferay.plugins";
+
+	private static final String _JSON_VERSION_REGEX =
+		"\\n\\t\"version\": \"(.+)\"";
 
 }

@@ -47,17 +47,23 @@ public class UpgradeMessageBoards extends UpgradeProcess {
 
 			runSQL(sb.toString());
 
-			runSQL(
-				"delete from MBMessage where threadId in (" +
-					"select threadId from MBThread where categoryId = " +
-						MBCategoryConstants.DISCUSSION_CATEGORY_ID +
-							" and messageCount = 1)");
+			sb = new StringBundler(4);
 
-			runSQL(
-				"delete from MBDiscussion where threadId in (" +
-					"select threadId from MBThread where categoryId = " +
-						MBCategoryConstants.DISCUSSION_CATEGORY_ID +
-							" and messageCount = 1)");
+			sb.append("delete from MBDiscussion where threadId in (select ");
+			sb.append("threadId from MBThread where categoryId = ");
+			sb.append(MBCategoryConstants.DISCUSSION_CATEGORY_ID);
+			sb.append(" and messageCount = 1)");
+
+			runSQL(sb.toString());
+
+			sb = new StringBundler(4);
+
+			sb.append("delete from MBMessage where threadId in (select ");
+			sb.append("threadId from MBThread where categoryId = ");
+			sb.append(MBCategoryConstants.DISCUSSION_CATEGORY_ID);
+			sb.append(" and messageCount = 1)");
+
+			runSQL(sb.toString());
 
 			runSQL(
 				"delete from MBThread where categoryId = " +
