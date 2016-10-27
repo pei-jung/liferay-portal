@@ -27,6 +27,8 @@ import com.liferay.calendar.service.configuration.CalendarServiceConfigurationVa
 import com.liferay.petra.content.ContentUtil;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.configuration.Filter;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -233,6 +235,14 @@ public class NotificationUtil {
 				continue;
 			}
 
+			if (!user.isActive()) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Skip inactive user " + user.getUserId());
+				}
+
+				continue;
+			}
+
 			notificationRecipients.add(new NotificationRecipient(user));
 		}
 
@@ -254,5 +264,8 @@ public class NotificationUtil {
 	private static final long _CHECK_INTERVAL =
 		CalendarServiceConfigurationValues.
 			CALENDAR_NOTIFICATION_CHECK_INTERVAL * Time.MINUTE;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		NotificationUtil.class);
 
 }

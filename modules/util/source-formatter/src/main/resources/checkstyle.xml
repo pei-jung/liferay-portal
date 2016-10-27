@@ -83,6 +83,9 @@
 		<module name="com.liferay.source.formatter.checkstyle.checks.AnnotationParameterOrder">
 			<message key="annotation.unsortedParameter" value="Annotation parameter ''{0}'' is not sorted alphabetically" />
 		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.Arquillian">
+			<message key="import.invalid" value="Use import ''com.liferay.arquillian.extension.junit.bridge.junit.Arquillian'' instead of ''org.jboss.arquillian.junit.Arquillian'', see LPS-68945" />
+		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.Chaining">
 			<property name="chainingAllowedFormat" value="(^|.*\.)(bind|stream)\..*" />
 			<message key="chaining.avoid" value="Avoid chaining on method ''{0}'" />
@@ -155,7 +158,7 @@
 			<message key="variable.invalidName" value="'sub' should be followed by a lowercase character for variable ''{0}''" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.TransactionalTestRuleCheck">
-			<message key="import.invalid" value="LPS-68908: Avoid using import TransactionalTestRuleCheck in *StagedModelDataHandlerTest" />
+			<message key="import.invalid" value="Avoid using import TransactionalTestRuleCheck in *StagedModelDataHandlerTest, see LPS-68908" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.UnprocessedException">
 			<message key="exception.unprocessed" value="Unprocessed exception ''{0}'', see LPS-36174" />
