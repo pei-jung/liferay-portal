@@ -19,7 +19,7 @@ import com.liferay.login.web.internal.portlet.util.LoginUtil;
 import com.liferay.portal.kernel.captcha.CaptchaConfigurationException;
 import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
-import com.liferay.portal.kernel.captcha.CaptchaUtil;
+import com.liferay.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
 import com.liferay.portal.kernel.exception.RequiredReminderQueryException;
 import com.liferay.portal.kernel.exception.SendPasswordException;
