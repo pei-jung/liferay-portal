@@ -31,28 +31,43 @@ import com.liferay.portal.kernel.util.PropsKeys;
 )
 public interface FileUploadsConfiguration {
 
-	@Meta.AD(deflt = "104857600", required = false)
+	@Meta.AD(
+		deflt = "104857600",
+		description = "dl-maximum-previewable-file-size-help",
+		name = "dl-maximum-previewable-file-size", required = false
+	)
 	public long dlFileEntryPreviewableProcessorMaxSize();
 
-	@Meta.AD(deflt = "300", required = false)
+	@Meta.AD(
+		deflt = "300", name = "dl-maximum-thumbnail-height", required = false
+	)
 	public int dlFileEntryThumbnailMaxHeight();
 
-	@Meta.AD(deflt = "300", required = false)
+	@Meta.AD(
+		deflt = "300", name = "dl-maximum-thumbnail-width", required = false
+	)
 	public int dlFileEntryThumbnailMaxWidth();
 
-	@Meta.AD(deflt = "*", required = false)
+	@Meta.AD(deflt = "*", name = "dl-allowed-file-extensions", required = false)
 	public String[] dlFileExtensions();
 
-	@Meta.AD(deflt = "0", required = false)
+	@Meta.AD(deflt = "0", name = "dl-maximum-file-size", required = false)
 	public long dlFileMaxSize();
 
-	@Meta.AD(deflt = ".gif|.jpeg|.jpg|.png", required = false)
+	@Meta.AD(
+		deflt = ".gif|.jpeg|.jpg|.png",
+		name = "journal-allowed-file-extensions", required = false
+	)
 	public String[] journalImageExtensions();
 
-	@Meta.AD(deflt = "51200", required = false)
+	@Meta.AD(
+		deflt = "51200", name = "journal-maximum-file-size", required = false
+	)
 	public long journalImageSmallMaxSize();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(
+		deflt = "", name = "shopping-allowed-file-extensions", required = false
+	)
 	public String[] shoppingImageExtensions();
 
 	@Meta.AD(deflt = "0", required = false)
@@ -67,18 +82,19 @@ public interface FileUploadsConfiguration {
 	@Meta.AD(
 		deflt = "104857600",
 		id = PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE,
-		required = false
+		name = "overall-maximum-upload-request-size", required = false
 	)
 	public long uploadServletRequestImplMaxSize();
 
 	@Meta.AD(
-		deflt = "",
-		id = PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_TEMP_DIR,
-		required = false
+		deflt = "", id = PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_TEMP_DIR,
+		name = "temporary-storage-directory", required = false
 	)
 	public String uploadServletRequestImplTempDir();
 
-	@Meta.AD(deflt = "307200", required = false)
+	@Meta.AD(
+		deflt = "307200", name = "users-maximum-file-size", required = false
+	)
 	public long usersImageMaxSize();
 
 }
