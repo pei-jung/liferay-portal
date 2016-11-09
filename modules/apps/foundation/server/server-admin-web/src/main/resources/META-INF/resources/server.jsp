@@ -33,7 +33,7 @@ serverURL.setParameter("tabs2", tabs2);
 			<aui:nav cssClass="navbar-nav">
 
 				<%
-				String[] tabs1Names = new String[] {"resources", "log-levels", "properties", "captcha", "data-migration", "file-uploads", "mail", "external-services", "script", "shutdown"};
+				String[] tabs1Names = new String[] {"resources", "log-levels", "properties", "captcha", "data-migration", "mail", "external-services", "script", "shutdown"};
 
 				for (String tabs1Name : tabs1Names) {
 					serverURL.setParameter("tabs1", tabs1Name);
@@ -61,9 +61,6 @@ serverURL.setParameter("tabs2", tabs2);
 				</c:when>
 				<c:when test='<%= tabs1.equals("data-migration") %>'>
 					<liferay-util:include page="/data_migration.jsp" servletContext="<%= application %>" />
-				</c:when>
-				<c:when test='<%= tabs1.equals("file-uploads") %>'>
-					<liferay-util:include page="/file_uploads.jsp" servletContext="<%= application %>" />
 				</c:when>
 				<c:when test='<%= tabs1.equals("mail") %>'>
 					<liferay-util:include page="/mail.jsp" servletContext="<%= application %>" />
