@@ -82,7 +82,6 @@ import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portal.kernel.xuggler.XugglerInstallException;
 import com.liferay.portal.kernel.xuggler.XugglerUtil;
 import com.liferay.portal.security.lang.DoPrivilegedBean;
-import com.liferay.portal.upload.UploadServletRequestImpl;
 import com.liferay.portal.util.MaintenanceUtil;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PrefsPropsUtil;
@@ -91,7 +90,6 @@ import com.liferay.portlet.ActionResponseImpl;
 import com.liferay.portlet.admin.util.CleanUpPermissionsUtil;
 import com.liferay.portlet.admin.util.CleanUpPortletPreferencesUtil;
 
-import java.io.File;
 import java.io.Serializable;
 
 import java.util.Enumeration;
@@ -217,9 +215,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		else if (cmd.equals("updateExternalServices")) {
 			updateExternalServices(actionRequest, portletPreferences);
 		}
-		else if (cmd.equals("updateFileUploads")) {
-			updateFileUploads(actionRequest, portletPreferences);
-		}
 		else if (cmd.equals("updateLogLevels")) {
 			updateLogLevels(actionRequest);
 		}
@@ -327,14 +322,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 	protected void gc() throws Exception {
 		Runtime.getRuntime().gc();
-	}
-
-	protected String getFileExtensions(
-		ActionRequest actionRequest, String name) {
-
-		String value = ParamUtil.getString(actionRequest, name);
-
-		return value.replace(", .", ",.");
 	}
 
 	protected void installXuggler(
@@ -613,86 +600,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 		GhostscriptUtil.reset();
 		ImageMagickUtil.reset();
-	}
-
-	protected void updateFileUploads(
-			ActionRequest actionRequest, PortletPreferences portletPreferences)
-		throws Exception {
-
-		long dlFileEntryPreviewableProcessorMaxSize = ParamUtil.getLong(
-			actionRequest, "dlFileEntryPreviewableProcessorMaxSize");
-		long dlFileEntryThumbnailMaxHeight = ParamUtil.getLong(
-			actionRequest, "dlFileEntryThumbnailMaxHeight");
-		long dlFileEntryThumbnailMaxWidth = ParamUtil.getLong(
-			actionRequest, "dlFileEntryThumbnailMaxWidth");
-		String dlFileExtensions = getFileExtensions(
-			actionRequest, "dlFileExtensions");
-		long dlFileMaxSize = ParamUtil.getLong(actionRequest, "dlFileMaxSize");
-		String journalImageExtensions = getFileExtensions(
-			actionRequest, "journalImageExtensions");
-		long journalImageSmallMaxSize = ParamUtil.getLong(
-			actionRequest, "journalImageSmallMaxSize");
-		String shoppingImageExtensions = getFileExtensions(
-			actionRequest, "shoppingImageExtensions");
-		long shoppingImageLargeMaxSize = ParamUtil.getLong(
-			actionRequest, "shoppingImageLargeMaxSize");
-		long shoppingImageMediumMaxSize = ParamUtil.getLong(
-			actionRequest, "shoppingImageMediumMaxSize");
-		long shoppingImageSmallMaxSize = ParamUtil.getLong(
-			actionRequest, "shoppingImageSmallMaxSize");
-		long uploadServletRequestImplMaxSize = ParamUtil.getLong(
-			actionRequest, "uploadServletRequestImplMaxSize");
-		String uploadServletRequestImplTempDir = ParamUtil.getString(
-			actionRequest, "uploadServletRequestImplTempDir");
-		long usersImageMaxSize = ParamUtil.getLong(
-			actionRequest, "usersImageMaxSize");
-
-		portletPreferences.setValue(
-			PropsKeys.DL_FILE_ENTRY_PREVIEWABLE_PROCESSOR_MAX_SIZE,
-			String.valueOf(dlFileEntryPreviewableProcessorMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_HEIGHT,
-			String.valueOf(dlFileEntryThumbnailMaxHeight));
-		portletPreferences.setValue(
-			PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_WIDTH,
-			String.valueOf(dlFileEntryThumbnailMaxWidth));
-		portletPreferences.setValue(
-			PropsKeys.DL_FILE_EXTENSIONS, dlFileExtensions);
-		portletPreferences.setValue(
-			PropsKeys.DL_FILE_MAX_SIZE, String.valueOf(dlFileMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.JOURNAL_IMAGE_EXTENSIONS, journalImageExtensions);
-		portletPreferences.setValue(
-			PropsKeys.JOURNAL_IMAGE_SMALL_MAX_SIZE,
-			String.valueOf(journalImageSmallMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SHOPPING_IMAGE_EXTENSIONS, shoppingImageExtensions);
-		portletPreferences.setValue(
-			PropsKeys.SHOPPING_IMAGE_LARGE_MAX_SIZE,
-			String.valueOf(shoppingImageLargeMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SHOPPING_IMAGE_MEDIUM_MAX_SIZE,
-			String.valueOf(shoppingImageMediumMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SHOPPING_IMAGE_SMALL_MAX_SIZE,
-			String.valueOf(shoppingImageSmallMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE,
-			String.valueOf(uploadServletRequestImplMaxSize));
-
-		if (Validator.isNotNull(uploadServletRequestImplTempDir)) {
-			portletPreferences.setValue(
-				PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_TEMP_DIR,
-				uploadServletRequestImplTempDir);
-
-			UploadServletRequestImpl.setTempDir(
-				new File(uploadServletRequestImplTempDir));
-		}
-
-		portletPreferences.setValue(
-			PropsKeys.USERS_IMAGE_MAX_SIZE, String.valueOf(usersImageMaxSize));
-
-		portletPreferences.store();
 	}
 
 	protected void updateLogLevels(ActionRequest actionRequest)
