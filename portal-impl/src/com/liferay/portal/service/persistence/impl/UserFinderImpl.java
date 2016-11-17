@@ -672,17 +672,7 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			params = _emptyLinkedHashMap;
 		}
 
-		LinkedHashMap<String, Object> params1 = params;
-
-		LinkedHashMap<String, Object> params2 = null;
-
-		LinkedHashMap<String, Object> params3 = null;
-
-		LinkedHashMap<String, Object> params4 = null;
-
-		LinkedHashMap<String, Object> params5 = null;
-
-		LinkedHashMap<String, Object> params6 = null;
+		List<LinkedHashMap<String, Object>> paramsMapList = new ArrayList<>();
 
 		Long[] groupIds = null;
 
@@ -740,7 +730,8 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			}
 
 			if (!organizationIds.isEmpty()) {
-				params2 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params2 = new LinkedHashMap<>(
+					params);
 
 				params2.remove("usersGroups");
 
@@ -756,33 +747,44 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 						"usersOrgsTree",
 						new ArrayList<Organization>(organizations.values()));
 				}
+
+				paramsMapList.add(params2);
 			}
 
 			if (!siteGroupIds.isEmpty()) {
 				Long[] siteGroupIdsArray = siteGroupIds.toArray(
 					new Long[siteGroupIds.size()]);
 
-				params3 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params3 = new LinkedHashMap<>(
+					params);
 
 				params3.remove("usersGroups");
 
 				params3.put("groupsOrgs", siteGroupIdsArray);
 
-				params4 = new LinkedHashMap<>(params1);
+				paramsMapList.add(params3);
+
+				LinkedHashMap<String, Object> params4 = new LinkedHashMap<>(
+					params);
 
 				params4.remove("usersGroups");
 
 				params4.put("groupsUserGroups", siteGroupIdsArray);
+
+				paramsMapList.add(params4);
 			}
 
 			if (!userGroupIds.isEmpty()) {
-				params5 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params5 = new LinkedHashMap<>(
+					params);
 
 				params5.remove("usersGroups");
 
 				params5.put(
 					"usersUserGroups",
 					userGroupIds.toArray(new Long[userGroupIds.size()]));
+
+				paramsMapList.add(params5);
 			}
 		}
 
@@ -810,7 +812,8 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			}
 
 			if (!organizationIds.isEmpty()) {
-				params2 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params2 = new LinkedHashMap<>(
+					params);
 
 				params2.remove("usersRoles");
 
@@ -829,54 +832,74 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 						"usersOrgsTree",
 						new ArrayList<Organization>(organizations.values()));
 				}
+
+				paramsMapList.add(params2);
 			}
 
 			if (!siteGroupIds.isEmpty()) {
 				Long[] siteGroupIdsArray = siteGroupIds.toArray(
 					new Long[siteGroupIds.size()]);
 
-				params3 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params3 = new LinkedHashMap<>(
+					params);
 
 				params3.remove("usersRoles");
 
 				params3.put("usersGroups", siteGroupIdsArray);
 
-				params4 = new LinkedHashMap<>(params1);
+				paramsMapList.add(params3);
+
+				LinkedHashMap<String, Object> params4 = new LinkedHashMap<>(
+					params);
 
 				params4.remove("usersRoles");
 
 				params4.put("groupsOrgs", siteGroupIdsArray);
 
-				params5 = new LinkedHashMap<>(params1);
+				paramsMapList.add(params4);
+
+				LinkedHashMap<String, Object> params5 = new LinkedHashMap<>(
+					params);
 
 				params5.remove("usersRoles");
 
 				params5.put("groupsUserGroups", siteGroupIdsArray);
+
+				paramsMapList.add(params5);
 			}
 
 			if (!userGroupIds.isEmpty()) {
-				params6 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params6 = new LinkedHashMap<>(
+					params);
 
 				params6.remove("usersRoles");
 
 				params6.put(
 					"usersUserGroups",
 					userGroupIds.toArray(new Long[userGroupIds.size()]));
+
+				paramsMapList.add(params6);
 			}
 		}
+
+		LinkedHashMap<String, Object> params1 = new LinkedHashMap<>(params);
 
 		if (socialRelationTypeUnionUserGroups) {
 			boolean hasSocialRelationTypes = Validator.isNotNull(
 				params.get("socialRelationType"));
 
 			if (hasSocialRelationTypes && ArrayUtil.isNotEmpty(groupIds)) {
-				params2 = new LinkedHashMap<>(params1);
+				LinkedHashMap<String, Object> params2 = new LinkedHashMap<>(params);
 
 				params1.remove("socialRelationType");
 
 				params2.remove("usersGroups");
+
+				paramsMapList.add(params2);
 			}
 		}
+
+		paramsMapList.add(0,params1);
 
 		Session session = null;
 
@@ -907,37 +930,13 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 			StringBundler sb = new StringBundler(20);
 
-			sb.append(StringPool.OPEN_PARENTHESIS);
-			sb.append(replaceJoinAndWhere(sql, params1));
-			sb.append(StringPool.CLOSE_PARENTHESIS);
+			for (int i = 0; i < paramsMapList.size(); i++) {
+				if (i != 0) {
+					sb.append(" UNION ");
+				}
 
-			if (params2 != null) {
-				sb.append(" UNION (");
-				sb.append(replaceJoinAndWhere(sql, params2));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-
-			if (params3 != null) {
-				sb.append(" UNION (");
-				sb.append(replaceJoinAndWhere(sql, params3));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-
-			if (params4 != null) {
-				sb.append(" UNION (");
-				sb.append(replaceJoinAndWhere(sql, params4));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-
-			if (params5 != null) {
-				sb.append(" UNION (");
-				sb.append(replaceJoinAndWhere(sql, params5));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-
-			if (params6 != null) {
-				sb.append(" UNION (");
-				sb.append(replaceJoinAndWhere(sql, params6));
+				sb.append(StringPool.OPEN_PARENTHESIS);
+				sb.append(replaceJoinAndWhere(sql, paramsMapList.get(i)));
 				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 
@@ -956,86 +955,8 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			setJoin(qPos, params1);
-
-			qPos.add(companyId);
-			qPos.add(false);
-			qPos.add(firstNames, 2);
-			qPos.add(middleNames, 2);
-			qPos.add(lastNames, 2);
-			qPos.add(screenNames, 2);
-			qPos.add(emailAddresses, 2);
-
-			if (status != WorkflowConstants.STATUS_ANY) {
-				qPos.add(status);
-			}
-
-			if (params2 != null) {
-				setJoin(qPos, params2);
-
-				qPos.add(companyId);
-				qPos.add(false);
-				qPos.add(firstNames, 2);
-				qPos.add(middleNames, 2);
-				qPos.add(lastNames, 2);
-				qPos.add(screenNames, 2);
-				qPos.add(emailAddresses, 2);
-
-				if (status != WorkflowConstants.STATUS_ANY) {
-					qPos.add(status);
-				}
-			}
-
-			if (params3 != null) {
-				setJoin(qPos, params3);
-
-				qPos.add(companyId);
-				qPos.add(false);
-				qPos.add(firstNames, 2);
-				qPos.add(middleNames, 2);
-				qPos.add(lastNames, 2);
-				qPos.add(screenNames, 2);
-				qPos.add(emailAddresses, 2);
-
-				if (status != WorkflowConstants.STATUS_ANY) {
-					qPos.add(status);
-				}
-			}
-
-			if (params4 != null) {
-				setJoin(qPos, params4);
-
-				qPos.add(companyId);
-				qPos.add(false);
-				qPos.add(firstNames, 2);
-				qPos.add(middleNames, 2);
-				qPos.add(lastNames, 2);
-				qPos.add(screenNames, 2);
-				qPos.add(emailAddresses, 2);
-
-				if (status != WorkflowConstants.STATUS_ANY) {
-					qPos.add(status);
-				}
-			}
-
-			if (params5 != null) {
-				setJoin(qPos, params5);
-
-				qPos.add(companyId);
-				qPos.add(false);
-				qPos.add(firstNames, 2);
-				qPos.add(middleNames, 2);
-				qPos.add(lastNames, 2);
-				qPos.add(screenNames, 2);
-				qPos.add(emailAddresses, 2);
-
-				if (status != WorkflowConstants.STATUS_ANY) {
-					qPos.add(status);
-				}
-			}
-
-			if (params6 != null) {
-				setJoin(qPos, params6);
+			for (LinkedHashMap<String, Object> paramsMap : paramsMapList) {
+				setJoin(qPos, paramsMap);
 
 				qPos.add(companyId);
 				qPos.add(false);
