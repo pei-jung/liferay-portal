@@ -462,7 +462,20 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 				sql = StringUtil.replace(sql, _STATUS_SQL, StringPool.BLANK);
 			}
 
-			int stringBundlerSize = (paramsMapList.size() * 4) + 1;
+			int stringBundlerSize;
+
+			DB db = getDB();
+
+			boolean sybase = false;
+
+			if (db.getDBType() == DBType.SYBASE) {
+				sybase = true;
+
+				stringBundlerSize = (paramsMapList.size() * 7) + 1;
+			}
+			else {
+				stringBundlerSize = (paramsMapList.size() * 4) + 1;
+			}
 
 			StringBundler sb = new StringBundler(stringBundlerSize);
 
@@ -473,9 +486,18 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 					sb.append(" UNION ");
 				}
 
+				if (sybase) {
+					sb.append("SELECT userId FROM ");
+				}
+
 				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(replaceJoinAndWhere(sql, paramsMapList.get(i)));
 				sb.append(StringPool.CLOSE_PARENTHESIS);
+
+				if (sybase) {
+					sb.append(" params");
+					sb.append(i);
+				}
 			}
 
 			sb.append(") userId");
