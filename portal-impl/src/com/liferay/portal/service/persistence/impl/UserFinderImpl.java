@@ -668,6 +668,188 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 		screenNames = CustomSQLUtil.keywords(screenNames);
 		emailAddresses = CustomSQLUtil.keywords(emailAddresses);
 
+		List<LinkedHashMap<String, Object>> paramsMapList = getParamsMapList(
+			params);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(FIND_BY_C_FN_MN_LN_SN_EA_S);
+
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.firstName)", StringPool.LIKE, false,
+				firstNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.middleName)", StringPool.LIKE, false,
+				middleNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.lastName)", StringPool.LIKE, false,
+				lastNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.screenName)", StringPool.LIKE, false,
+				screenNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.emailAddress)", StringPool.LIKE, true,
+				emailAddresses);
+
+			if (status == WorkflowConstants.STATUS_ANY) {
+				sql = StringUtil.replace(sql, _STATUS_SQL, StringPool.BLANK);
+			}
+
+			StringBundler sb = new StringBundler(20);
+
+			for (int i = 0; i < paramsMapList.size(); i++) {
+				if (i != 0) {
+					sb.append(" UNION ");
+				}
+
+				sb.append(StringPool.OPEN_PARENTHESIS);
+				sb.append(replaceJoinAndWhere(sql, paramsMapList.get(i)));
+				sb.append(StringPool.CLOSE_PARENTHESIS);
+			}
+
+			if (obc != null) {
+				sb.append(" ORDER BY ");
+				sb.append(obc.toString());
+			}
+
+			sql = sb.toString();
+
+			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar("userId", Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			for (LinkedHashMap<String, Object> paramsMap : paramsMapList) {
+				setJoin(qPos, paramsMap);
+
+				qPos.add(companyId);
+				qPos.add(false);
+				qPos.add(firstNames, 2);
+				qPos.add(middleNames, 2);
+				qPos.add(lastNames, 2);
+				qPos.add(screenNames, 2);
+				qPos.add(emailAddresses, 2);
+
+				if (status != WorkflowConstants.STATUS_ANY) {
+					qPos.add(status);
+				}
+			}
+
+			return (List<Long>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected String getJoin(LinkedHashMap<String, Object> params) {
+		if ((params == null) || params.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(params.size());
+
+		for (Map.Entry<String, Object> entry : params.entrySet()) {
+			String key = entry.getKey();
+
+			if (key.equals("expandoAttributes")) {
+				continue;
+			}
+
+			Object value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				sb.append(getJoin(key, value));
+			}
+		}
+
+		return sb.toString();
+	}
+
+	protected String getJoin(String key, Object value) {
+		String join = StringPool.BLANK;
+
+		if (key.equals("contactTwitterSn")) {
+			join = CustomSQLUtil.get(JOIN_BY_CONTACT_TWITTER_SN);
+		}
+		else if (key.equals("groupsOrgs")) {
+			join = CustomSQLUtil.get(JOIN_BY_GROUPS_ORGS);
+		}
+		else if (key.equals("groupsUserGroups")) {
+			join = CustomSQLUtil.get(JOIN_BY_GROUPS_USER_GROUPS);
+		}
+		else if (key.equals("noOrganizations")) {
+			join = CustomSQLUtil.get(JOIN_BY_NO_ORGANIZATIONS);
+		}
+		else if (key.equals("userGroupRole")) {
+			join = CustomSQLUtil.get(JOIN_BY_USER_GROUP_ROLE);
+		}
+		else if (key.equals("usersGroups")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_GROUPS);
+		}
+		else if (key.equals("usersOrgs")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_ORGS);
+		}
+		else if (key.equals("usersOrgsTree")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_ORGS_TREE);
+		}
+		else if (key.equals("usersPasswordPolicies")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_PASSWORD_POLICIES);
+		}
+		else if (key.equals("usersRoles")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_ROLES);
+		}
+		else if (key.equals("usersTeams")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_TEAMS);
+		}
+		else if (key.equals("usersUserGroups")) {
+			join = CustomSQLUtil.get(JOIN_BY_USERS_USER_GROUPS);
+		}
+		else if (key.equals("announcementsDeliveryEmailOrSms")) {
+			join = CustomSQLUtil.get(
+				JOIN_BY_ANNOUNCEMENTS_DELIVERY_EMAIL_OR_SMS);
+		}
+		else if (key.equals("socialMutualRelation")) {
+			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_MUTUAL_RELATION);
+		}
+		else if (key.equals("socialMutualRelationType")) {
+			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_MUTUAL_RELATION_TYPE);
+		}
+		else if (key.equals("socialRelation")) {
+			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_RELATION);
+		}
+		else if (key.equals("socialRelationType")) {
+			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_RELATION_TYPE);
+		}
+		else if (value instanceof CustomSQLParam) {
+			CustomSQLParam customSQLParam = (CustomSQLParam)value;
+
+			join = customSQLParam.getSQL();
+		}
+
+		if (Validator.isNotNull(join)) {
+			int pos = join.indexOf("WHERE");
+
+			if (pos != -1) {
+				join = join.substring(0, pos);
+			}
+		}
+
+		return join;
+	}
+
+	protected List<LinkedHashMap<String, Object>> getParamsMapList(
+		LinkedHashMap<String, Object> params) {
+
 		if (params == null) {
 			params = _emptyLinkedHashMap;
 		}
@@ -901,180 +1083,7 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 		paramsMapList.add(0,params1);
 
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			String sql = CustomSQLUtil.get(FIND_BY_C_FN_MN_LN_SN_EA_S);
-
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.firstName)", StringPool.LIKE, false,
-				firstNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.middleName)", StringPool.LIKE, false,
-				middleNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.lastName)", StringPool.LIKE, false,
-				lastNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.screenName)", StringPool.LIKE, false,
-				screenNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.emailAddress)", StringPool.LIKE, true,
-				emailAddresses);
-
-			if (status == WorkflowConstants.STATUS_ANY) {
-				sql = StringUtil.replace(sql, _STATUS_SQL, StringPool.BLANK);
-			}
-
-			StringBundler sb = new StringBundler(20);
-
-			for (int i = 0; i < paramsMapList.size(); i++) {
-				if (i != 0) {
-					sb.append(" UNION ");
-				}
-
-				sb.append(StringPool.OPEN_PARENTHESIS);
-				sb.append(replaceJoinAndWhere(sql, paramsMapList.get(i)));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-
-			if (obc != null) {
-				sb.append(" ORDER BY ");
-				sb.append(obc.toString());
-			}
-
-			sql = sb.toString();
-
-			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
-
-			SQLQuery q = session.createSynchronizedSQLQuery(sql);
-
-			q.addScalar("userId", Type.LONG);
-
-			QueryPos qPos = QueryPos.getInstance(q);
-
-			for (LinkedHashMap<String, Object> paramsMap : paramsMapList) {
-				setJoin(qPos, paramsMap);
-
-				qPos.add(companyId);
-				qPos.add(false);
-				qPos.add(firstNames, 2);
-				qPos.add(middleNames, 2);
-				qPos.add(lastNames, 2);
-				qPos.add(screenNames, 2);
-				qPos.add(emailAddresses, 2);
-
-				if (status != WorkflowConstants.STATUS_ANY) {
-					qPos.add(status);
-				}
-			}
-
-			return (List<Long>)QueryUtil.list(q, getDialect(), start, end);
-		}
-		catch (Exception e) {
-			throw new SystemException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-	}
-
-	protected String getJoin(LinkedHashMap<String, Object> params) {
-		if ((params == null) || params.isEmpty()) {
-			return StringPool.BLANK;
-		}
-
-		StringBundler sb = new StringBundler(params.size());
-
-		for (Map.Entry<String, Object> entry : params.entrySet()) {
-			String key = entry.getKey();
-
-			if (key.equals("expandoAttributes")) {
-				continue;
-			}
-
-			Object value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				sb.append(getJoin(key, value));
-			}
-		}
-
-		return sb.toString();
-	}
-
-	protected String getJoin(String key, Object value) {
-		String join = StringPool.BLANK;
-
-		if (key.equals("contactTwitterSn")) {
-			join = CustomSQLUtil.get(JOIN_BY_CONTACT_TWITTER_SN);
-		}
-		else if (key.equals("groupsOrgs")) {
-			join = CustomSQLUtil.get(JOIN_BY_GROUPS_ORGS);
-		}
-		else if (key.equals("groupsUserGroups")) {
-			join = CustomSQLUtil.get(JOIN_BY_GROUPS_USER_GROUPS);
-		}
-		else if (key.equals("noOrganizations")) {
-			join = CustomSQLUtil.get(JOIN_BY_NO_ORGANIZATIONS);
-		}
-		else if (key.equals("userGroupRole")) {
-			join = CustomSQLUtil.get(JOIN_BY_USER_GROUP_ROLE);
-		}
-		else if (key.equals("usersGroups")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_GROUPS);
-		}
-		else if (key.equals("usersOrgs")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_ORGS);
-		}
-		else if (key.equals("usersOrgsTree")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_ORGS_TREE);
-		}
-		else if (key.equals("usersPasswordPolicies")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_PASSWORD_POLICIES);
-		}
-		else if (key.equals("usersRoles")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_ROLES);
-		}
-		else if (key.equals("usersTeams")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_TEAMS);
-		}
-		else if (key.equals("usersUserGroups")) {
-			join = CustomSQLUtil.get(JOIN_BY_USERS_USER_GROUPS);
-		}
-		else if (key.equals("announcementsDeliveryEmailOrSms")) {
-			join = CustomSQLUtil.get(
-				JOIN_BY_ANNOUNCEMENTS_DELIVERY_EMAIL_OR_SMS);
-		}
-		else if (key.equals("socialMutualRelation")) {
-			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_MUTUAL_RELATION);
-		}
-		else if (key.equals("socialMutualRelationType")) {
-			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_MUTUAL_RELATION_TYPE);
-		}
-		else if (key.equals("socialRelation")) {
-			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_RELATION);
-		}
-		else if (key.equals("socialRelationType")) {
-			join = CustomSQLUtil.get(JOIN_BY_SOCIAL_RELATION_TYPE);
-		}
-		else if (value instanceof CustomSQLParam) {
-			CustomSQLParam customSQLParam = (CustomSQLParam)value;
-
-			join = customSQLParam.getSQL();
-		}
-
-		if (Validator.isNotNull(join)) {
-			int pos = join.indexOf("WHERE");
-
-			if (pos != -1) {
-				join = join.substring(0, pos);
-			}
-		}
-
-		return join;
+		return paramsMapList;
 	}
 
 	protected String getWhere(LinkedHashMap<String, Object> params) {
