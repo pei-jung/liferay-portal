@@ -668,6 +668,92 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 		screenNames = CustomSQLUtil.keywords(screenNames);
 		emailAddresses = CustomSQLUtil.keywords(emailAddresses);
 
+		List<LinkedHashMap<String, Object>> paramsMapList = getParamsMapList(
+			params);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(FIND_BY_C_FN_MN_LN_SN_EA_S);
+
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.firstName)", StringPool.LIKE, false,
+				firstNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.middleName)", StringPool.LIKE, false,
+				middleNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.lastName)", StringPool.LIKE, false,
+				lastNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.screenName)", StringPool.LIKE, false,
+				screenNames);
+			sql = CustomSQLUtil.replaceKeywords(
+				sql, "lower(User_.emailAddress)", StringPool.LIKE, true,
+				emailAddresses);
+
+			if (status == WorkflowConstants.STATUS_ANY) {
+				sql = StringUtil.replace(sql, _STATUS_SQL, StringPool.BLANK);
+			}
+
+			StringBundler sb = new StringBundler(20);
+
+			for (int i = 0; i < paramsMapList.size(); i++) {
+				if (i != 0) {
+					sb.append(" UNION ");
+				}
+
+				sb.append(StringPool.OPEN_PARENTHESIS);
+				sb.append(replaceJoinAndWhere(sql, paramsMapList.get(i)));
+				sb.append(StringPool.CLOSE_PARENTHESIS);
+			}
+
+			if (obc != null) {
+				sb.append(" ORDER BY ");
+				sb.append(obc.toString());
+			}
+
+			sql = sb.toString();
+
+			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar("userId", Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			for (LinkedHashMap<String, Object> paramsMap : paramsMapList) {
+				setJoin(qPos, paramsMap);
+
+				qPos.add(companyId);
+				qPos.add(false);
+				qPos.add(firstNames, 2);
+				qPos.add(middleNames, 2);
+				qPos.add(lastNames, 2);
+				qPos.add(screenNames, 2);
+				qPos.add(emailAddresses, 2);
+
+				if (status != WorkflowConstants.STATUS_ANY) {
+					qPos.add(status);
+				}
+			}
+
+			return (List<Long>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected List<LinkedHashMap<String, Object>> getParamsMapList(
+		LinkedHashMap<String, Object> params) {
+
 		if (params == null) {
 			params = _emptyLinkedHashMap;
 		}
@@ -901,84 +987,7 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 		paramsMapList.add(0,params1);
 
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			String sql = CustomSQLUtil.get(FIND_BY_C_FN_MN_LN_SN_EA_S);
-
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.firstName)", StringPool.LIKE, false,
-				firstNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.middleName)", StringPool.LIKE, false,
-				middleNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.lastName)", StringPool.LIKE, false,
-				lastNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.screenName)", StringPool.LIKE, false,
-				screenNames);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(User_.emailAddress)", StringPool.LIKE, true,
-				emailAddresses);
-
-			if (status == WorkflowConstants.STATUS_ANY) {
-				sql = StringUtil.replace(sql, _STATUS_SQL, StringPool.BLANK);
-			}
-
-			StringBundler sb = new StringBundler(20);
-
-			for (int i = 0; i < paramsMapList.size(); i++) {
-				if (i != 0) {
-					sb.append(" UNION ");
-				}
-
-				sb.append(StringPool.OPEN_PARENTHESIS);
-				sb.append(replaceJoinAndWhere(sql, paramsMapList.get(i)));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-
-			if (obc != null) {
-				sb.append(" ORDER BY ");
-				sb.append(obc.toString());
-			}
-
-			sql = sb.toString();
-
-			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
-
-			SQLQuery q = session.createSynchronizedSQLQuery(sql);
-
-			q.addScalar("userId", Type.LONG);
-
-			QueryPos qPos = QueryPos.getInstance(q);
-
-			for (LinkedHashMap<String, Object> paramsMap : paramsMapList) {
-				setJoin(qPos, paramsMap);
-
-				qPos.add(companyId);
-				qPos.add(false);
-				qPos.add(firstNames, 2);
-				qPos.add(middleNames, 2);
-				qPos.add(lastNames, 2);
-				qPos.add(screenNames, 2);
-				qPos.add(emailAddresses, 2);
-
-				if (status != WorkflowConstants.STATUS_ANY) {
-					qPos.add(status);
-				}
-			}
-
-			return (List<Long>)QueryUtil.list(q, getDialect(), start, end);
-		}
-		catch (Exception e) {
-			throw new SystemException(e);
-		}
-		finally {
-			closeSession(session);
-		}
+		return paramsMapList;
 	}
 
 	protected String getJoin(LinkedHashMap<String, Object> params) {
