@@ -878,11 +878,13 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 		paramsMapList.add(params1);
 
-		if (socialRelationTypeUnionUserGroups) {
+		if (socialRelationTypeUnionUserGroups &&
+			ArrayUtil.isNotEmpty(groupIds)) {
+
 			boolean hasSocialRelationTypes = Validator.isNotNull(
 				params.get("socialRelationType"));
 
-			if (hasSocialRelationTypes && ArrayUtil.isNotEmpty(groupIds)) {
+			if (hasSocialRelationTypes) {
 				LinkedHashMap<String, Object> params2 = new LinkedHashMap<>(
 					params);
 
