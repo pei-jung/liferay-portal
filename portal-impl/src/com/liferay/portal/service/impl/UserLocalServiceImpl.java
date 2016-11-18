@@ -425,9 +425,14 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addGroupUser(long groupId, long userId) {
 		groupPersistence.addUser(groupId, userId);
 
-		reindex(userId);
+		try {
+			reindex(userId);
 
-		addDefaultRolesAndTeams(groupId, new long[] {userId});
+			addDefaultRolesAndTeams(groupId, new long[] {userId});
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	/**
@@ -458,7 +463,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			userIds.add(user.getUserId());
 		}
 
-		addGroupUsers(groupId, ArrayUtil.toLongArray(userIds));
+		try {
+			addGroupUsers(groupId, ArrayUtil.toLongArray(userIds));
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	/**
@@ -488,7 +498,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addOrganizationUser(long organizationId, long userId) {
 		organizationPersistence.addUser(organizationId, userId);
 
-		reindex(userId);
+		try {
+			reindex(userId);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	/**
@@ -501,7 +516,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addOrganizationUser(long organizationId, User user) {
 		organizationPersistence.addUser(organizationId, user);
 
-		reindex(user);
+		try {
+			reindex(user);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	/**
@@ -557,7 +577,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addRoleUser(long roleId, long userId) {
 		rolePersistence.addUser(roleId, userId);
 
-		reindex(userId);
+		try {
+			reindex(userId);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	/**
@@ -570,7 +595,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addRoleUser(long roleId, User user) {
 		rolePersistence.addUser(roleId, user);
 
-		reindex(user);
+		try {
+			reindex(user);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	/**
@@ -614,7 +644,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addTeamUser(long teamId, long userId) {
 		teamPersistence.addUser(teamId, userId);
 
-		reindex(userId);
+		try {
+			reindex(userId);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	/**
@@ -627,7 +662,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	public void addTeamUser(long teamId, User user) {
 		teamPersistence.addUser(teamId, user);
 
-		reindex(user);
+		try {
+			reindex(user);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	/**
@@ -757,13 +797,18 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	@Override
 	@SuppressWarnings("deprecation")
 	public void addUserGroupUser(long userGroupId, long userId) {
-		if (PropsValues.USER_GROUPS_COPY_LAYOUTS_TO_USER_PERSONAL_SITE) {
-			userGroupLocalService.copyUserGroupLayouts(userGroupId, userId);
+		try {
+			if (PropsValues.USER_GROUPS_COPY_LAYOUTS_TO_USER_PERSONAL_SITE) {
+				userGroupLocalService.copyUserGroupLayouts(userGroupId, userId);
+			}
+
+			userGroupPersistence.addUser(userGroupId, userId);
+
+			reindex(userId);
 		}
-
-		userGroupPersistence.addUser(userGroupId, userId);
-
-		reindex(userId);
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	/**
@@ -794,7 +839,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			userIds.add(user.getUserId());
 		}
 
-		addUserGroupUsers(userGroupId, ArrayUtil.toLongArray(userIds));
+		try {
+			addUserGroupUsers(userGroupId, ArrayUtil.toLongArray(userIds));
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	/**
@@ -6167,7 +6217,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		Indexer<User> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
 			User.class);
 
-		indexer.reindex(users);
+		try {
+			indexer.reindex(users);
+		}
+		catch (SearchException se) {
+			throw new SystemException(se);
+		}
 	}
 
 	protected void reindex(long userId) throws SearchException {
