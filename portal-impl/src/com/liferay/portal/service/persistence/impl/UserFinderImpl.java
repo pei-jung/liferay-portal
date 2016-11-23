@@ -1002,7 +1002,7 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			return paramsMapList;
 		}
 
-		if (!inherit) {
+		if (!inherit || socialRelationTypeUnionUserGroups) {
 			return paramsMapList;
 		}
 
