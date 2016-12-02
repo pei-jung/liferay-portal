@@ -24,6 +24,7 @@ import com.liferay.portal.configuration.metatype.definitions.ExtendedObjectClass
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -262,6 +263,18 @@ public class ExportConfigurationMVCResourceCommand
 		ExtendedAttributeDefinition[] attributeDefinitions =
 			extendedObjectClassDefinition.getAttributeDefinitions(
 				ConfigurationModel.ALL);
+
+		if (configurationModel.isCompanyFactory()) {
+			String factoryInstanceLabelAttributeId =
+				configurationModel.getLabelAttribute();
+
+			ExtendedAttributeDefinition factoryInstanceLabelAttribute =
+				configurationModel.getExtendedAttributeDefinition(
+					factoryInstanceLabelAttributeId);
+
+			attributeDefinitions = ArrayUtil.append(
+				attributeDefinitions, factoryInstanceLabelAttribute);
+		}
 
 		for (AttributeDefinition attributeDefinition : attributeDefinitions) {
 			String[] values = AttributeDefinitionUtil.getProperty(
