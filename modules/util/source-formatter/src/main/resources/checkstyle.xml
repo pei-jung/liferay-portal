@@ -155,6 +155,9 @@
 			<message key="start.character.invalid" value="When concatenating multiple literal strings using '+', only the first literal string can start with ''{0}''" />
 			<message key="tabbing.incorrect" value="Expected indentation is ''{0}'' tabs" />
 		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.SelfReference">
+			<message key="self.reference.unneeded" value="Reference to method ''{0}'' does not need ''{1}''" />
+		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.SizeIsZero">
 			<message key="method.use" value="Use method ''{0}'' instead" />
 		</module>
@@ -163,8 +166,8 @@
 			<message key="parameter.invalidName" value="'sub' should be followed by a lowercase character for parameter ''{0}''" />
 			<message key="variable.invalidName" value="'sub' should be followed by a lowercase character for variable ''{0}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.TransactionalTestRuleCheck">
-			<message key="import.invalid" value="Avoid using import TransactionalTestRuleCheck in *StagedModelDataHandlerTest, see LPS-68908" />
+		<module name="com.liferay.source.formatter.checkstyle.checks.TransactionalTestRule">
+			<message key="import.invalid" value="Avoid using import TransactionalTestRule in *StagedModelDataHandlerTest, see LPS-68908" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.UnprocessedException">
 			<message key="exception.unprocessed" value="Unprocessed exception ''{0}'', see LPS-36174" />

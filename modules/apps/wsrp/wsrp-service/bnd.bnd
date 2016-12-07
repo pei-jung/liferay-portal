@@ -1,6 +1,6 @@
 Bundle-Name: Liferay WSRP Service
 Bundle-SymbolicName: com.liferay.wsrp.service
-Bundle-Version: 1.0.11
+Bundle-Version: 1.0.13
 Export-Package:\
 	com.liferay.wsrp.model.impl,\
 	com.liferay.wsrp.util
@@ -11,6 +11,7 @@ Import-Package:\
 	*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title:
+Liferay-Require-SchemaVersion: 1.0.11
 Liferay-Service: true
 Web-ContextPath: /wsrp-service
 -includeresource:\

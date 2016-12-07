@@ -34,10 +34,26 @@ import org.gradle.api.plugins.PluginContainer;
 public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 
 	public static String getArchivesBaseName(Project project) {
-		BasePluginConvention basePluginConvention = GradleUtil.getConvention(
+		BasePluginConvention basePluginConvention = getConvention(
 			project, BasePluginConvention.class);
 
 		return basePluginConvention.getArchivesBaseName();
+	}
+
+	public static File getRootDir(File dir, String markerFileName) {
+		while (true) {
+			File markerFile = new File(dir, markerFileName);
+
+			if (markerFile.exists()) {
+				return dir;
+			}
+
+			dir = dir.getParentFile();
+
+			if (dir == null) {
+				return null;
+			}
+		}
 	}
 
 	public static File getSrcDir(SourceDirectorySet sourceDirectorySet) {

@@ -121,6 +121,7 @@ request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 					PortletURL assignMembersURL = PortalUtil.getControlPanelPortletURL(request, portletId, PortletRequest.RENDER_PHASE);
 
 					assignMembersURL.setParameter("redirect", currentURL);
+					assignMembersURL.setParameter("groupId", String.valueOf(group.getGroupId()));
 					%>
 
 					<c:if test="<%= siteAdminDisplayContext.getUsersCount(group) > 0 %>">

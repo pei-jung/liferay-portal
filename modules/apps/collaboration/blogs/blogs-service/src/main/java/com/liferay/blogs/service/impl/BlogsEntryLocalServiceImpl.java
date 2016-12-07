@@ -26,6 +26,7 @@ import com.liferay.blogs.exception.EntrySmallImageNameException;
 import com.liferay.blogs.exception.EntrySmallImageScaleException;
 import com.liferay.blogs.exception.EntryTitleException;
 import com.liferay.blogs.exception.EntryUrlTitleException;
+import com.liferay.blogs.exception.NoSuchEntryException;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.base.BlogsEntryLocalServiceBaseImpl;
 import com.liferay.blogs.service.permission.BlogsPermission;
@@ -950,6 +951,11 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	}
 
 	@Override
+	public String getUniqueUrlTitle(BlogsEntry entry) throws PortalException {
+		return _getUniqueUrlTitle(entry);
+	}
+
+	@Override
 	public void moveEntriesToTrash(long groupId, long userId)
 		throws PortalException {
 
@@ -1189,10 +1195,10 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		throws PortalException {
 
 		return updateEntry(
-			userId, entryId, title, subtitle, StringPool.BLANK, description,
-			content, displayDate, allowPingbacks, allowTrackbacks, trackbacks,
-			coverImageCaption, coverImageImageSelector, smallImageImageSelector,
-			serviceContext);
+			userId, entryId, title, subtitle, _getURLTitle(entryId),
+			description, content, displayDate, allowPingbacks, allowTrackbacks,
+			trackbacks, coverImageCaption, coverImageImageSelector,
+			smallImageImageSelector, serviceContext);
 	}
 
 	@Override
@@ -1208,11 +1214,11 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		throws PortalException {
 
 		return updateEntry(
-			userId, entryId, title, subtitle, StringPool.BLANK, description,
-			content, displayDateMonth, displayDateDay, displayDateYear,
-			displayDateHour, displayDateMinute, allowPingbacks, allowTrackbacks,
-			trackbacks, coverImageCaption, coverImageImageSelector,
-			smallImageImageSelector, serviceContext);
+			userId, entryId, title, subtitle, _getURLTitle(entryId),
+			description, content, displayDateMonth, displayDateDay,
+			displayDateYear, displayDateHour, displayDateMinute, allowPingbacks,
+			allowTrackbacks, trackbacks, coverImageCaption,
+			coverImageImageSelector, smallImageImageSelector, serviceContext);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -1246,6 +1252,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 			friendlyURLLocalService.validate(
 				entry.getCompanyId(), entry.getGroupId(), classNameId, entryId,
 				urlTitle);
+		}
+		else {
+			urlTitle = _getUniqueUrlTitle(entry, title);
 		}
 
 		String oldUrlTitle = entry.getUrlTitle();
@@ -2297,8 +2306,13 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	}
 
 	private String _getUniqueUrlTitle(BlogsEntry entry) throws PortalException {
-		String urlTitle = BlogsUtil.getUrlTitle(
-			entry.getEntryId(), entry.getTitle());
+		return _getUniqueUrlTitle(entry, entry.getTitle());
+	}
+
+	private String _getUniqueUrlTitle(BlogsEntry entry, String newTitle)
+		throws PortalException {
+
+		String urlTitle = BlogsUtil.getUrlTitle(entry.getEntryId(), newTitle);
 
 		long classNameId = classNameLocalService.getClassNameId(
 			BlogsEntry.class);
@@ -2306,6 +2320,16 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		return friendlyURLLocalService.getUniqueUrlTitle(
 			entry.getCompanyId(), entry.getGroupId(), classNameId,
 			entry.getEntryId(), urlTitle);
+	}
+
+	private String _getURLTitle(long entryId) throws NoSuchEntryException {
+		BlogsEntry entry = blogsEntryPersistence.fetchByPrimaryKey(entryId);
+
+		if (entry != null) {
+			return entry.getUrlTitle();
+		}
+
+		return StringPool.BLANK;
 	}
 
 	private static final String _COVER_IMAGE_FOLDER_NAME = "Cover Image";

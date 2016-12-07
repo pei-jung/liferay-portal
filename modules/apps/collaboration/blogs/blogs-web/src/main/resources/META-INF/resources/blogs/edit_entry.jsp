@@ -156,7 +156,7 @@ if (portletTitleBasedNavigation) {
 
 					<div class="col-md-8 col-md-offset-2">
 						<div class="entry-title">
-							<h1><liferay-ui:input-editor contents="<%= HtmlUtil.escape(title) %>" editorName="alloyeditor" name="titleEditor" placeholder="title" showSource="<%= false %>" /></h1>
+							<h1><liferay-ui:input-editor contents="<%= HtmlUtil.escape(title) %>" editorName="alloyeditor" name="titleEditor" onChangeMethod="OnChangeTitle" placeholder="title" showSource="<%= false %>" /></h1>
 						</div>
 
 						<aui:input name="title" type="hidden" />
@@ -196,7 +196,33 @@ if (portletTitleBasedNavigation) {
 					String friendlyURLPrefix = StringUtil.shorten("/-/" + portlet.getFriendlyURLMapping(), 40) + StringPool.SLASH;
 					%>
 
-					<aui:input cssClass="input-medium" data-customUrl="<%= false %>" helpMessage='<%= LanguageUtil.format(resourceBundle, "for-example-x", "<em>one-day-in-the-life-of-marion-cotillard</em>") %>' ignoreRequestValue="<%= true %>" label="blog-entry-url" name="urlTitle" prefix="<%= friendlyURLPrefix %>" type="text" value="<%= urlTitle %>" />
+					<div class="clearfix form-group">
+
+						<%
+						boolean automaticURL;
+
+						if (entry == null) {
+							automaticURL = Validator.isNull(urlTitle);
+						}
+						else {
+							String uniqueUrlTitle = BlogsEntryLocalServiceUtil.getUniqueUrlTitle(entry);
+
+							automaticURL = uniqueUrlTitle.equals(urlTitle);
+						}
+						%>
+
+						<h4>
+							<liferay-ui:message key="url" />
+						</h4>
+
+						<div class="form-group" id="<portlet:namespace />urlOptions">
+							<aui:input checked="<%= automaticURL %>" helpMessage="the-url-will-be-based-on-the-entry-title" label="automatic" name="automaticURL" type="radio" value="<%= true %>" />
+
+							<aui:input checked="<%= !automaticURL %>" label="custom" name="automaticURL" type="radio" value="<%= false %>" />
+						</div>
+
+						<aui:input cssClass="input-medium" disabled="<%= automaticURL %>" helpMessage='<%= LanguageUtil.format(resourceBundle, "for-example-x", "<em>one-day-in-the-life-of-marion-cotillard</em>") %>' ignoreRequestValue="<%= true %>" label="blog-entry-url" name="urlTitle" prefix="<%= friendlyURLPrefix %>" type="text" value="<%= urlTitle %>" />
+					</div>
 
 					<div class="clearfix form-group">
 						<label><liferay-ui:message key="abstract" /> <liferay-ui:icon-help message="an-abstract-is-a-brief-summary-of-a-blog-entry" /></label>
@@ -358,6 +384,14 @@ if (portletTitleBasedNavigation) {
 		}
 	}
 
+	function <portlet:namespace />OnChangeTitle(title) {
+		var blogs = Liferay.component('<portlet:namespace />Blogs');
+
+		if (blogs) {
+			blogs.updateFriendlyURL(title);
+		}
+	}
+
 	function <portlet:namespace />OnDescriptionEditorInit() {
 		<c:if test="<%= !customAbstract %>">
 			document.getElementById('<portlet:namespace />descriptionEditor').setAttribute('contenteditable', false);
@@ -403,14 +437,6 @@ if (portletTitleBasedNavigation) {
 		)
 	);
 
-	var clearSaveDraftHandle = function(event) {
-		if (event.portletId === '<%= portletDisplay.getRootPortletId() %>') {
-			blogs.destroy();
-
-			Liferay.detach('destroyPortlet', clearSaveDraftHandle);
-		}
-	};
-
 	var createAbstractEditor = function() {
 		var descriptionEditor = window['<portlet:namespace />descriptionEditor'];
 
@@ -430,16 +456,13 @@ if (portletTitleBasedNavigation) {
 		configurationContentHeader.on('show.bs.collapse', createAbstractEditor);
 	}
 
-	var form = A.one('#<portlet:namespace />fm');
+	var clearSaveDraftHandle = function(event) {
+		if (event.portletId === '<%= portletDisplay.getRootPortletId() %>') {
+			blogs.destroy();
 
-	var urlTitleInput = form.one('#<portlet:namespace />urlTitle');
-
-	urlTitleInput.on(
-		'input',
-		function(event) {
-			event.currentTarget.setAttribute('data-customUrl', urlTitleInput.val() != '');
+			Liferay.detach('destroyPortlet', clearSaveDraftHandle);
 		}
-	);
+	};
 
 	Liferay.on('destroyPortlet', clearSaveDraftHandle);
 </aui:script>
