@@ -17,8 +17,8 @@
 	</command>
 
 	<command name="disableRecycleBinViaSiteSettings">
-		<execute macro="Navigator#gotoTab">
-			<var name="tab" value="Advanced" />
+		<execute macro="Navigator#gotoNavTab">
+			<var name="navTab" value="Advanced" />
 		</execute>
 
 		<execute macro="Panel#expandPanel">

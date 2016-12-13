@@ -7482,7 +7482,19 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 					<elseif>
 						<equals arg1="${app.server.type}" arg2="weblogic" />
 						<then>
-							<ant antfile="build-dist.xml" inheritAll="false" target="unzip-weblogic" />
+							<ant antfile="build-dist.xml" inheritAll="false" target="unzip-weblogic-custom" />
+
+							<chmod perm="a+x">
+								<fileset dir="${app.server.weblogic.bin.dir}">
+									<include name="**/*.sh" />
+								</fileset>
+							</chmod>
+
+							<chmod perm="a+x">
+								<fileset dir="${app.server.weblogic.instance.dir}">
+									<include name="**/*.sh" />
+								</fileset>
+							</chmod>
 						</then>
 					</elseif>
 				</if>
