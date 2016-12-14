@@ -148,6 +148,12 @@
 	}
 
 	.edit-entry {
+		.alloy-editor-placeholder:before {
+			display: block;
+			text-align: inherit;
+			width: 100%;
+		}
+
 		.entry-title h1 p {
 			line-height: 80px;
 		}
@@ -256,6 +262,14 @@
 			ul {
 				margin-top: 6px;
 			}
+		}
+	}
+
+	.info-bar-container.affix + .entry-body {
+		margin-top: 47px;
+
+		@include sm() {
+			margin-top: 59px;
 		}
 	}
 

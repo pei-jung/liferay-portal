@@ -3,7 +3,7 @@
 ;
 [subrepo]
 	cmdver = liferay
-	commit = 0dab58a0e02779453a2be4a6af316532e8f5ef13
+	commit = 14c794ed61f33dbb78ccd3405cb30787b8862c9c
 	mode = push
-	parent = 986b8e9f5c6675db505f9421a1f08368e86d29b5
+	parent = b64f374b7d726c11b2d9f479a7893c77a27cb361
 	remote = git@github.com:liferay/com-liferay-document-library.git

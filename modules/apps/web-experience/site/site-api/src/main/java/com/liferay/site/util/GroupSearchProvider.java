@@ -14,6 +14,7 @@
 
 package com.liferay.site.util;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -134,11 +135,11 @@ public class GroupSearchProvider {
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		if (isFilterManageableGroups(portletRequest)) {
-			User user = themeDisplay.getUser();
+		User user = themeDisplay.getUser();
 
-			groups = user.getSiteGroups(true);
-		}
+		groups = user.getMySiteGroups(
+			new String[] {Group.class.getName(), Organization.class.getName()},
+			QueryUtil.ALL_POS);
 
 		long groupId = ParamUtil.getLong(
 			portletRequest, "groupId", GroupConstants.DEFAULT_PARENT_GROUP_ID);
@@ -194,16 +195,14 @@ public class GroupSearchProvider {
 		return groupParams;
 	}
 
-	protected long getParentGroupId(PortletRequest portletRequest)
-		throws PortalException {
-
+	protected long getParentGroupId(PortletRequest portletRequest) {
 		Group group = null;
 
 		long groupId = ParamUtil.getLong(
 			portletRequest, "groupId", GroupConstants.DEFAULT_PARENT_GROUP_ID);
 
 		if (groupId > 0) {
-			group = _groupService.getGroup(groupId);
+			group = _groupLocalService.fetchGroup(groupId);
 		}
 
 		if (group != null) {
@@ -240,6 +239,10 @@ public class GroupSearchProvider {
 		_groupLocalService = groupLocalService;
 	}
 
+	/**
+	 * @deprecated As of 2.2.0, with no direct replacement
+	 */
+	@Deprecated
 	@Reference(unbind = "-")
 	protected void setGroupService(GroupService groupService) {
 		_groupService = groupService;

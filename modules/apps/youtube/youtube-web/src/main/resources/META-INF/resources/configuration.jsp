@@ -43,11 +43,11 @@ String redirect = ParamUtil.getString(request, "redirect");
 						<aui:option label="full-hd-1080-16-9" value="1920x1080" />
 					</aui:select>
 
-					<aui:input disabled="<%= true %>" inlineField="<%= true %>" label="frame-width" name="preferences--width--" value="<%= youTubeDisplayContext.getWidth() %>">
+					<aui:input disabled="<%= !youTubeDisplayContext.isCustomSize() %>" inlineField="<%= true %>" label="frame-width" name="preferences--width--" value="<%= youTubeDisplayContext.getWidth() %>">
 						<aui:validator name="digits" />
 					</aui:input>
 
-					<aui:input disabled="<%= true %>" inlineField="<%= true %>" label="frame-height" name="preferences--height--" value="<%= youTubeDisplayContext.getHeight() %>">
+					<aui:input disabled="<%= !youTubeDisplayContext.isCustomSize() %>" inlineField="<%= true %>" label="frame-height" name="preferences--height--" value="<%= youTubeDisplayContext.getHeight() %>">
 						<aui:validator name="digits" />
 					</aui:input>
 				</aui:fieldset>
@@ -55,19 +55,21 @@ String redirect = ParamUtil.getString(request, "redirect");
 				<aui:fieldset collapsed="<%= true %>" collapsible="<%= true %>" label="advanced-options">
 					<aui:input name="preferences--showThumbnail--" type="toggle-switch" value="<%= youTubeDisplayContext.isShowThumbnail() %>" />
 
-					<aui:input inlineField="<%= true %>" label="auto-play" name="preferences--autoplay--" type="toggle-switch" value="<%= youTubeDisplayContext.isAutoPlay() %>" />
+					<div class="<%= youTubeDisplayContext.isShowThumbnail() ? "hide" : StringPool.BLANK %>" id="<portlet:namespace />videoPreferences">
+						<aui:input inlineField="<%= true %>" label="auto-play" name="preferences--autoplay--" type="toggle-switch" value="<%= youTubeDisplayContext.isAutoPlay() %>" />
 
-					<aui:input inlineField="<%= true %>" name="preferences--loop--" type="toggle-switch" value="<%= youTubeDisplayContext.isLoop() %>" />
+						<aui:input inlineField="<%= true %>" name="preferences--loop--" type="toggle-switch" value="<%= youTubeDisplayContext.isLoop() %>" />
 
-					<aui:input inlineField="<%= true %>" name="preferences--enableKeyboardControls--" type="toggle-switch" value="<%= youTubeDisplayContext.isEnableKeyboardControls() %>" />
+						<aui:input inlineField="<%= true %>" name="preferences--enableKeyboardControls--" type="toggle-switch" value="<%= youTubeDisplayContext.isEnableKeyboardControls() %>" />
 
-					<aui:input inlineField="<%= true %>" name="preferences--annotations--" type="toggle-switch" value="<%= youTubeDisplayContext.isAnnotations() %>" />
+						<aui:input inlineField="<%= true %>" name="preferences--annotations--" type="toggle-switch" value="<%= youTubeDisplayContext.isAnnotations() %>" />
 
-					<aui:input inlineField="<%= true %>" name="preferences--closedCaptioning--" type="toggle-switch" value="<%= youTubeDisplayContext.isClosedCaptioning() %>" />
+						<aui:input inlineField="<%= true %>" name="preferences--closedCaptioning--" type="toggle-switch" value="<%= youTubeDisplayContext.isClosedCaptioning() %>" />
 
-					<aui:input name="preferences--startTime--" value="<%= youTubeDisplayContext.getStartTime() %>">
-						<aui:validator name="digits" />
-					</aui:input>
+						<aui:input name="preferences--startTime--" value="<%= youTubeDisplayContext.getStartTime() %>">
+							<aui:validator name="digits" />
+						</aui:input>
+					</div>
 				</aui:fieldset>
 			</aui:fieldset-group>
 		</div>
@@ -121,4 +123,6 @@ String redirect = ParamUtil.getString(request, "redirect");
 			widthNode.val(<portlet:namespace />customWidth);
 		}
 	}
+
+	Liferay.Util.toggleBoxes('<portlet:namespace />showThumbnail','<portlet:namespace />videoPreferences','<%= youTubeDisplayContext.isShowThumbnail() %>');
 </aui:script>
