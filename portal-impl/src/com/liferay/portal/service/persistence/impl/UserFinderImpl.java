@@ -453,6 +453,9 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 			String sql = CustomSQLUtil.get(FIND_BY_C_FN_MN_LN_SN_EA_S);
 
+			sql = StringUtil.replace(
+				sql, "[$ATTRIBUTES$]", "User_.userId AS userId");
+
 			sql = replaceKeywords(
 				sql, firstNames, middleNames, lastNames, screenNames,
 				emailAddresses);
@@ -775,6 +778,17 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			session = openSession();
 
 			String sql = CustomSQLUtil.get(FIND_BY_C_FN_MN_LN_SN_EA_S);
+
+			String attributes = "User_.userId AS userId";
+
+			if (obc != null) {
+				for (String conditionField : obc.getOrderByConditionFields()) {
+					attributes += ", User_." + conditionField + " AS " +
+						conditionField;
+				}
+			}
+
+			sql = StringUtil.replace(sql, "[$ATTRIBUTES$]", attributes);
 
 			sql = replaceKeywords(
 				sql, firstNames, middleNames, lastNames, screenNames,
