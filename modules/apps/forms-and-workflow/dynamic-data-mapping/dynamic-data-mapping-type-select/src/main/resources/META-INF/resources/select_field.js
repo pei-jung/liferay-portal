@@ -41,6 +41,10 @@ AUI.add(
 					}
 				},
 
+				AUGMENTS: [
+					Liferay.DDM.Field.SelectFieldSearchSupport
+				],
+
 				EXTENDS: Liferay.DDM.Renderer.Field,
 
 				NAME: 'liferay-ddm-form-field-select',
@@ -50,7 +54,7 @@ AUI.add(
 						var instance = this;
 
 						instance._eventHandlers.push(
-							A.one('doc').after('click', A.bind(instance.closeList, instance)),
+							A.one('doc').after('click', A.bind(instance._afterClickOutside, instance)),
 							instance.bindContainerEvent('mousedown', instance._afterClickSelectTrigger, '.form-builder-select-field'),
 							instance.bindContainerEvent('mousedown', instance._onClickItem, 'li')
 						);
@@ -66,19 +70,17 @@ AUI.add(
 						instance.set('value', []);
 					},
 
-					closeList: function(event) {
+					closeList: function() {
 						var instance = this;
 
 						var container = instance.get('container');
 
-						var ancestor = event.target.ancestor('.form-builder-select-field');
-
-						if (ancestor && ancestor == container.one('.form-builder-select-field')) {
-							return;
-						}
-
 						if (!instance.get('readOnly') && instance._isListOpen()) {
-							instance.get('container').one('.drop-chosen').addClass('hide');
+							container.one('.drop-chosen').addClass('hide');
+
+							container.one('.form-builder-select-field').removeClass('active');
+
+							instance.fire('closeList');
 						}
 					},
 
@@ -89,7 +91,8 @@ AUI.add(
 							SelectField.superclass.getTemplateContext.apply(instance, arguments),
 							{
 								options: instance.get('options'),
-								selecteCaretDoubleIcon: Liferay.Util.getLexiconIconTpl('caret-double-l', 'icon-monospaced'),
+								selectCaretDoubleIcon: Liferay.Util.getLexiconIconTpl('caret-double-l', 'icon-monospaced'),
+								selectSearchIcon: Liferay.Util.getLexiconIconTpl('search', 'icon-monospaced'),
 								strings: instance.get('strings'),
 								value: instance.getValueSelected()
 							}
@@ -141,6 +144,18 @@ AUI.add(
 						return values;
 					},
 
+					openList: function() {
+						var instance = this;
+
+						var container = instance.get('container');
+
+						var selectGroup = container.one('.form-builder-select-field');
+
+						container.one('.drop-chosen').toggleClass('hide');
+
+						selectGroup.addClass('active');
+					},
+
 					render: function() {
 						var instance = this;
 
@@ -180,13 +195,27 @@ AUI.add(
 						inputGroup.insert(container.one('.help-block'), 'after');
 					},
 
+					_afterClickOutside: function(event) {
+						var instance = this;
+
+						if (instance._isClickingOutSide(event)) {
+							instance.closeList();
+						}
+					},
+
 					_afterClickSelectTrigger: function(event) {
-						event.stopPropagation();
+						event.preventDefault();
 
 						var instance = this;
 
+						var target = event.target;
+
+						if (target.ancestor('.search-chosen')) {
+							return;
+						}
+
 						if (!instance.get('readOnly')) {
-							instance.get('container').one('.drop-chosen').toggleClass('hide');
+							instance.openList();
 						}
 					},
 
@@ -238,6 +267,16 @@ AUI.add(
 						return optionsSelected;
 					},
 
+					_isClickingOutSide: function(event) {
+						var instance = this;
+
+						var ancestor = event.target.ancestor('.form-builder-select-field');
+
+						var container = instance.get('container');
+
+						return !ancestor || ancestor !== container.one('.form-builder-select-field');
+					},
+
 					_isListOpen: function() {
 						var instance = this;
 
@@ -251,15 +290,9 @@ AUI.add(
 					_onClickItem: function(event) {
 						var instance = this;
 
-						var options = instance.get('options');
+						var value = event.target.getAttribute('data-option-value');
 
-						var index = event.target.getAttribute('data-option-index');
-
-						var option = options[index];
-
-						instance.set('value', [option.value]);
-
-						instance.get('container').one('.option-selected').text(option.label);
+						instance.set('value', [value]);
 
 						instance.render();
 					}
@@ -271,6 +304,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddm-form-renderer-field']
+		requires: ['liferay-ddm-form-field-select', 'liferay-ddm-form-field-select-search-support', 'liferay-ddm-form-renderer-field']
 	}
 );

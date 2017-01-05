@@ -206,8 +206,7 @@
 			content: attr(data-placeholder);
 		}
 
-		.alloy-editor.alloy-editor-placeholder,
-		.alloy-editor.alloy-editor-placeholder:empty:not(:focus),
+		.alloy-editor-container .alloy-editor.alloy-editor-placeholder.ae-placeholder:not(:focus):not(.form-control),
 		.ddl-form-name,
 		.ddl-form-description {
 			border-width: 0;
@@ -322,16 +321,20 @@
 	.search-chosen {
 		border-bottom: 1px solid #E4E9EC;
 		position: relative;
+	}
 
-		.select-search-container {
-			left: 8px;
-			position: absolute;
-			top: 2px;
+	.select-search-container {
+		left: 8px;
+		position: absolute;
+		top: 2px;
 
-			a {
-				color: #869CAD;
-			}
+		a {
+			color: #869CAD;
 		}
+	}
+
+	&.active .select-field-trigger {
+		border-bottom: 2px solid #65B3F0;
 	}
 
 	.form-control[disabled] + a {
@@ -349,15 +352,7 @@
 		color: #869CAD;
 		display: block;
 		padding: 10px 5px;
-
-		&:hover {
-			text-decoration: none;
-		}
-
-		&:focus {
-			border-bottom: 2px solid #65B3F0;
-			text-decoration: none;
-		}
+		text-decoration: none;
 	}
 
 	.drop-chosen {

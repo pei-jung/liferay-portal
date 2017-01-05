@@ -1395,15 +1395,15 @@ app.server.type=@{app.server.type}]]></echo>
 		/>
 	</target>
 
-	<target name="functional-bundle-markerplaceapp-smoke-jboss-mysql56-jdk8">
+	<target name="functional-bundle-marketplaceapp-smoke-jboss-mysql56-jdk8">
 		<antcall target="functional-bundle-jboss-mysql56-jdk8" />
 	</target>
 
-	<target name="functional-bundle-markerplaceapp-smoke-tomcat-mysql56-jdk8">
+	<target name="functional-bundle-marketplaceapp-smoke-tomcat-mysql56-jdk8">
 		<antcall target="functional-bundle-tomcat-mysql56-jdk8" />
 	</target>
 
-	<target name="functional-bundle-markerplaceapp-smoke-wildfly-mysql56-jdk8">
+	<target name="functional-bundle-marketplaceapp-smoke-wildfly-mysql56-jdk8">
 		<antcall target="functional-bundle-wildfly-mysql56-jdk8" />
 	</target>
 
@@ -1611,6 +1611,10 @@ app.server.type=@{app.server.type}]]></echo>
 		<antcall target="functional-tomcat80-mysql56-jdk8" />
 	</target>
 
+	<target name="functional-upgrade-jboss70-mysql56-jdk8">
+		<run-functional-test app.server.type="jboss" database.type="mysql" />
+	</target>
+
 	<target name="functional-upgrade-tomcat80-mariadb100-jdk8">
 		<run-functional-test app.server.type="tomcat" database.type="mariadb" />
 	</target>
@@ -1633,6 +1637,14 @@ app.server.type=@{app.server.type}]]></echo>
 
 	<target name="functional-upgrade-tomcat80-sybase160-jdk8">
 		<run-functional-test app.server.type="tomcat" database.type="sybase" />
+	</target>
+
+	<target name="functional-upgrade-weblogic121-mysql56-jdk8">
+		<run-functional-test app.server.type="weblogic" database.type="mysql" />
+	</target>
+
+	<target name="functional-upgrade-wildfly100-mariadb100-jdk8">
+		<run-functional-test app.server.type="wildfly" database.type="mariadb" />
 	</target>
 
 	<target name="integration-db2105-jdk8">
@@ -2403,7 +2415,10 @@ information. Make sure to commit in all build services results.
 			<try>
 				<move file="${module.base.dir}/settings.gradle" tofile="${module.base.dir}/settings.gradle.temp" />
 
-				<gradle-execute dir="${module.base.dir}" task="checkSourceFormatting" />
+				<gradle-execute dir="${module.base.dir}" task="checkSourceFormatting">
+					<arg value="-Pcom.liferay.source.formatter.ignore.local=true" />
+					<arg value="-PdependencyCheckerIgnoreFailures=false" />
+				</gradle-execute>
 			</try>
 			<catch>
 				<fail message="${failure.property}" />
@@ -2455,6 +2470,8 @@ go
 drop database lportal
 go
 exec sp_configure 'lock scheme', 0, datarows
+go
+exec sp_configure 'procedure cache size', 28000
 go
 create database lportal on master = "250m"
 go

@@ -888,6 +888,54 @@ version 2.3.4.
 - [LPS-69838]: Allow to configure the `npmArgs` argument in the `node` extension
 object by setting the project property `nodejs.npm.args`.
 
+## 3.0.62 - 2016-12-29
+
+### Changed
+- [LPS-67352]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.68.
+- [LPS-67352]: Update the [Liferay Source Formatter] dependency to version
+1.0.334.
+- [LPS-69824]: Update the [Liferay Gradle Plugins Service Builder] dependency to
+version 1.0.29.
+- [LPS-69824]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.143.
+
+## 3.0.63 - 2016-12-29
+
+### Changed
+- [LPS-69920]: Update the [Liferay Gradle Plugins Gulp] dependency to version
+2.0.8.
+- [LPS-69920]: Update the [Liferay Gradle Plugins JS Module Config Generator]
+dependency to version 2.1.6.
+- [LPS-69920]: Update the [Liferay Gradle Plugins JS Transpiler] dependency to
+version 2.3.5.
+
+## 3.0.64 - 2016-12-29
+
+### Changed
+- [LPS-67352]: Update the [Liferay Source Formatter] dependency to version
+1.0.335.
+- [LPS-67352]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.69.
+
+## 3.0.65 - 2017-01-02
+
+### Changed
+- [LPS-67352]: Update the [Liferay Source Formatter] dependency to version
+1.0.336.
+- [LPS-67352]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.70.
+
+## 3.0.66 - 2017-01-03
+
+### Changed
+- [LPS-67352]: Update the [Liferay Source Formatter] dependency to version
+1.0.337.
+
+## 3.0.67 - 2017-01-03
+
+*No changes.*
+
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
 [Liferay CSS Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/css-builder
@@ -967,5 +1015,7 @@ object by setting the project property `nodejs.npm.args`.
 [LPS-69677]: https://issues.liferay.com/browse/LPS-69677
 [LPS-69730]: https://issues.liferay.com/browse/LPS-69730
 [LPS-69802]: https://issues.liferay.com/browse/LPS-69802
+[LPS-69824]: https://issues.liferay.com/browse/LPS-69824
 [LPS-69838]: https://issues.liferay.com/browse/LPS-69838
+[LPS-69920]: https://issues.liferay.com/browse/LPS-69920
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023

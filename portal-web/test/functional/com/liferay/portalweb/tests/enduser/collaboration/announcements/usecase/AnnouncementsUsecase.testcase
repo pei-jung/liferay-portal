@@ -238,7 +238,7 @@
 		</for>
 
 		<var name="key_entryTitle" value="Announcements Entry Title" />
-		<var name="viewEntryList" value="1,2,3,4,5" />
+		<var name="viewEntryList" value="3,4,5,6,7" />
 
 		<for list="${viewEntryList}" param="viewEntryCount">
 			<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title ${viewEntryCount}" />
