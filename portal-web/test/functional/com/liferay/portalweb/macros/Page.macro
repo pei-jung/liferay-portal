@@ -1,7 +1,7 @@
 <definition>
 	<command name="_addPageTypeEmbedded">
 		<execute function="Type" locator1="SitePagesEditPage#PAGE_TYPE_EMBEDDED_URL_FIELD" value1="${pageTypeURL}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesEditPage#PAGE_TYPE_EMBEDDED_DESCRIPTION_FIELD" value1="Show content from another website." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesEditPage#PAGE_TYPE_DESCRIPTION" value1="Show content from another website." />
 	</command>
 
 	<command name="_addPageTypeFullPageApplication">
@@ -9,8 +9,8 @@
 	</command>
 
 	<command name="_addPageTypeLinkToURL">
-		<execute function="Type" locator1="SitePagesEditPage#PAGE_TYPE_LINK_TO_URL_URL_FIELD" value1="${pageTypeURL}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesEditPage#PAGE_TYPE_LINK_TO_URL_DESCRIPTION_FIELD" value1="Link to another website." />
+		<execute function="Type" locator1="TextInput#URL" value1="${pageTypeURL}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesEditPage#PAGE_TYPE_DESCRIPTION" value1="Link to another website." />
 	</command>
 
 	<command name="_addPageTypePanel">
@@ -449,9 +449,7 @@
 		<if>
 			<equals arg1="${pageType}" arg2="Link to a Page of This Site" />
 			<then>
-				<var name="key_indexNumber" value="${indexNumber}" />
-
-				<execute function="Select" locator1="SitePagesEditPage#PAGE_TYPE_LINK_TO_PAGE_PAGE_SELECT" value1="index=${indexNumber}" />
+				<execute function="Select" locator1="SitePagesEditPage#PAGE_TYPE_LINK_TO_PAGE_PAGE_SELECT" value1="regexp:.*${pageLinkName}.*" />
 			</then>
 			<elseif>
 				<equals arg1="${pageType}" arg2="Embedded" />
@@ -460,6 +458,8 @@
 				</then>
 			</elseif>
 		</if>
+
+		<execute function="Pause" locator1="3000" />
 
 		<execute macro="PortletEntry#save" />
 	</command>

@@ -350,8 +350,7 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 
 		Node node = dynamicContentElement.node(0);
 
-			node.setText(
-				context + path + StringPool.SLASH + fileEntry.getUuid());
+		node.setText(context + path + StringPool.SLASH + fileEntry.getUuid());
 	}
 
 	protected void updateDynamicElements(JournalArticle article)

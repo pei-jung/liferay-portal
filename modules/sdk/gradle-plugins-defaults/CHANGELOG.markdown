@@ -884,8 +884,45 @@ used.
 version 1.1.1.
 
 ### Fixed
-- [LPS-69606]: Fix artifact publish commands for the "WSDD" commit in older
+- [LPS-69606]: Fix artifact publish commands for the *WSDD* commit in older
 versions of Git.
+
+## 2.4.9 - 2017-01-06
+
+### Changed
+- [LPS-69706]: Update the [Liferay Gradle Plugins] dependency to version 3.0.68.
+
+### Fixed
+- [LPS-65179]: Fix artifact publish commands in case of local unstaged changes.
+
+## 2.4.10 - 2017-01-09
+
+### Changed
+- [LPS-69706]: Update the [Liferay Gradle Plugins] dependency to version 3.0.69.
+
+## 2.4.11 - 2017-01-10
+
+### Changed
+- [LPS-66853]: Update the [Liferay Gradle Plugins] dependency to version 3.0.70.
+
+## 2.4.12 - 2017-01-10
+
+### Changed
+- [LPS-70084]: Update the [Liferay Gradle Plugins] dependency to version 3.0.71.
+
+## 2.4.13 - 2017-01-12
+
+### Changed
+- [LPS-70092]: Update the [Liferay Gradle Plugins] dependency to version 3.1.0.
+
+## 2.4.14 - 2017-01-13
+
+### Added
+- [LPS-70146]: Add the `printDependentArtifact` task to print the project
+directory if the project contains dependencies to other projects.
+
+### Changed
+- [LPS-70036]: Update the [Liferay Gradle Plugins] dependency to version 3.1.1.
 
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -898,7 +935,7 @@ versions of Git.
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
 [LPS-61099]: https://issues.liferay.com/browse/LPS-61099
 [LPS-61987]: https://issues.liferay.com/browse/LPS-61987
-[LPS-66396]: https://issues.liferay.com/browse/LPS-66396
+[LPS-65179]: https://issues.liferay.com/browse/LPS-65179
 [LPS-66396]: https://issues.liferay.com/browse/LPS-66396
 [LPS-66762]: https://issues.liferay.com/browse/LPS-66762
 [LPS-66853]: https://issues.liferay.com/browse/LPS-66853
@@ -962,6 +999,7 @@ versions of Git.
 [LPS-69606]: https://issues.liferay.com/browse/LPS-69606
 [LPS-69618]: https://issues.liferay.com/browse/LPS-69618
 [LPS-69677]: https://issues.liferay.com/browse/LPS-69677
+[LPS-69706]: https://issues.liferay.com/browse/LPS-69706
 [LPS-69719]: https://issues.liferay.com/browse/LPS-69719
 [LPS-69730]: https://issues.liferay.com/browse/LPS-69730
 [LPS-69802]: https://issues.liferay.com/browse/LPS-69802
@@ -970,6 +1008,10 @@ versions of Git.
 [LPS-69847]: https://issues.liferay.com/browse/LPS-69847
 [LPS-69899]: https://issues.liferay.com/browse/LPS-69899
 [LPS-69920]: https://issues.liferay.com/browse/LPS-69920
+[LPS-70036]: https://issues.liferay.com/browse/LPS-70036
+[LPS-70084]: https://issues.liferay.com/browse/LPS-70084
+[LPS-70092]: https://issues.liferay.com/browse/LPS-70092
+[LPS-70146]: https://issues.liferay.com/browse/LPS-70146
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981

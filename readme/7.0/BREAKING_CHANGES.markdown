@@ -20,7 +20,7 @@ Here are some of the types of changes documented in this file:
   replaces an old API, in spite of the old API being kept in Liferay Portal for
   backwards compatibility.
 
-*This document has been reviewed through commit `66199bf`.*
+*This document has been reviewed through commit `16080bf`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -4213,6 +4213,32 @@ Content application.
 
 ---------------------------------------
 
+### Deprecated the liferay-ui:captcha Tag and Replaced with liferay-captcha:captcha
+- **Date:** 2016-Nov-29
+- **JIRA Ticket:** LPS-69383
+
+#### What changed?
+
+The `liferay-ui:captcha` tag has been deprecated and replaced with the
+`liferay-captcha:captcha` tag.
+
+#### Who is affected?
+
+Plugins or templates that are using the `liferay-ui:captcha` tag need to update
+their usage of the tag.
+
+#### How should I update my code?
+
+You should import the `liferay-captcha` tag library (if necessary) and update
+the tag namespace from `liferay-ui:captcha` to `liferay-captcha:captcha`.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to modularize Liferay
+Portal by means of an OSGi container.
+
+---------------------------------------
+
 ### Moved Shopping File Uploads Portlet Properties to OSGi Configuration
 - **Date:** 2016-Dec-08
 - **JIRA Ticket:** LPS-69210
@@ -4280,5 +4306,76 @@ the tag namespace from `liferay-ui` to `liferay-expando`:
 
 This change was made as part of the ongoing strategy to modularize Liferay
 Portal by means of an OSGi container.
+
+---------------------------------------
+
+### Moved Users File Uploads Portlet Properties to OSGi Configuration
+- **Date:** 2016-Jan-13
+- **JIRA Ticket:** LPS-69211
+
+#### What changed?
+
+The Users file uploads portlet properties have been moved from Server
+Administration to an OSGI configuration named `UserFileUploadsConfiguration`
+in the `users-admin-api` module.
+
+#### Who is affected?
+
+This affects anyone who is using the following portlet properties:
+
+- `users.image.check.token`
+- `users.image.max.size`
+- `users.image.max.height`
+- `users.image.max.width`
+
+#### How should I update my code?
+
+Instead of overriding the `portal.properties` file, you can manage the
+properties from Portal's configuration administrator. This can be accessed by
+navigating to Liferay's Control Panel &rarr; *Configuration* &rarr; *System
+Settings* &rarr; *Foundation* &rarr; *User Images* and editing the settings there.
+
+If you would like to include the new configuration in your application, follow
+the instructions for
+[making your applications configurable in Liferay 7.0](https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-0/making-your-applications-configurable).
+
+#### Why was this change made?
+
+This change was made as part of the modularization efforts to ease portal
+configuration changes.
+
+---------------------------------------
+### Moved Journal File Uploads Portlet Properties to OSGi Configuration
+- **Date:** 2017-Jan-04
+- **JIRA Ticket:** LPS-69209
+
+#### What changed?
+
+The Journal file uploads portlet properties have been moved from Server
+Administration to an OSGI configuration named `JournalFileUploadsConfiguration.java`
+in the `journal-service` module.
+
+#### Who is affected?
+
+This affects anyone who is using the following portlet properties:
+
+- `journal.image.small.max.size`
+- `journal.image.extensions`
+
+#### How should I update my code?
+
+Instead of overriding the `portal.properties` file, you can manage the
+properties from Portal's configuration administrator. This can be accessed by
+navigating to Liferay's Control Panel &rarr; *Configuration* &rarr; *System
+Settings* &rarr; *Web Content File Uploads* and editing the settings there.
+
+If you would like to include the new configuration in your application, follow
+the instructions for
+[making your applications configurable in Liferay 7.0](https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-0/making-your-applications-configurable).
+
+#### Why was this change made?
+
+This change was made as part of the modularization efforts to ease portal
+configuration changes.
 
 ---------------------------------------

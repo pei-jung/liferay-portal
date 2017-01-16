@@ -58,7 +58,9 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -67,10 +69,10 @@ import com.liferay.portal.kernel.util.comparator.OrganizationNameComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.impl.OrganizationImpl;
 import com.liferay.portal.service.base.OrganizationLocalServiceBaseImpl;
-import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.usersadmin.search.OrganizationUsersSearcher;
+import com.liferay.users.admin.kernel.settings.UserFileUploadsSettings;
 import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
@@ -1775,9 +1777,9 @@ public class OrganizationLocalServiceImpl
 
 		PortalUtil.updateImageId(
 			organization, logo, logoBytes, "logoId",
-			PrefsPropsUtil.getLong(PropsKeys.USERS_IMAGE_MAX_SIZE),
-			PropsValues.USERS_IMAGE_MAX_HEIGHT,
-			PropsValues.USERS_IMAGE_MAX_WIDTH);
+			_userFileUploadsSettings.getImageMaxSize(),
+			_userFileUploadsSettings.getImageMaxHeight(),
+			_userFileUploadsSettings.getImageMaxWidth());
 
 		organization.setExpandoBridgeAttributes(serviceContext);
 
@@ -2119,11 +2121,16 @@ public class OrganizationLocalServiceImpl
 	protected long[] getReindexOrganizationIds(Organization organization)
 		throws PortalException {
 
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(StringPool.FORWARD_SLASH);
+		sb.append(organization.getOrganizationId());
+		sb.append(StringPool.FORWARD_SLASH);
+
 		List<Organization> organizations = organizationPersistence.findByC_T(
 			organization.getCompanyId(),
-			CustomSQLUtil.keywords(organization.getTreePath())[0],
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			new OrganizationNameComparator(true));
+			CustomSQLUtil.keywords(sb.toString())[0], QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, new OrganizationNameComparator(true));
 
 		long[] organizationIds = new long[organizations.size()];
 
@@ -2173,8 +2180,8 @@ public class OrganizationLocalServiceImpl
 			long parentOrganizationId, long organizationId)
 		throws PortalException {
 
-		// Return true if parentOrganizationId is among the parent or ancestor
-		// organizations of organizationId
+		// Return true if parentOrganizationId is among the parent organizatons
+		// of organizationId
 
 		if (organizationId ==
 				OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID) {
@@ -2193,8 +2200,7 @@ public class OrganizationLocalServiceImpl
 			return true;
 		}
 		else {
-			return isParentOrganization(
-				parentOrganizationId, organization.getParentOrganizationId());
+			return false;
 		}
 	}
 
@@ -2305,5 +2311,10 @@ public class OrganizationLocalServiceImpl
 			companyId, 0, parentOrganizationId, name, type, countryId,
 			statusId);
 	}
+
+	private static volatile UserFileUploadsSettings _userFileUploadsSettings =
+		ServiceProxyFactory.newServiceTrackedInstance(
+			UserFileUploadsSettings.class, OrganizationLocalServiceImpl.class,
+			"_userFileUploadsSettings", false);
 
 }

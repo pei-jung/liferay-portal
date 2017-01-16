@@ -115,6 +115,11 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
+	public String getAppServer() {
+		return null;
+	}
+
+	@Override
 	public String getArchivePath() {
 		StringBuilder sb = new StringBuilder(archiveName);
 
@@ -154,6 +159,11 @@ public abstract class BaseBuild implements Build {
 	@Override
 	public String getBranchName() {
 		return branchName;
+	}
+
+	@Override
+	public String getBrowser() {
+		return null;
 	}
 
 	@Override
@@ -232,6 +242,11 @@ public abstract class BaseBuild implements Build {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public String getDatabase() {
+		return null;
 	}
 
 	@Override
@@ -327,6 +342,11 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
+	public String getJDK() {
+		return null;
+	}
+
+	@Override
 	public String getJobName() {
 		return jobName;
 	}
@@ -352,8 +372,24 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
+	public String getJobVariant() {
+		String batchName = getParameterValue("JOB_VARIANT");
+
+		if ((batchName == null) || batchName.isEmpty()) {
+			batchName = getParameterValue("JENKINS_JOB_VARIANT");
+		}
+
+		return batchName;
+	}
+
+	@Override
 	public String getMaster() {
 		return master;
+	}
+
+	@Override
+	public String getOperatingSystem() {
+		return null;
 	}
 
 	@Override
@@ -731,23 +767,6 @@ public abstract class BaseBuild implements Build {
 
 	protected BaseBuild(String url, Build parentBuild) {
 		_parentBuild = parentBuild;
-
-		try {
-			String archiveMarkerContent = JenkinsResultsParserUtil.toString(
-				url + "/archive-marker", false, 0, 0, 0);
-
-			if ((archiveMarkerContent != null) &&
-				!archiveMarkerContent.isEmpty()) {
-
-				fromArchive = true;
-			}
-			else {
-				fromArchive = false;
-			}
-		}
-		catch (IOException ioe) {
-			fromArchive = false;
-		}
 
 		if (url.contains("buildWithParameters")) {
 			setInvocationURL(url);
@@ -1375,6 +1394,23 @@ public abstract class BaseBuild implements Build {
 				"Unable to decode " + buildURL, uee);
 		}
 
+		try {
+			String archiveMarkerContent = JenkinsResultsParserUtil.toString(
+				buildURL + "/archive-marker", false, 0, 0, 0);
+
+			if ((archiveMarkerContent != null) &&
+				!archiveMarkerContent.isEmpty()) {
+
+				fromArchive = true;
+			}
+			else {
+				fromArchive = false;
+			}
+		}
+		catch (IOException ioe) {
+			fromArchive = false;
+		}
+
 		Matcher matcher = buildURLPattern.matcher(buildURL);
 
 		if (!matcher.find()) {
@@ -1388,9 +1424,10 @@ public abstract class BaseBuild implements Build {
 			archiveName = matcher.group("archiveName");
 		}
 
-		_buildNumber = Integer.parseInt(matcher.group("buildNumber"));
 		setJobName(matcher.group("jobName"));
 		master = matcher.group("master");
+
+		_buildNumber = Integer.parseInt(matcher.group("buildNumber"));
 
 		loadParametersFromBuildJSONObject();
 
