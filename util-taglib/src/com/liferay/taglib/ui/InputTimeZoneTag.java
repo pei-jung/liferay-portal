@@ -14,10 +14,23 @@
 
 package com.liferay.taglib.ui;
 
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.TimeZoneComparator;
+import com.liferay.portal.kernel.util.TimeZoneDisplay;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.taglib.util.IncludeTag;
 
+import java.text.NumberFormat;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -99,6 +112,37 @@ public class InputTimeZoneTag extends IncludeTag {
 		request.setAttribute("liferay-ui:input-time-zone:name", _name);
 		request.setAttribute(
 			"liferay-ui:input-time-zone:nullable", String.valueOf(_nullable));
+
+		long currentTime = System.currentTimeMillis();
+		Date date = new Date();
+		Locale locale = PortalUtil.getLocale(request);
+
+		NumberFormat numberFormat = NumberFormat.getInstance(locale);
+
+		numberFormat.setMinimumIntegerDigits(2);
+
+		List<String> timeZoneIds = ListUtil.toList(
+			PropsUtil.getArray(PropsKeys.TIME_ZONES));
+
+		Stream<String> timeZoneIdsStream = timeZoneIds.stream();
+
+		Stream<TimeZone> timeZonesStream = timeZoneIdsStream.map(
+			TimeZoneUtil::getTimeZone);
+
+		timeZonesStream = timeZonesStream.sorted(new TimeZoneComparator());
+		timeZonesStream = timeZonesStream.distinct();
+
+		Stream<TimeZoneDisplay> timeZoneDisplayStream = timeZonesStream.map(
+			(timeZone) -> new TimeZoneDisplay(
+				date, _displayStyle, locale, currentTime, numberFormat,
+				timeZone));
+
+		List<TimeZoneDisplay> timeZoneDisplays = timeZoneDisplayStream.collect(
+			Collectors.toList());
+
+		request.setAttribute(
+			"liferay-ui:input-time-zone:timeZoneDisplays", timeZoneDisplays);
+
 		request.setAttribute("liferay-ui:input-time-zone:value", _value);
 	}
 
