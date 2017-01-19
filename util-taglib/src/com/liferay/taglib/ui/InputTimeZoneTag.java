@@ -15,25 +15,23 @@
 package com.liferay.taglib.ui;
 
 import com.liferay.ibm.icu.text.TimeZoneFormat;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.kernel.util.TimeZoneComparator;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.text.NumberFormat;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -134,14 +132,30 @@ public class InputTimeZoneTag extends IncludeTag {
 			"liferay-ui:input-time-zone:nullable", String.valueOf(_nullable));
 		request.setAttribute("liferay-ui:input-time-zone:value", _value);
 
+		long currentTime = System.currentTimeMillis();
+		Date date = new Date();
+		Locale locale = PortalUtil.getLocale(request);
+
+		NumberFormat numberFormat = NumberFormat.getInstance(locale);
+
+		numberFormat.setMinimumIntegerDigits(2);
+
+		List<TimeZoneDisplay> timeZoneDisplays =
+			ListUtil.toList(PropsUtil.getArray(PropsKeys.TIME_ZONES)).stream().
+				distinct().map(
+				(timeZoneId) -> _getTimeZoneDisplay(
+					date, locale, currentTime, numberFormat, timeZoneId)).
+				collect(Collectors.toList());
+
 		request.setAttribute(
-			"liferay-ui:input-time-zone:timeZoneDisplays",
-			_getTimeZoneDisplays(request));
+			"liferay-ui:input-time-zone:timeZoneDisplays", timeZoneDisplays);
 	}
 
 	private TimeZoneDisplay _getTimeZoneDisplay(
 		Date date, Locale locale, long currentTime, NumberFormat numberFormat,
-		TimeZone timeZone) {
+		String timeZoneId) {
+
+		TimeZone timeZone = TimeZoneUtil.getTimeZone(timeZoneId);
 
 		StringBundler displayNameSb = new StringBundler();
 
@@ -172,8 +186,6 @@ public class InputTimeZoneTag extends IncludeTag {
 			timeZone.getDisplayName(
 				timeZone.inDaylightTime(date), _displayStyle, locale));
 
-		String timeZoneId = timeZone.getID();
-
 		if (timeZoneId.contains("Phoenix")) {
 			StringBundler sb = new StringBundler(4);
 
@@ -197,36 +209,6 @@ public class InputTimeZoneTag extends IncludeTag {
 		}
 
 		return new TimeZoneDisplay(displayNameSb.toString(), timeZoneId);
-	}
-
-	private List<TimeZoneDisplay> _getTimeZoneDisplays(
-		HttpServletRequest request) {
-
-		List<TimeZoneDisplay> timeZoneDisplays = new ArrayList();
-
-		Set<TimeZone> timeZones = new TreeSet(new TimeZoneComparator());
-
-		for (String timeZoneId : PropsUtil.getArray(PropsKeys.TIME_ZONES)) {
-			TimeZone curTimeZone = TimeZoneUtil.getTimeZone(timeZoneId);
-
-			timeZones.add(curTimeZone);
-		}
-
-		long currentTime = System.currentTimeMillis();
-		Date date = new Date();
-		Locale locale = PortalUtil.getLocale(request);
-
-		NumberFormat numberFormat = NumberFormat.getInstance(locale);
-
-		numberFormat.setMinimumIntegerDigits(2);
-
-		for (TimeZone timeZone : timeZones) {
-			timeZoneDisplays.add(
-				_getTimeZoneDisplay(
-					date, locale, currentTime, numberFormat, timeZone));
-		}
-
-		return timeZoneDisplays;
 	}
 
 	private static final String _PAGE =
