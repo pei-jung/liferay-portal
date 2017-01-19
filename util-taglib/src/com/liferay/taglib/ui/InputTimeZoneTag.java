@@ -14,10 +14,24 @@
 
 package com.liferay.taglib.ui;
 
+import com.liferay.ibm.icu.text.TimeZoneFormat;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.taglib.util.IncludeTag;
 
+import java.text.NumberFormat;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,6 +78,26 @@ public class InputTimeZoneTag extends IncludeTag {
 		_value = value;
 	}
 
+	public class TimeZoneDisplay {
+
+		public TimeZoneDisplay(String displayName, String timeZoneId) {
+			_displayName = displayName;
+			_timeZoneId = timeZoneId;
+		}
+
+		public String getDisplayName() {
+			return _displayName;
+		}
+
+		public String getTimeZoneId() {
+			return _timeZoneId;
+		}
+
+		private final String _displayName;
+		private final String _timeZoneId;
+
+	}
+
 	@Override
 	protected void cleanUp() {
 		_autoFocus = false;
@@ -93,13 +127,88 @@ public class InputTimeZoneTag extends IncludeTag {
 			"liferay-ui:input-time-zone:daylight", String.valueOf(_daylight));
 		request.setAttribute(
 			"liferay-ui:input-time-zone:disabled", String.valueOf(_disabled));
-		request.setAttribute(
-			"liferay-ui:input-time-zone:displayStyle",
-			String.valueOf(_displayStyle));
 		request.setAttribute("liferay-ui:input-time-zone:name", _name);
 		request.setAttribute(
 			"liferay-ui:input-time-zone:nullable", String.valueOf(_nullable));
 		request.setAttribute("liferay-ui:input-time-zone:value", _value);
+
+		long currentTime = System.currentTimeMillis();
+		Date date = new Date();
+		Locale locale = PortalUtil.getLocale(request);
+
+		NumberFormat numberFormat = NumberFormat.getInstance(locale);
+
+		numberFormat.setMinimumIntegerDigits(2);
+
+		List<TimeZoneDisplay> timeZoneDisplays =
+			ListUtil.toList(PropsUtil.getArray(PropsKeys.TIME_ZONES)).stream().
+				distinct().map(
+				(timeZoneId) -> _getTimeZoneDisplay(
+					date, locale, currentTime, numberFormat, timeZoneId)).
+				collect(Collectors.toList());
+
+		request.setAttribute(
+			"liferay-ui:input-time-zone:timeZoneDisplays", timeZoneDisplays);
+	}
+
+	private TimeZoneDisplay _getTimeZoneDisplay(
+		Date date, Locale locale, long currentTime, NumberFormat numberFormat,
+		String timeZoneId) {
+
+		TimeZone timeZone = TimeZoneUtil.getTimeZone(timeZoneId);
+
+		StringBundler displayNameSb = new StringBundler();
+
+		int totalOffset = timeZone.getOffset(currentTime);
+
+		if (totalOffset != 0) {
+			displayNameSb.append(StringPool.OPEN_PARENTHESIS);
+			displayNameSb.append("UTC");
+
+			String offsetHour = numberFormat.format(totalOffset / Time.HOUR);
+			String offsetMinute = numberFormat.format(
+				Math.abs(totalOffset % Time.HOUR) / Time.MINUTE);
+
+			displayNameSb.append(StringPool.SPACE);
+
+			if (totalOffset > 0) {
+				displayNameSb.append(StringPool.PLUS);
+			}
+
+			displayNameSb.append(offsetHour);
+			displayNameSb.append(StringPool.COLON);
+			displayNameSb.append(offsetMinute);
+			displayNameSb.append(StringPool.CLOSE_PARENTHESIS);
+			displayNameSb.append(StringPool.SPACE);
+		}
+
+		displayNameSb.append(
+			timeZone.getDisplayName(
+				timeZone.inDaylightTime(date), _displayStyle, locale));
+
+		if (timeZoneId.contains("Phoenix")) {
+			StringBundler sb = new StringBundler(4);
+
+			displayNameSb.append(StringPool.SPACE);
+			displayNameSb.append(StringPool.OPEN_PARENTHESIS);
+
+			com.liferay.ibm.icu.util.TimeZone icuTimeZone =
+				com.liferay.ibm.icu.util.TimeZone.getTimeZone(timeZoneId);
+
+			com.liferay.ibm.icu.text.SimpleDateFormat icuSimpleDateFormat =
+				new com.liferay.ibm.icu.text.SimpleDateFormat();
+
+			TimeZoneFormat icuTimeZoneFormat =
+				icuSimpleDateFormat.getTimeZoneFormat();
+
+			displayNameSb.append(
+				icuTimeZoneFormat.format(
+					TimeZoneFormat.Style.ZONE_ID, icuTimeZone, date.getTime()));
+
+			displayNameSb.append(StringPool.CLOSE_PARENTHESIS);
+		}
+
+		return new TimeZoneDisplay(displayNameSb.toString(), timeZoneId);
 	}
 
 	private static final String _PAGE =
