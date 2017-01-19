@@ -233,8 +233,7 @@ page import="java.util.Objects" %><%@
 page import="java.util.Properties" %><%@
 page import="java.util.ResourceBundle" %><%@
 page import="java.util.Set" %><%@
-page import="java.util.TimeZone" %><%@
-page import="java.util.TreeSet" %>
+page import="java.util.TimeZone" %>
 
 <%@ page import="javax.portlet.MimeResponse" %><%@
 page import="javax.portlet.PortletConfig" %><%@
