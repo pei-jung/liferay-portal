@@ -20,7 +20,6 @@
 boolean autoFocus = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-time-zone:autoFocus"));
 String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-time-zone:cssClass")) + " form-control";
 boolean disabled = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-time-zone:disabled"));
-int displayStyle = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:input-time-zone:displayStyle"));
 String name = namespace + request.getAttribute("liferay-ui:input-time-zone:name");
 boolean nullable = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-time-zone:nullable"));
 List<TimeZoneDisplay> timeZoneDisplays = (List<TimeZoneDisplay>)request.getAttribute("liferay-ui:input-time-zone:timeZoneDisplays");
