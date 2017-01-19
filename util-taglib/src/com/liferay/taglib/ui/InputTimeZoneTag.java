@@ -129,9 +129,6 @@ public class InputTimeZoneTag extends IncludeTag {
 			"liferay-ui:input-time-zone:daylight", String.valueOf(_daylight));
 		request.setAttribute(
 			"liferay-ui:input-time-zone:disabled", String.valueOf(_disabled));
-		request.setAttribute(
-			"liferay-ui:input-time-zone:displayStyle",
-			String.valueOf(_displayStyle));
 		request.setAttribute("liferay-ui:input-time-zone:name", _name);
 		request.setAttribute(
 			"liferay-ui:input-time-zone:nullable", String.valueOf(_nullable));
