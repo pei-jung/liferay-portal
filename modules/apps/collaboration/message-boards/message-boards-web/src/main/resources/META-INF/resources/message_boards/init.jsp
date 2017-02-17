@@ -38,6 +38,7 @@ page import="com.liferay.asset.kernel.model.AssetTag" %><%@
 page import="com.liferay.asset.kernel.service.AssetEntryServiceUtil" %><%@
 page import="com.liferay.asset.kernel.service.AssetTagLocalServiceUtil" %><%@
 page import="com.liferay.asset.kernel.service.persistence.AssetEntryQuery" %><%@
+page import="com.liferay.captcha.configuration.CaptchaConfiguration" %><%@
 page import="com.liferay.document.library.kernel.antivirus.AntivirusScannerException" %><%@
 page import="com.liferay.document.library.kernel.exception.DuplicateFileEntryException" %><%@
 page import="com.liferay.document.library.kernel.exception.FileExtensionException" %><%@
@@ -118,7 +119,6 @@ page import="com.liferay.portal.kernel.search.SearchResult" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
 page import="com.liferay.portal.kernel.service.ServiceContext" %><%@
-page import="com.liferay.portal.kernel.service.SubscriptionLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.theme.ThemeDisplay" %><%@
@@ -131,7 +131,6 @@ page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
-page import="com.liferay.portal.kernel.util.MimeTypesUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.Portal" %><%@
@@ -158,6 +157,7 @@ page import="com.liferay.portlet.messageboards.service.permission.MBMessagePermi
 page import="com.liferay.portlet.messageboards.service.permission.MBPermission" %><%@
 page import="com.liferay.portlet.messageboards.util.MBMessageAttachmentsUtil" %><%@
 page import="com.liferay.portlet.messageboards.util.MBUtil" %><%@
+page import="com.liferay.subscription.service.SubscriptionLocalServiceUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.trash.kernel.util.TrashUtil" %>
 
@@ -188,6 +188,8 @@ String currentLanguageId = LanguageUtil.getLanguageId(request);
 Locale currentLocale = LocaleUtil.fromLanguageId(currentLanguageId);
 Locale defaultLocale = themeDisplay.getSiteDefaultLocale();
 String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+CaptchaConfiguration captchaConfiguration = (CaptchaConfiguration)request.getAttribute(CaptchaConfiguration.class.getName());
 
 MBGroupServiceSettings mbGroupServiceSettings = MBGroupServiceSettings.getInstance(themeDisplay.getSiteGroupId());
 

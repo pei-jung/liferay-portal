@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.ToolsUtil;
 
 import java.io.File;
 
@@ -32,11 +33,6 @@ import java.util.regex.Pattern;
  * @author Andrea Di Giorgi
  */
 public class GradleSourceProcessor extends BaseSourceProcessor {
-
-	@Override
-	public String[] getIncludes() {
-		return _INCLUDES;
-	}
 
 	protected void checkDefaultVersion(String fileName, String content) {
 		Matcher matcher = _defaultVersionPattern.matcher(content);
@@ -73,6 +69,11 @@ public class GradleSourceProcessor extends BaseSourceProcessor {
 		return getFileNames(new String[0], getIncludes());
 	}
 
+	@Override
+	protected String[] doGetIncludes() {
+		return _INCLUDES;
+	}
+
 	protected String formatDependencies(String absolutePath, String content) {
 		Matcher matcher = _dependenciesPattern.matcher(content);
 
@@ -81,6 +82,18 @@ public class GradleSourceProcessor extends BaseSourceProcessor {
 		}
 
 		String dependencies = matcher.group(1);
+
+		matcher = _incorrectWhitespacePattern.matcher(dependencies);
+
+		while (matcher.find()) {
+			if (!ToolsUtil.isInsideQuotes(dependencies, matcher.start())) {
+				String newDependencies = StringUtil.insert(
+					dependencies, StringPool.SPACE, matcher.end() - 1);
+
+				return StringUtil.replace(
+					content, dependencies, newDependencies);
+			}
+		}
 
 		Set<String> uniqueDependencies = new TreeSet<>();
 
@@ -133,5 +146,7 @@ public class GradleSourceProcessor extends BaseSourceProcessor {
 		"name: \"(.*?)\", version: \"default\"");
 	private final Pattern _dependenciesPattern = Pattern.compile(
 		"^dependencies \\{(.+?\n)\\}", Pattern.DOTALL | Pattern.MULTILINE);
+	private final Pattern _incorrectWhitespacePattern = Pattern.compile(
+		":[^ \n]");
 
 }

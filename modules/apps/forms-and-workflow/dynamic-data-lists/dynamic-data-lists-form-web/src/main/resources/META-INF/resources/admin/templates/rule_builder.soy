@@ -51,8 +51,8 @@
 							{/call}
 
 							{if not isLast($condition)}
-							, <br />
-							<b> and </b>
+							<br />
+							<b> {$condition.logicOperator} </b>
 							{/if}
 						{/foreach}
 

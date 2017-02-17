@@ -20,7 +20,7 @@ Here are some of the types of changes documented in this file:
   replaces an old API, in spite of the old API being kept in Liferay Portal for
   backwards compatibility.
 
-*This document has been reviewed through commit `d5f10c3`.*
+*This document has been reviewed through commit `93f3807`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -4341,5 +4341,79 @@ the instructions for
 
 This change was made as part of the modularization efforts to ease portal
 configuration changes.
+
+---------------------------------------
+
+### Moved Captcha Portal Properties to OSGi Configuration
+- **Date:** 2017-Feb-13
+- **JIRA Ticket:** LPS-67830
+
+#### What changed?
+
+The captcha properties have been moved from portal.properties and Server
+Administration to an OSGi configuration named
+`CaptchaConfiguration.java` in the `captcha-api` module.
+
+#### Who is affected?
+
+This affects anyone who is using the following portal properties:
+
+- `captcha.max.challenges`
+- `captcha.check.portal.create_account`
+- `captcha.check.portal.send_password`
+- `captcha.check.portlet.message_boards.edit_category`
+- `captcha.check.portlet.message_boards.edit_message`
+- `captcha.engine.impl`
+- `captcha.engine.recaptcha.key.private`
+- `captcha.engine.recaptcha.key.public`
+- `captcha.engine.recaptcha.url.script`
+- `captcha.engine.recaptcha.url.noscript`
+- `captcha.engine.recaptcha.url.verify`
+- `captcha.engine.simplecaptcha.height`
+- `captcha.engine.simplecaptcha.width`
+- `captcha.engine.simplecaptcha.background.producers`
+- `captcha.engine.simplecaptcha.gimpy.renderers`
+- `captcha.engine.simplecaptcha.noise.producers`
+- `captcha.engine.simplecaptcha.text.producers`
+- `captcha.engine.simplecaptcha.word.renderers`
+
+#### How should I update my code?
+
+Instead of overriding the `portal.properties` file, you can manage the
+properties from Portal's configuration administrator. This can be accessed by
+navigating to Liferay's *Control Panel* &rarr; *Configuration* &rarr; *System
+Settings* &rarr; *Captcha* and editing the settings there.
+
+If you would like to include the new configuration in your application, follow
+the instructions for
+[making your applications configurable in Liferay 7.0](https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-0/making-your-applications-configurable).
+
+#### Why was this change made?
+
+This change was made as part of the modularization efforts to ease portal
+configuration changes.
+
+---------------------------------------
+### Deprecated the aui:tool Tag with No Direct Replacement
+- **Date:** 2017-Feb-02
+- **JIRA Ticket:** LPS-70422
+
+#### What changed?
+
+The `aui:tool` tag has been deprecated with no direct replacement.
+
+#### Who is affected?
+
+Plugins or templates that are using the `aui:tool` tag must remove their usage
+of the tag.
+
+#### How should I update my code?
+
+There is no direct replacement. You should remove all usages of the `aui:tool`
+tag.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to deprecate unused tags.
 
 ---------------------------------------

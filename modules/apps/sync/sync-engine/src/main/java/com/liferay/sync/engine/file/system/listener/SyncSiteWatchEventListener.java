@@ -160,7 +160,7 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 					Watcher watcher = WatcherManager.getWatcher(
 						getSyncAccountId());
 
-					watcher.walkFileTree(Paths.get(filePathName));
+					watcher.walkFileTree(Paths.get(filePathName), true);
 				}
 			}
 			else if (filePath.equals(previousFilePath)) {
@@ -191,7 +191,7 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 					Watcher watcher = WatcherManager.getWatcher(
 						getSyncAccountId());
 
-					watcher.walkFileTree(Paths.get(filePathName));
+					watcher.walkFileTree(Paths.get(filePathName), true);
 				}
 			}
 			else {
@@ -205,7 +205,7 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 					Watcher watcher = WatcherManager.getWatcher(
 						getSyncAccountId());
 
-					watcher.walkFileTree(Paths.get(filePathName));
+					watcher.walkFileTree(Paths.get(filePathName), true);
 
 					watchEvent(SyncWatchEvent.EVENT_TYPE_DELETE, filePath);
 				}
@@ -222,7 +222,7 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 						Watcher watcher = WatcherManager.getWatcher(
 							getSyncAccountId());
 
-						watcher.walkFileTree(Paths.get(filePathName));
+						watcher.walkFileTree(Paths.get(filePathName), true);
 					}
 				}
 			}

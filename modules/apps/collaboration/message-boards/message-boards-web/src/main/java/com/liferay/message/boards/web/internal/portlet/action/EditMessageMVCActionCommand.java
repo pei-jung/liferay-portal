@@ -16,6 +16,7 @@ package com.liferay.message.boards.web.internal.portlet.action;
 
 import com.liferay.asset.kernel.exception.AssetCategoryException;
 import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.captcha.configuration.CaptchaConfiguration;
 import com.liferay.document.library.kernel.antivirus.AntivirusScannerException;
 import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
 import com.liferay.document.library.kernel.exception.FileExtensionException;
@@ -34,6 +35,11 @@ import com.liferay.message.boards.kernel.service.MBMessageService;
 import com.liferay.message.boards.kernel.service.MBThreadLocalService;
 import com.liferay.message.boards.kernel.service.MBThreadService;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
+import com.liferay.message.boards.web.internal.upload.format.MBMessageFormatUploadHandler;
+import com.liferay.message.boards.web.internal.upload.format.MBMessageFormatUploadHandlerProvider;
+import com.liferay.message.boards.web.internal.util.MBAttachmentFileEntryReference;
+import com.liferay.message.boards.web.internal.util.MBAttachmentFileEntryUtil;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.captcha.CaptchaConfigurationException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
@@ -41,6 +47,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -62,7 +71,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.ActionResponseImpl;
 import com.liferay.portlet.messageboards.MBGroupServiceSettings;
 import com.liferay.portlet.messageboards.service.permission.MBMessagePermission;
@@ -71,13 +79,16 @@ import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -86,6 +97,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Shuyang Zhou
  */
 @Component(
+	configurationPid = "com.liferay.captcha.configuration.CaptchaConfiguration",
 	property = {
 		"javax.portlet.name=" + MBPortletKeys.MESSAGE_BOARDS,
 		"javax.portlet.name=" + MBPortletKeys.MESSAGE_BOARDS_ADMIN,
@@ -94,6 +106,13 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCActionCommand.class
 )
 public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_captchaConfiguration = ConfigurableUtil.createConfigurable(
+			CaptchaConfiguration.class, properties);
+	}
 
 	protected void addAnswer(ActionRequest actionRequest) throws Exception {
 		long messageId = ParamUtil.getLong(actionRequest, "messageId");
@@ -424,8 +443,8 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 			MBMessage message = null;
 
 			if (messageId <= 0) {
-				if (PropsValues.
-						CAPTCHA_CHECK_PORTLET_MESSAGE_BOARDS_EDIT_MESSAGE) {
+				if (_captchaConfiguration.
+						messageBoardsEditMessageCaptchaEnabled()) {
 
 					CaptchaUtil.check(actionRequest);
 				}
@@ -455,6 +474,20 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 						inputStreamOVPs, anonymous, priority, allowPingbacks,
 						serviceContext);
 				}
+
+				MBMessageFormatUploadHandler formatHandler =
+					_formatHandlerProvider.provide(message.getFormat());
+
+				if (formatHandler != null) {
+					body = _addBodyAttachmentTempFiles(
+						themeDisplay, body, message, new ArrayList<String>(),
+						formatHandler);
+
+					_mbMessageService.updateMessage(
+						message.getMessageId(), message.getSubject(), body,
+						null, null, message.getPriority(),
+						message.getAllowPingbacks(), serviceContext);
+				}
 			}
 			else {
 				List<String> existingFiles = new ArrayList<>();
@@ -466,6 +499,17 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 					if (Validator.isNotNull(path)) {
 						existingFiles.add(path);
 					}
+				}
+
+				message = _mbMessageService.getMessage(messageId);
+
+				MBMessageFormatUploadHandler formatHandler =
+					_formatHandlerProvider.provide(message.getFormat());
+
+				if (formatHandler != null) {
+					body = _addBodyAttachmentTempFiles(
+						themeDisplay, body, message, existingFiles,
+						formatHandler);
 				}
 
 				// Update message
@@ -505,6 +549,52 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 	}
+
+	private String _addBodyAttachmentTempFiles(
+			ThemeDisplay themeDisplay, String body, MBMessage message,
+			List<String> existingFiles,
+			MBMessageFormatUploadHandler formatHandler)
+		throws PortalException {
+
+		List<FileEntry> tempMBAttachmentFileEntries =
+			MBAttachmentFileEntryUtil.getTempMBAttachmentFileEntries(body);
+
+		if (!tempMBAttachmentFileEntries.isEmpty()) {
+			Folder folder = message.addAttachmentsFolder();
+
+			List<MBAttachmentFileEntryReference>
+				mbAttachmentFileEntryReferences =
+					MBAttachmentFileEntryUtil.addMBAttachmentFileEntries(
+						message.getGroupId(), themeDisplay.getUserId(),
+						message.getMessageId(), folder.getFolderId(),
+						tempMBAttachmentFileEntries);
+
+			for (MBAttachmentFileEntryReference mbAttachmentFileEntryReference :
+					mbAttachmentFileEntryReferences) {
+
+				FileEntry mbAttachmentFileEntry =
+					mbAttachmentFileEntryReference.getMBAttachmentFileEntry();
+
+				existingFiles.add(
+					String.valueOf(mbAttachmentFileEntry.getFileEntryId()));
+			}
+
+			body = formatHandler.replaceImageReferences(
+				body, mbAttachmentFileEntryReferences);
+
+			for (FileEntry tempMBAttachment : tempMBAttachmentFileEntries) {
+				PortletFileRepositoryUtil.deletePortletFileEntry(
+					tempMBAttachment.getFileEntryId());
+			}
+		}
+
+		return body;
+	}
+
+	private volatile CaptchaConfiguration _captchaConfiguration;
+
+	@Reference
+	private MBMessageFormatUploadHandlerProvider _formatHandlerProvider;
 
 	private MBCategoryService _mbCategoryService;
 	private MBMessageService _mbMessageService;

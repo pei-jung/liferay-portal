@@ -93,9 +93,13 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 	@Override
 	public final void format() throws Exception {
-		preFormat();
-
 		List<String> fileNames = getFileNames();
+
+		if (fileNames.isEmpty()) {
+			return;
+		}
+
+		preFormat();
 
 		ExecutorService executorService = Executors.newFixedThreadPool(
 			sourceFormatterArgs.getProcessorThreadCount());
@@ -148,6 +152,11 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	@Override
 	public SourceMismatchException getFirstSourceMismatchException() {
 		return _firstSourceMismatchException;
+	}
+
+	@Override
+	public String[] getIncludes() {
+		return filterIncludes(doGetIncludes());
 	}
 
 	@Override
@@ -789,6 +798,29 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		throws Exception;
 
 	protected abstract List<String> doGetFileNames() throws Exception;
+
+	protected abstract String[] doGetIncludes();
+
+	protected String[] filterIncludes(String[] includes) {
+		List<String> fileExtensions = sourceFormatterArgs.getFileExtensions();
+
+		if (fileExtensions.isEmpty()) {
+			return includes;
+		}
+
+		String[] filteredIncludes = new String[0];
+
+		for (String include : includes) {
+			for (String fileExtension : fileExtensions) {
+				if (include.endsWith(fileExtension)) {
+					filteredIncludes = ArrayUtil.append(
+						filteredIncludes, include);
+				}
+			}
+		}
+
+		return filteredIncludes;
+	}
 
 	protected String fixCompatClassImports(String absolutePath, String content)
 		throws Exception {
@@ -2583,7 +2615,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected boolean isExcludedPath(
-		String property, String path, int lineCount, String javaTermName) {
+		String property, String path, int lineCount, String parameter) {
 
 		if (property == null) {
 			return false;
@@ -2601,10 +2633,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			return false;
 		}
 
-		String pathWithJavaTermName = null;
+		String pathWithParameter = null;
 
-		if (Validator.isNotNull(javaTermName)) {
-			pathWithJavaTermName = path + StringPool.AT + javaTermName;
+		if (Validator.isNotNull(parameter)) {
+			pathWithParameter = path + StringPool.AT + parameter;
 		}
 
 		String pathWithLineCount = null;
@@ -2614,6 +2646,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		for (String exclude : excludes) {
+			if (Validator.isNull(exclude)) {
+				continue;
+			}
+
 			if (exclude.startsWith("**")) {
 				exclude = exclude.substring(2);
 			}
@@ -2629,8 +2665,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			}
 
 			if (path.endsWith(exclude) ||
-				((pathWithJavaTermName != null) &&
-				 pathWithJavaTermName.endsWith(exclude)) ||
+				((pathWithParameter != null) &&
+				 pathWithParameter.endsWith(exclude)) ||
 				((pathWithLineCount != null) &&
 				 pathWithLineCount.endsWith(exclude))) {
 
@@ -2641,12 +2677,22 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return false;
 	}
 
+	protected boolean isExcludedPath(
+		String property, String path, String parameter) {
+
+		return isExcludedPath(property, path, -1, parameter);
+	}
+
 	protected boolean isModulesFile(String absolutePath) {
 		return isModulesFile(absolutePath, false);
 	}
 
 	protected boolean isModulesFile(
 		String absolutePath, boolean includePlugins) {
+
+		if (subrepository) {
+			return true;
+		}
 
 		if (includePlugins) {
 			return absolutePath.contains("/modules/");

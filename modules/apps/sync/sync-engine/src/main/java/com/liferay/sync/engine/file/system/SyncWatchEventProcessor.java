@@ -34,6 +34,7 @@ import com.liferay.sync.engine.util.OSDetector;
 import com.liferay.sync.engine.util.SyncEngineUtil;
 
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -717,7 +718,33 @@ public class SyncWatchEventProcessor implements Runnable {
 				}
 			}
 			else {
-				modifyFile(syncWatchEvent);
+				if (OSDetector.isWindows()) {
+
+					// SYNC-1713
+
+					String filePathName = syncWatchEvent.getFilePathName();
+
+					Path filePath = Paths.get(filePathName);
+
+					Path realFilePath = filePath.toRealPath(
+						LinkOption.NOFOLLOW_LINKS);
+
+					if (!filePathName.equals(realFilePath.toString())) {
+						syncWatchEvent.setEventType(
+							SyncWatchEvent.EVENT_TYPE_RENAME);
+						syncWatchEvent.setFilePathName(realFilePath.toString());
+						syncWatchEvent.setPreviousFilePathName(filePathName);
+
+						renameFile(syncWatchEvent);
+					}
+
+					if (fileType.equals(SyncFile.TYPE_FILE)) {
+						modifyFile(syncWatchEvent);
+					}
+				}
+				else {
+					modifyFile(syncWatchEvent);
+				}
 			}
 		}
 		else if (eventType.equals(SyncWatchEvent.EVENT_TYPE_MOVE)) {
@@ -773,17 +800,14 @@ public class SyncWatchEventProcessor implements Runnable {
 	}
 
 	protected void renameFile(SyncWatchEvent syncWatchEvent) throws Exception {
-		Path sourceFilePath = Paths.get(
-			syncWatchEvent.getPreviousFilePathName());
-
-		SyncFile syncFile = SyncFileService.fetchSyncFile(
-			sourceFilePath.toString());
-
 		Path targetFilePath = Paths.get(syncWatchEvent.getFilePathName());
 
 		if (sanitizeFileName(targetFilePath)) {
 			return;
 		}
+
+		SyncFile syncFile = SyncFileService.fetchSyncFile(
+			FileKeyUtil.getFileKey(targetFilePath));
 
 		if (syncFile == null) {
 			if (Files.isDirectory(targetFilePath)) {

@@ -381,7 +381,10 @@ public class LiferayThemeDefaultsPlugin implements Plugin<Project> {
 	}
 
 	private void _configureProject(Project project) {
-		project.setGroup(_GROUP);
+		String group = GradleUtil.getGradlePropertiesValue(
+			project, "project.group", _GROUP);
+
+		project.setGroup(group);
 	}
 
 	private void _configureTaskExecuteGulp(
@@ -390,6 +393,7 @@ public class LiferayThemeDefaultsPlugin implements Plugin<Project> {
 		Project frontendThemeUnstyledProject) {
 
 		executeGulpTask.args(
+			"--skip-update-check",
 			new Callable<String>() {
 
 				@Override

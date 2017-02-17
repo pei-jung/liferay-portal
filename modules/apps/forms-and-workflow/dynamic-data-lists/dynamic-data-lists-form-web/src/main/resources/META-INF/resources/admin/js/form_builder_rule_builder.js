@@ -17,6 +17,10 @@ AUI.add(
 						value: null
 					},
 
+					functionsMetadata: {
+						value: []
+					},
+
 					rules: {
 						value: []
 					},
@@ -26,7 +30,7 @@ AUI.add(
 							contains: Liferay.Language.get('contains'),
 							delete: Liferay.Language.get('delete'),
 							edit: Liferay.Language.get('edit'),
-							emptyListText: Liferay.Language.get('there-are-no-rules-yet-click-on-plus-icon-bellow-to-add-the-first'),
+							emptyListText: Liferay.Language.get('there-are-no-rules-yet-click-on-plus-icon-below-to-add-the-first'),
 							'enable-field': Liferay.Language.get('enable-x'),
 							'equals-to': Liferay.Language.get('is-equal-to'),
 							'jump-from-page-to-page': Liferay.Language.get('jump-from-x-to-x'),
@@ -112,6 +116,7 @@ AUI.add(
 							function(field) {
 								fields.push(
 									{
+										dataType: field.get('dataType'),
 										label: field.get('label') || field.get('fieldName'),
 										options: field.get('options'),
 										type: field.get('type'),
@@ -139,7 +144,7 @@ AUI.add(
 
 						for (var i = 0; i < pagesQuantity; i++) {
 							pages[i] = {
-								label: pagesTitles[i] ? pagesTitles[i] : (i + 1).toString(),
+								label: pagesTitles[i] ? (i + 1).toString() + ' ' + pagesTitles[i] : (i + 1).toString(),
 								value: i.toString()
 							};
 						}
@@ -157,6 +162,7 @@ AUI.add(
 									bubbleTargets: [instance],
 									contentBox: instance.get('contentBox'),
 									fields: instance.getFields(),
+									functionsMetadata: instance.get('functionsMetadata'),
 									pages: instance.getPages()
 								}
 							);
@@ -210,7 +216,7 @@ AUI.add(
 								data = [
 									badgeTemplate(
 										{
-											content: action.target
+											content: action.label
 										}
 									)
 								];
@@ -260,10 +266,12 @@ AUI.add(
 						var rulesDescription = [];
 
 						for (var i = 0; i < rules.length; i++) {
-							rulesDescription.push({
-								actions: instance._getActionsDescription(rules[i].actions),
-								conditions: rules[i].conditions
-							});
+							rulesDescription.push(
+								{
+									actions: instance._getActionsDescription(rules[i].actions),
+									conditions: rules[i].conditions
+								}
+							);
 						}
 
 						return rulesDescription;

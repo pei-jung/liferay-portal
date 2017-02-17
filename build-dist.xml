@@ -1751,13 +1751,13 @@ this task.
 			<then>
 				<replace file="${app.server.tcserver.bin.dir}/setenv.bat">
 					<replacetoken><![CDATA[set JVM_OPTS=-Xmx512M -Xss256K]]></replacetoken>
-					<replacevalue><![CDATA[set JVM_OPTS=-Xmx1024M -Xss512K -XX:MaxMetaspaceSize=512m]]></replacevalue>
+					<replacevalue><![CDATA[set JVM_OPTS=-Dfile.encoding=UTF-8 -Xmx1024M -Xss512K -XX:MaxMetaspaceSize=512m]]></replacevalue>
 				</replace>
 			</then>
 			<else>
 				<replace file="${app.server.tcserver.bin.dir}/setenv.sh">
 					<replacetoken><![CDATA[JVM_OPTS="-Xmx512M -Xss256K"]]></replacetoken>
-					<replacevalue><![CDATA[JVM_OPTS="-Xmx1024M -Xss512K -XX:MaxPermSize=512m"]]></replacevalue>
+					<replacevalue><![CDATA[JVM_OPTS="-Dfile.encoding=UTF-8 -Xmx1024M -Xss512K -XX:MaxPermSize=512m"]]></replacevalue>
 				</replace>
 			</else>
 		</if>
@@ -2603,6 +2603,11 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 		<replace file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/nodes/liferay-node/servers/server1/server.xml">
 			<replacetoken><![CDATA[disableJIT="false">]]></replacetoken>
 			<replacevalue><![CDATA[disableJIT="false" maximumHeapSize="1024">]]></replacevalue>
+		</replace>
+
+		<replace file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/nodes/liferay-node/servers/server1/server.xml">
+			<replacetoken><![CDATA[genericJvmArguments="-Xquickstart"]]></replacetoken>
+			<replacevalue><![CDATA[genericJvmArguments="-Xquickstart -Dfile.encoding=UTF-8"]]></replacevalue>
 		</replace>
 
 		<echo>Installing fix pack. This may take a few minutes</echo>

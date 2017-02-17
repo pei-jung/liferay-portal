@@ -14,15 +14,9 @@
 
 		<execute function="SelectFrame" locator1="IFrame#SELECT_SITES" />
 
-		<var name="key_siteName" value="${siteName}" />
-
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${siteName}" />
-
-		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-
-		<execute function="AssertTextEquals" locator1="APConfigurationSites#SITES_TABLE_NAME" value1="${siteName}" />
-
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute macro="SiteSelector#viewSite">
+			<var name="site" value="${siteName}" />
+		</execute>
 	</command>
 
 	<command name="configureAddSiteScopes">
@@ -52,9 +46,9 @@
 
 				<execute function="SelectFrame" locator1="IFrame#SELECT_SITES" />
 
-				<var name="key_siteName" value="${otherSite}" />
-
-				<execute function="Click" locator1="SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK" />
+				<execute macro="SiteSelector#selectSite">
+					<var name="site" value="${otherSite}" />
+				</execute>
 			</then>
 		</if>
 
@@ -620,7 +614,9 @@
 
 		<execute function="AssertClick" locator1="Configuration#SAVE_CONFIGURATION_TEMPLATE" value1="Save Current Configuration as Template" />
 
-		<execute function="Type" locator1="TextInput#NAME" value1="${configurationName}" />
+		<execute macro="PortletEntry#inputName">
+			<var name="name" value="${configurationName}" />
+		</execute>
 
 		<execute macro="Button#clickSave" />
 
