@@ -474,7 +474,7 @@ public class IconTag extends IncludeTag {
 			sb.append(themeDisplay.getPathThemeImages());
 			sb.append("/common/");
 			sb.append(_image);
-			sb.append(".png");
+			sb.append(".svg");
 
 			return StringUtil.replace(sb.toString(), "common/../", "");
 		}
