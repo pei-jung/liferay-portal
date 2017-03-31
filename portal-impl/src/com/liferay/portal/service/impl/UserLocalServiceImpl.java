@@ -473,7 +473,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			userIds.add(user.getUserId());
 		}
 
-		addGroupUsers(groupId, ArrayUtil.toLongArray(userIds));
+		try {
+			addGroupUsers(groupId, ArrayUtil.toLongArray(userIds));
+		}
+		catch (PortalException pe) {
+			throw new SystemException(pe);
+		}
 	}
 
 	/**
