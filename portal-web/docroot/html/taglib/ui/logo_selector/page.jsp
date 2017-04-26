@@ -29,6 +29,10 @@ boolean showBackground = GetterUtil.getBoolean((String)request.getAttribute("lif
 boolean showButtons = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:logo-selector:showButtons"));
 String tempImageFileName = (String)request.getAttribute("liferay-ui:logo-selector:tempImageFileName");
 
+if (maxFileSize == 0) {
+	maxFileSize = UploadServletRequestImpl.getMaxSize();
+}
+
 boolean deleteLogo = ParamUtil.getBoolean(request, "deleteLogo");
 long fileEntryId = ParamUtil.getLong(request, "fileEntryId");
 
