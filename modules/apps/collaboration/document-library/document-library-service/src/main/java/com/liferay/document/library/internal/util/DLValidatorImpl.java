@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.upload.UploadServletRequestImpl;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.webdav.DLWebDAVUtil;
@@ -65,8 +66,7 @@ public final class DLValidatorImpl implements DLValidator {
 		long fileMaxSize = PrefsPropsUtil.getLong(PropsKeys.DL_FILE_MAX_SIZE);
 
 		if (fileMaxSize == 0) {
-			fileMaxSize = PrefsPropsUtil.getLong(
-				PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE);
+			fileMaxSize = UploadServletRequestImpl.getMaxSize();
 		}
 
 		return fileMaxSize;
