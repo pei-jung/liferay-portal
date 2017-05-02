@@ -62,6 +62,11 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class UploadServletRequestImpl
 	extends HttpServletRequestWrapper implements UploadServletRequest {
 
+	public static long getMaxSize() {
+		return PrefsPropsUtil.getLong(
+			PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE);
+	}
+
 	public static File getTempDir() {
 		if (_tempDir == null) {
 			_tempDir = new File(
@@ -100,8 +105,7 @@ public class UploadServletRequestImpl
 
 			liferayServletRequest.setFinishedReadingOriginalStream(true);
 
-			long uploadServletRequestImplMaxSize = PrefsPropsUtil.getLong(
-				PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE);
+			long uploadServletRequestImplMaxSize = getMaxSize();
 			long uploadServletRequestImplSize = 0;
 
 			int contentLength = request.getContentLength();
