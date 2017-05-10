@@ -189,7 +189,7 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 			String description = actionElement.elementTextTrim("description");
 			String executionType = actionElement.elementTextTrim(
 				"execution-type");
-			String script = actionElement.elementTextTrim("script");
+			String script = actionElement.elementText("script");
 			String scriptLanguage = actionElement.elementTextTrim(
 				"script-language");
 			String scriptRequiredContexts = actionElement.elementTextTrim(
@@ -285,7 +285,7 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 			"scripted-assignment");
 
 		for (Element scriptedAssignmentElement : scriptedAssignmentElements) {
-			String script = scriptedAssignmentElement.elementTextTrim("script");
+			String script = scriptedAssignmentElement.elementText("script");
 			String scriptLanguage = scriptedAssignmentElement.elementTextTrim(
 				"script-language");
 			String scriptRequiredContexts =
@@ -321,7 +321,7 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 	protected Condition parseCondition(Element conditionElement) {
 		String name = conditionElement.elementTextTrim("name");
 		String description = conditionElement.elementTextTrim("description");
-		String script = conditionElement.elementTextTrim("script");
+		String script = conditionElement.elementText("script");
 		String scriptLanguage = conditionElement.elementTextTrim(
 			"script-language");
 		String scriptRequiredContexts = conditionElement.elementTextTrim(
@@ -542,7 +542,7 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 			"scripted-recipient");
 
 		for (Element scriptedRecipientElement : scriptedRecipientElements) {
-			String script = scriptedRecipientElement.elementTextTrim("script");
+			String script = scriptedRecipientElement.elementText("script");
 			String scriptLanguage = scriptedRecipientElement.elementTextTrim(
 				"script-language");
 			String scriptRequiredContexts =

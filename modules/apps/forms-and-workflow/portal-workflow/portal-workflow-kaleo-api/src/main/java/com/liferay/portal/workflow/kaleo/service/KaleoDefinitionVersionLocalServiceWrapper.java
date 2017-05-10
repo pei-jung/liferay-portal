@@ -224,9 +224,9 @@ public class KaleoDefinitionVersionLocalServiceWrapper
 
 	@Override
 	public int getLatestKaleoDefinitionVersionsCount(long companyId,
-		java.lang.String keywords) {
+		java.lang.String keywords, int status) {
 		return _kaleoDefinitionVersionLocalService.getLatestKaleoDefinitionVersionsCount(companyId,
-			keywords);
+			keywords, status);
 	}
 
 	/**
@@ -337,10 +337,11 @@ public class KaleoDefinitionVersionLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> getLatestKaleoDefinitionVersions(
-		long companyId, java.lang.String keywords, int start, int end,
+		long companyId, java.lang.String keywords, int status, int start,
+		int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> orderByComparator) {
 		return _kaleoDefinitionVersionLocalService.getLatestKaleoDefinitionVersions(companyId,
-			keywords, start, end, orderByComparator);
+			keywords, status, start, end, orderByComparator);
 	}
 
 	/**

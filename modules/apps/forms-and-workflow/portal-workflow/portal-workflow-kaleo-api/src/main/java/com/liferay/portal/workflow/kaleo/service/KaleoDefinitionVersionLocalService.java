@@ -192,7 +192,7 @@ public interface KaleoDefinitionVersionLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getLatestKaleoDefinitionVersionsCount(long companyId,
-		java.lang.String keywords);
+		java.lang.String keywords, int status);
 
 	/**
 	* Returns the OSGi service identifier.
@@ -271,8 +271,8 @@ public interface KaleoDefinitionVersionLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<KaleoDefinitionVersion> getLatestKaleoDefinitionVersions(
-		long companyId, java.lang.String keywords, int start, int end,
-		OrderByComparator<KaleoDefinitionVersion> orderByComparator);
+		long companyId, java.lang.String keywords, int status, int start,
+		int end, OrderByComparator<KaleoDefinitionVersion> orderByComparator);
 
 	/**
 	* Returns the number of rows matching the dynamic query.

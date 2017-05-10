@@ -651,7 +651,7 @@ AUI.add(
 								var payload = instance.ns(
 									{
 										published: newPublishedValue,
-										recordSetId: instance.get('recordSetId')
+										recordSetId: instance.byId('recordSetId').val()
 									}
 								);
 
