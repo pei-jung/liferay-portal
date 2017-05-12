@@ -66,7 +66,7 @@ AUI.add(
 								position: 'left',
 								visible: false,
 								width: 500,
-								zIndex: 999
+								zIndex: Liferay.zIndex.OVERLAY
 							}
 						).render();
 

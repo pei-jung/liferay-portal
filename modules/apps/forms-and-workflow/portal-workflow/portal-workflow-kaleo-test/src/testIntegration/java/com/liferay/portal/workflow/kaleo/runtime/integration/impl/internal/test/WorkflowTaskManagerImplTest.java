@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -41,9 +40,6 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -68,11 +64,7 @@ public class WorkflowTaskManagerImplTest
 
 	@Test
 	public void testApproveJoinXorWorkflow() throws Exception {
-		createJoinXorWorkflow();
-
-		activateWorkflow(
-			group.getGroupId(), BlogsEntry.class.getName(), 0, 0, "Join Xor",
-			1);
+		activateWorkflow(BlogsEntry.class.getName(), 0, 0, JOIN_XOR, 1);
 
 		BlogsEntry blogsEntry = addBlogsEntry();
 
@@ -244,7 +236,7 @@ public class WorkflowTaskManagerImplTest
 		Organization parentOrganization = createOrganization();
 
 		User reviewerUser = createUser(
-			"Organization Content Reviewer", parentOrganization.getGroup());
+			ORGANIZATION_CONTENT_REVIEWER, parentOrganization.getGroup());
 
 		OrganizationLocalServiceUtil.addUserOrganization(
 			reviewerUser.getUserId(), parentOrganization);
@@ -261,14 +253,6 @@ public class WorkflowTaskManagerImplTest
 
 		serviceContext = ServiceContextTestUtil.getServiceContext(
 			childOrganization.getGroupId());
-
-		_organizations.add(childOrganization);
-
-		_organizations.add(parentOrganization);
-
-		_users.add(memberUser);
-
-		_users.add(reviewerUser);
 
 		activateSingleApproverWorkflow(
 			childOrganization.getGroupId(), BlogsEntry.class.getName(), 0, 0);
@@ -289,6 +273,51 @@ public class WorkflowTaskManagerImplTest
 
 		deactivateWorkflow(
 			childOrganization.getGroupId(), BlogsEntry.class.getName(), 0, 0);
+
+		serviceContext = ServiceContextTestUtil.getServiceContext(
+			group.getGroupId());
+	}
+
+	@Test
+	public void testApproveScriptAssignmentOrganizationAndSiteReviewer()
+		throws Exception {
+
+		Organization organization = createOrganization();
+
+		User organizationReviewerUser = createUser(
+			ORGANIZATION_CONTENT_REVIEWER, organization.getGroup());
+
+		OrganizationLocalServiceUtil.addUserOrganization(
+			organizationReviewerUser.getUserId(), organization);
+
+		User siteAdministratorUser = createUser(
+			RoleConstants.SITE_ADMINISTRATOR);
+
+		OrganizationLocalServiceUtil.addUserOrganization(
+			siteAdministratorUser.getUserId(), organization);
+
+		serviceContext = ServiceContextTestUtil.getServiceContext(
+			organization.getGroupId());
+
+		activateWorkflow(
+			organization.getGroupId(), BlogsEntry.class.getName(), 0, 0,
+			SCRIPTED_SINGLE_APPROVER, 1);
+
+		BlogsEntry blogsEntry = addBlogsEntry(siteAdministratorUser);
+
+		assignWorkflowTaskToUser(
+			organizationReviewerUser, organizationReviewerUser);
+
+		completeWorkflowTask(organizationReviewerUser, Constants.APPROVE);
+
+		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
+			blogsEntry.getEntryId());
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
+
+		deactivateWorkflow(
+			organization.getGroupId(), BlogsEntry.class.getName(), 0, 0);
 
 		serviceContext = ServiceContextTestUtil.getServiceContext(
 			group.getGroupId());
@@ -409,11 +438,5 @@ public class WorkflowTaskManagerImplTest
 
 		deactivateWorkflow(BlogsEntry.class.getName(), 0, 0);
 	}
-
-	@DeleteAfterTestRun
-	private final List<Organization> _organizations = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<User> _users = new ArrayList<>();
 
 }

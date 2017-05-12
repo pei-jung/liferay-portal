@@ -548,7 +548,7 @@
 
 		<execute macro="FormRules#configureConditionOptions">
 			<var name="conditionField" value="User" />=
-			<var name="conditionOperator" value="belongs to" />
+			<var name="conditionOperator" value="Belongs to" />
 			<var name="conditionRowNumber" value="1" />
 			<var name="conditionValueType" value="Site Administrator" />
 		</execute>
@@ -574,7 +574,7 @@
 			<var name="actionTarget" value="Manager" />
 			<var name="conditionField" value="User" />
 			<var name="conditionFieldConstant" value="Site Administrator" />
-			<var name="conditionOperator" value="belongs to" />
+			<var name="conditionOperator" value="Belongs to" />
 			<var name="ruleNumber" value="1" />
 		</execute>
 
@@ -583,7 +583,7 @@
 			<var name="actionTarget" value="Manager" />
 			<var name="conditionField" value="User" />
 			<var name="conditionFieldConstant" value="Site Administrator" />
-			<var name="conditionOperator" value="belongs to" />
+			<var name="conditionOperator" value="Belongs to" />
 			<var name="ruleNumber" value="1" />
 		</execute>
 

@@ -26,13 +26,13 @@ the WAR file.
 - [LPS-69223]: Update the [Liferay Gradle Plugins CSS Builder] dependency to
 version 2.0.0.
 
-## 2.0.2 - 2017-05-04
+## 2.0.2 - 2017-05-09
 
 ### Added
 - [LPS-72367]: Automatically add the latest release of the
 [Liferay Frontend Theme Classic] artifact to the `parentThemes` configuration.
-- [LPS-72367]: Change the sensible default of the `parentFile` property of the
-`buildTheme` task so it is possible to use WAR parent themes from the
+- [LPS-72367]: Change the sensible default of the `buildTheme` task's
+`parentFile` property so it's possible to use WAR parent themes from the
 `parentThemes` configuration.
 
 [LPS-66396]: https://issues.liferay.com/browse/LPS-66396

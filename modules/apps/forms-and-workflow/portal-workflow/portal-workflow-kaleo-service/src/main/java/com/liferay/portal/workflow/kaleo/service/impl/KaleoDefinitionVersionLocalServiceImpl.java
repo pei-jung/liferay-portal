@@ -188,11 +188,11 @@ public class KaleoDefinitionVersionLocalServiceImpl
 
 	@Override
 	public List<KaleoDefinitionVersion> getLatestKaleoDefinitionVersions(
-		long companyId, String keywords, int start, int end,
+		long companyId, String keywords, int status, int start, int end,
 		OrderByComparator<KaleoDefinitionVersion> orderByComparator) {
 
 		List<Long> kaleoDefinitionVersionIds = getKaleoDefinitionVersionIds(
-			companyId, keywords);
+			companyId, keywords, status);
 
 		if (kaleoDefinitionVersionIds.isEmpty()) {
 			return Collections.emptyList();
@@ -211,10 +211,10 @@ public class KaleoDefinitionVersionLocalServiceImpl
 
 	@Override
 	public int getLatestKaleoDefinitionVersionsCount(
-		long companyId, String keywords) {
+		long companyId, String keywords, int status) {
 
 		List<Long> kaleoDefinitionVersionIds = getKaleoDefinitionVersionIds(
-			companyId, keywords);
+			companyId, keywords, status);
 
 		return kaleoDefinitionVersionIds.size();
 	}
@@ -250,8 +250,18 @@ public class KaleoDefinitionVersionLocalServiceImpl
 		dynamicQuery.add(junction);
 	}
 
+	protected void addStatusCriterion(DynamicQuery dynamicQuery, int status) {
+		if (status != WorkflowConstants.STATUS_ANY) {
+			Junction junction = RestrictionsFactoryUtil.disjunction();
+
+			junction.add(RestrictionsFactoryUtil.eq("status", status));
+
+			dynamicQuery.add(junction);
+		}
+	}
+
 	protected List<Long> getKaleoDefinitionVersionIds(
-		long companyId, String keywords) {
+		long companyId, String keywords, int status) {
 
 		List<Long> kaleoDefinitionVersionIds = new ArrayList<>();
 
@@ -263,6 +273,8 @@ public class KaleoDefinitionVersionLocalServiceImpl
 		dynamicQuery.add(companyIdProperty.eq(companyId));
 
 		addKeywordsCriterion(dynamicQuery, keywords);
+
+		addStatusCriterion(dynamicQuery, status);
 
 		ProjectionList projectionList = ProjectionFactoryUtil.projectionList();
 

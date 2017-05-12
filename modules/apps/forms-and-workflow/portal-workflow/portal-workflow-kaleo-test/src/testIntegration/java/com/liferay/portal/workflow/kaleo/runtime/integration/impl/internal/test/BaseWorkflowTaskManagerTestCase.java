@@ -107,6 +107,7 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 			PermissionThreadLocal.getPermissionChecker();
 
 		setUpUsers();
+		setUpWorkflow();
 	}
 
 	@After
@@ -140,6 +141,16 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 			adminUser.getUserId(), TestPropsValues.getCompanyId(), groupId,
 			className, classPK, typePK, workflowDefinitionName,
 			workflowDefinitionVersion);
+	}
+
+	protected void activateWorkflow(
+			String className, long classPK, long typePK,
+			String workflowDefinitionName, int workflowDefinitionVersion)
+		throws PortalException {
+
+		activateWorkflow(
+			group.getGroupId(), className, classPK, typePK,
+			workflowDefinitionName, workflowDefinitionVersion);
 	}
 
 	protected BlogsEntry addBlogsEntry() throws PortalException {
@@ -369,11 +380,20 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 	}
 
 	protected void createJoinXorWorkflow() throws Exception {
-		String content = read("join-xor-definition.xml");
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_PROXY_MESSAGE_LISTENER_CLASS_NAME, Level.OFF)) {
 
-		WorkflowDefinitionManagerUtil.deployWorkflowDefinition(
-			adminUser.getCompanyId(), adminUser.getUserId(), "Join Xor",
-			content.getBytes());
+			WorkflowDefinitionManagerUtil.getWorkflowDefinition(
+				adminUser.getCompanyId(), JOIN_XOR, 1);
+		}
+		catch (WorkflowException we) {
+			String content = read("join-xor-definition.xml");
+
+			WorkflowDefinitionManagerUtil.deployWorkflowDefinition(
+				adminUser.getCompanyId(), adminUser.getUserId(), JOIN_XOR,
+				content.getBytes());
+		}
 	}
 
 	protected Organization createOrganization() throws PortalException {
@@ -384,9 +404,32 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 	protected Organization createOrganization(long parentOrganizationId)
 		throws PortalException {
 
-		return OrganizationLocalServiceUtil.addOrganization(
-			adminUser.getUserId(), parentOrganizationId,
-			StringUtil.randomString(), true);
+		Organization organization =
+			OrganizationLocalServiceUtil.addOrganization(
+				adminUser.getUserId(), parentOrganizationId,
+				StringUtil.randomString(), true);
+
+		_organizations.add(0, organization);
+
+		return organization;
+	}
+
+	protected void createScriptedAssignmentWorkflow() throws Exception {
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_PROXY_MESSAGE_LISTENER_CLASS_NAME, Level.OFF)) {
+
+			WorkflowDefinitionManagerUtil.getWorkflowDefinition(
+				adminUser.getCompanyId(), SCRIPTED_SINGLE_APPROVER, 1);
+		}
+		catch (WorkflowException we) {
+			String content = read(
+				"single-approver-definition-scripted-assignment.xml");
+
+			WorkflowDefinitionManagerUtil.deployWorkflowDefinition(
+				adminUser.getCompanyId(), adminUser.getUserId(),
+				SCRIPTED_SINGLE_APPROVER, content.getBytes());
+		}
 	}
 
 	protected User createUser(String roleName) throws Exception {
@@ -395,6 +438,8 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 
 	protected User createUser(String roleName, Group group) throws Exception {
 		User user = UserTestUtil.addUser(group.getGroupId());
+
+		_users.add(user);
 
 		Role role = RoleLocalServiceUtil.getRole(
 			TestPropsValues.getCompanyId(), roleName);
@@ -470,17 +515,24 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 	protected void setUpUsers() throws Exception {
 		adminUser = createUser(RoleConstants.ADMINISTRATOR);
 
-		_users.add(adminUser);
-
 		portalContentReviewerUser = createUser(
 			RoleConstants.PORTAL_CONTENT_REVIEWER);
 
-		_users.add(portalContentReviewerUser);
-
 		siteAdminUser = createUser(RoleConstants.SITE_ADMINISTRATOR);
-
-		_users.add(siteAdminUser);
 	}
+
+	protected void setUpWorkflow() throws Exception {
+		createJoinXorWorkflow();
+		createScriptedAssignmentWorkflow();
+	}
+
+	protected static final String JOIN_XOR = "Join Xor";
+
+	protected static final String ORGANIZATION_CONTENT_REVIEWER =
+		"Organization Content Reviewer";
+
+	protected static final String SCRIPTED_SINGLE_APPROVER =
+		"Scripted Single Approver";
 
 	protected User adminUser;
 
@@ -493,6 +545,12 @@ public abstract class BaseWorkflowTaskManagerTestCase {
 
 	private static final String _MAIL_ENGINE_CLASS_NAME =
 		"com.liferay.util.mail.MailEngine";
+
+	private static final String _PROXY_MESSAGE_LISTENER_CLASS_NAME =
+		"com.liferay.portal.kernel.messaging.proxy.ProxyMessageListener";
+
+	@DeleteAfterTestRun
+	private final List<Organization> _organizations = new ArrayList<>();
 
 	private PermissionChecker _originalPermissionChecker;
 

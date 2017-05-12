@@ -1552,7 +1552,7 @@
 
 		<execute function="Click" locator1="Icon#INFO" />
 
-		<execute function="AssertClick" locator1="WikiRSS#FEED_LINK" value1="Feed" />
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="WikiRSS#FEED_LINK" value1="Feed" />
 
 		<execute function="Pause" locator1="3000" />
 

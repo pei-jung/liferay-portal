@@ -253,7 +253,8 @@ AUI.add(
 								trigger: '.publish-icon',
 								triggerHideEvent: ['blur', 'mouseleave'],
 								triggerShowEvent: ['focus', 'mouseover'],
-								visible: false
+								visible: false,
+								zIndex: 900
 							}
 						);
 					},
@@ -651,7 +652,7 @@ AUI.add(
 								var payload = instance.ns(
 									{
 										published: newPublishedValue,
-										recordSetId: instance.get('recordSetId')
+										recordSetId: instance.byId('recordSetId').val()
 									}
 								);
 

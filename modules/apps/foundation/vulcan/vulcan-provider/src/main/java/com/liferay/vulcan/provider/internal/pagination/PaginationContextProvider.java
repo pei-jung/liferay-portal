@@ -58,7 +58,7 @@ public class PaginationContextProvider implements ContextProvider<Pagination> {
 
 	private static final int _PAGE_NUMBER_DEFAULT = 1;
 
-	private class DefaultPage<T> implements Page<T> {
+	private static class DefaultPage<T> implements Page<T> {
 
 		public DefaultPage(
 			Collection<T> items, int itemsPerPage, int pageNumber,
@@ -120,7 +120,7 @@ public class PaginationContextProvider implements ContextProvider<Pagination> {
 
 	}
 
-	private class DefaultPagination implements Pagination {
+	private static class DefaultPagination implements Pagination {
 
 		public DefaultPagination(int itemsPerPage, int pageNumber) {
 			_itemsPerPage = itemsPerPage;

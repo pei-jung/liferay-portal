@@ -1588,6 +1588,22 @@ version 2.3.12.
 - [LPS-72252]: Update the [Liferay Gradle Plugins Source Formatter] dependency
 to version 2.0.0.
 
+## 3.3.10 - 2017-05-09
+
+### Changed
+- [LPS-71164]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.0.2.
+- [LPS-71164]: Update the [Liferay Source Formatter] dependency to version
+1.0.392.
+
+## 3.3.11 - 2017-05-11
+
+### Changed
+- [LPS-72365]: Update the [Liferay Gradle Plugins Test Integration] dependency
+to version 1.2.0.
+- [LPS-72514]: Update the [Liferay Portal Tools DB Support] dependency to
+version 1.0.3.
+
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Alloy Taglib]: https://github.com/liferay/alloy-taglibs
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
@@ -1613,6 +1629,7 @@ to version 2.0.0.
 [Liferay Jasper JSPC]: https://github.com/liferay/liferay-portal/tree/master/modules/util/jasper-jspc
 [Liferay Javadoc Formatter]: https://github.com/liferay/liferay-portal/tree/master/modules/util/javadoc-formatter
 [Liferay Lang Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/lang-builder
+[Liferay Portal Tools DB Support]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-db-support
 [Liferay Portal Tools Service Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-service-builder
 [Liferay Portal Tools Upgrade Table Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-upgrade-table-builder
 [Liferay Portal Tools WSDD Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-wsdd-builder
@@ -1732,4 +1749,6 @@ to version 2.0.0.
 [LPS-72252]: https://issues.liferay.com/browse/LPS-72252
 [LPS-72326]: https://issues.liferay.com/browse/LPS-72326
 [LPS-72340]: https://issues.liferay.com/browse/LPS-72340
+[LPS-72365]: https://issues.liferay.com/browse/LPS-72365
+[LPS-72514]: https://issues.liferay.com/browse/LPS-72514
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023
