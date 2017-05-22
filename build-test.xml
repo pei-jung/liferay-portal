@@ -212,6 +212,7 @@ jdbc.default.password=${database.password}
 
 // HikariCP
 
+jdbc.default.connectionTimeout=600000
 jdbc.default.maximumPoolSize=20
 jdbc.default.minimumIdle=0
 
@@ -5242,6 +5243,23 @@ go]]></replacevalue>
 									<else>
 										<echo>Deploying all relevant modules that make up ${Liferay-Releng-App-Title}.lpkg.</echo>
 
+										<for param="module.dir.path">
+											<path>
+												<dirset dir="@{app.dir}">
+													<include name="*" />
+												</dirset>
+											</path>
+											<sequential>
+												<basename file="@{module.dir.path}" property="module.war.name" />
+
+												<delete failonerror="false" verbose="true">
+													<fileset dir="${liferay.home}/deploy">
+														<include name="${module.war.name}*" />
+													</fileset>
+												</delete>
+											</sequential>
+										</for>
+
 										<gradle-execute dir="@{app.dir}" task="deploy">
 											<arg value="clean" />
 										</gradle-execute>
@@ -6306,6 +6324,7 @@ jdbc.default.password=${database.password}
 
 // HikariCP
 
+jdbc.default.connectionTimeout=600000
 jdbc.default.maximumPoolSize=20
 jdbc.default.minimumIdle=0
 

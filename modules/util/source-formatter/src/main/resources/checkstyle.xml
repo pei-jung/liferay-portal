@@ -89,9 +89,10 @@
 			<message key="assert.add.information" value="Add ''{0}'' as extra parameter at the beginning of the ''Assert.assertEquals'' call to provide more information to the test. See LPS-70411." />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.Chaining">
-			<property name="chainingAllowedFormat" value="(^|.*\.)(bind|stream)\..*" />
-			<message key="chaining.avoid" value="Avoid chaining on method ''{0}'" />
-			<message key="chaining.avoid.multiple" value="Avoid multiple chaining on method ''{0}'" />
+			<property name="allowedClassNames" value=".*Builder,Optional,Stream" />
+			<property name="allowedMethodNames" value="bind" />
+			<message key="chaining.avoid" value="Avoid chaining on method ''{0}''. See https://github.com/liferay/liferay-portal/blob/master/modules/util/source-formatter/documentation/chaining.markdown" />
+			<message key="chaining.avoid.multiple" value="Avoid multiple chaining on method ''{0}''. See https://github.com/liferay/liferay-portal/blob/master/modules/util/source-formatter/documentation/chaining.markdown" />
 			<message key="concat.avoid.too.many" value="Use StringBundler instead of chaining concat when there is more than 3 parts" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.ConstantName">
@@ -197,6 +198,7 @@
 			<message key="import.invalid" value="Avoid using import TransactionalTestRule in *StagedModelDataHandlerTest, see LPS-68908" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.UnprocessedException">
+			<property name="checkUnprocessedThrownExceptions" value="false" />
 			<message key="exception.unprocessed" value="Unprocessed exception ''{0}'', see LPS-36174" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.UnusedParameter">

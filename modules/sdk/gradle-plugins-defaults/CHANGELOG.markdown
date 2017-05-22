@@ -1483,6 +1483,23 @@ task.
 ### Changed
 - [LPS-67352]: Update the [Liferay Gradle Plugins] dependency to version 3.3.12.
 
+## 3.6.17 - 2017-05-15
+
+### Changed
+- [LPS-72562]: Update the [Liferay Gradle Plugins] dependency to version 3.3.13.
+
+## 3.6.18 - 2017-05-16
+
+### Changed
+- [LPS-67352]: Update the [Liferay Gradle Plugins] dependency to version 3.3.14.
+
+## 3.6.19 - 2017-05-19
+
+### Changed
+- [LPS-72572]: Update the [Liferay Gradle Plugins Baseline] dependency to
+version 1.1.7.
+- [LPS-72656]: Update the [Liferay Gradle Plugins] dependency to version 3.3.15.
+
 [Find Security Bugs]: https://github.com/liferay/liferay-portal/tree/master/modules/third-party/com-h3xstream-findsecbugs
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -1636,6 +1653,9 @@ task.
 [LPS-72340]: https://issues.liferay.com/browse/LPS-72340
 [LPS-72456]: https://issues.liferay.com/browse/LPS-72456
 [LPS-72514]: https://issues.liferay.com/browse/LPS-72514
+[LPS-72562]: https://issues.liferay.com/browse/LPS-72562
+[LPS-72572]: https://issues.liferay.com/browse/LPS-72572
+[LPS-72656]: https://issues.liferay.com/browse/LPS-72656
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981

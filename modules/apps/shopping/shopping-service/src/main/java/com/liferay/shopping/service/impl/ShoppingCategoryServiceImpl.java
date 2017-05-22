@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.shopping.model.ShoppingCategory;
 import com.liferay.shopping.service.base.ShoppingCategoryServiceBaseImpl;
 import com.liferay.shopping.service.permission.ShoppingCategoryPermission;
@@ -39,7 +38,7 @@ public class ShoppingCategoryServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		shoppingCategoryPermission.check(
+		ShoppingCategoryPermission.check(
 			getPermissionChecker(), serviceContext.getScopeGroupId(),
 			parentCategoryId, ActionKeys.ADD_CATEGORY);
 
@@ -52,7 +51,7 @@ public class ShoppingCategoryServiceImpl
 		ShoppingCategory category = shoppingCategoryLocalService.getCategory(
 			categoryId);
 
-		shoppingCategoryPermission.check(
+		ShoppingCategoryPermission.check(
 			getPermissionChecker(), category, ActionKeys.DELETE);
 
 		shoppingCategoryLocalService.deleteCategory(categoryId);
@@ -102,7 +101,7 @@ public class ShoppingCategoryServiceImpl
 		ShoppingCategory category = shoppingCategoryLocalService.getCategory(
 			categoryId);
 
-		shoppingCategoryPermission.check(
+		ShoppingCategoryPermission.check(
 			getPermissionChecker(), category, ActionKeys.VIEW);
 
 		return category;
@@ -133,15 +132,12 @@ public class ShoppingCategoryServiceImpl
 		ShoppingCategory category = shoppingCategoryLocalService.getCategory(
 			categoryId);
 
-		shoppingCategoryPermission.check(
+		ShoppingCategoryPermission.check(
 			getPermissionChecker(), category, ActionKeys.UPDATE);
 
 		return shoppingCategoryLocalService.updateCategory(
 			categoryId, parentCategoryId, name, description,
 			mergeWithParentCategory, serviceContext);
 	}
-
-	@ServiceReference(type = ShoppingCategoryPermission.class)
-	protected ShoppingCategoryPermission shoppingCategoryPermission;
 
 }

@@ -181,7 +181,11 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 					group, layout.isPrivateLayout());
 			}
 			catch (PortalException pe) {
-				_log.error(pe);
+				if (_log.isDebugEnabled()) {
+					_log.debug(pe);
+				}
+
+				_log.error(pe.getMessage());
 			}
 		}
 		else if (group.isStagingGroup()) {

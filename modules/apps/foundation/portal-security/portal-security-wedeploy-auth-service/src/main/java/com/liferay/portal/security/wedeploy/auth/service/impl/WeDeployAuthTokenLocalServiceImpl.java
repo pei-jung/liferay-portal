@@ -34,25 +34,32 @@ public class WeDeployAuthTokenLocalServiceImpl
 
 	@Override
 	public WeDeployAuthToken addAccessWeDeployAuthToken(
-			long userId, String clientId, String clientSecret,
+			String redirectURI, String clientId, String clientSecret,
 			String authorizationToken, int type, ServiceContext serviceContext)
 		throws PortalException {
 
-		validate(clientId, clientSecret, authorizationToken, type);
+		validateAccess(redirectURI, clientId, clientSecret);
+
+		WeDeployAuthToken weDeployAuthToken =
+			weDeployAuthTokenPersistence.removeByCI_T_T(
+				clientId, authorizationToken, type);
 
 		String token = DigesterUtil.digestHex(
 			Digester.MD5, clientId.concat(authorizationToken),
 			PwdGenerator.getPassword());
 
 		return addWeDeployAuthToken(
-			userId, clientId, token, WeDeployAuthTokenConstants.TYPE_ACCESS,
-			new ServiceContext());
+			weDeployAuthToken.getUserId(), clientId, token,
+			WeDeployAuthTokenConstants.TYPE_ACCESS, serviceContext);
 	}
 
 	@Override
 	public WeDeployAuthToken addAuthorizationWeDeployAuthToken(
-			long userId, String clientId, ServiceContext serviceContext)
+			long userId, String redirectURI, String clientId,
+			ServiceContext serviceContext)
 		throws PortalException {
+
+		validateAuthorization(redirectURI, clientId);
 
 		String token = DigesterUtil.digestHex(
 			Digester.MD5, clientId, PwdGenerator.getPassword());
@@ -98,15 +105,19 @@ public class WeDeployAuthTokenLocalServiceImpl
 		return weDeployAuthToken;
 	}
 
-	protected void validate(
-			String clientId, String clientSecret, String authorizationToken,
-			int type)
+	protected void validateAccess(
+			String redirectURI, String clientId, String clientSecret)
 		throws PortalException {
 
-		weDeployAuthAppPersistence.findByCI_CS(clientId, clientSecret);
+		weDeployAuthAppPersistence.findByRU_CI(redirectURI, clientId);
 
-		weDeployAuthTokenPersistence.findByCI_T_T(
-			clientId, authorizationToken, type);
+		weDeployAuthAppPersistence.findByCI_CS(clientId, clientSecret);
+	}
+
+	protected void validateAuthorization(String redirectURI, String clientId)
+		throws PortalException {
+
+		weDeployAuthAppPersistence.findByRU_CI(redirectURI, clientId);
 	}
 
 }

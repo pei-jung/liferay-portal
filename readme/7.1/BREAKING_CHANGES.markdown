@@ -73,6 +73,55 @@ in ascending chronological order.
 
 ## Breaking Changes List
 
+### Standardized Data Attribute Names Passed into Selectors
+- **Date:** 2016-Oct-26
+- **JIRA Ticket:** LPS-66646
+
+#### What changed?
+
+The data attributes passed into the event when someone uses a selector (e.g.,
+asset selector, document selector, file selector, role selector, site selector,
+user group selector, etc.) have been standardized from being selector specific
+(e.g., `groupid`, `groupdescriptivename`, `teamid`, `teamname`, etc.) to being
+more generic (e.g., `entityid` and `entityname`).
+
+#### Who is affected?
+
+This affects anyone who is passing selector specific data attributes to a
+selector.
+
+#### How should I update my code?
+
+Instead of using selector specific data attributes, you should change your data
+attributes to use `entityid` and `entityname`.
+
+**Example**
+
+Old way:
+
+    <portlet:namespace />selectFileEntryType(event.fileentrytypeid, event.fileentrytypename);
+
+New way:
+
+    <portlet:namespace />selectFileEntryType(event.entityid, event.entityname);
+
+Old way:
+
+    data.put("roleid", role.getRoleId());
+    data.put("roletitle", role.getTitle(locale));
+
+New way:
+
+    data.put("entityid", role.getRoleId());
+    data.put("entityname", role.getTitle(locale));
+
+#### Why was this change made?
+
+This change was made to standardize the data attribute names and allow utility
+methods to accept standardized event parameters.
+
+---------------------------------------
+
 ### Removed URL Parameters p_p_col_id, p_p_col_pos, and p_p_col_count from Every Portlet URL.
 - **Date:** 2016-Dec-12
 - **JIRA Ticket:** LPS-69482
@@ -143,6 +192,7 @@ This change was made as part of the modularization efforts to ease portal
 configuration changes.
 
 ---------------------------------------
+
 ### Moved CAPTCHA Portal Properties to OSGi Configuration
 - **Date:** 2017-Feb-13
 - **JIRA Ticket:** LPS-67830
@@ -229,5 +279,41 @@ the instructions for
 
 This change was made as part of the modularization efforts to ease portal
 configuration changes.
+
+---------------------------------------
+
+### Removed Indexation of Fields ratings and viewCount
+- **Date:** 2017-May-16
+- **JIRA Ticket:** LPS-70724
+
+#### What changed?
+
+The fields `ratings` and `viewCount` are no longer indexed in the `BaseIndexer`
+class for `AssetEntry` objects.
+
+#### Who is affected?
+
+This affects any search-related custom code where the `ratings` and `viewCount`
+fields are used in queries.
+
+#### How should I update my code?
+
+To adapt to these changes, consider several alternatives:
+
+ - Use the Highest Rated Assets and Most Viewed Assets Liferay portlets.
+ - Replace the index query with a database query.
+ - Implement an `IndexerPostProcessor` to index these fields in certain
+   documents.
+
+#### Why was this change made?
+
+Keeping the Ratings and View Count options in the search index in sync with the
+database has a negative impact on normal operations due to the significantly
+increased number of index Write requests causing throughput issues and,
+therefore, performance degradation.
+
+In addition, the view count is not always up-to-date in the database. This
+behavior is controlled by the *Buffered Increment* mechanism. You can find
+more information about this in the `portal.properties` file.
 
 ---------------------------------------

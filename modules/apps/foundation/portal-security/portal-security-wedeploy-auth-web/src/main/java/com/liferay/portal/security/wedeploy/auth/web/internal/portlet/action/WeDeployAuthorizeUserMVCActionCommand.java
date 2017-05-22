@@ -27,7 +27,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp;
@@ -68,7 +68,7 @@ public class WeDeployAuthorizeUserMVCActionCommand
 
 		try {
 			if (cmd.equals("allow")) {
-				redirectURI = HttpUtil.addParameter(
+				redirectURI = _http.addParameter(
 					redirectURI, "code",
 					getWeDeployAuthToken(actionRequest, themeDisplay));
 			}
@@ -104,6 +104,7 @@ public class WeDeployAuthorizeUserMVCActionCommand
 			ActionRequest actionRequest, ThemeDisplay themeDisplay)
 		throws PortalException {
 
+		String redirectURI = ParamUtil.getString(actionRequest, "redirectURI");
 		String clientId = ParamUtil.getString(actionRequest, "clientId");
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
@@ -111,13 +112,17 @@ public class WeDeployAuthorizeUserMVCActionCommand
 
 		WeDeployAuthToken weDeployAuthRequestToken =
 			_weDeployAuthTokenLocalService.addAuthorizationWeDeployAuthToken(
-				themeDisplay.getUserId(), clientId, serviceContext);
+				themeDisplay.getUserId(), redirectURI, clientId,
+				serviceContext);
 
 		return weDeployAuthRequestToken.getToken();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		WeDeployAuthorizeUserMVCActionCommand.class);
+
+	@Reference
+	private Http _http;
 
 	@Reference
 	private WeDeployAuthTokenLocalService _weDeployAuthTokenLocalService;

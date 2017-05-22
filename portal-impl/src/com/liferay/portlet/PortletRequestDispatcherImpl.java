@@ -258,7 +258,11 @@ public class PortletRequestDispatcherImpl
 			}
 		}
 		catch (ServletException se) {
-			_log.error(se, se);
+			if (_log.isDebugEnabled()) {
+				_log.debug(se);
+			}
+
+			_log.error(se.getMessage());
 
 			throw new PortletException(se);
 		}

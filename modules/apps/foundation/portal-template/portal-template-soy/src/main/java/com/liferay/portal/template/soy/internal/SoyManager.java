@@ -14,6 +14,8 @@
 
 package com.liferay.portal.template.soy.internal;
 
+import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.cache.SingleVMPool;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManager;
@@ -22,13 +24,11 @@ import com.liferay.portal.template.BaseMultiTemplateManager;
 import com.liferay.portal.template.RestrictedTemplate;
 import com.liferay.portal.template.TemplateContextHelper;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -62,22 +62,19 @@ public class SoyManager extends BaseMultiTemplateManager {
 	public void init() {
 	}
 
+	@Reference(unbind = "-")
+	public void setSingleVMPool(SingleVMPool singleVMPool) {
+		_portalCache =
+			(PortalCache<HashSet<TemplateResource>, SoyTofuCacheBag>)
+				singleVMPool.getPortalCache(SoyTemplate.class.getName());
+	}
+
 	@Override
 	@Reference(service = SoyTemplateContextHelper.class, unbind = "-")
 	public void setTemplateContextHelper(
 		TemplateContextHelper templateContextHelper) {
 
 		super.setTemplateContextHelper(templateContextHelper);
-	}
-
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		SoyTemplateResourcesTracker.open(bundleContext);
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		SoyTemplateResourcesTracker.close();
 	}
 
 	@Override
@@ -88,7 +85,8 @@ public class SoyManager extends BaseMultiTemplateManager {
 
 		Template template = new SoyTemplate(
 			templateResources, errorTemplateResource, helperUtilities,
-			(SoyTemplateContextHelper)templateContextHelper, privileged);
+			(SoyTemplateContextHelper)templateContextHelper, privileged,
+			_portalCache);
 
 		if (restricted) {
 			template = new RestrictedTemplate(
@@ -97,5 +95,8 @@ public class SoyManager extends BaseMultiTemplateManager {
 
 		return template;
 	}
+
+	private PortalCache<HashSet<TemplateResource>, SoyTofuCacheBag>
+		_portalCache;
 
 }

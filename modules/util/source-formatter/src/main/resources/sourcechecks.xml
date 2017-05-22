@@ -37,6 +37,7 @@
 	</source-processor>
 	<source-processor name="GradleSourceProcessor">
 		<check name="GradleDependenciesCheck" />
+		<check name="GradleImportsCheck" />
 		<check name="GradleVersionCheck" />
 		<check name="WhitespaceCheck" />
 	</source-processor>
@@ -47,7 +48,7 @@
 		<check name="CopyrightCheck">
 			<property name="copyrightFileName" value="copyright.txt" />
 		</check>
-		<check name="EmptyArrayCheck" />
+		<check name="ArrayCheck" />
 		<check name="EmptyCollectionCheck" />
 		<check name="GetterUtilCheck" />
 		<check name="Java2HTMLCheck" />
@@ -144,7 +145,7 @@
 		<check name="CopyrightCheck">
 			<property name="copyrightFileName" value="copyright.txt" />
 		</check>
-		<check name="EmptyArrayCheck" />
+		<check name="ArrayCheck" />
 		<check name="EmptyCollectionCheck" />
 		<check name="GetterUtilCheck" />
 		<check name="JSPButtonTagCheck" />
@@ -232,6 +233,7 @@
 		<check name="XMLCustomSQLFileCheck" />
 		<check name="XMLDDLStructuresFileCheck" />
 		<check name="XMLFriendlyURLRoutesFileCheck" />
+		<check name="XMLFSBExcludeFileCheck" />
 		<check name="XMLHBMFileCheck" />
 		<check name="XMLLog4jFileCheck" />
 		<check name="XMLLookAndFeelFileCheck" />
