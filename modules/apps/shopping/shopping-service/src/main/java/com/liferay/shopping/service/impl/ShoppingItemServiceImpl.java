@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.shopping.model.ShoppingItem;
 import com.liferay.shopping.model.ShoppingItemField;
 import com.liferay.shopping.model.ShoppingItemPrice;
@@ -47,7 +46,7 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 			List<ShoppingItemPrice> itemPrices, ServiceContext serviceContext)
 		throws PortalException {
 
-		shoppingCategoryPermission.check(
+		ShoppingCategoryPermission.check(
 			getPermissionChecker(), groupId, categoryId, ActionKeys.ADD_ITEM);
 
 		return shoppingItemLocalService.addItem(
@@ -60,7 +59,7 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 
 	@Override
 	public void deleteItem(long itemId) throws PortalException {
-		shoppingItemPermission.check(
+		ShoppingItemPermission.check(
 			getPermissionChecker(), itemId, ActionKeys.DELETE);
 
 		shoppingItemLocalService.deleteItem(itemId);
@@ -73,7 +72,7 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 
 	@Override
 	public ShoppingItem getItem(long itemId) throws PortalException {
-		shoppingItemPermission.check(
+		ShoppingItemPermission.check(
 			getPermissionChecker(), itemId, ActionKeys.VIEW);
 
 		return shoppingItemLocalService.getItem(itemId);
@@ -121,7 +120,7 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 			List<ShoppingItemPrice> itemPrices, ServiceContext serviceContext)
 		throws PortalException {
 
-		shoppingItemPermission.check(
+		ShoppingItemPermission.check(
 			getPermissionChecker(), itemId, ActionKeys.UPDATE);
 
 		return shoppingItemLocalService.updateItem(
@@ -131,11 +130,5 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 			mediumImageURL, mediumFile, largeImage, largeImageURL, largeFile,
 			itemFields, itemPrices, serviceContext);
 	}
-
-	@ServiceReference(type = ShoppingCategoryPermission.class)
-	protected ShoppingCategoryPermission shoppingCategoryPermission;
-
-	@ServiceReference(type = ShoppingItemPermission.class)
-	protected ShoppingItemPermission shoppingItemPermission;
 
 }
