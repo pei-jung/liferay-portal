@@ -187,7 +187,7 @@ public class Field implements Serializable {
 			return values.get(0);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Error extracting field value", e);
 		}
 
 		return null;

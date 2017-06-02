@@ -162,9 +162,10 @@ public class DDMIndexerImpl implements DDMIndexer {
 							JSONObject jsonObject =
 								JSONFactoryUtil.createJSONObject(valueString);
 
-							double latitude = jsonObject.getDouble("latitude");
+							double latitude = jsonObject.getDouble(
+								"latitude", 0);
 							double longitude = jsonObject.getDouble(
-								"longitude");
+								"longitude", 0);
 
 							document.addGeoLocation(
 								name.concat("_geolocation"), latitude,

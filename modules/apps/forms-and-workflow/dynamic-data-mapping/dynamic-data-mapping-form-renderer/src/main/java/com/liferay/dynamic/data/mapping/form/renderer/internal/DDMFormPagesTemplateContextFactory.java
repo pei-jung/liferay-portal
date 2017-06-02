@@ -31,6 +31,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
@@ -57,7 +58,9 @@ public class DDMFormPagesTemplateContextFactory {
 		DDMFormValues ddmFormValues =
 			ddmFormRenderingContext.getDDMFormValues();
 
-		if (ddmFormValues == null) {
+		if ((ddmFormValues == null) ||
+			ListUtil.isEmpty(ddmFormValues.getDDMFormFieldValues())) {
+
 			DefaultDDMFormValuesFactory defaultDDMFormValuesFactory =
 				new DefaultDDMFormValuesFactory(
 					ddmForm, ddmFormRenderingContext.getLocale());
