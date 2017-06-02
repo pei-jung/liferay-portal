@@ -63,9 +63,10 @@
 
 				<div class="inline-alert-container lfr-alert-container"></div>
 
+				<liferay-util:dynamic-include key="com.liferay.login.web#/login.jsp#alertPre" />
+
 				<c:choose>
 					<c:when test='<%= SessionMessages.contains(request, "passwordSent") %>'>
-
 						<div class="alert alert-success">
 							<liferay-ui:message key="your-password-was-sent-to-the-provided-email-address" />
 						</div>
@@ -127,6 +128,8 @@
 
 				<liferay-ui:error exception="<%= UserPasswordException.class %>" message="authentication-failed" />
 				<liferay-ui:error exception="<%= UserScreenNameException.MustNotBeNull.class %>" message="the-screen-name-cannot-be-blank" />
+
+				<liferay-util:dynamic-include key="com.liferay.login.web#/login.jsp#alertPost" />
 
 				<aui:fieldset>
 
