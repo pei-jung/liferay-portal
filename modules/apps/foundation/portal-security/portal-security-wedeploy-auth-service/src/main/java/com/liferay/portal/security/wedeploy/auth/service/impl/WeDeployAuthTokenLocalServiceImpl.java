@@ -16,13 +16,17 @@ package com.liferay.portal.security.wedeploy.auth.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Digester;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.PwdGenerator;
+import com.liferay.portal.security.wedeploy.auth.configuration.WeDeployAuthWebConfiguration;
 import com.liferay.portal.security.wedeploy.auth.constants.WeDeployAuthTokenConstants;
+import com.liferay.portal.security.wedeploy.auth.exception.WeDeployAuthTokenExpiredException;
 import com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthToken;
 import com.liferay.portal.security.wedeploy.auth.service.base.WeDeployAuthTokenLocalServiceBaseImpl;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.util.Date;
 
@@ -43,6 +47,20 @@ public class WeDeployAuthTokenLocalServiceImpl
 		WeDeployAuthToken weDeployAuthToken =
 			weDeployAuthTokenPersistence.removeByCI_T_T(
 				clientId, authorizationToken, type);
+
+		Date date = weDeployAuthToken.getCreateDate();
+
+		WeDeployAuthWebConfiguration weDeployAuthWebConfiguration =
+			configurationProvider.getSystemConfiguration(
+				WeDeployAuthWebConfiguration.class);
+
+		long expirationTime =
+			date.getTime() +
+				weDeployAuthWebConfiguration.authorizationTokenExpirationTime();
+
+		if (System.currentTimeMillis() > expirationTime) {
+			throw new WeDeployAuthTokenExpiredException();
+		}
 
 		String token = DigesterUtil.digestHex(
 			Digester.MD5, clientId.concat(authorizationToken),
@@ -119,5 +137,8 @@ public class WeDeployAuthTokenLocalServiceImpl
 
 		weDeployAuthAppPersistence.findByRU_CI(redirectURI, clientId);
 	}
+
+	@ServiceReference(type = ConfigurationProvider.class)
+	protected ConfigurationProvider configurationProvider;
 
 }
