@@ -1656,6 +1656,70 @@ if the system property `jacoco.code.coverage` is set to `true`.
 ### Changed
 - [LPS-73383]: Update the [Liferay Gradle Plugins] dependency to version 3.3.35.
 
+## 3.8.4 - 2017-07-06
+
+### Changed
+- [LPS-72705]: Update the [Liferay Gradle Plugins] dependency to version 3.3.36.
+
+## 3.8.5 - 2017-07-07
+
+*No changes.*
+
+## 3.8.6 - 2017-07-10
+
+### Changed
+- [LPS-73495]: Update the [Liferay Gradle Plugins] dependency to version 3.3.37.
+
+## 3.8.7 - 2017-07-10
+
+### Changed
+- [LPS-72705]: Update the [Liferay Gradle Plugins] dependency to version 3.3.38.
+
+## 3.9.0 - 2017-07-11
+
+### Added
+- [LPS-73489]: Add plugin `LiferayRootDefaultsPlugin` that can be applied to
+root projects in order to:
+	- apply [Liferay Gradle Plugins Source Formatter]
+	- apply `com.liferay.app.defaults.plugin`
+	- automatically configure the subprojects
+	- configure default Maven repositories
+
+### Changed
+- [LPS-73489]: Update the [Liferay Gradle Plugins] dependency to version 3.4.0.
+
+## 3.9.1 - 2017-07-11
+
+### Changed
+- [LPS-72705]: Update the [Liferay Gradle Plugins] dependency to version 3.4.1.
+
+## 4.0.0 - 2017-07-12
+
+### Changed
+- [LPS-73525]: Update the [Liferay Gradle Plugins] dependency to version 3.4.2.
+
+### Removed
+- [LPS-73525]: Remove all deprecated methods.
+- [LPS-73525]: The tasks `test` and `testIntegration` are no longer configurated
+with an Aspectj weaver, hence the configuration `aspectJWeaver` is no longer
+available.
+
+## 4.0.1 - 2017-07-13
+
+### Changed
+- [LPS-73584]: Update the [Liferay Gradle Plugins] dependency to version 3.4.3.
+
+## 4.0.2 - 2017-07-13
+
+### Changed
+- [LPS-73584]: Update the [Liferay Gradle Plugins] dependency to version 3.4.4.
+
+## 4.0.3 - 2017-07-13
+
+### Fixed
+- [LPS-73584]: Trigger the `-PsyncRelease` logic even when Gradle is invoked
+with the full path of the `baseline` task.
+
 [Find Security Bugs]: https://github.com/liferay/liferay-portal/tree/master/modules/third-party/com-h3xstream-findsecbugs
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -1834,6 +1898,11 @@ if the system property `jacoco.code.coverage` is set to `true`.
 [LPS-73327]: https://issues.liferay.com/browse/LPS-73327
 [LPS-73352]: https://issues.liferay.com/browse/LPS-73352
 [LPS-73383]: https://issues.liferay.com/browse/LPS-73383
+[LPS-73465]: https://issues.liferay.com/browse/LPS-73465
+[LPS-73489]: https://issues.liferay.com/browse/LPS-73489
+[LPS-73495]: https://issues.liferay.com/browse/LPS-73495
+[LPS-73525]: https://issues.liferay.com/browse/LPS-73525
+[LPS-73584]: https://issues.liferay.com/browse/LPS-73584
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981
