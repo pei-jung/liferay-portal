@@ -20,12 +20,15 @@ import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -77,6 +80,8 @@ public class FriendlyURLServletTest {
 	public void setUp() throws Exception {
 		PropsValues.LOCALES_ENABLED = new String[] {"en_US", "hu_HU", "de_DE"};
 		PropsValues.LOCALE_USE_DEFAULT_IF_NOT_AVAILABLE = true;
+		PropsValues.SITES_FRIENDLY_URL_ALLOW_GROUP_ID = false;
+		PropsValues.USERS_SCREEN_NAME_ALLOW_NUMERIC = true;
 
 		LanguageUtil.init();
 
@@ -116,6 +121,10 @@ public class FriendlyURLServletTest {
 			PropsKeys.LOCALES_ENABLED);
 		PropsValues.LOCALE_USE_DEFAULT_IF_NOT_AVAILABLE = GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.LOCALE_USE_DEFAULT_IF_NOT_AVAILABLE));
+		PropsValues.SITES_FRIENDLY_URL_ALLOW_GROUP_ID = GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.SITES_FRIENDLY_URL_ALLOW_GROUP_ID));
+		PropsValues.USERS_SCREEN_NAME_ALLOW_NUMERIC = GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.USERS_SCREEN_NAME_ALLOW_NUMERIC));
 
 		LanguageUtil.init();
 
@@ -131,6 +140,36 @@ public class FriendlyURLServletTest {
 
 		testGetRedirect(
 			mockHttpServletRequest, getPath(_group, _layout), Portal.PATH_MAIN,
+			new FriendlyURLServlet.Redirect(getURL(_layout)));
+	}
+
+	@Test(expected = NoSuchGroupException.class)
+	public void testGetRedirectWithGroupId() throws Exception {
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.setPathInfo(StringPool.SLASH);
+
+		String path = "/" + _group.getGroupId() + _layout.getFriendlyURL();
+
+		testGetRedirect(
+			mockHttpServletRequest, path, Portal.PATH_MAIN,
+			new FriendlyURLServlet.Redirect(getURL(_layout)));
+	}
+
+	@Test
+	public void testGetRedirectWithGroupId1() throws Exception {
+		PropsValues.SITES_FRIENDLY_URL_ALLOW_GROUP_ID = true;
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.setPathInfo(StringPool.SLASH);
+
+		String path = "/" + _group.getGroupId() + _layout.getFriendlyURL();
+
+		testGetRedirect(
+			mockHttpServletRequest, path, Portal.PATH_MAIN,
 			new FriendlyURLServlet.Redirect(getURL(_layout)));
 	}
 
@@ -153,6 +192,26 @@ public class FriendlyURLServletTest {
 		testGetRedirect(
 			mockHttpServletRequest, "/nonexistent-site/home", Portal.PATH_MAIN,
 			null);
+	}
+
+	@Test
+	public void testGetRedirectWithNumericUserScreenName() throws Exception {
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.setPathInfo(StringPool.SLASH);
+
+		long numericScreenName = RandomTestUtil.nextLong();
+
+		_user = UserTestUtil.addUser(String.valueOf(numericScreenName));
+
+		Group userGroup = _user.getGroup();
+
+		_layout = LayoutTestUtil.addLayout(userGroup);
+
+		testGetRedirect(
+			mockHttpServletRequest, getPath(userGroup, _layout),
+			Portal.PATH_MAIN, new FriendlyURLServlet.Redirect(getURL(_layout)));
 	}
 
 	protected String getI18nLanguageId(HttpServletRequest request) {
@@ -260,5 +319,8 @@ public class FriendlyURLServletTest {
 	private final I18nServlet _i18nServlet = new I18nServlet();
 	private Layout _layout;
 	private ServiceTracker<Servlet, Servlet> _serviceTracker;
+
+	@DeleteAfterTestRun
+	private User _user;
 
 }
