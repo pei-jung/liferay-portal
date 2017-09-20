@@ -99,7 +99,10 @@ public class FriendlyURLServlet extends HttpServlet {
 		Group group = groupLocalService.fetchFriendlyURLGroup(
 			companyId, friendlyURL);
 
-		if (group == null) {
+		if ((group == null) ||
+			(group.isRegularSite() &&
+			 Validator.isNumber(friendlyURL.substring(1)))) {
+
 			String screenName = friendlyURL.substring(1);
 
 			User user = userLocalService.fetchUserByScreenName(
