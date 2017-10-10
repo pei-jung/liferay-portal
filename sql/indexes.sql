@@ -49,6 +49,7 @@ create index IX_14D5A20D on AssetLink (entryId1, type_);
 create index IX_91F132C on AssetLink (entryId2, type_);
 
 create unique index IX_D63322F9 on AssetTag (groupId, name[$COLUMN_LENGTH:75$]);
+create index IX_C43137AF on AssetTag (name[$COLUMN_LENGTH:75$]);
 create index IX_84C501E4 on AssetTag (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_B6ACB166 on AssetTag (uuid_[$COLUMN_LENGTH:75$], groupId);
 
@@ -140,9 +141,6 @@ create index IX_6F63F140 on DLFolder (repositoryId, mountPoint);
 create index IX_6747B2BC on DLFolder (repositoryId, parentFolderId);
 create index IX_DA448450 on DLFolder (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_3CC1DED2 on DLFolder (uuid_[$COLUMN_LENGTH:75$], groupId);
-
-create index IX_3D8E1607 on DLSyncEvent (modifiedTime);
-create unique index IX_57D82B06 on DLSyncEvent (typePK);
 
 create index IX_2A2CB130 on EmailAddress (companyId, classNameId, classPK, primary_);
 create index IX_7B43CD8 on EmailAddress (userId);

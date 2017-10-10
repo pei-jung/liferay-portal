@@ -15,7 +15,7 @@ task buildLexiconIcons(type: Copy)
 task buildTheme
 task publishNodeModule(type: PublishNodeModuleTask)
 
-String alloyUIVersion = "3.1.0-deprecated.23"
+String alloyUIVersion = "3.1.0-deprecated.25"
 String fontAwesomeVersion = "3.2.1"
 
 File themeDestinationDir = file("src/main/resources/META-INF/resources/_unstyled");
@@ -92,7 +92,6 @@ buildClay {
 				}
 				else if (line == "// INSERT CUSTOM VARS") {
 					line = '''\
-@import "variables";
 
 @import "../liferay_variables_custom";
 @import "../liferay_variables";'''
@@ -203,6 +202,5 @@ dependencies {
 
 publishNodeModule {
 	dependsOn jar
-	enabled = false
 	workingDir = "src/main/resources/META-INF/resources/_unstyled"
 }

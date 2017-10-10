@@ -160,6 +160,19 @@ cache digest.
 - [LPS-74770]: Run the `"test"` script (if declared in the `package.json` file)
 when executing the `check` task.
 
+## 3.2.0 - 2017-09-28
+
+### Added
+- [LPS-74933]: Add the ability to merge the existing `package.json` of the
+project with the values provided by the task properties of
+`PublishNodeModuleTask` when publishing a package to the NPM registry.
+
+## 3.2.1 - 2017-10-10
+
+### Fixed
+- [LPS-75175]: Fix `downloadNode` task circular dependency when setting the
+`node.global` property to `true` in the root project.
+
 [LPS-66906]: https://issues.liferay.com/browse/LPS-66906
 [LPS-67023]: https://issues.liferay.com/browse/LPS-67023
 [LPS-67573]: https://issues.liferay.com/browse/LPS-67573
@@ -178,3 +191,5 @@ when executing the `check` task.
 [LPS-73070]: https://issues.liferay.com/browse/LPS-73070
 [LPS-73472]: https://issues.liferay.com/browse/LPS-73472
 [LPS-74770]: https://issues.liferay.com/browse/LPS-74770
+[LPS-74933]: https://issues.liferay.com/browse/LPS-74933
+[LPS-75175]: https://issues.liferay.com/browse/LPS-75175

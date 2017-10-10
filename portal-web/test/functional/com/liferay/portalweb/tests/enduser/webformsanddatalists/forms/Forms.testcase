@@ -1,5 +1,5 @@
 <definition component-name="portal-web-forms-and-data-lists">
-	<property name="custom.properties" value="minifier.enabled=false" />
+	<property name="custom.properties" value="minifier.enabled=true" />
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
 	<property name="testray.main.component.name" value="Forms" />
@@ -99,7 +99,7 @@
 
 		<execute macro="Role#definePermissionPG">
 			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_ADD_RECORD_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
+			<var name="roleTitle" value="Power User" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -737,6 +737,8 @@
 
 	<command name="EditAllFormFieldsTypesUsedBySystemSettings" priority="4">
 		<description message="This is a use case for LPS-50757." />
+
+		<property name="portal.subrepo" value="false" />
 		<property name="test.name.skip.portal.instance" value="Forms#EditAllFormFieldsTypesUsedBySystemSettings" />
 
 		<execute macro="Navigator#openURL" />
@@ -2083,7 +2085,7 @@
 		<execute macro="FormsAdmin#viewDateEntry">
 			<var name="fieldLabel" value="New Date" />
 			<var name="fieldName" value="Date" />
-			<var name="fieldValue" value="05/02/2016" />
+			<var name="fieldValue" value="5/2/16" />
 		</execute>
 
 		<execute macro="FormsAdmin#viewCheckboxEntry">
@@ -2176,7 +2178,7 @@
 		<execute macro="FormsAdmin#viewDateEntry">
 			<var name="fieldLabel" value="New Date" />
 			<var name="fieldName" value="Date" />
-			<var name="fieldValue" value="05/02/2016" />
+			<var name="fieldValue" value="5/2/16" />
 		</execute>
 
 		<execute macro="FormsAdmin#viewCheckboxEntry">
@@ -2497,7 +2499,7 @@
 		<execute macro="FormsAdmin#viewDateEntry">
 			<var name="fieldLabel" value="Date" />
 			<var name="fieldName" value="Date" />
-			<var name="fieldValue" value="05/02/2016" />
+			<var name="fieldValue" value="5/2/16" />
 		</execute>
 
 		<execute macro="FormsAdmin#viewCheckboxEntry">
