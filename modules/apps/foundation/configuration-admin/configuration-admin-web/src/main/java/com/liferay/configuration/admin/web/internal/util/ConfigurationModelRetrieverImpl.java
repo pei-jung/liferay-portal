@@ -168,7 +168,7 @@ public class ConfigurationModelRetrieverImpl
 			ConfigurationModel curConfigurationModel = new ConfigurationModel(
 				factoryConfigurationModel, configuration,
 				factoryConfigurationModel.getBundleSymbolicName(),
-				configuration.getBundleLocation(), false);
+				configuration.getBundleLocation(), false, null);
 
 			factoryInstances.add(curConfigurationModel);
 		}
@@ -247,10 +247,21 @@ public class ConfigurationModelRetrieverImpl
 			return null;
 		}
 
+		Class<?> configurationBeanType = null;
+
+		BundleContext bundleContext = bundle.getBundleContext();
+
+		try {
+			configurationBeanType = bundle.loadClass(pid);
+		}
+		catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
 		ConfigurationModel configurationModel = new ConfigurationModel(
 			metaTypeInformation.getObjectClassDefinition(pid, locale),
 			getConfiguration(pid), bundle.getSymbolicName(),
-			StringPool.QUESTION, factory);
+			StringPool.QUESTION, factory, configurationBeanType);
 
 		if (configurationModel.isCompanyFactory()) {
 			Configuration configuration = getCompanyDefaultConfiguration(pid);
@@ -258,7 +269,7 @@ public class ConfigurationModelRetrieverImpl
 			configurationModel = new ConfigurationModel(
 				configurationModel.getExtendedObjectClassDefinition(),
 				configuration, bundle.getSymbolicName(), StringPool.QUESTION,
-				configurationModel.isFactory());
+				configurationModel.isFactory(), configurationBeanType);
 		}
 
 		return configurationModel;
