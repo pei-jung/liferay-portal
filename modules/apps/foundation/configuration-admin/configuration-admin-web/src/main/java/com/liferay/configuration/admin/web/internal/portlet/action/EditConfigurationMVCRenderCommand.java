@@ -83,7 +83,8 @@ public class EditConfigurationMVCRenderCommand implements MVCRenderCommand {
 				configurationModel.getExtendedObjectClassDefinition(),
 				configuration, configurationModel.getBundleSymbolicName(),
 				configurationModel.getBundleLocation(),
-				configurationModel.isFactory());
+				configurationModel.isFactory(),
+				configurationModel.getConfigurationBeanClass());
 		}
 
 		if (configurationModel != null) {

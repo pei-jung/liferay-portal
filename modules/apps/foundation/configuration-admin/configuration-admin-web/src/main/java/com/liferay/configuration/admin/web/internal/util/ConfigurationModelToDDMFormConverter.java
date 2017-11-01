@@ -21,14 +21,22 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.dynamic.data.mapping.util.DDMFormFieldFactoryHelper;
+import com.liferay.portal.configuration.metatype.definitions.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
@@ -49,7 +57,29 @@ public class ConfigurationModelToDDMFormConverter {
 	}
 
 	public DDMForm getDDMForm() {
-		DDMForm ddmForm = new DDMForm();
+		DDMForm ddmForm;
+
+		String pid = _configurationModel.getID();
+
+		if (_configurationModel.getFactoryPid() != null) {
+			pid = _configurationModel.getFactoryPid();
+		}
+
+		try {
+//			ddmForm = DDMFormFactory.create(Class.forName(pid));
+
+			Class<?> clazz = _configurationModel.getConfigurationBeanClass();
+
+			if (clazz != null) {
+				ddmForm = DDMFormFactory.create(clazz);
+			}
+			else {
+				ddmForm = DDMFormFactory.create(Class.forName(pid));
+			}
+		}
+		catch (IllegalArgumentException | ClassNotFoundException e) {
+			ddmForm = new DDMForm();
+		}
 
 		ddmForm.addAvailableLocale(_locale);
 		ddmForm.setDefaultLocale(_locale);
@@ -68,7 +98,19 @@ public class ConfigurationModelToDDMFormConverter {
 			return;
 		}
 
+		List<DDMFormField> formFieldList = ddmForm.getDDMFormFields();
+
+		List<String> formFieldNamesList = formFieldList.stream().map(
+			formField -> formField.getName()
+		).collect(
+			Collectors.toList()
+		);
+
 		for (AttributeDefinition attributeDefinition : attributeDefinitions) {
+			if (formFieldNamesList.contains(attributeDefinition.getName())) {
+				continue;
+			}
+
 			DDMFormField ddmFormField = getDDMFormField(
 				attributeDefinition, required);
 

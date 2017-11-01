@@ -49,13 +49,21 @@ public class ConfigurationModel implements ExtendedObjectClassDefinition {
 	public ConfigurationModel(
 		ExtendedObjectClassDefinition extendedObjectClassDefinition,
 		Configuration configuration, String bundleSymbolicName,
-		String bundleLocation, boolean factory) {
+		String bundleLocation, boolean factory,
+		Class<?> configurationBeanClass) {
 
 		_extendedObjectClassDefinition = extendedObjectClassDefinition;
 		_configuration = configuration;
 		_bundleSymbolicName = bundleSymbolicName;
 		_bundleLocation = bundleLocation;
 		_factory = factory;
+		_configurationBeanClass = configurationBeanClass;
+	}
+
+	private Class<?> _configurationBeanClass;
+
+	public Class<?> getConfigurationBeanClass() {
+		return _configurationBeanClass;
 	}
 
 	@Override

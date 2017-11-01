@@ -16,6 +16,8 @@ package com.liferay.users.admin.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
+import com.liferay.dynamic.data.mapping.annotations.DDMForm;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
@@ -27,6 +29,7 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 	localization = "content/Language",
 	name = "user-file-uploads-configuration-name"
 )
+@DDMForm
 public interface UserFileUploadsConfiguration {
 
 	@Meta.AD(
@@ -53,6 +56,9 @@ public interface UserFileUploadsConfiguration {
 	)
 	public boolean imageCheckToken();
 
+	@DDMFormField(
+		properties = "showAsSwitcher=true"
+	)
 	@Meta.AD(
 		deflt = "true",
 		description = "use-initials-for-default-user-portrait-help",

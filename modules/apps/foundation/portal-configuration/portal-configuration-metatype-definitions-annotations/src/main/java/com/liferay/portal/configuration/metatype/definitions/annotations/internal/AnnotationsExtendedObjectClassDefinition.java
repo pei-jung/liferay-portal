@@ -96,6 +96,11 @@ public class AnnotationsExtendedObjectClassDefinition
 	}
 
 	@Override
+	public Object<?> getConfigurationBean() {
+		return null;
+	}
+
+	@Override
 	public InputStream getIcon(int size) throws IOException {
 		return _objectClassDefinition.getIcon(size);
 	}
