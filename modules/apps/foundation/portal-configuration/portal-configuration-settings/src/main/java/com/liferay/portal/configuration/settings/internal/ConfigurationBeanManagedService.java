@@ -14,8 +14,10 @@
 
 package com.liferay.portal.configuration.settings.internal;
 
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.configuration.settings.internal.util.ConfigurationPidUtil;
+import com.liferay.portal.configuration.metatype.util.ConfigurationScopedPidUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 
 import java.security.AccessController;
@@ -39,9 +41,22 @@ public class ConfigurationBeanManagedService implements ManagedService {
 		BundleContext bundleContext, Class<?> configurationBeanClass,
 		Consumer<Object> configurationBeanConsumer) {
 
+		this(
+			bundleContext, configurationBeanClass, configurationBeanConsumer,
+			ExtendedObjectClassDefinition.Scope.SYSTEM, null);
+	}
+
+	public ConfigurationBeanManagedService(
+		BundleContext bundleContext, Class<?> configurationBeanClass,
+		Consumer<Object> configurationBeanConsumer,
+		ExtendedObjectClassDefinition.Scope settingsScope,
+		String scopePrimKey) {
+
 		_bundleContext = bundleContext;
 		_configurationBeanClass = configurationBeanClass;
 		_configurationBeanConsumer = configurationBeanConsumer;
+		_settingsScope = settingsScope;
+		_scopePrimKey = scopePrimKey;
 
 		_configurationPid = ConfigurationPidUtil.getConfigurationPid(
 			configurationBeanClass);
@@ -54,7 +69,10 @@ public class ConfigurationBeanManagedService implements ManagedService {
 	public void register() {
 		Dictionary<String, Object> properties = new HashMapDictionary<>();
 
-		properties.put(Constants.SERVICE_PID, _configurationPid);
+		properties.put(
+			Constants.SERVICE_PID,
+			ConfigurationScopedPidUtil.buildEncodedPid(
+				_configurationPid, _settingsScope, _scopePrimKey));
 
 		_managedServiceServiceRegistration = _bundleContext.registerService(
 			ManagedService.class, this, properties);
@@ -85,6 +103,12 @@ public class ConfigurationBeanManagedService implements ManagedService {
 			_configurationBeanClass, properties);
 
 		_configurationBeanConsumer.accept(_configurationBean);
+
+		if (!_settingsScope.equals(
+				ExtendedObjectClassDefinition.Scope.SYSTEM)) {
+
+			return;
+		}
 
 		if (_configurationBeanServiceRegistration != null) {
 			_configurationBeanServiceRegistration.unregister();
@@ -120,5 +144,7 @@ public class ConfigurationBeanManagedService implements ManagedService {
 	private final String _configurationPid;
 	private ServiceRegistration<ManagedService>
 		_managedServiceServiceRegistration;
+	private final String _scopePrimKey;
+	private ExtendedObjectClassDefinition.Scope _settingsScope;
 
 }
