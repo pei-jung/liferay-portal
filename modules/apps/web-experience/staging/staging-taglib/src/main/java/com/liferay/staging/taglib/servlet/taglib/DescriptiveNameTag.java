@@ -55,17 +55,16 @@ public class DescriptiveNameTag extends IncludeTag {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		StringBundler sb = new StringBundler(1);
-
 		try {
 			String descriptiveName = HtmlUtil.escape(
 				_group.getDescriptiveName(themeDisplay.getLocale()));
 
-			sb.append(descriptiveName);
-
 			if (_group.isStaged() && !_group.isStagedRemotely() &&
 				_group.isStagingGroup()) {
 
+				StringBundler sb = new StringBundler(5);
+
+				sb.append(descriptiveName);
 				sb.append(StringPool.SPACE);
 				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(LanguageUtil.get(request, "staging"));
@@ -73,6 +72,8 @@ public class DescriptiveNameTag extends IncludeTag {
 
 				return sb.toString();
 			}
+
+			return descriptiveName;
 		}
 		catch (PortalException pe) {
 			if (_log.isDebugEnabled()) {
