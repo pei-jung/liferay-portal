@@ -15,7 +15,6 @@
 package com.liferay.users.admin.web.internal.servlet.taglib.ui.navigation.user.entry;
 
 import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationEntry;
-import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.users.admin.web.constants.UserFormConstants;
 
 import java.io.IOException;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Pei-Jung Lan
@@ -47,13 +45,20 @@ public class UserInformationScreenNavigationEntry
 	}
 
 	@Override
+	public String getActionURL() {
+		return null;
+	}
+
+	@Override
+	public String getJspPath() {
+		return null;
+	}
+
+	@Override
 	public void render(HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 
-		_jspRenderer.renderJSP(request, response, "/user/information.jsp");
+		jspRenderer.renderJSP(request, response, "/user/information.jsp");
 	}
-
-	@Reference
-	private JSPRenderer _jspRenderer;
 
 }
