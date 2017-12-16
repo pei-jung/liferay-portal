@@ -15,13 +15,18 @@
 package com.liferay.users.admin.web.internal.servlet.taglib.ui.navigation.user.entry;
 
 import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationEntry;
+import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.users.admin.web.constants.UserFormConstants;
+import org.osgi.service.component.annotations.Reference;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -30,6 +35,10 @@ import java.util.ResourceBundle;
  */
 public abstract class BaseUserScreenNavigationEntry
 	implements ScreenNavigationEntry<User> {
+
+	public abstract String getActionURL();
+
+	public abstract String getJspPath();
 
 	@Override
 	public String getLabel(Locale locale) {
@@ -48,5 +57,18 @@ public abstract class BaseUserScreenNavigationEntry
 		return new AggregateResourceBundle(
 			bundleResourceBundle, PortalUtil.getResourceBundle(locale));
 	}
+
+	@Override
+	public void render(HttpServletRequest request, HttpServletResponse response)
+		throws IOException {
+
+		request.setAttribute("actionURL", getActionURL());
+		request.setAttribute("jspPath", getJspPath());
+
+		jspRenderer.renderJSP(request, response, "/edit_user_navigation.jsp");
+	}
+
+	@Reference
+	protected JSPRenderer jspRenderer;
 
 }
