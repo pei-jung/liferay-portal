@@ -59,7 +59,6 @@ import com.liferay.portal.kernel.model.ListTypeConstants;
 import com.liferay.portal.kernel.model.PasswordPolicy;
 import com.liferay.portal.kernel.model.Phone;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.model.UserGroupRole;
 import com.liferay.portal.kernel.model.Website;
 import com.liferay.portal.kernel.portlet.DynamicActionRequest;
 import com.liferay.portal.kernel.portlet.PortletProvider;
@@ -181,9 +180,6 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 		String twitterSn = ParamUtil.getString(actionRequest, "twitterSn");
 		String jobTitle = ParamUtil.getString(actionRequest, "jobTitle");
 		long[] groupIds = UsersAdminUtil.getGroupIds(actionRequest);
-		long[] roleIds = UsersAdminUtil.getRoleIds(actionRequest);
-		List<UserGroupRole> userGroupRoles = UsersAdminUtil.getUserGroupRoles(
-			actionRequest);
 		long[] userGroupIds = UsersAdminUtil.getUserGroupIds(actionRequest);
 		List<Address> addresses = UsersAdminUtil.getAddresses(actionRequest);
 		List<EmailAddress> emailAddresses = UsersAdminUtil.getEmailAddresses(
@@ -200,27 +196,20 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 			autoScreenName, screenName, emailAddress, facebookId, openId,
 			LocaleUtil.fromLanguageId(languageId), firstName, middleName,
 			lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay,
-			birthdayYear, jobTitle, groupIds, null, roleIds, userGroupIds,
+			birthdayYear, jobTitle, groupIds, null, null, userGroupIds,
 			addresses, emailAddresses, phones, websites,
 			new ArrayList<AnnouncementsDelivery>(), sendEmail, serviceContext);
 
-		if (!userGroupRoles.isEmpty()) {
-			for (UserGroupRole userGroupRole : userGroupRoles) {
-				userGroupRole.setUserId(user.getUserId());
-			}
-
-			user = _userService.updateUser(
-				user.getUserId(), StringPool.BLANK, StringPool.BLANK,
-				StringPool.BLANK, false, reminderQueryQuestion,
-				reminderQueryAnswer, user.getScreenName(),
-				user.getEmailAddress(), facebookId, openId, true, null,
-				languageId, user.getTimeZoneId(), user.getGreeting(), comments,
-				firstName, middleName, lastName, prefixId, suffixId, male,
-				birthdayMonth, birthdayDay, birthdayYear, smsSn, facebookSn,
-				jabberSn, skypeSn, twitterSn, jobTitle, groupIds, null, roleIds,
-				userGroupRoles, userGroupIds, addresses, emailAddresses, phones,
-				websites, null, serviceContext);
-		}
+		user = _userService.updateUser(
+			user.getUserId(), StringPool.BLANK, StringPool.BLANK,
+			StringPool.BLANK, false, reminderQueryQuestion, reminderQueryAnswer,
+			user.getScreenName(), user.getEmailAddress(), facebookId, openId,
+			true, null, languageId, user.getTimeZoneId(), user.getGreeting(),
+			comments, firstName, middleName, lastName, prefixId, suffixId, male,
+			birthdayMonth, birthdayDay, birthdayYear, smsSn, facebookSn,
+			jabberSn, skypeSn, twitterSn, jobTitle, groupIds, null, null, null,
+			userGroupIds, addresses, emailAddresses, phones, websites, null,
+			serviceContext);
 
 		long publicLayoutSetPrototypeId = ParamUtil.getLong(
 			actionRequest, "publicLayoutSetPrototypeId");
@@ -641,18 +630,6 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 		String jobTitle = BeanParamUtil.getString(
 			user, actionRequest, "jobTitle");
 		long[] groupIds = UsersAdminUtil.getGroupIds(actionRequest);
-		long[] roleIds = UsersAdminUtil.getRoleIds(actionRequest);
-
-		List<UserGroupRole> userGroupRoles = null;
-
-		if ((actionRequest.getParameter("addGroupRolesGroupIds") != null) ||
-			(actionRequest.getParameter("addGroupRolesRoleIds") != null) ||
-			(actionRequest.getParameter("deleteGroupRolesGroupIds") != null) ||
-			(actionRequest.getParameter("deleteGroupRolesRoleIds") != null)) {
-
-			userGroupRoles = UsersAdminUtil.getUserGroupRoles(actionRequest);
-		}
-
 		long[] userGroupIds = UsersAdminUtil.getUserGroupIds(actionRequest);
 		List<Address> addresses = UsersAdminUtil.getAddresses(
 			actionRequest, user.getAddresses());
@@ -673,9 +650,9 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 			portraitBytes, languageId, user.getTimeZoneId(), user.getGreeting(),
 			comments, firstName, middleName, lastName, prefixId, suffixId, male,
 			birthdayMonth, birthdayDay, birthdayYear, smsSn, facebookSn,
-			jabberSn, skypeSn, twitterSn, jobTitle, groupIds, null, roleIds,
-			userGroupRoles, userGroupIds, addresses, emailAddresses, phones,
-			websites, null, serviceContext);
+			jabberSn, skypeSn, twitterSn, jobTitle, groupIds, null, null, null,
+			userGroupIds, addresses, emailAddresses, phones, websites, null,
+			serviceContext);
 
 		if (oldScreenName.equals(user.getScreenName())) {
 			oldScreenName = StringPool.BLANK;
