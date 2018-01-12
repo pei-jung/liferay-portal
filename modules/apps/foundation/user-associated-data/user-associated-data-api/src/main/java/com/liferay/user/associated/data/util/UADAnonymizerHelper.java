@@ -12,17 +12,21 @@
  * details.
  */
 
-package com.liferay.announcements.uad.constants;
+package com.liferay.user.associated.data.util;
+
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
 
 /**
  * @author Drew Brokke
  */
-public class AnnouncementsUADConstants {
+@ProviderType
+public interface UADAnonymizerHelper {
 
-	public static final String ANNOUNCEMENTS_ENTRY =
-		"com.liferay.announcements.kernel.model.AnnouncementsEntry";
+	public User getAnonymousUser() throws PortalException;
 
-	public static final String ANNOUNCEMENTS_FLAG =
-		"com.liferay.announcements.kernel.model.AnnouncementsFlag";
+	public long getAnonymousUserId() throws PortalException;
 
 }
