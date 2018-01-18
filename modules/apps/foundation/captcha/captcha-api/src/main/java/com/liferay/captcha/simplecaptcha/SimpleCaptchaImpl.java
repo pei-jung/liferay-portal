@@ -18,6 +18,7 @@ import com.liferay.captcha.configuration.CaptchaConfiguration;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.captcha.Captcha;
 import com.liferay.portal.kernel.captcha.CaptchaException;
+import com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -69,15 +70,18 @@ public class SimpleCaptchaImpl implements Captcha {
 
 	@Override
 	public void check(HttpServletRequest request) throws CaptchaException {
+		if (isExceededMaxChallenges(request)) {
+			throw new CaptchaMaxChallengesException();
+		}
+
 		if (!isEnabled(request)) {
 			return;
 		}
 
 		if (!validateChallenge(request)) {
-			throw new CaptchaTextException();
-		}
-		else {
 			incrementCounter(request);
+
+			throw new CaptchaTextException();
 		}
 
 		if (_log.isDebugEnabled()) {
@@ -87,15 +91,18 @@ public class SimpleCaptchaImpl implements Captcha {
 
 	@Override
 	public void check(PortletRequest portletRequest) throws CaptchaException {
+		if (isExceededMaxChallenges(portletRequest)) {
+			throw new CaptchaMaxChallengesException();
+		}
+
 		if (!isEnabled(portletRequest)) {
 			return;
 		}
 
 		if (!validateChallenge(portletRequest)) {
-			throw new CaptchaTextException();
-		}
-		else {
 			incrementCounter(portletRequest);
+
+			throw new CaptchaTextException();
 		}
 
 		if (_log.isDebugEnabled()) {
