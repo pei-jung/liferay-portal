@@ -12,17 +12,29 @@
  * details.
  */
 
-package com.liferay.bookmarks.uad.constants;
+package com.liferay.bookmarks.uad.entity;
+
+import com.liferay.bookmarks.model.BookmarksFolder;
+import com.liferay.bookmarks.uad.constants.BookmarksUADConstants;
+import com.liferay.user.associated.data.entity.BaseUADEntity;
 
 /**
  * @author Noah Sherrill
  */
-public class BookmarksUADConstants {
+public class BookmarksFolderUADEntity extends BaseUADEntity {
 
-	public static final String BOOKMARKS_ENTRY =
-		"com.liferay.bookmarks.model.BookmarksEntry";
+	public BookmarksFolderUADEntity(
+		long userId, String uadEntityId, BookmarksFolder bookmarksFolder) {
 
-	public static final String BOOKMARKS_FOLDER =
-		"com.liferay.bookmarks.model.BookmarksFolder";
+		super(userId, uadEntityId, BookmarksUADConstants.BOOKMARKS_FOLDER);
+
+		_bookmarksFolder = bookmarksFolder;
+	}
+
+	public BookmarksFolder getBookmarksFolder() {
+		return _bookmarksFolder;
+	}
+
+	private final BookmarksFolder _bookmarksFolder;
 
 }
