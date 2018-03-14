@@ -38,4 +38,8 @@ public class BookmarksEntryUADEntityDisplayHelper {
 		return StringPool.BLANK;
 	}
 
+	public String[] getDisplayFieldNames() {
+		return new String[] {"name", "description", "url"};
+	}
+
 }
