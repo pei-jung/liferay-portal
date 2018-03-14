@@ -56,6 +56,10 @@ public class AnnouncementsEntryUADEntityDisplayHelper {
 		return portletURL.toString();
 	}
 
+	public String[] getDisplayFieldNames() {
+		return new String[] {"title", "content"};
+	}
+
 	@Reference
 	protected Portal portal;
 
