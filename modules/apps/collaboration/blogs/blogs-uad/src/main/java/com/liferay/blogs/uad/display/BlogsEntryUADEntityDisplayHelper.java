@@ -54,6 +54,13 @@ public class BlogsEntryUADEntityDisplayHelper {
 		return portletURL.toString();
 	}
 
+	public String[] getDisplayFieldNames() {
+		return new String[] {
+			"title", "subtitle", "urlTitle", "description", "content",
+			"smallImage", "smallImageId"
+		};
+	}
+
 	@Reference
 	protected Portal portal;
 

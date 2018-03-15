@@ -58,8 +58,18 @@ public class BlogsEntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase
 	}
 
 	@Override
+	protected String getApplicationName() {
+		return BlogsUADConstants.UAD_ENTITY_SET_NAME;
+	}
+
+	@Override
 	protected UADEntityAggregator getUADEntityAggregator() {
 		return _uadEntityAggregator;
+	}
+
+	@Override
+	protected String[] getDisplayFieldNames() {
+		return _blogsEntryUADEntityDisplayHelper.getDisplayFieldNames();
 	}
 
 	@Override
@@ -74,6 +84,8 @@ public class BlogsEntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase
 
 	@DeleteAfterTestRun
 	private final List<BlogsEntry> _blogsEntries = new ArrayList<BlogsEntry>();
+	@Inject
+	private BlogsEntryUADEntityDisplayHelper _blogsEntryUADEntityDisplayHelper;
 	@Inject
 	private BlogsEntryUADEntityTestHelper _blogsEntryUADEntityTestHelper;
 	@Inject(filter = "model.class.name=" +
