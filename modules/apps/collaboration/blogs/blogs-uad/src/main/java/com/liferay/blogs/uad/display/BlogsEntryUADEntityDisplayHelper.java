@@ -33,13 +33,6 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = BlogsEntryUADEntityDisplayHelper.class)
 public class BlogsEntryUADEntityDisplayHelper {
 
-	public String[] getDisplayFieldNames() {
-		return new String[]{
-			"title", "subtitle", "urlTitle", "description", "content",
-			"smallImage", "smallImageId"
-		};
-	}
-
 	public String getBlogsEntryEditURL(
 			BlogsEntry blogsEntry, LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse)
@@ -59,6 +52,13 @@ public class BlogsEntryUADEntityDisplayHelper {
 			"entryId", String.valueOf(blogsEntry.getEntryId()));
 
 		return portletURL.toString();
+	}
+
+	public String[] getDisplayFieldNames() {
+		return new String[] {
+			"title", "subtitle", "urlTitle", "description", "content",
+			"smallImage", "smallImageId"
+		};
 	}
 
 	@Reference
