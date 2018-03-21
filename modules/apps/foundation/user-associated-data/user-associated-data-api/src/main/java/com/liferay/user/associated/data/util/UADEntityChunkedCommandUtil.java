@@ -24,12 +24,13 @@ import com.liferay.user.associated.data.entity.UADEntity;
  */
 public class UADEntityChunkedCommandUtil {
 
-	public static void executeChunkedCommand(
-			long userId, UADEntityAggregator uadEntityAggregator,
-			UnsafeConsumer<UADEntity, PortalException> uadEntityUnsafeConsumer)
+	public static <T> void executeChunkedCommand(
+			long userId, UADEntityAggregator<T> uadEntityAggregator,
+			UnsafeConsumer<UADEntity<T>, PortalException>
+				uadEntityUnsafeConsumer)
 		throws PortalException {
 
-		int count = uadEntityAggregator.count(userId);
+		int count = (int)uadEntityAggregator.count(userId);
 		int end = _CHUNK_SIZE;
 		int start = 0;
 
@@ -38,7 +39,7 @@ public class UADEntityChunkedCommandUtil {
 				end = count;
 			}
 
-			for (UADEntity uadEntity :
+			for (UADEntity<T> uadEntity :
 					uadEntityAggregator.getUADEntities(userId, start, end)) {
 
 				uadEntityUnsafeConsumer.accept(uadEntity);
