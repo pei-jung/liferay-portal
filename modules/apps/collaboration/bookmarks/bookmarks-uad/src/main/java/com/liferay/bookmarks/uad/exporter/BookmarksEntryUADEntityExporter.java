@@ -18,9 +18,9 @@ import com.liferay.bookmarks.constants.BookmarksPortletKeys;
 import com.liferay.bookmarks.model.BookmarksEntry;
 import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.bookmarks.uad.constants.BookmarksUADConstants;
-import com.liferay.bookmarks.uad.entity.BookmarksEntryUADEntity;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -30,8 +30,8 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
+import com.liferay.user.associated.data.entity.BaseUADEntity;
 import com.liferay.user.associated.data.entity.UADEntity;
-import com.liferay.user.associated.data.exception.UADEntityException;
 import com.liferay.user.associated.data.exception.UADEntityExporterException;
 import com.liferay.user.associated.data.exporter.BaseUADEntityExporter;
 import com.liferay.user.associated.data.exporter.UADEntityExporter;
@@ -51,7 +51,8 @@ import org.osgi.service.component.annotations.Reference;
 	property = {"model.class.name=" + BookmarksUADConstants.CLASS_NAME_BOOKMARKS_ENTRY},
 	service = UADEntityExporter.class
 )
-public class BookmarksEntryUADEntityExporter extends BaseUADEntityExporter {
+public class BookmarksEntryUADEntityExporter
+	extends BaseUADEntityExporter<BookmarksEntry> {
 
 	@Override
 	public long count(long userId) throws PortalException {
@@ -62,8 +63,10 @@ public class BookmarksEntryUADEntityExporter extends BaseUADEntityExporter {
 	}
 
 	@Override
-	public void export(UADEntity uadEntity) throws PortalException {
-		BookmarksEntry bookmarksEntry = _getBookmarksEntry(uadEntity);
+	public void export(UADEntity<BookmarksEntry> uadEntity)
+		throws PortalException {
+
+		BookmarksEntry bookmarksEntry = uadEntity.getEntity();
 
 		String json = getJSON(bookmarksEntry);
 
@@ -107,7 +110,14 @@ public class BookmarksEntryUADEntityExporter extends BaseUADEntityExporter {
 
 					stagedModelDataHandler.exportStagedModel(
 						portletDataContext,
-						_getBookmarksEntryUADEntity(userId, bookmarksEntry));
+						new BaseUADEntity(
+							bookmarksEntry,
+							StringBundler.concat(
+								String.valueOf(bookmarksEntry.getEntryId()),
+								StringPool.POUND,
+								String.valueOf(bookmarksEntry.getUserId())),
+							BookmarksUADConstants.CLASS_NAME_BOOKMARKS_ENTRY,
+							bookmarksEntry.getUserId()));
 				}
 
 			});
@@ -120,44 +130,10 @@ public class BookmarksEntryUADEntityExporter extends BaseUADEntityExporter {
 		return _uadEntityAggregator;
 	}
 
-	@Override
-	protected String getUADEntityName() {
-		return BookmarksEntryUADEntity.class.getName();
-	}
-
 	private ActionableDynamicQuery _getActionableDynamicQuery(long userId) {
 		return _uadDynamicQueryHelper.addActionableDynamicQueryCriteria(
 			_bookmarksEntryLocalService.getActionableDynamicQuery(),
 			BookmarksUADConstants.USER_ID_FIELD_NAMES_BOOKMARKS_ENTRY, userId);
-	}
-
-	private BookmarksEntry _getBookmarksEntry(UADEntity uadEntity)
-		throws PortalException {
-
-		_validate(uadEntity);
-
-		BookmarksEntryUADEntity bookmarksEntryUADEntity =
-			(BookmarksEntryUADEntity)uadEntity;
-
-		return bookmarksEntryUADEntity.getBookmarksEntry();
-	}
-
-	private BookmarksEntryUADEntity _getBookmarksEntryUADEntity(
-		long userId, BookmarksEntry bookmarksEntry) {
-
-		return new BookmarksEntryUADEntity(
-			userId, _getUADEntityId(userId, bookmarksEntry), bookmarksEntry);
-	}
-
-	private String _getUADEntityId(long userId, BookmarksEntry bookmarksEntry) {
-		return String.valueOf(bookmarksEntry.getEntryId()) + StringPool.POUND +
-			String.valueOf(userId);
-	}
-
-	private void _validate(UADEntity uadEntity) throws PortalException {
-		if (!(uadEntity instanceof BookmarksEntryUADEntity)) {
-			throw new UADEntityException();
-		}
 	}
 
 	private static final String _FOLDER_NAME = "UADExport";
