@@ -23,21 +23,21 @@ import java.util.Map;
 /**
  * @author William Newbury
  */
-public interface UADEntityDisplay {
+public interface UADEntityDisplay<T> {
 
 	public String getApplicationName();
 
 	public String[] getDisplayFieldNames();
 
 	public String getEditURL(
-			UADEntity uadEntity, LiferayPortletRequest liferayPortletRequest,
+			UADEntity<T> uadEntity, LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse)
 		throws Exception;
 
 	public String getKey();
 
 	public Map<String, Object> getUADEntityNonanonymizableFieldValues(
-		UADEntity uadEntity);
+		UADEntity<T> uadEntity);
 
 	public String getUADEntityTypeDescription();
 
