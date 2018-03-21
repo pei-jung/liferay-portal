@@ -17,7 +17,6 @@ package com.liferay.announcements.uad.exporter;
 import com.liferay.announcements.constants.AnnouncementsPortletKeys;
 import com.liferay.announcements.kernel.model.AnnouncementsFlag;
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
-import com.liferay.announcements.uad.entity.AnnouncementsFlagUADEntity;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
@@ -27,7 +26,6 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.entity.UADEntity;
-import com.liferay.user.associated.data.exception.UADEntityException;
 import com.liferay.user.associated.data.exception.UADEntityExporterException;
 import com.liferay.user.associated.data.exporter.BaseUADEntityExporter;
 import com.liferay.user.associated.data.exporter.UADEntityExporter;
@@ -46,11 +44,14 @@ import org.osgi.service.component.annotations.Reference;
 	property = {"model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_FLAG},
 	service = UADEntityExporter.class
 )
-public class AnnouncementsFlagUADEntityExporter extends BaseUADEntityExporter {
+public class AnnouncementsFlagUADEntityExporter
+	extends BaseUADEntityExporter<AnnouncementsFlag> {
 
 	@Override
-	public void export(UADEntity uadEntity) throws PortalException {
-		AnnouncementsFlag announcementsFlag = _getAnnouncementsFlag(uadEntity);
+	public void export(UADEntity<AnnouncementsFlag> uadEntity)
+		throws PortalException {
+
+		AnnouncementsFlag announcementsFlag = uadEntity.getEntity();
 
 		String json = getJSON(announcementsFlag);
 
@@ -75,25 +76,8 @@ public class AnnouncementsFlagUADEntityExporter extends BaseUADEntityExporter {
 	}
 
 	@Override
-	protected UADEntityAggregator getUADEntityAggregator() {
+	protected UADEntityAggregator<AnnouncementsFlag> getUADEntityAggregator() {
 		return _uadEntityAggregator;
-	}
-
-	private AnnouncementsFlag _getAnnouncementsFlag(UADEntity uadEntity)
-		throws PortalException {
-
-		_validate(uadEntity);
-
-		AnnouncementsFlagUADEntity announcementsFlagUADEntity =
-			(AnnouncementsFlagUADEntity)uadEntity;
-
-		return announcementsFlagUADEntity.getAnnouncementsFlag();
-	}
-
-	private void _validate(UADEntity uadEntity) throws PortalException {
-		if (!(uadEntity instanceof AnnouncementsFlagUADEntity)) {
-			throw new UADEntityException();
-		}
 	}
 
 	private static final String _FOLDER_NAME = "UADExport";
