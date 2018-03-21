@@ -25,16 +25,16 @@ import com.liferay.user.associated.data.entity.UADEntity;
  * @author William Newbury
  */
 @ProviderType
-public interface UADEntityExporter {
+public interface UADEntityExporter<T> {
 
 	public long count(long userId) throws PortalException;
 
-	public void export(UADEntity uadEntity) throws PortalException;
+	public void export(UADEntity<T> uadEntity) throws PortalException;
 
 	public void exportAll(long userId, PortletDataContext portletDataContext)
 		throws PortalException;
 
-	public <T extends UADEntity> StagedModelDataHandler<T>
+	public <U extends UADEntity<T>> StagedModelDataHandler<U>
 		getStagedModelDataHandler();
 
 	public void prepareManifestSummary(
