@@ -44,6 +44,8 @@ import com.liferay.user.associated.data.exporter.UADEntityExporter;
 import java.io.InputStream;
 import java.io.StringWriter;
 
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 
 import org.junit.Assert;
@@ -75,8 +77,10 @@ public class AnnouncementsFlagUADEntityExporterTest
 		AnnouncementsFlag announcementsFlag = addAnnouncementsFlag(
 			_user.getUserId());
 
-		UADEntity uadEntity = _uadEntityAggregator.getUADEntity(
-			String.valueOf(announcementsFlag.getFlagId()));
+		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+			_user.getUserId(), 0, 1);
+
+		UADEntity uadEntity = uadEntities.get(0);
 
 		_uadEntityExporter.export(uadEntity);
 
