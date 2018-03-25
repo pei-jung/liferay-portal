@@ -25,15 +25,15 @@ import java.util.Date;
 /**
  * @author William Newbury
  */
-public abstract class BaseUADEntity implements UADEntity {
+public class BaseUADEntity<T> implements UADEntity<T> {
 
 	public BaseUADEntity(
-		long userId, String uadEntityId, String uadRegistryKey) {
+		T entity, String uadEntityId, String uadRegistryKey, long userId) {
 
-		_userId = userId;
-
+		_entity = entity;
 		_uadEntityId = uadEntityId;
 		_uadRegistryKey = uadRegistryKey;
+		_userId = userId;
 	}
 
 	@Override
@@ -49,6 +49,11 @@ public abstract class BaseUADEntity implements UADEntity {
 	@Override
 	public Date getCreateDate() {
 		return null;
+	}
+
+	@Override
+	public T getEntity() {
+		return _entity;
 	}
 
 	@Override
@@ -126,6 +131,7 @@ public abstract class BaseUADEntity implements UADEntity {
 		throw new UnsupportedOperationException();
 	}
 
+	private final T _entity;
 	private final String _uadEntityId;
 	private final String _uadRegistryKey;
 	private final long _userId;

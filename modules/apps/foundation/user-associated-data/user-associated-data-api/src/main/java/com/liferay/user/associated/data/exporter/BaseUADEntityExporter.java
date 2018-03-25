@@ -42,7 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author William Newbury
  */
-public abstract class BaseUADEntityExporter implements UADEntityExporter {
+public abstract class BaseUADEntityExporter<T> implements UADEntityExporter<T> {
 
 	@Override
 	public long count(long userId) throws PortalException {
@@ -124,7 +124,7 @@ public abstract class BaseUADEntityExporter implements UADEntityExporter {
 		return JSONFactoryUtil.looseSerialize(object);
 	}
 
-	protected abstract UADEntityAggregator getUADEntityAggregator();
+	protected abstract UADEntityAggregator<T> getUADEntityAggregator();
 
 	protected String getUADEntityName() {
 		return StringPool.BLANK;

@@ -17,7 +17,6 @@ package com.liferay.announcements.uad.exporter;
 import com.liferay.announcements.constants.AnnouncementsPortletKeys;
 import com.liferay.announcements.kernel.model.AnnouncementsEntry;
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
-import com.liferay.announcements.uad.entity.AnnouncementsEntryUADEntity;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
@@ -27,7 +26,6 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.entity.UADEntity;
-import com.liferay.user.associated.data.exception.UADEntityException;
 import com.liferay.user.associated.data.exception.UADEntityExporterException;
 import com.liferay.user.associated.data.exporter.BaseUADEntityExporter;
 import com.liferay.user.associated.data.exporter.UADEntityExporter;
@@ -46,12 +44,14 @@ import org.osgi.service.component.annotations.Reference;
 	property = {"model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_ENTRY},
 	service = UADEntityExporter.class
 )
-public class AnnouncementsEntryUADEntityExporter extends BaseUADEntityExporter {
+public class AnnouncementsEntryUADEntityExporter
+	extends BaseUADEntityExporter<AnnouncementsEntry> {
 
 	@Override
-	public void export(UADEntity uadEntity) throws PortalException {
-		AnnouncementsEntry announcementsEntry = _getAnnouncementsEntry(
-			uadEntity);
+	public void export(UADEntity<AnnouncementsEntry> uadEntity)
+		throws PortalException {
+
+		AnnouncementsEntry announcementsEntry = uadEntity.getEntity();
 
 		String json = getJSON(announcementsEntry);
 
@@ -76,25 +76,8 @@ public class AnnouncementsEntryUADEntityExporter extends BaseUADEntityExporter {
 	}
 
 	@Override
-	protected UADEntityAggregator getUADEntityAggregator() {
+	protected UADEntityAggregator<AnnouncementsEntry> getUADEntityAggregator() {
 		return _uadEntityAggregator;
-	}
-
-	private AnnouncementsEntry _getAnnouncementsEntry(UADEntity uadEntity)
-		throws PortalException {
-
-		_validate(uadEntity);
-
-		AnnouncementsEntryUADEntity announcementsEntryUADEntity =
-			(AnnouncementsEntryUADEntity)uadEntity;
-
-		return announcementsEntryUADEntity.getAnnouncementsEntry();
-	}
-
-	private void _validate(UADEntity uadEntity) throws PortalException {
-		if (!(uadEntity instanceof AnnouncementsEntryUADEntity)) {
-			throw new UADEntityException();
-		}
 	}
 
 	private static final String _FOLDER_NAME = "UADExport";

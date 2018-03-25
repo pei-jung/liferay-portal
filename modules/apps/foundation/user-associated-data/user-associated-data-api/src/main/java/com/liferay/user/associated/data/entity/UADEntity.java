@@ -19,7 +19,9 @@ import com.liferay.portal.kernel.model.StagedModel;
 /**
  * @author William Newbury
  */
-public interface UADEntity extends StagedModel {
+public interface UADEntity<T> extends StagedModel {
+
+	public T getEntity();
 
 	public String getUADEntityId();
 

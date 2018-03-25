@@ -14,13 +14,12 @@
 
 package com.liferay.blogs.uad.display;
 
+import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.uad.constants.BlogsUADConstants;
-import com.liferay.blogs.uad.entity.BlogsEntryUADEntity;
 
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 
-import com.liferay.user.associated.data.anonymizer.UADEntityAnonymizer;
 import com.liferay.user.associated.data.display.UADEntityDisplay;
 import com.liferay.user.associated.data.entity.UADEntity;
 
@@ -35,7 +34,7 @@ import java.util.Map;
  */
 @Component(immediate = true, property =  {
 	"model.class.name=" + BlogsUADConstants.CLASS_NAME_BLOGS_ENTRY}, service = UADEntityDisplay.class)
-public class BlogsEntryUADEntityDisplay implements UADEntityDisplay {
+public class BlogsEntryUADEntityDisplay implements UADEntityDisplay<BlogsEntry> {
 	public String getApplicationName() {
 		return BlogsUADConstants.UAD_ENTITY_SET_NAME;
 	}
@@ -45,13 +44,11 @@ public class BlogsEntryUADEntityDisplay implements UADEntityDisplay {
 	}
 
 	@Override
-	public String getEditURL(UADEntity uadEntity,
+	public String getEditURL(UADEntity<BlogsEntry> uadEntity,
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
-		BlogsEntryUADEntity blogsEntryUADEntity = (BlogsEntryUADEntity)uadEntity;
-
-		return _blogsEntryUADEntityDisplayHelper.getBlogsEntryEditURL(blogsEntryUADEntity.getBlogsEntry(),
+		return _blogsEntryUADEntityDisplayHelper.getBlogsEntryEditURL(uadEntity.getEntity(),
 			liferayPortletRequest, liferayPortletResponse);
 	}
 
@@ -61,10 +58,8 @@ public class BlogsEntryUADEntityDisplay implements UADEntityDisplay {
 
 	@Override
 	public Map<String, Object> getUADEntityNonanonymizableFieldValues(
-		UADEntity uadEntity) {
-		BlogsEntryUADEntity blogsEntryUADEntity = (BlogsEntryUADEntity)uadEntity;
-
-		return _blogsEntryUADEntityDisplayHelper.getUADEntityNonanonymizableFieldValues(blogsEntryUADEntity.getBlogsEntry());
+		UADEntity<BlogsEntry> uadEntity) {
+		return _blogsEntryUADEntityDisplayHelper.getUADEntityNonanonymizableFieldValues(uadEntity.getEntity());
 	}
 
 	@Override
@@ -79,7 +74,4 @@ public class BlogsEntryUADEntityDisplay implements UADEntityDisplay {
 
 	@Reference
 	private BlogsEntryUADEntityDisplayHelper _blogsEntryUADEntityDisplayHelper;
-	@Reference(target = "(model.class.name=" +
-	BlogsUADConstants.CLASS_NAME_BLOGS_ENTRY + ")")
-	private UADEntityAnonymizer _uadEntityAnonymizer;
 }

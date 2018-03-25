@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * @author Noah Sherrill
  */
-public abstract class BaseUADEntityAggregatorTestCase {
+public abstract class BaseUADEntityAggregatorTestCase<T> {
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,12 +52,12 @@ public abstract class BaseUADEntityAggregatorTestCase {
 		addBaseModel(TestPropsValues.getUserId());
 		addBaseModel(_user.getUserId());
 
-		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+		List<UADEntity<T>> uadEntities = _uadEntityAggregator.getUADEntities(
 			_user.getUserId());
 
 		Assert.assertEquals(uadEntities.toString(), 1, uadEntities.size());
 
-		UADEntity uadEntity = uadEntities.get(0);
+		UADEntity<T> uadEntity = uadEntities.get(0);
 
 		Assert.assertEquals(_user.getUserId(), uadEntity.getUserId());
 	}
@@ -72,19 +72,19 @@ public abstract class BaseUADEntityAggregatorTestCase {
 		whenHasStatusByUserIdField.addBaseModelWithStatusByUserId(
 			TestPropsValues.getUserId(), _user.getUserId());
 
-		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+		List<UADEntity<T>> uadEntities = _uadEntityAggregator.getUADEntities(
 			_user.getUserId());
 
 		Assert.assertEquals(uadEntities.toString(), 1, uadEntities.size());
 
-		UADEntity uadEntity = uadEntities.get(0);
+		UADEntity<T> uadEntity = uadEntities.get(0);
 
 		Assert.assertEquals(_user.getUserId(), uadEntity.getUserId());
 	}
 
 	@Test
 	public void testGetUADEntitiesWithNoBaseModel() throws Exception {
-		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+		List<UADEntity<T>> uadEntities = _uadEntityAggregator.getUADEntities(
 			_user.getUserId());
 
 		Assert.assertEquals(uadEntities.toString(), 0, uadEntities.size());
@@ -94,10 +94,10 @@ public abstract class BaseUADEntityAggregatorTestCase {
 	public void testGetUADEntity() throws Exception {
 		addBaseModel(_user.getUserId());
 
-		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+		List<UADEntity<T>> uadEntities = _uadEntityAggregator.getUADEntities(
 			_user.getUserId());
 
-		UADEntity uadEntity = uadEntities.get(0);
+		UADEntity<T> uadEntity = uadEntities.get(0);
 
 		String uadEntityId = uadEntity.getUADEntityId();
 
@@ -109,9 +109,9 @@ public abstract class BaseUADEntityAggregatorTestCase {
 
 	protected abstract BaseModel<?> addBaseModel(long userId) throws Exception;
 
-	protected abstract UADEntityAggregator getUADEntityAggregator();
+	protected abstract UADEntityAggregator<T> getUADEntityAggregator();
 
-	private UADEntityAggregator _uadEntityAggregator;
+	private UADEntityAggregator<T> _uadEntityAggregator;
 
 	@DeleteAfterTestRun
 	private User _user;

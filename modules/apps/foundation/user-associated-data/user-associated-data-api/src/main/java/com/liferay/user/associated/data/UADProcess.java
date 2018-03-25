@@ -12,21 +12,13 @@
  * details.
  */
 
-package com.liferay.user.associated.data.aggregator;
-
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.user.associated.data.entity.UADEntity;
-
-import java.util.List;
+package com.liferay.user.associated.data;
 
 /**
- * @author William Newbury
+ * @author Drew Brokke
  */
-public abstract class BaseUADEntityAggregator implements UADEntityAggregator {
+public interface UADProcess {
 
-	@Override
-	public List<UADEntity> getUADEntities(long userId) {
-		return getUADEntities(userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-	}
+	public String[] getUserIdFieldNames();
 
 }

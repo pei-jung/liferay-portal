@@ -15,13 +15,13 @@
 package com.liferay.announcements.uad.aggregator;
 
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
-import com.liferay.user.associated.data.aggregator.BaseUADEntityAggregator;
+import com.liferay.user.associated.data.aggregator.DynamicQueryUADEntityAggregator;
 
 /**
  * @author Drew Brokke
  */
-public abstract class BaseAnnouncementsUADEntityAggregator
-	extends BaseUADEntityAggregator {
+public abstract class BaseAnnouncementsUADEntityAggregator<T>
+	extends DynamicQueryUADEntityAggregator<T> {
 
 	@Override
 	public String getUADEntitySetName() {

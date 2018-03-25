@@ -15,7 +15,6 @@
 package com.liferay.bookmarks.uad.exportimport.data.handler;
 
 import com.liferay.bookmarks.model.BookmarksEntry;
-import com.liferay.bookmarks.uad.entity.BookmarksEntryUADEntity;
 import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -30,10 +29,9 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(immediate = true, service = StagedModelDataHandler.class)
 public class BookmarksEntryUADEntityStagedModelDataHandler
-	extends BaseStagedModelDataHandler<UADEntity> {
+	extends BaseStagedModelDataHandler<UADEntity<BookmarksEntry>> {
 
-	public static final String[] CLASS_NAMES =
-		{BookmarksEntryUADEntity.class.getName()};
+	public static final String[] CLASS_NAMES = {UADEntity.class.getName()};
 
 	@Override
 	public String[] getClassNames() {
@@ -41,65 +39,34 @@ public class BookmarksEntryUADEntityStagedModelDataHandler
 	}
 
 	@Override
-	public String getDisplayName(UADEntity uadEntity) {
-		BookmarksEntry bookmarksEntry = _getBookmarksEntry(uadEntity);
+	public String getDisplayName(UADEntity<BookmarksEntry> uadEntity) {
+		BookmarksEntry bookmarksEntry = uadEntity.getEntity();
 
-		if (bookmarksEntry != null) {
-			return bookmarksEntry.getName();
-		}
-
-		return null;
+		return bookmarksEntry.getName();
 	}
 
 	@Override
 	protected void doExportStagedModel(
-			PortletDataContext portletDataContext, UADEntity uadEntity)
+			PortletDataContext portletDataContext,
+			UADEntity<BookmarksEntry> uadEntity)
 		throws Exception {
 
-		BookmarksEntry bookmarksEntry = _getBookmarksEntry(uadEntity);
+		BookmarksEntry bookmarksEntry = uadEntity.getEntity();
 
-		if (bookmarksEntry == null) {
-			return;
-		}
-
-		BookmarksEntryUADEntity bookmarksEntryUADEntity =
-			_getBookmarksEntryUADEntity(uadEntity);
-
-		Element element = portletDataContext.getExportDataElement(
-			bookmarksEntryUADEntity);
+		Element element = portletDataContext.getExportDataElement(uadEntity);
 
 		portletDataContext.addClassedModel(
-			element, ExportImportPathUtil.getModelPath(bookmarksEntryUADEntity),
+			element, ExportImportPathUtil.getModelPath(uadEntity),
 			bookmarksEntry);
 	}
 
 	@Override
 	protected void doImportStagedModel(
-			PortletDataContext portletDataContext, UADEntity uadEntity)
+			PortletDataContext portletDataContext,
+			UADEntity<BookmarksEntry> uadEntity)
 		throws Exception {
 
 		throw new UnsupportedOperationException();
-	}
-
-	private BookmarksEntry _getBookmarksEntry(UADEntity uadEntity) {
-		BookmarksEntryUADEntity bookmarksEntryUADEntity =
-			_getBookmarksEntryUADEntity(uadEntity);
-
-		if (bookmarksEntryUADEntity != null) {
-			return bookmarksEntryUADEntity.getBookmarksEntry();
-		}
-
-		return null;
-	}
-
-	private BookmarksEntryUADEntity _getBookmarksEntryUADEntity(
-		UADEntity uadEntity) {
-
-		if (uadEntity instanceof BookmarksEntryUADEntity) {
-			return (BookmarksEntryUADEntity)uadEntity;
-		}
-
-		return null;
 	}
 
 }

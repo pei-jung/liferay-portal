@@ -33,7 +33,7 @@ import org.junit.Test;
 /**
  * @author Noah Sherrill
  */
-public abstract class BaseUADEntityAnonymizerTestCase {
+public abstract class BaseUADEntityAnonymizerTestCase<T> {
 
 	@Before
 	public void setUp() throws Exception {
@@ -105,7 +105,7 @@ public abstract class BaseUADEntityAnonymizerTestCase {
 	public void testDelete() throws Exception {
 		BaseModel baseModel = addBaseModel(_user.getUserId(), false);
 
-		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+		List<UADEntity<T>> uadEntities = _uadEntityAggregator.getUADEntities(
 			_user.getUserId());
 
 		_uadEntityAnonymizer.delete(uadEntities.get(0));
@@ -146,9 +146,9 @@ public abstract class BaseUADEntityAnonymizerTestCase {
 		return (long)baseModel.getPrimaryKeyObj();
 	}
 
-	protected abstract UADEntityAggregator getUADEntityAggregator();
+	protected abstract UADEntityAggregator<T> getUADEntityAggregator();
 
-	protected abstract UADEntityAnonymizer getUADEntityAnonymizer();
+	protected abstract UADEntityAnonymizer<T> getUADEntityAnonymizer();
 
 	protected abstract boolean isBaseModelAutoAnonymized(
 			long baseModelPK, User user)
@@ -157,7 +157,7 @@ public abstract class BaseUADEntityAnonymizerTestCase {
 	protected abstract boolean isBaseModelDeleted(long baseModelPK);
 
 	private void _testAutoAnonymize(BaseModel baseModel) throws Exception {
-		List<UADEntity> uadEntities = _uadEntityAggregator.getUADEntities(
+		List<UADEntity<T>> uadEntities = _uadEntityAggregator.getUADEntities(
 			_user.getUserId());
 
 		_uadEntityAnonymizer.autoAnonymize(uadEntities.get(0));
@@ -167,8 +167,8 @@ public abstract class BaseUADEntityAnonymizerTestCase {
 		Assert.assertTrue(isBaseModelAutoAnonymized(baseModelPK, _user));
 	}
 
-	private UADEntityAggregator _uadEntityAggregator;
-	private UADEntityAnonymizer _uadEntityAnonymizer;
+	private UADEntityAggregator<T> _uadEntityAggregator;
+	private UADEntityAnonymizer<T> _uadEntityAnonymizer;
 
 	@DeleteAfterTestRun
 	private User _user;

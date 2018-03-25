@@ -14,11 +14,10 @@
 
 package com.liferay.announcements.uad.display;
 
+import com.liferay.announcements.kernel.model.AnnouncementsEntry;
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
-import com.liferay.announcements.uad.entity.AnnouncementsEntryUADEntity;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.user.associated.data.anonymizer.UADEntityAnonymizer;
 import com.liferay.user.associated.data.display.UADEntityDisplay;
 import com.liferay.user.associated.data.entity.UADEntity;
 
@@ -35,7 +34,8 @@ import org.osgi.service.component.annotations.Reference;
 	property = "model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_ENTRY,
 	service = UADEntityDisplay.class
 )
-public class AnnouncementsEntryUADEntityDisplay implements UADEntityDisplay {
+public class AnnouncementsEntryUADEntityDisplay
+	implements UADEntityDisplay<AnnouncementsEntry> {
 
 	public String getApplicationName() {
 		return AnnouncementsUADConstants.UAD_ENTITY_SET_NAME;
@@ -46,17 +46,15 @@ public class AnnouncementsEntryUADEntityDisplay implements UADEntityDisplay {
 	}
 
 	public String getEditURL(
-			UADEntity uadEntity, LiferayPortletRequest liferayPortletRequest,
+			UADEntity<AnnouncementsEntry> uadEntity,
+			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
-		AnnouncementsEntryUADEntity announcementsEntryUADEntity =
-			(AnnouncementsEntryUADEntity)uadEntity;
-
 		return _announcementsEntryUADEntityDisplayHelper.
 			getAnnouncementsEntryEditURL(
-				announcementsEntryUADEntity.getAnnouncementsEntry(),
-				liferayPortletRequest, liferayPortletResponse);
+				uadEntity.getEntity(), liferayPortletRequest,
+				liferayPortletResponse);
 	}
 
 	public String getKey() {
@@ -64,14 +62,10 @@ public class AnnouncementsEntryUADEntityDisplay implements UADEntityDisplay {
 	}
 
 	public Map<String, Object> getUADEntityNonanonymizableFieldValues(
-		UADEntity uadEntity) {
-
-		AnnouncementsEntryUADEntity announcementsEntryUADEntity =
-			(AnnouncementsEntryUADEntity)uadEntity;
+		UADEntity<AnnouncementsEntry> uadEntity) {
 
 		return _announcementsEntryUADEntityDisplayHelper.
-			getUADEntityNonanonymizableFieldValues(
-				announcementsEntryUADEntity.getAnnouncementsEntry());
+			getUADEntityNonanonymizableFieldValues(uadEntity.getEntity());
 	}
 
 	public String getUADEntityTypeDescription() {
@@ -85,10 +79,5 @@ public class AnnouncementsEntryUADEntityDisplay implements UADEntityDisplay {
 	@Reference
 	private AnnouncementsEntryUADEntityDisplayHelper
 		_announcementsEntryUADEntityDisplayHelper;
-
-	@Reference(
-		target = "(model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_ENTRY + ")"
-	)
-	private UADEntityAnonymizer _uadEntityAnonymizer;
 
 }
