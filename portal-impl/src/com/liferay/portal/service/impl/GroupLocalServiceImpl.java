@@ -1114,6 +1114,11 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		return groupPersistence.findByC_A(companyId, active);
 	}
 
+	@Override
+	public List<Long> getActiveTransitiveGroupIds(long userId) {
+		return groupFinder.findByActiveTransitiveGroupIds(userId);
+	}
+
 	/**
 	 * Returns the company group.
 	 *
