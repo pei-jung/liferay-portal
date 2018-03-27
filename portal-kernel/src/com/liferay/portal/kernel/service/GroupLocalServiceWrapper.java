@@ -603,6 +603,12 @@ public class GroupLocalServiceWrapper implements GroupLocalService,
 		return _groupLocalService.getActiveGroups(companyId, active);
 	}
 
+	@Override
+	public java.util.List<java.lang.Long> getActiveTransitiveGroupIds(
+		long userId) {
+		return _groupLocalService.getActiveTransitiveGroupIds(userId);
+	}
+
 	/**
 	* Returns the company group.
 	*
