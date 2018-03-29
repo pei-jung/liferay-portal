@@ -72,18 +72,27 @@ renderResponse.setTitle(StringBundler.concat(selectedUser.getFullName(), " - ", 
 				keyProperty="name"
 				modelVar="uadEntity"
 			>
-				<liferay-ui:search-container-column-text
-					cssClass="table-cell-expand"
-					name="entity-id"
-					property="UADEntityId"
-				/>
+				<%
+				String editURL = uadEntityDisplay.getEditURL(uadEntity, liferayPortletRequest, liferayPortletResponse);
 
-				<liferay-ui:search-container-column-text
-					cssClass="table-cell-expand"
-					href="<%= uadEntityDisplay.getEditURL(uadEntity, liferayPortletRequest, liferayPortletResponse) %>"
-					name="edit-url"
-					value="<%= uadEntityDisplay.getEditURL(uadEntity, liferayPortletRequest, liferayPortletResponse) %>"
-				/>
+				Map<String, Object> entityFieldValues = uadEntityDisplay.getUADEntityNonanonymizableFieldValues(uadEntity);
+
+				for (String fieldName : uadEntityDisplay.getDisplayFieldNames()) {
+					if (!entityFieldValues.containsKey(fieldName)) {
+						continue;
+					}
+				%>
+
+					<liferay-ui:search-container-column-text
+						cssClass="table-cell-expand"
+						href="<%= editURL %>"
+						name="<%= fieldName %>"
+						value="<%= StringUtil.shorten(String.valueOf(entityFieldValues.get(fieldName))) %>"
+					/>
+
+				<%
+				}
+				%>
 
 				<liferay-ui:search-container-column-jsp
 					cssClass="entry-action-column"
