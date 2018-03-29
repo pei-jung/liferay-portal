@@ -78,14 +78,20 @@ renderResponse.setTitle(StringBundler.concat(selectedUser.getFullName(), " - ", 
 
 				Map<String, Object> entityFieldValues = uadEntityDisplay.getUADEntityNonanonymizableFieldValues(uadEntity);
 
+				List<String> filteredDisplayFieldNames = new ArrayList();
+
 				for (String fieldName : uadEntityDisplay.getDisplayFieldNames()) {
-					if (!entityFieldValues.containsKey(fieldName)) {
-						continue;
+					if (entityFieldValues.containsKey(fieldName)) {
+						filteredDisplayFieldNames.add(fieldName);
 					}
+				}
+
+				for (String fieldName : filteredDisplayFieldNames) {
+					String cssClass = fieldName.equals(filteredDisplayFieldNames.get(0)) ? "table-cell-expand table-list-title" : "table-cell-expand";
 				%>
 
 					<liferay-ui:search-container-column-text
-						cssClass="table-cell-expand"
+						cssClass="<%= cssClass %>"
 						href="<%= editURL %>"
 						name="<%= fieldName %>"
 						value="<%= StringUtil.shorten(String.valueOf(entityFieldValues.get(fieldName)), 200) %>"

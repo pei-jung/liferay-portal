@@ -58,8 +58,10 @@ page import="com.liferay.users.admin.constants.UsersAdminPortletKeys" %>
 
 <%@ page import="java.text.Format" %>
 
-<%@ page import="java.util.Date" %><%@
+<%@ page import="java.util.ArrayList" %><%@
+page import="java.util.Date" %><%@
 page import="java.util.HashMap" %><%@
+page import="java.util.List" %><%@
 page import="java.util.Map" %>
 
 <%@ page import="javax.portlet.PortletRequest" %><%@
