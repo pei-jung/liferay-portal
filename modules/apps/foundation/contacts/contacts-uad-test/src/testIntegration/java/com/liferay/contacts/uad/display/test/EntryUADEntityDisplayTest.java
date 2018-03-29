@@ -30,6 +30,7 @@ import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.display.UADEntityDisplay;
 import com.liferay.user.associated.data.test.util.BaseUADEntityDisplayTestCase;
 
+import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
@@ -75,6 +76,11 @@ public class EntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase {
 	@Override
 	protected String getUADEntityTypeDescription() {
 		return "";
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		_entryUADEntityTestHelper.cleanUpDependencies(_entries);
 	}
 
 	@DeleteAfterTestRun
