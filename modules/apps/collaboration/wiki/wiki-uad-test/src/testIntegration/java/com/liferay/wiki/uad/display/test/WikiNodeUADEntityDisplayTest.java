@@ -12,13 +12,9 @@
  * details.
  */
 
-package com.liferay.contacts.uad.display.test;
+package com.liferay.wiki.uad.display.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-
-import com.liferay.contacts.model.Entry;
-import com.liferay.contacts.uad.constants.ContactsUADConstants;
-import com.liferay.contacts.uad.test.EntryUADEntityTestHelper;
 
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -29,6 +25,10 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.display.UADEntityDisplay;
 import com.liferay.user.associated.data.test.util.BaseUADEntityDisplayTestCase;
+
+import com.liferay.wiki.model.WikiNode;
+import com.liferay.wiki.uad.constants.WikiUADConstants;
+import com.liferay.wiki.uad.test.WikiNodeUADEntityTestHelper;
 
 import org.junit.After;
 import org.junit.ClassRule;
@@ -44,23 +44,23 @@ import java.util.List;
  * @generated
  */
 @RunWith(Arquillian.class)
-public class EntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase {
+public class WikiNodeUADEntityDisplayTest extends BaseUADEntityDisplayTestCase {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule = new LiferayIntegrationTestRule();
 
 	@Override
 	protected BaseModel<?> addBaseModel(long userId) throws Exception {
-		Entry entry = _entryUADEntityTestHelper.addEntry(userId);
+		WikiNode wikiNode = _wikiNodeUADEntityTestHelper.addWikiNode(userId);
 
-		_entries.add(entry);
+		_wikiNodes.add(wikiNode);
 
-		return entry;
+		return wikiNode;
 	}
 
 	@Override
 	protected String getApplicationName() {
-		return ContactsUADConstants.UAD_ENTITY_SET_NAME;
+		return WikiUADConstants.UAD_ENTITY_SET_NAME;
 	}
 
 	@Override
@@ -75,22 +75,22 @@ public class EntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase {
 
 	@Override
 	protected String getUADEntityTypeDescription() {
-		return "";
+		return "A wiki node";
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		_entryUADEntityTestHelper.cleanUpDependencies(_entries);
+		_wikiNodeUADEntityTestHelper.cleanUpDependencies(_wikiNodes);
 	}
 
 	@DeleteAfterTestRun
-	private final List<Entry> _entries = new ArrayList<Entry>();
+	private final List<WikiNode> _wikiNodes = new ArrayList<WikiNode>();
 	@Inject
-	private EntryUADEntityTestHelper _entryUADEntityTestHelper;
+	private WikiNodeUADEntityTestHelper _wikiNodeUADEntityTestHelper;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	WikiUADConstants.CLASS_NAME_WIKI_NODE)
 	private UADEntityAggregator _uadEntityAggregator;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	WikiUADConstants.CLASS_NAME_WIKI_NODE)
 	private UADEntityDisplay _uadEntityDisplay;
 }

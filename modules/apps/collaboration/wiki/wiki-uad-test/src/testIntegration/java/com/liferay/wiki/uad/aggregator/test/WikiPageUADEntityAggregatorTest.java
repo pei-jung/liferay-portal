@@ -12,13 +12,9 @@
  * details.
  */
 
-package com.liferay.contacts.uad.display.test;
+package com.liferay.wiki.uad.aggregator.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-
-import com.liferay.contacts.model.Entry;
-import com.liferay.contacts.uad.constants.ContactsUADConstants;
-import com.liferay.contacts.uad.test.EntryUADEntityTestHelper;
 
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -27,8 +23,12 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
-import com.liferay.user.associated.data.display.UADEntityDisplay;
-import com.liferay.user.associated.data.test.util.BaseUADEntityDisplayTestCase;
+import com.liferay.user.associated.data.test.util.BaseUADEntityAggregatorTestCase;
+import com.liferay.user.associated.data.test.util.WhenHasStatusByUserIdField;
+
+import com.liferay.wiki.model.WikiPage;
+import com.liferay.wiki.uad.constants.WikiUADConstants;
+import com.liferay.wiki.uad.test.WikiPageUADEntityTestHelper;
 
 import org.junit.After;
 import org.junit.ClassRule;
@@ -44,23 +44,31 @@ import java.util.List;
  * @generated
  */
 @RunWith(Arquillian.class)
-public class EntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase {
+public class WikiPageUADEntityAggregatorTest
+	extends BaseUADEntityAggregatorTestCase
+	implements WhenHasStatusByUserIdField {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule = new LiferayIntegrationTestRule();
 
 	@Override
-	protected BaseModel<?> addBaseModel(long userId) throws Exception {
-		Entry entry = _entryUADEntityTestHelper.addEntry(userId);
+	public BaseModel<?> addBaseModelWithStatusByUserId(long userId,
+		long statusByUserId) throws Exception {
+		WikiPage wikiPage = _wikiPageUADEntityTestHelper.addWikiPageWithStatusByUserId(userId,
+				statusByUserId);
 
-		_entries.add(entry);
+		_wikiPages.add(wikiPage);
 
-		return entry;
+		return wikiPage;
 	}
 
 	@Override
-	protected String getApplicationName() {
-		return ContactsUADConstants.UAD_ENTITY_SET_NAME;
+	protected BaseModel<?> addBaseModel(long userId) throws Exception {
+		WikiPage wikiPage = _wikiPageUADEntityTestHelper.addWikiPage(userId);
+
+		_wikiPages.add(wikiPage);
+
+		return wikiPage;
 	}
 
 	@Override
@@ -68,29 +76,16 @@ public class EntryUADEntityDisplayTest extends BaseUADEntityDisplayTestCase {
 		return _uadEntityAggregator;
 	}
 
-	@Override
-	protected UADEntityDisplay getUADEntityDisplay() {
-		return _uadEntityDisplay;
-	}
-
-	@Override
-	protected String getUADEntityTypeDescription() {
-		return "";
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		_entryUADEntityTestHelper.cleanUpDependencies(_entries);
+		_wikiPageUADEntityTestHelper.cleanUpDependencies(_wikiPages);
 	}
 
 	@DeleteAfterTestRun
-	private final List<Entry> _entries = new ArrayList<Entry>();
+	private final List<WikiPage> _wikiPages = new ArrayList<WikiPage>();
 	@Inject
-	private EntryUADEntityTestHelper _entryUADEntityTestHelper;
+	private WikiPageUADEntityTestHelper _wikiPageUADEntityTestHelper;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	WikiUADConstants.CLASS_NAME_WIKI_PAGE)
 	private UADEntityAggregator _uadEntityAggregator;
-	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
-	private UADEntityDisplay _uadEntityDisplay;
 }
