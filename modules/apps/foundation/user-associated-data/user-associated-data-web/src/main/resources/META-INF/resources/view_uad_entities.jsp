@@ -72,6 +72,7 @@ renderResponse.setTitle(StringBundler.concat(selectedUser.getFullName(), " - ", 
 				keyProperty="name"
 				modelVar="uadEntity"
 			>
+
 				<%
 				String editURL = uadEntityDisplay.getEditURL(uadEntity, liferayPortletRequest, liferayPortletResponse);
 
@@ -87,7 +88,7 @@ renderResponse.setTitle(StringBundler.concat(selectedUser.getFullName(), " - ", 
 						cssClass="table-cell-expand"
 						href="<%= editURL %>"
 						name="<%= fieldName %>"
-						value="<%= StringUtil.shorten(String.valueOf(entityFieldValues.get(fieldName))) %>"
+						value="<%= StringUtil.shorten(String.valueOf(entityFieldValues.get(fieldName)), 200) %>"
 					/>
 
 				<%
