@@ -21,6 +21,8 @@
 		form.setAttribute('method', 'post');
 
 		if (confirm(message)) {
+			document.body.appendChild(form);
+
 			submitForm(form, actionURL);
 		}
 	}
