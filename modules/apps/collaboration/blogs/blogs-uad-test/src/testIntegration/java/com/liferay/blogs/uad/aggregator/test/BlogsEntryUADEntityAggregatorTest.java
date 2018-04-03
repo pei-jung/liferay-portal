@@ -30,6 +30,7 @@ import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.test.util.BaseUADEntityAggregatorTestCase;
 import com.liferay.user.associated.data.test.util.WhenHasStatusByUserIdField;
 
+import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
@@ -73,6 +74,11 @@ public class BlogsEntryUADEntityAggregatorTest
 	@Override
 	protected UADEntityAggregator getUADEntityAggregator() {
 		return _uadEntityAggregator;
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		_blogsEntryUADEntityTestHelper.cleanUpDependencies(_blogsEntries);
 	}
 
 	@DeleteAfterTestRun
