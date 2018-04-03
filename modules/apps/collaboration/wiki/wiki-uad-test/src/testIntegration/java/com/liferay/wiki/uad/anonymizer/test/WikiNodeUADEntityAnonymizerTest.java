@@ -12,14 +12,9 @@
  * details.
  */
 
-package com.liferay.contacts.uad.anonymizer.test;
+package com.liferay.wiki.uad.anonymizer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-
-import com.liferay.contacts.model.Entry;
-import com.liferay.contacts.service.EntryLocalService;
-import com.liferay.contacts.uad.constants.ContactsUADConstants;
-import com.liferay.contacts.uad.test.EntryUADEntityTestHelper;
 
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.User;
@@ -31,6 +26,12 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.anonymizer.UADEntityAnonymizer;
 import com.liferay.user.associated.data.test.util.BaseUADEntityAnonymizerTestCase;
+import com.liferay.user.associated.data.test.util.WhenHasStatusByUserIdField;
+
+import com.liferay.wiki.model.WikiNode;
+import com.liferay.wiki.service.WikiNodeLocalService;
+import com.liferay.wiki.uad.constants.WikiUADConstants;
+import com.liferay.wiki.uad.test.WikiNodeUADEntityTestHelper;
 
 import org.junit.After;
 import org.junit.ClassRule;
@@ -46,11 +47,23 @@ import java.util.List;
  * @generated
  */
 @RunWith(Arquillian.class)
-public class EntryUADEntityAnonymizerTest
-	extends BaseUADEntityAnonymizerTestCase {
+public class WikiNodeUADEntityAnonymizerTest
+	extends BaseUADEntityAnonymizerTestCase
+	implements WhenHasStatusByUserIdField {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule = new LiferayIntegrationTestRule();
+
+	@Override
+	public BaseModel<?> addBaseModelWithStatusByUserId(long userId,
+		long statusByUserId) throws Exception {
+		WikiNode wikiNode = _wikiNodeUADEntityTestHelper.addWikiNodeWithStatusByUserId(userId,
+				statusByUserId);
+
+		_wikiNodes.add(wikiNode);
+
+		return wikiNode;
+	}
 
 	@Override
 	protected BaseModel<?> addBaseModel(long userId) throws Exception {
@@ -60,13 +73,13 @@ public class EntryUADEntityAnonymizerTest
 	@Override
 	protected BaseModel<?> addBaseModel(long userId, boolean deleteAfterTestRun)
 		throws Exception {
-		Entry entry = _entryUADEntityTestHelper.addEntry(userId);
+		WikiNode wikiNode = _wikiNodeUADEntityTestHelper.addWikiNode(userId);
 
 		if (deleteAfterTestRun) {
-			_entries.add(entry);
+			_wikiNodes.add(wikiNode);
 		}
 
-		return entry;
+		return wikiNode;
 	}
 
 	@Override
@@ -82,12 +95,15 @@ public class EntryUADEntityAnonymizerTest
 	@Override
 	protected boolean isBaseModelAutoAnonymized(long baseModelPK, User user)
 		throws Exception {
-		Entry entry = _entryLocalService.getEntry(baseModelPK);
+		WikiNode wikiNode = _wikiNodeLocalService.getWikiNode(baseModelPK);
 
-		String userName = entry.getUserName();
+		String userName = wikiNode.getUserName();
+		String statusByUserName = wikiNode.getStatusByUserName();
 
-		if ((entry.getUserId() != user.getUserId()) &&
-				!userName.equals(user.getFullName())) {
+		if ((wikiNode.getUserId() != user.getUserId()) &&
+				!userName.equals(user.getFullName()) &&
+				(wikiNode.getStatusByUserId() != user.getUserId()) &&
+				!statusByUserName.equals(user.getFullName())) {
 			return true;
 		}
 
@@ -96,7 +112,7 @@ public class EntryUADEntityAnonymizerTest
 
 	@Override
 	protected boolean isBaseModelDeleted(long baseModelPK) {
-		if (_entryLocalService.fetchEntry(baseModelPK) == null) {
+		if (_wikiNodeLocalService.fetchWikiNode(baseModelPK) == null) {
 			return true;
 		}
 
@@ -105,19 +121,19 @@ public class EntryUADEntityAnonymizerTest
 
 	@After
 	public void tearDown() throws Exception {
-		_entryUADEntityTestHelper.cleanUpDependencies(_entries);
+		_wikiNodeUADEntityTestHelper.cleanUpDependencies(_wikiNodes);
 	}
 
 	@DeleteAfterTestRun
-	private final List<Entry> _entries = new ArrayList<Entry>();
+	private final List<WikiNode> _wikiNodes = new ArrayList<WikiNode>();
 	@Inject
-	private EntryLocalService _entryLocalService;
+	private WikiNodeLocalService _wikiNodeLocalService;
 	@Inject
-	private EntryUADEntityTestHelper _entryUADEntityTestHelper;
+	private WikiNodeUADEntityTestHelper _wikiNodeUADEntityTestHelper;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	WikiUADConstants.CLASS_NAME_WIKI_NODE)
 	private UADEntityAggregator _uadEntityAggregator;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	WikiUADConstants.CLASS_NAME_WIKI_NODE)
 	private UADEntityAnonymizer _uadEntityAnonymizer;
 }
