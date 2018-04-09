@@ -180,7 +180,7 @@ boolean hasAddOrganizationPermission = PortalPermissionUtil.contains(permissionC
 					parentOrganizationId = OrganizationConstants.ANY_PARENT_ORGANIZATION_ID;
 				}
 				else {
-					parentOrganizationId = ParamUtil.getLong(request, "parentOrganizationId", OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID);
+					parentOrganizationId = ParamUtil.getLong(request, "parentOrganizationId", OrganizationConstants.ANY_PARENT_ORGANIZATION_ID);
 				}
 				%>
 
