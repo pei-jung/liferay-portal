@@ -12,14 +12,14 @@
  * details.
  */
 
-package com.liferay.contacts.uad.anonymizer.test;
+package com.liferay.message.boards.uad.anonymizer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 
-import com.liferay.contacts.model.Entry;
-import com.liferay.contacts.service.EntryLocalService;
-import com.liferay.contacts.uad.constants.ContactsUADConstants;
-import com.liferay.contacts.uad.test.EntryUADEntityTestHelper;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.service.MBMessageLocalService;
+import com.liferay.message.boards.uad.constants.MBUADConstants;
+import com.liferay.message.boards.uad.test.MBMessageUADEntityTestHelper;
 
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -30,6 +30,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.user.associated.data.aggregator.UADAggregator;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
 import com.liferay.user.associated.data.test.util.BaseUADAnonymizerTestCase;
+import com.liferay.user.associated.data.test.util.WhenHasStatusByUserIdField;
 
 import org.junit.After;
 import org.junit.ClassRule;
@@ -45,28 +46,38 @@ import java.util.List;
  * @generated
  */
 @RunWith(Arquillian.class)
-public class EntryUADAnonymizerTest
-	extends BaseUADAnonymizerTestCase<Entry> {
-
+public class MBMessageUADAnonymizerTest extends BaseUADAnonymizerTestCase<MBMessage>
+	implements WhenHasStatusByUserIdField {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule = new LiferayIntegrationTestRule();
 
 	@Override
-	protected Entry addBaseModel(long userId) throws Exception {
+	public MBMessage addBaseModelWithStatusByUserId(long userId,
+		long statusByUserId) throws Exception {
+		MBMessage mbMessage = _mbMessageUADEntityTestHelper.addMBMessageWithStatusByUserId(userId,
+				statusByUserId);
+
+		_mbMessages.add(mbMessage);
+
+		return mbMessage;
+	}
+
+	@Override
+	protected MBMessage addBaseModel(long userId) throws Exception {
 		return addBaseModel(userId, true);
 	}
 
 	@Override
-	protected Entry addBaseModel(long userId, boolean deleteAfterTestRun)
+	protected MBMessage addBaseModel(long userId, boolean deleteAfterTestRun)
 		throws Exception {
-		Entry entry = _entryUADEntityTestHelper.addEntry(userId);
+		MBMessage mbMessage = _mbMessageUADEntityTestHelper.addMBMessage(userId);
 
 		if (deleteAfterTestRun) {
-			_entries.add(entry);
+			_mbMessages.add(mbMessage);
 		}
 
-		return entry;
+		return mbMessage;
 	}
 
 	@Override
@@ -82,12 +93,15 @@ public class EntryUADAnonymizerTest
 	@Override
 	protected boolean isBaseModelAutoAnonymized(long baseModelPK, User user)
 		throws Exception {
-		Entry entry = _entryLocalService.getEntry(baseModelPK);
+		MBMessage mbMessage = _mbMessageLocalService.getMBMessage(baseModelPK);
 
-		String userName = entry.getUserName();
+		String userName = mbMessage.getUserName();
+		String statusByUserName = mbMessage.getStatusByUserName();
 
-		if ((entry.getUserId() != user.getUserId()) &&
-				!userName.equals(user.getFullName())) {
+		if ((mbMessage.getUserId() != user.getUserId()) &&
+				!userName.equals(user.getFullName()) &&
+				(mbMessage.getStatusByUserId() != user.getUserId()) &&
+				!statusByUserName.equals(user.getFullName())) {
 			return true;
 		}
 
@@ -96,7 +110,7 @@ public class EntryUADAnonymizerTest
 
 	@Override
 	protected boolean isBaseModelDeleted(long baseModelPK) {
-		if (_entryLocalService.fetchEntry(baseModelPK) == null) {
+		if (_mbMessageLocalService.fetchMBMessage(baseModelPK) == null) {
 			return true;
 		}
 
@@ -104,26 +118,26 @@ public class EntryUADAnonymizerTest
 	}
 
 	@Override
-	public void tearDownBaseModels(List<Entry> baseModels)
+	public void tearDownBaseModels(List<MBMessage> baseModels)
 		throws Exception {
-		_entryUADEntityTestHelper.cleanUpDependencies(baseModels);
+		_mbMessageUADEntityTestHelper.cleanUpDependencies(baseModels);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		_entryUADEntityTestHelper.cleanUpDependencies(_entries);
+		_mbMessageUADEntityTestHelper.cleanUpDependencies(_mbMessages);
 	}
 
 	@DeleteAfterTestRun
-	private final List<Entry> _entries = new ArrayList<Entry>();
+	private final List<MBMessage> _mbMessages = new ArrayList<MBMessage>();
 	@Inject
-	private EntryLocalService _entryLocalService;
+	private MBMessageLocalService _mbMessageLocalService;
 	@Inject
-	private EntryUADEntityTestHelper _entryUADEntityTestHelper;
+	private MBMessageUADEntityTestHelper _mbMessageUADEntityTestHelper;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	MBUADConstants.CLASS_NAME_MB_MESSAGE)
 	private UADAggregator _uadAggregator;
 	@Inject(filter = "model.class.name=" +
-	ContactsUADConstants.CLASS_NAME_ENTRY)
+	MBUADConstants.CLASS_NAME_MB_MESSAGE)
 	private UADAnonymizer _uadAnonymizer;
 }
