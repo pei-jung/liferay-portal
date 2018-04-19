@@ -125,6 +125,63 @@
 				(Group_.active_ = [$TRUE$])
 		]]>
 	</sql>
+	<sql id="com.liferay.portal.kernel.service.persistence.GroupFinder.findByActiveTransitiveGroups">
+		<![CDATA[
+			(
+				SELECT
+					Group_.groupId
+				FROM
+					Group_
+					INNER JOIN
+					Users_Groups ON
+						Users_Groups.groupId = Group_.groupId
+				WHERE
+					(Users_Groups.userId = ?) AND
+					(Group_.active_ = [$TRUE$])
+			) UNION
+			(
+				SELECT
+					Group_.groupId
+				FROM
+					Group_
+				WHERE
+					Group_.groupId IN
+						(
+							SELECT
+								Groups_Orgs.groupId
+							FROM
+								Groups_Orgs
+								INNER JOIN
+								Users_Orgs ON
+									Users_Orgs.organizationId = Groups_Orgs.organizationId
+							WHERE
+								Users_Orgs.userId = ?
+						) AND
+					(Group_.active_ = [$TRUE$])
+
+			) UNION
+			(
+				SELECT
+					Group_.groupId
+				FROM
+					Group_
+				WHERE
+					Group_.groupid IN
+						(
+							SELECT
+								Groups_UserGroups.groupId
+							FROM
+								Groups_UserGroups
+								INNER JOIN
+								Users_UserGroups ON
+									Users_UserGroups.userGroupId = Groups_UserGroups.userGroupId
+							WHERE
+								Users_UserGroups.userId = ?
+						) AND
+					(Group_.active_ = [$TRUE$])
+			)
+		]]>
+	</sql>
 	<sql id="com.liferay.portal.kernel.service.persistence.GroupFinder.findByCompanyId">
 		<![CDATA[
 			SELECT

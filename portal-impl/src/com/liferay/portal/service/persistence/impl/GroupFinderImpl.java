@@ -72,6 +72,9 @@ public class GroupFinderImpl
 	public static final String FIND_BY_ACTIVE_GROUPS =
 		GroupFinder.class.getName() + ".findByActiveGroups";
 
+	public static final String FIND_BY_ACTIVE_TRANSITIVE_GROUPS =
+		GroupFinder.class.getName() + ".findByActiveTransitiveGroups";
+
 	public static final String FIND_BY_COMPANY_ID =
 		GroupFinder.class.getName() + ".findByCompanyId";
 
@@ -360,6 +363,37 @@ public class GroupFinderImpl
 			q.addScalar("groupId", Type.LONG);
 
 			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(userId);
+
+			return q.list(true);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	@Override
+	public List<Long> findByActiveTransitiveGroupIds(long userId) {
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(FIND_BY_ACTIVE_TRANSITIVE_GROUPS);
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar("groupId", Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(userId);
+
+			qPos.add(userId);
 
 			qPos.add(userId);
 

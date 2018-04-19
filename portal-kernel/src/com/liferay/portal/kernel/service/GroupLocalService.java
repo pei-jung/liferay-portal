@@ -409,6 +409,9 @@ public interface GroupLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Group> getActiveGroups(long companyId, boolean active);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<java.lang.Long> getActiveTransitiveGroupIds(long userId);
+
 	/**
 	* Returns the company group.
 	*

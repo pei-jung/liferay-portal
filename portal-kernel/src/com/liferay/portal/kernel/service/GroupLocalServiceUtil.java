@@ -554,6 +554,11 @@ public class GroupLocalServiceUtil {
 		return getService().getActiveGroups(companyId, active);
 	}
 
+	public static java.util.List<java.lang.Long> getActiveTransitiveGroupIds(
+		long userId) {
+		return getService().getActiveTransitiveGroupIds(userId);
+	}
+
 	/**
 	* Returns the company group.
 	*
