@@ -51,6 +51,7 @@ import com.liferay.portal.kernel.model.OrganizationConstants;
 import com.liferay.portal.kernel.model.PasswordPolicy;
 import com.liferay.portal.kernel.model.PortalPreferences;
 import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
@@ -399,6 +400,20 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 				defaultContact.setBirthday(now);
 
 				contactPersistence.update(defaultContact);
+			}
+
+			// Default user resources
+
+			int defaultUserResourcePermissionsCount =
+				resourcePermissionLocalService.getResourcePermissionsCount(
+					companyId, User.class.getName(),
+					ResourceConstants.SCOPE_INDIVIDUAL,
+					String.valueOf(defaultUser.getUserId()));
+
+			if (defaultUserResourcePermissionsCount == 0) {
+				resourceLocalService.addResources(
+					companyId, 0, 0, User.class.getName(),
+					defaultUser.getUserId(), false, false, false);
 			}
 
 			// System roles
