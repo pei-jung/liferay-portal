@@ -1115,7 +1115,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				if (ArrayUtil.isNotEmpty(userIds)) {
 					TransactionCommitCallbackUtil.registerCallback(
 						() -> {
-							reindex(group.getCompanyId(), userIds);
+							userLocalService.reindex(
+								group.getCompanyId(), userIds);
 
 							return null;
 						});
@@ -3684,7 +3685,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 			TransactionCommitCallbackUtil.registerCallback(
 				() -> {
-					reindex(group.getCompanyId(), getUserPrimaryKeys(groupId));
+					userLocalService.reindex(
+						group.getCompanyId(), getUserPrimaryKeys(groupId));
 
 					return null;
 				});
