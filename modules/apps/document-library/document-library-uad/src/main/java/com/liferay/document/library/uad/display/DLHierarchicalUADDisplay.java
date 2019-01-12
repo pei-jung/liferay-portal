@@ -156,20 +156,30 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 		long userId, long[] groupIds, Serializable parentFolderId,
 		String keywords, String orderByField, String orderByType) {
 
-		List<DLFileEntry> dlFileEntries = _dlFileEntryUADDisplay.search(
-			userId, groupIds, keywords, orderByField, orderByType,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-		List<DLFolder> dlFolders = _dlFolderUADDisplay.search(
-			userId, groupIds, keywords, orderByField, orderByType,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
 		Map<Long, Integer> topLevelFolders = new HashMap<>();
 
 		try {
-			topLevelFolders =
-				HierarchicalDLFolderUtil.getTopLevelFoldersAndCount(
-					dlFileEntries, dlFolders, (long)parentFolderId);
+			List<DLFolder> dlFolders = _dlFolderUADDisplay.search(
+				userId, groupIds, keywords, orderByField, orderByType,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			for (DLFolder dlFolder : dlFolders) {
+				topLevelFolders.merge(
+					HierarchicalDLFolderUtil.getTopLevelFolderId(
+						dlFolder, (long)parentFolderId),
+					1, (oldValue, value) -> oldValue + 1);
+			}
+
+			List<DLFileEntry> dlFileEntries = _dlFileEntryUADDisplay.search(
+				userId, groupIds, keywords, orderByField, orderByType,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			for (DLFileEntry dlFileEntry : dlFileEntries) {
+				topLevelFolders.merge(
+					HierarchicalDLFolderUtil.getTopLevelFolderId(
+						dlFileEntry, (long)parentFolderId),
+					1, (oldValue, value) -> oldValue + 1);
+			}
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
@@ -178,12 +188,16 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 		List<UADContainerEntity<DLFolder>> topLevelFoldersList =
 			new ArrayList<>();
 
-		topLevelFolders.forEach(
-			(folderId, count) -> {
+		for (Map.Entry<Long, Integer> entry : topLevelFolders.entrySet()) {
+			long folderId = entry.getKey();
+			long count = entry.getValue();
+
+			if (folderId > 0) {
 				topLevelFoldersList.add(
 					new UADContainerEntity<>(
 						_dlFolderLocalService.fetchDLFolder(folderId), count));
-			});
+			}
+		}
 
 		return topLevelFoldersList;
 	}

@@ -54,6 +54,28 @@ public class HierarchicalDLFolderUtil {
 		return topLevelFolders;
 	}
 
+	public static long getTopLevelFolderId(
+		DLFileEntry dlFileEntry, long parentFolderId) throws PortalException {
+
+		return getTopLevelFolderId(
+			dlFileEntry.getFolder(), parentFolderId);
+	}
+
+	public static long getTopLevelFolderId(
+			DLFolder dlFolder, long parentFolderId)
+		throws PortalException {
+
+		if ((parentFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) &&
+			!StringUtil.contains(
+				dlFolder.getTreePath(), String.valueOf(parentFolderId), "/")) {
+
+			return 0;
+		}
+
+		return _getTopLevelFolderId(dlFolder, parentFolderId);
+	}
+
+
 	private static void _addTopLevelFolderToMap(
 			DLFileEntry dlFileEntry, long parentFolderId,
 			Map<Long, Integer> topLevelFoldersMap)
