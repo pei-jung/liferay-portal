@@ -17,16 +17,17 @@ package com.liferay.document.library.uad.display;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
-import com.liferay.document.library.uad.util.HierarchicalDLFolderUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.user.associated.data.display.HierarchicalUADDisplay;
-import com.liferay.user.associated.data.display.UADContainerEntity;
 
 import java.io.Serializable;
 
@@ -35,6 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -64,11 +68,10 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 
 		Map<String, Object> fieldValues = new HashMap<>();
 
-		if (object instanceof UADContainerEntity) {
-			UADContainerEntity<DLFolder> uadContainerEntity =
-				(UADContainerEntity<DLFolder>)object;
+		if (object instanceof DLFolderContainer) {
+			DLFolderContainer uadContainerEntity = (DLFolderContainer)object;
 
-			DLFolder dlFolder = uadContainerEntity.getEntity();
+			DLFolder dlFolder = uadContainerEntity.getDlFolder();
 
 			fieldValues = _dlFolderUADDisplay.getFieldValues(
 				dlFolder, fieldNames);
@@ -107,12 +110,12 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 
 	@Override
 	public Class[] getTypeClasses() {
-		return new Class<?>[] {DLFolder.class, DLFileEntry.class};
+		return new Class<?>[] {DLFolderContainer.class, DLFileEntry.class};
 	}
 
 	@Override
 	public String getTypeClassLabel(Class clazz, Locale locale) {
-		if (clazz == DLFolder.class) {
+		if (clazz == DLFolderContainer.class) {
 			return LanguageUtil.get(locale, "folders");
 		}
 
@@ -152,7 +155,7 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
 
-	private List<UADContainerEntity<DLFolder>> _getDLFolders(
+	private List<DLFolderContainer> _getDLFolders(
 		long userId, long[] groupIds, Serializable parentFolderId,
 		String keywords, String orderByField, String orderByType) {
 
@@ -164,10 +167,9 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 			for (DLFolder dlFolder : dlFolders) {
-				topLevelFolders.merge(
-					HierarchicalDLFolderUtil.getTopLevelFolderId(
-						dlFolder, (long)parentFolderId),
-					1, (oldValue, value) -> oldValue + 1);
+				_incrementCount(
+					topLevelFolders,
+					_getTopLevelFolderId(dlFolder, (long)parentFolderId));
 			}
 
 			List<DLFileEntry> dlFileEntries = _dlFileEntryUADDisplay.search(
@@ -175,31 +177,69 @@ public class DLHierarchicalUADDisplay implements HierarchicalUADDisplay {
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 			for (DLFileEntry dlFileEntry : dlFileEntries) {
-				topLevelFolders.merge(
-					HierarchicalDLFolderUtil.getTopLevelFolderId(
-						dlFileEntry, (long)parentFolderId),
-					1, (oldValue, value) -> oldValue + 1);
+				_incrementCount(
+					topLevelFolders,
+					_getTopLevelFolderId(
+						dlFileEntry.getFolder(), (long)parentFolderId));
 			}
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
 		}
 
-		List<UADContainerEntity<DLFolder>> topLevelFoldersList =
-			new ArrayList<>();
+		Set<Map.Entry<Long, Integer>> entrySet = topLevelFolders.entrySet();
 
-		for (Map.Entry<Long, Integer> entry : topLevelFolders.entrySet()) {
-			long folderId = entry.getKey();
-			long count = entry.getValue();
+		Stream<Map.Entry<Long, Integer>> topLevelFoldersEntryStream =
+			entrySet.stream();
 
-			if (folderId > 0) {
-				topLevelFoldersList.add(
-					new UADContainerEntity<>(
-						_dlFolderLocalService.fetchDLFolder(folderId), count));
-			}
+		return topLevelFoldersEntryStream.filter(
+			entry -> Validator.isNotNull(entry.getKey())
+		).map(
+			entry -> new DLFolderContainer(
+				_dlFolderLocalService.fetchDLFolder(entry.getKey()),
+				entry.getValue())
+		).collect(
+			Collectors.toList()
+		);
+	}
+
+	private long _getTopLevelFolderId(DLFolder dlFolder, long parentFolderId)
+		throws PortalException {
+
+		if ((dlFolder.getFolderId() == parentFolderId) ||
+			((parentFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) &&
+			 !StringUtil.contains(
+				 dlFolder.getTreePath(), String.valueOf(parentFolderId),
+				 "/"))) {
+
+			return 0;
 		}
 
-		return topLevelFoldersList;
+		if ((dlFolder.getParentFolderId() ==
+				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) ||
+			(dlFolder.getParentFolderId() == parentFolderId)) {
+
+			return dlFolder.getFolderId();
+		}
+
+		List<Long> ancestorFolderIds = dlFolder.getAncestorFolderIds();
+
+		if (parentFolderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			return ancestorFolderIds.get(ancestorFolderIds.size() - 1);
+		}
+
+		return ancestorFolderIds.get(
+			ancestorFolderIds.indexOf(parentFolderId) - 1);
+	}
+
+	private void _incrementCount(Map<Long, Integer> map, long key) {
+		int currentCount = 0;
+
+		if (map.containsKey(key)) {
+			currentCount = map.get(key);
+		}
+
+		map.put(key, currentCount + 1);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
