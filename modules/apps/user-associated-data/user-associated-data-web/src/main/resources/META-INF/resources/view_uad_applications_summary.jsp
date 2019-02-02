@@ -96,17 +96,7 @@ String statusLabelPending = StringUtil.toUpperCase(LanguageUtil.get(request, "pe
 						<liferay-ui:message key="status-summary" />
 					</h3>
 
-					<div class="autofit-row autofit-row-center">
-						<div class="autofit-col autofit-col-expand">
-							<div class="autofit-section">
-								<strong><liferay-ui:message key="remaining-items" />: </strong><%= viewUADApplicationsSummaryDisplay.getTotalCount() %>
-							</div>
-						</div>
-
-						<div class="autofit-col">
-							<aui:button cssClass="btn-sm" disabled="<%= viewUADApplicationsSummaryDisplay.getTotalCount() > 0 %>" href="<%= backURL.toString() %>" primary="true" value="complete-step" />
-						</div>
-					</div>
+					<strong><liferay-ui:message key="remaining-items" />: </strong><%= viewUADApplicationsSummaryDisplay.getTotalCount() %>
 				</div>
 
 				<div class="sheet-section">
