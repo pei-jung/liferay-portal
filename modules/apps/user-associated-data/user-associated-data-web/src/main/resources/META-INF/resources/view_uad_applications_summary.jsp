@@ -88,7 +88,7 @@ String statusLabelPending = StringUtil.toUpperCase(LanguageUtil.get(request, "pe
 		<div class="col-lg-8">
 			<div class="sheet sheet-lg">
 				<div class="sheet-header">
-					<h2 class="sheet-title"><liferay-ui:message key="application-data-review" /></h2>
+					<h2 class="sheet-title"><liferay-ui:message key="review-data" /></h2>
 				</div>
 
 				<div class="sheet-section">
