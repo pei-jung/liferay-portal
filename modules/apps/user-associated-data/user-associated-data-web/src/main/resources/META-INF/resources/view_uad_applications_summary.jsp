@@ -39,80 +39,129 @@ String statusLabelPending = StringUtil.toUpperCase(LanguageUtil.get(request, "pe
 %>
 
 <div class="container-fluid container-fluid-max-xl container-form-lg">
-	<div class="sheet sheet-lg">
-		<div class="sheet-header">
-			<h2 class="sheet-title"><liferay-ui:message key="application-data-review" /></h2>
-		</div>
+	<div class="row">
+		<div class="col-lg-3">
+			<div class="panel-group">
+				<div class="panel panel-secondary">
+					<div class="collapse-icon collapse-icon-middle panel-header" data-target="#<portlet:namespace />applicationPanelBody" data-toggle="collapse">
+						<span class="panel-title">
 
-		<div class="sheet-section">
-			<h3 class="sheet-subtitle">
-				<liferay-ui:message key="status-summary" />
-			</h3>
+							<%
+							String applicationPanelTitle = StringUtil.toUpperCase(LanguageUtil.get(request, "applications"), locale);
 
-			<div class="autofit-row autofit-row-center">
-				<div class="autofit-col autofit-col-expand">
-					<div class="autofit-section">
-						<strong><liferay-ui:message key="remaining-items" />: </strong><%= viewUADApplicationsSummaryDisplay.getTotalCount() %>
+							applicationPanelTitle = StringUtil.appendParentheticalSuffix(applicationPanelTitle, viewUADApplicationsSummaryDisplay.getTotalCount());
+							%>
+
+							<%= applicationPanelTitle %>
+						</span>
+
+						<aui:icon cssClass="collapse-icon-closed" image="angle-right" markupView="lexicon" />
+
+						<aui:icon cssClass="collapse-icon-open" image="angle-down" markupView="lexicon" />
 					</div>
-				</div>
 
-				<div class="autofit-col">
-					<aui:button cssClass="btn-sm" disabled="<%= viewUADApplicationsSummaryDisplay.getTotalCount() > 0 %>" href="<%= backURL.toString() %>" primary="true" value="complete-step" />
+					<div class="collapse panel-collapse show" id="<portlet:namespace />applicationPanelBody">
+						<div class="panel-body">
+
+							<%
+							List<UADApplicationSummaryDisplay> uadApplicationSummaryDisplays = uadApplicationsSummaryDisplaySearchContainer.getResults();
+
+							for (UADApplicationSummaryDisplay uadApplicationSummaryDisplay : uadApplicationSummaryDisplays) {
+								String applicationName = UADLanguageUtil.getApplicationName(uadApplicationSummaryDisplay.getApplicationKey(), locale);
+							%>
+
+								<clay:radio
+									label="<%= StringUtil.appendParentheticalSuffix(applicationName, uadApplicationSummaryDisplay.getCount()) %>"
+									name="applications"
+								/>
+
+							<%
+							}
+							%>
+
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="sheet-section">
-			<h3 class="sheet-subtitle"><liferay-ui:message key="applications" /></h3>
+		<div class="col-lg-8">
+			<div class="sheet sheet-lg">
+				<div class="sheet-header">
+					<h2 class="sheet-title"><liferay-ui:message key="application-data-review" /></h2>
+				</div>
 
-			<clay:management-toolbar
-				displayContext="<%= uadApplicationsSummaryManagementToolbarDisplayContext %>"
-			/>
+				<div class="sheet-section">
+					<h3 class="sheet-subtitle">
+						<liferay-ui:message key="status-summary" />
+					</h3>
 
-			<liferay-ui:search-container
-				searchContainer="<%= uadApplicationsSummaryDisplaySearchContainer %>"
-			>
-				<liferay-ui:search-container-row
-					className="com.liferay.user.associated.data.web.internal.display.UADApplicationSummaryDisplay"
-					escapedModel="<%= true %>"
-					keyProperty="key"
-					modelVar="uadApplicationSummaryDisplay"
-				>
-					<liferay-ui:search-container-column-text
-						cssClass="table-cell-expand table-list-title"
-						href="<%= uadApplicationSummaryDisplay.getViewURL() %>"
-						name="name"
-						value="<%= UADLanguageUtil.getApplicationName(uadApplicationSummaryDisplay.getApplicationKey(), locale) %>"
+					<div class="autofit-row autofit-row-center">
+						<div class="autofit-col autofit-col-expand">
+							<div class="autofit-section">
+								<strong><liferay-ui:message key="remaining-items" />: </strong><%= viewUADApplicationsSummaryDisplay.getTotalCount() %>
+							</div>
+						</div>
+
+						<div class="autofit-col">
+							<aui:button cssClass="btn-sm" disabled="<%= viewUADApplicationsSummaryDisplay.getTotalCount() > 0 %>" href="<%= backURL.toString() %>" primary="true" value="complete-step" />
+						</div>
+					</div>
+				</div>
+
+				<div class="sheet-section">
+					<h3 class="sheet-subtitle"><liferay-ui:message key="applications" /></h3>
+
+					<clay:management-toolbar
+						displayContext="<%= uadApplicationsSummaryManagementToolbarDisplayContext %>"
 					/>
 
-					<liferay-ui:search-container-column-text
-						cssClass="table-cell-expand"
-						href="<%= uadApplicationSummaryDisplay.getViewURL() %>"
-						name="items"
-						property="count"
-					/>
-
-					<liferay-ui:search-container-column-text
-						cssClass="table-cell-expand"
-						name="status"
+					<liferay-ui:search-container
+						searchContainer="<%= uadApplicationsSummaryDisplaySearchContainer %>"
 					>
-						<clay:label
-							label="<%= uadApplicationSummaryDisplay.hasItems() ? statusLabelPending : statusLabelDone %>"
-							style='<%= uadApplicationSummaryDisplay.hasItems() ? "warning" : "success" %>'
+						<liferay-ui:search-container-row
+							className="com.liferay.user.associated.data.web.internal.display.UADApplicationSummaryDisplay"
+							escapedModel="<%= true %>"
+							keyProperty="key"
+							modelVar="uadApplicationSummaryDisplay"
+						>
+							<liferay-ui:search-container-column-text
+								cssClass="table-cell-expand table-list-title"
+								href="<%= uadApplicationSummaryDisplay.getViewURL() %>"
+								name="name"
+								value="<%= UADLanguageUtil.getApplicationName(uadApplicationSummaryDisplay.getApplicationKey(), locale) %>"
+							/>
+
+							<liferay-ui:search-container-column-text
+								cssClass="table-cell-expand"
+								href="<%= uadApplicationSummaryDisplay.getViewURL() %>"
+								name="items"
+								property="count"
+							/>
+
+							<liferay-ui:search-container-column-text
+								cssClass="table-cell-expand"
+								name="status"
+							>
+								<clay:label
+									label="<%= uadApplicationSummaryDisplay.hasItems() ? statusLabelPending : statusLabelDone %>"
+									style='<%= uadApplicationSummaryDisplay.hasItems() ? "warning" : "success" %>'
+								/>
+							</liferay-ui:search-container-column-text>
+
+							<liferay-ui:search-container-column-jsp
+								cssClass="entry-action-column"
+								path="/applications_summary_action.jsp"
+							/>
+						</liferay-ui:search-container-row>
+
+						<liferay-ui:search-iterator
+							markupView="lexicon"
+							searchResultCssClass="show-quick-actions-on-hover table table-autofit"
 						/>
-					</liferay-ui:search-container-column-text>
-
-					<liferay-ui:search-container-column-jsp
-						cssClass="entry-action-column"
-						path="/applications_summary_action.jsp"
-					/>
-				</liferay-ui:search-container-row>
-
-				<liferay-ui:search-iterator
-					markupView="lexicon"
-					searchResultCssClass="show-quick-actions-on-hover table table-autofit"
-				/>
-			</liferay-ui:search-container>
+					</liferay-ui:search-container>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
