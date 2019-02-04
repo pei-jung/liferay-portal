@@ -63,11 +63,11 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + UserAssociatedDataPortletKeys.USER_ASSOCIATED_DATA,
-		"mvc.command.name=/view_uad_entities"
+		"mvc.command.name=/review_uad_data"
 	},
 	service = MVCRenderCommand.class
 )
-public class ViewUADEntitiesMVCRenderCommand implements MVCRenderCommand {
+public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 
 	@Override
 	public String render(
@@ -120,7 +120,7 @@ public class ViewUADEntitiesMVCRenderCommand implements MVCRenderCommand {
 			throw new PortletException(pe);
 		}
 
-		return "/view_uad_entities.jsp";
+		return "/review_uad_data.jsp";
 	}
 
 	private <T> UADEntity<T> _constructUADEntity(
