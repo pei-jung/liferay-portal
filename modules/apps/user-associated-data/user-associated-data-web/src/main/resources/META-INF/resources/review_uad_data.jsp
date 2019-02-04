@@ -23,6 +23,8 @@ SearchContainer<UADApplicationSummaryDisplay> uadApplicationsSummaryDisplaySearc
 
 UADApplicationsSummaryManagementToolbarDisplayContext uadApplicationsSummaryManagementToolbarDisplayContext = new UADApplicationsSummaryManagementToolbarDisplayContext(liferayPortletRequest, liferayPortletResponse, request, uadApplicationsSummaryDisplaySearchContainer);
 
+ViewUADEntitiesDisplay viewUADEntitiesDisplay = (ViewUADEntitiesDisplay)request.getAttribute(UADWebKeys.VIEW_UAD_ENTITIES_DISPLAY);
+
 portletDisplay.setShowBackIcon(true);
 
 PortletURL backURL = renderResponse.createRenderURL();
@@ -37,6 +39,20 @@ renderResponse.setTitle(StringBundler.concat(selectedUser.getFullName(), " - ", 
 String statusLabelDone = StringUtil.toUpperCase(LanguageUtil.get(request, "done"), locale);
 String statusLabelPending = StringUtil.toUpperCase(LanguageUtil.get(request, "pending"), locale);
 %>
+
+<clay:navigation-bar
+	navigationItems='<%=
+		new JSPNavigationItemList(pageContext) {
+			{
+				add(
+					navigationItem -> {
+						navigationItem.setActive(true);
+						navigationItem.setHref(StringPool.BLANK);
+						navigationItem.setLabel(LanguageUtil.get(request, "review-data"));
+					});
+			}
+		} %>'
+/>
 
 <div class="container-fluid container-fluid-max-xl container-form-lg">
 	<div class="row">
@@ -71,8 +87,50 @@ String statusLabelPending = StringUtil.toUpperCase(LanguageUtil.get(request, "pe
 							%>
 
 								<clay:radio
+									checked="<%= Objects.equals(uadApplicationSummaryDisplay.getApplicationKey(), viewUADEntitiesDisplay.getApplicationKey()) %>"
 									label="<%= StringUtil.appendParentheticalSuffix(applicationName, uadApplicationSummaryDisplay.getCount()) %>"
 									name="applications"
+								/>
+
+							<%
+							}
+							%>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="panel-group">
+				<div class="panel panel-secondary">
+					<div class="collapse-icon collapse-icon-middle panel-header" data-target="#<portlet:namespace />entitiesTypePanelBody" data-toggle="collapse">
+						<span class="panel-title">
+
+							<%
+								String applicationName = UADLanguageUtil.getApplicationName(viewUADEntitiesDisplay.getApplicationKey(), locale);
+							%>
+
+							<%= StringUtil.toUpperCase(applicationName, locale) %>
+						</span>
+
+						<aui:icon cssClass="collapse-icon-closed" image="angle-right" markupView="lexicon" />
+
+						<aui:icon cssClass="collapse-icon-open" image="angle-down" markupView="lexicon" />
+					</div>
+
+					<div class="collapse panel-collapse show" id="<portlet:namespace />entitiesTypePanelBody">
+						<div class="panel-body">
+
+							<%
+							List<String> entitiesTypeNames = viewUADEntitiesDisplay.getTypeNames();
+
+							for (String typeName : entitiesTypeNames) {
+							%>
+
+								<clay:radio
+									checked="<%= typeName.equals(viewUADEntitiesDisplay.getTypeName()) %>"
+									label="<%= typeName %>"
+									name="entities"
 								/>
 
 							<%
@@ -100,56 +158,9 @@ String statusLabelPending = StringUtil.toUpperCase(LanguageUtil.get(request, "pe
 				</div>
 
 				<div class="sheet-section">
-					<h3 class="sheet-subtitle"><liferay-ui:message key="applications" /></h3>
+					<h3 class="sheet-subtitle"><liferay-ui:message key="view-data" /></h3>
 
-					<clay:management-toolbar
-						displayContext="<%= uadApplicationsSummaryManagementToolbarDisplayContext %>"
-					/>
-
-					<liferay-ui:search-container
-						searchContainer="<%= uadApplicationsSummaryDisplaySearchContainer %>"
-					>
-						<liferay-ui:search-container-row
-							className="com.liferay.user.associated.data.web.internal.display.UADApplicationSummaryDisplay"
-							escapedModel="<%= true %>"
-							keyProperty="key"
-							modelVar="uadApplicationSummaryDisplay"
-						>
-							<liferay-ui:search-container-column-text
-								cssClass="table-cell-expand table-list-title"
-								href="<%= uadApplicationSummaryDisplay.getViewURL() %>"
-								name="name"
-								value="<%= UADLanguageUtil.getApplicationName(uadApplicationSummaryDisplay.getApplicationKey(), locale) %>"
-							/>
-
-							<liferay-ui:search-container-column-text
-								cssClass="table-cell-expand"
-								href="<%= uadApplicationSummaryDisplay.getViewURL() %>"
-								name="items"
-								property="count"
-							/>
-
-							<liferay-ui:search-container-column-text
-								cssClass="table-cell-expand"
-								name="status"
-							>
-								<clay:label
-									label="<%= uadApplicationSummaryDisplay.hasItems() ? statusLabelPending : statusLabelDone %>"
-									style='<%= uadApplicationSummaryDisplay.hasItems() ? "warning" : "success" %>'
-								/>
-							</liferay-ui:search-container-column-text>
-
-							<liferay-ui:search-container-column-jsp
-								cssClass="entry-action-column"
-								path="/applications_summary_action.jsp"
-							/>
-						</liferay-ui:search-container-row>
-
-						<liferay-ui:search-iterator
-							markupView="lexicon"
-							searchResultCssClass="show-quick-actions-on-hover table table-autofit"
-						/>
-					</liferay-ui:search-container>
+					<liferay-util:include page="/view_uad_entities.jsp" servletContext="<%= application %>" />
 				</div>
 			</div>
 		</div>

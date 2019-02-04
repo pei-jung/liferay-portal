@@ -40,6 +40,10 @@ public class ViewUADEntitiesDisplay {
 		return _typeName;
 	}
 
+	public List<String> getTypeNames() {
+		return _typeNames;
+	}
+
 	public String getUADRegistryKey() {
 		return _uadRegistryKey;
 	}
@@ -60,6 +64,10 @@ public class ViewUADEntitiesDisplay {
 		_typeName = typeName;
 	}
 
+	public void setTypeNames(List<String> typeNames) {
+		_typeNames = typeNames;
+	}
+
 	public void setUADRegistryKey(String uadRegistryKey) {
 		_uadRegistryKey = uadRegistryKey;
 	}
@@ -68,6 +76,7 @@ public class ViewUADEntitiesDisplay {
 	private List<NavigationItem> _navigationItems;
 	private SearchContainer<UADEntity> _searchContainer;
 	private String _typeName;
+	private List<String> _typeNames;
 	private String _uadRegistryKey;
 
 }

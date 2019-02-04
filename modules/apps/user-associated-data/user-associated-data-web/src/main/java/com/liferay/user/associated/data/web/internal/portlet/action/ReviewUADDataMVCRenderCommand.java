@@ -34,7 +34,9 @@ import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
 import com.liferay.user.associated.data.display.UADDisplay;
 import com.liferay.user.associated.data.web.internal.constants.UADWebKeys;
+import com.liferay.user.associated.data.web.internal.display.UADApplicationSummaryDisplay;
 import com.liferay.user.associated.data.web.internal.display.UADEntity;
+import com.liferay.user.associated.data.web.internal.display.ViewUADApplicationsSummaryDisplay;
 import com.liferay.user.associated.data.web.internal.display.ViewUADEntitiesDisplay;
 import com.liferay.user.associated.data.web.internal.registry.UADRegistry;
 import com.liferay.user.associated.data.web.internal.util.SafeDisplayValueUtil;
@@ -53,6 +55,7 @@ import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import com.liferay.user.associated.data.web.internal.util.UADApplicationSummaryHelper;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -78,10 +81,36 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 			User selectedUser = _selectedUserHelper.getSelectedUser(
 				renderRequest);
 
+			ViewUADApplicationsSummaryDisplay
+				viewUADApplicationsSummaryDisplay =
+					new ViewUADApplicationsSummaryDisplay();
+
+			viewUADApplicationsSummaryDisplay.setSearchContainer(
+				_uadApplicationSummaryHelper.createSearchContainer(
+					renderRequest, renderResponse, selectedUser.getUserId()));
+			viewUADApplicationsSummaryDisplay.setTotalCount(
+				_uadApplicationSummaryHelper.getTotalReviewableUADEntitiesCount(
+					selectedUser.getUserId()));
+
+			renderRequest.setAttribute(
+				UADWebKeys.VIEW_UAD_APPLICATIONS_SUMMARY_DISPLAY,
+				viewUADApplicationsSummaryDisplay);
+
+			SearchContainer searchContainer =
+				viewUADApplicationsSummaryDisplay.getSearchContainer();
+
+			List<UADApplicationSummaryDisplay> uadApplicationSummaryDisplays =
+				searchContainer.getResults();
+
+			UADApplicationSummaryDisplay uadApplicationSummaryDisplay =
+				uadApplicationSummaryDisplays.get(0);
+
 			String applicationKey = ParamUtil.getString(
-				renderRequest, "applicationKey");
+				renderRequest, "applicationKey", uadApplicationSummaryDisplay.getApplicationKey());
 			String uadRegistryKey = ParamUtil.getString(
-				renderRequest, "uadRegistryKey");
+				renderRequest, "uadRegistryKey",
+				_uadApplicationSummaryHelper.getDefaultUADRegistryKey(
+					uadApplicationSummaryDisplay.getApplicationKey()));
 
 			ViewUADEntitiesDisplay viewUADEntitiesDisplay =
 				new ViewUADEntitiesDisplay();
@@ -108,6 +137,8 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 			viewUADEntitiesDisplay.setTypeName(
 				uadDisplay.getTypeName(
 					LocaleThreadLocal.getThemeDisplayLocale()));
+			viewUADEntitiesDisplay.setTypeNames(
+				_getEntitiesTypeNames(applicationKey));
 
 			viewUADEntitiesDisplay.setUADRegistryKey(uadRegistryKey);
 
@@ -145,6 +176,21 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 		}
 
 		return uadEntity;
+	}
+
+	private List<String> _getEntitiesTypeNames(String applicationKey) {
+		Collection<UADDisplay> applicationUADDisplays =
+			_uadRegistry.getApplicationUADDisplays(applicationKey);
+
+		List<String> typeNames = new ArrayList<>();
+
+		Locale locale = LocaleThreadLocal.getThemeDisplayLocale();
+
+		for (UADDisplay uadDisplay : applicationUADDisplays) {
+			typeNames.add(uadDisplay.getTypeName(locale));
+		}
+
+		return typeNames;
 	}
 
 	private List<NavigationItem> _getNavigationItems(
@@ -276,5 +322,8 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 
 	@Reference
 	private UADRegistry _uadRegistry;
+
+	@Reference
+	private UADApplicationSummaryHelper _uadApplicationSummaryHelper;
 
 }
