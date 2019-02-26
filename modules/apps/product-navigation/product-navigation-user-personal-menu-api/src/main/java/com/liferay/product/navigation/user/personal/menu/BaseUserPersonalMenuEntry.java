@@ -53,7 +53,7 @@ public abstract class BaseUserPersonalMenuEntry
 	}
 
 	@Override
-	public String getPortletURL(HttpServletRequest request) throws Exception {
+	public String getPortletURL(HttpServletRequest request) {
 		if (Validator.isNull(getPortletId())) {
 			return null;
 		}
