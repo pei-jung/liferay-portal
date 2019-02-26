@@ -43,7 +43,7 @@ public class SignOutUserPersonalMenuEntry implements UserPersonalMenuEntry {
 		return LanguageUtil.get(locale, "sign-out");
 	}
 
-	public String getPortletURL(HttpServletRequest request) throws Exception {
+	public String getPortletURL(HttpServletRequest request) {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
