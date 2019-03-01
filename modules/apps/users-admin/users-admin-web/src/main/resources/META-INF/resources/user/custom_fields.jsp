@@ -18,7 +18,30 @@
 
 <%
 User selUser = (User)request.getAttribute(UsersAdminWebKeys.SELECTED_USER);
+
+PortletURL portletURL = PortletProviderUtil.getPortletURL(request, ExpandoColumn.class.getName(), PortletProvider.Action.MANAGE);
+
+portletURL.setParameter("modelResource", User.class.getName());
+portletURL.setParameter("redirect", themeDisplay.getURLCurrent());
 %>
+
+<div class="autofit-padded-no-gutters autofit-row">
+	<span class="autofit-col autofit-col-expand">
+		<h4 class="sheet-tertiary-title">
+			<liferay-ui:message key="custom-fields" />
+		</h4>
+	</span>
+	<span class="autofit-col">
+		<liferay-ui:icon
+			cssClass="modify-link"
+			label="<%= true %>"
+			linkCssClass="btn btn-secondary btn-sm"
+			message="manage"
+			method="get"
+			url="<%= portletURL.toString() %>"
+		/>
+	</span>
+</div>
 
 <liferay-expando:custom-attribute-list
 	className="com.liferay.portal.kernel.model.User"
