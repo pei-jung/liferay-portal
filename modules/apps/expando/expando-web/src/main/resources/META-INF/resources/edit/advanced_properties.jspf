@@ -79,8 +79,10 @@
 	</aui:field-wrapper>
 
 	<c:if test="<%= propertyDisplayType.equals(ExpandoColumnConstants.PROPERTY_DISPLAY_TYPE_TEXT_BOX) || propertyDisplayType.equals(ExpandoColumnConstants.PROPERTY_DISPLAY_TYPE_TEXT_FIELD) %>">
-		<aui:field-wrapper>
-			<aui:input cssClass="lfr-input-text short-input-text" label="width" name="Property--width--" type="text" value="<%= propertyWidth %>" />
+		<aui:field-wrapper cssClass="form-group lfr-input-text-container">
+			<aui:input label="width" name="Property--width--" type="text" value="<%= propertyWidth %>">
+				<aui:validator name="digits" />
+			</aui:input>
 
 			<div class="form-text">
 				<liferay-ui:message key="custom-field-width-help" />
@@ -89,8 +91,12 @@
 	</c:if>
 
 	<c:if test="<%= propertyDisplayType.equals(ExpandoColumnConstants.PROPERTY_DISPLAY_TYPE_TEXT_BOX) %>">
-		<aui:field-wrapper>
-			<aui:input cssClass="lfr-input-text short-input-text" label="height" name="Property--height--" type="text" value="<%= propertyHeight %>" />
+		<aui:field-wrapper cssClass="form-group lfr-input-text-container">
+			<aui:input label="height" min="1" name="Property--height--" type="text" value="<%= propertyHeight %>">
+				<aui:validator name="digits" />
+
+				<aui:validator name="min">1</aui:validator>
+			</aui:input>
 
 			<div class="form-text">
 				<liferay-ui:message key="custom-field-height-help" />

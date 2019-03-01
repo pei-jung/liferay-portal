@@ -53,6 +53,8 @@ public class ExpandoColumnConstants {
 
 	public static final String DATE_LABEL = "custom.field.java.util.Date";
 
+	public static final int DEFAULT_PROPERTY_HEIGHT = 150;
+
 	public static final int DOUBLE = 5;
 
 	public static final int DOUBLE_ARRAY = 6;
