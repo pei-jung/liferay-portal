@@ -105,7 +105,7 @@ renderResponse.setTitle(modelResourceName + ": " + ((column == null) ? LanguageU
 		</h2>
 
 		<liferay-frontend:fieldset-group>
-			<aui:field-wrapper>
+			<aui:field-wrapper cssClass="form-group lfr-input-text-container">
 				<c:choose>
 					<c:when test="<%= column != null %>">
 						<aui:input name="name" type="hidden" value="<%= column.getName() %>" />
@@ -113,7 +113,7 @@ renderResponse.setTitle(modelResourceName + ": " + ((column == null) ? LanguageU
 						<aui:input label="field-name" name="key" type="resource" value="<%= column.getName() %>" />
 					</c:when>
 					<c:otherwise>
-						<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" label="field-name" name="name" />
+						<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" label="field-name" name="name" required="<%= true %>" />
 					</c:otherwise>
 				</c:choose>
 
