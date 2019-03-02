@@ -17,11 +17,13 @@
 <%@ include file="/user_personal_menu/init.jsp" %>
 
 <%
+String componentId = (String)request.getAttribute("liferay-product-navigation:user-personal-menu:componentId");
 List<DropdownItem> dropdownItems = (List<DropdownItem>)request.getAttribute("liferay-product-navigation:user-personal-menu:dropdownItems");
 String label = (String)request.getAttribute("liferay-product-navigation:user-personal-menu:label");
 %>
 
 <clay:dropdown-menu
+	componentId="<%= componentId %>"
 	dropdownItems="<%= dropdownItems %>"
 	label="<%= label %>"
 	showToggleIcon="<%= false %>"

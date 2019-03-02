@@ -26,6 +26,10 @@ import javax.servlet.jsp.PageContext;
  */
 public class ProductNavigationUserPersonalMenuTag extends IncludeTag {
 
+	public void setComponentId(String componentId) {
+		_componentId = componentId;
+	}
+
 	public void setLabel(String label) {
 		_label = label;
 	}
@@ -41,6 +45,7 @@ public class ProductNavigationUserPersonalMenuTag extends IncludeTag {
 	protected void cleanUp() {
 		super.cleanUp();
 
+		_componentId = null;
 		_label = null;
 	}
 
@@ -51,6 +56,10 @@ public class ProductNavigationUserPersonalMenuTag extends IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
+		request.setAttribute(
+			"liferay-product-navigation:user-personal-menu:componentId",
+			_componentId);
+
 		UserPersonalMenuDropdownItemsProvider
 			userPersonalMenuDropdownItemsProvider =
 				new UserPersonalMenuDropdownItemsProvider(request);
@@ -65,6 +74,7 @@ public class ProductNavigationUserPersonalMenuTag extends IncludeTag {
 
 	private static final String _PAGE = "/user_personal_menu/page.jsp";
 
+	private String _componentId;
 	private String _label;
 
 }
