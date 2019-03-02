@@ -16,12 +16,17 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+PortletURL portletURL = renderResponse.createRenderURL();
+
+portletURL.setParameter("mvcPath", "/user_personal_menu.jsp");
+portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+%>
+
 <c:choose>
 	<c:when test="<%= themeDisplay.isSignedIn() %>">
 		<span class="user-avatar-link">
-			<liferay-util:buffer
-				var="userAvatar"
-			>
+			<div data-url="<%= portletURL.toString() %>" id="<portlet:namespace />userAvatar">
 				<c:if test="<%= themeDisplay.isImpersonated() %>">
 					<aui:icon image="asterisk" markupView="lexicon" />
 				</c:if>
@@ -34,11 +39,7 @@
 				<span class="user-full-name">
 					<%= HtmlUtil.escape(user.getFullName()) %>
 				</span>
-			</liferay-util:buffer>
-
-			<liferay-product-navigation:user-personal-menu
-				label="<%= userAvatar %>"
-			/>
+			</div>
 
 			<%
 			int notificationsCount = GetterUtil.getInteger(request.getAttribute(ProductNavigationUserPersonalBarWebKeys.NOTIFICATIONS_COUNT));
@@ -71,3 +72,21 @@
 		</span>
 	</c:otherwise>
 </c:choose>
+
+<aui:script>
+	var userAvatar = $('#<portlet:namespace />userAvatar');
+
+	userAvatar.one(
+		'click',
+		function(event) {
+			$.ajax({
+				url: userAvatar.data('url'),
+				dataType: 'html',
+				type: 'get',
+				success: function(data) {
+					userAvatar.html(data);
+				}
+			})
+		}
+	);
+</aui:script>
