@@ -98,13 +98,14 @@
 			<aui:field-wrapper cssClass="localized-input-wrapper" label="starting-value">
 				<liferay-ui:input-localized
 					name="defaultValueLocalized"
+					type='<%= propertyDisplayType.equals(ExpandoColumnConstants.PROPERTY_DISPLAY_TYPE_TEXT_BOX) ? "textarea" : "input" %>'
 					xml="<%= xml %>"
 				/>
 			</aui:field-wrapper>
 		</div>
 
 		<div class="<%= (type != ExpandoColumnConstants.STRING_LOCALIZED) ? "" : "hide" %>" id="<portlet:namespace />textField">
-			<aui:input label="starting-value" name="defaultValue" type="text" value="<%= (defaultValue != null) ? String.valueOf(defaultValue) : StringPool.BLANK %>" />
+			<aui:input label="starting-value" name="defaultValue" type='<%= propertyDisplayType.equals(ExpandoColumnConstants.PROPERTY_DISPLAY_TYPE_TEXT_BOX) ? "textarea" : "text" %>' value="<%= (defaultValue != null) ? String.valueOf(defaultValue) : StringPool.BLANK %>" />
 		</div>
 
 		<c:if test="<%= ((type == ExpandoColumnConstants.STRING) || (type == ExpandoColumnConstants.STRING_LOCALIZED)) && (column == null) %>">

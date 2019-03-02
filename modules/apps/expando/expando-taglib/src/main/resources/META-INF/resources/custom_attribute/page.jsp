@@ -670,6 +670,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 								cssClass="lfr-input-text"
 								id="<%= randomNamespace + name %>"
 								name='<%= "ExpandoAttribute--" + name + "--" %>'
+								type='<%= (propertyHeight > 0) ? "textarea" : "input" %>'
 								xml="<%= xml %>"
 							/>
 						</c:when>
