@@ -42,6 +42,17 @@
 	Liferay.componentReady('<%= renderResponse.getNamespace() + "userPersonalMenu" %>').then(
 		function(userPersonalMenu) {
 			userPersonalMenu.expanded = true;
+
+			var dropdownContainer = userPersonalMenu.components.dropdown.components.portal;
+
+			dropdownContainer.on(
+				'rendered',
+				function(event) {
+					if (userPersonalMenu.expanded) {
+						$(dropdownContainer.refs.menu).addClass('user-personal-menu');
+					}
+				}
+			);
 		}
 	);
 </aui:script>
