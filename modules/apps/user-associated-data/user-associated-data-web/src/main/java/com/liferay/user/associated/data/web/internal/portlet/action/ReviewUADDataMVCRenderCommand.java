@@ -14,44 +14,35 @@
 
 package com.liferay.user.associated.data.web.internal.portlet.action;
 
-import com.liferay.portal.kernel.dao.search.DisplayTerms;
-import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
-import com.liferay.portal.kernel.dao.search.RowChecker;
-import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
 import com.liferay.user.associated.data.display.UADDisplay;
 import com.liferay.user.associated.data.web.internal.constants.UADConstants;
 import com.liferay.user.associated.data.web.internal.constants.UADWebKeys;
 import com.liferay.user.associated.data.web.internal.display.UADApplicationSummaryDisplay;
-import com.liferay.user.associated.data.web.internal.display.UADEntity;
+import com.liferay.user.associated.data.web.internal.display.UADHierarchyDisplay;
+import com.liferay.user.associated.data.web.internal.display.UADInfoPanelDisplay;
 import com.liferay.user.associated.data.web.internal.display.ViewUADEntitiesDisplay;
 import com.liferay.user.associated.data.web.internal.registry.UADRegistry;
-import com.liferay.user.associated.data.web.internal.util.SafeDisplayValueUtil;
+import com.liferay.user.associated.data.web.internal.search.UADHierarchyResultRowSplitter;
 import com.liferay.user.associated.data.web.internal.util.SelectedUserHelper;
 import com.liferay.user.associated.data.web.internal.util.UADApplicationSummaryHelper;
+import com.liferay.user.associated.data.web.internal.util.UADReviewDataHelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -96,12 +87,12 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 				uadApplicationSummaryDisplays.get(0);
 
 			for (UADApplicationSummaryDisplay
-					currentUadApplicationSummaryDisplay :
+					currentUADApplicationSummaryDisplay :
 						uadApplicationSummaryDisplays) {
 
-				if (currentUadApplicationSummaryDisplay.getCount() > 0) {
+				if (currentUADApplicationSummaryDisplay.getCount() > 0) {
 					uadApplicationSummaryDisplay =
-						currentUadApplicationSummaryDisplay;
+						currentUADApplicationSummaryDisplay;
 
 					break;
 				}
@@ -115,15 +106,6 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 					uadApplicationSummaryDisplay.getApplicationKey();
 			}
 
-			String uadRegistryKey = ParamUtil.getString(
-				renderRequest, "uadRegistryKey");
-
-			if (Validator.isNull(uadRegistryKey)) {
-				uadRegistryKey =
-					_uadApplicationSummaryHelper.getDefaultUADRegistryKey(
-						applicationKey);
-			}
-
 			ViewUADEntitiesDisplay viewUADEntitiesDisplay =
 				new ViewUADEntitiesDisplay();
 
@@ -135,24 +117,68 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 			PortletURL currentURL = PortletURLUtil.getCurrent(
 				renderRequest, renderResponse);
 
-			UADDisplay uadDisplay = _uadRegistry.getUADDisplay(uadRegistryKey);
+			UADInfoPanelDisplay uadInfoPanelDisplay = new UADInfoPanelDisplay();
 
-			viewUADEntitiesDisplay.setSearchContainer(
-				_getSearchContainer(
-					renderRequest, currentURL, uadDisplay, selectedUser,
-					groupIds, liferayPortletResponse));
-			viewUADEntitiesDisplay.setTypeName(
-				uadDisplay.getTypeName(
-					LocaleThreadLocal.getThemeDisplayLocale()));
+			UADHierarchyDisplay uadHierarchyDisplay =
+				_uadRegistry.getUADHierarchyDisplay(applicationKey);
 
-			viewUADEntitiesDisplay.setUADRegistryKey(uadRegistryKey);
+			if (uadHierarchyDisplay != null) {
+				UADDisplay<?>[] uadDisplays =
+					uadHierarchyDisplay.getUADDisplays();
+
+				uadInfoPanelDisplay.setUADDisplay(uadDisplays[0]);
+
+				uadInfoPanelDisplay.setHierarchyView(true);
+
+				viewUADEntitiesDisplay.setHierarchy(true);
+				viewUADEntitiesDisplay.setResultRowSplitter(
+					new UADHierarchyResultRowSplitter(
+						LocaleThreadLocal.getThemeDisplayLocale(),
+						uadHierarchyDisplay.getUADDisplays()));
+				viewUADEntitiesDisplay.setTypeClasses(
+					uadHierarchyDisplay.getTypeClasses());
+
+				Class<?> parentContainerClass =
+					uadHierarchyDisplay.getFirstContainerTypeClass();
+
+				viewUADEntitiesDisplay.setSearchContainer(
+					_uadReviewDataHelper.getSearchContainer(
+						renderRequest, liferayPortletResponse, applicationKey,
+						currentURL, groupIds, parentContainerClass, 0L,
+						selectedUser, uadHierarchyDisplay));
+			}
+			else {
+				String uadRegistryKey = ParamUtil.getString(
+					renderRequest, "uadRegistryKey");
+
+				if (Validator.isNull(uadRegistryKey)) {
+					uadRegistryKey =
+						_uadApplicationSummaryHelper.getDefaultUADRegistryKey(
+							applicationKey);
+				}
+
+				UADDisplay uadDisplay = _uadRegistry.getUADDisplay(
+					uadRegistryKey);
+
+				uadInfoPanelDisplay.setUADDisplay(uadDisplay);
+
+				viewUADEntitiesDisplay.setSearchContainer(
+					_uadReviewDataHelper.getSearchContainer(
+						renderRequest, liferayPortletResponse, currentURL,
+						groupIds, selectedUser, uadDisplay));
+				viewUADEntitiesDisplay.setTypeName(
+					uadDisplay.getTypeName(
+						LocaleThreadLocal.getThemeDisplayLocale()));
+				viewUADEntitiesDisplay.setTypeClasses(
+					new Class<?>[] {uadDisplay.getTypeClass()});
+
+				viewUADEntitiesDisplay.setUADRegistryKey(uadRegistryKey);
+			}
 
 			renderRequest.setAttribute(
 				UADWebKeys.APPLICATION_UAD_DISPLAYS,
 				_uadRegistry.getApplicationUADDisplays(applicationKey));
 			renderRequest.setAttribute(UADWebKeys.GROUP_IDS, groupIds);
-			renderRequest.setAttribute(
-				UADWebKeys.INFO_PANEL_UAD_DISPLAY, uadDisplay);
 			renderRequest.setAttribute(
 				UADWebKeys.TOTAL_UAD_ENTITIES_COUNT,
 				_uadApplicationSummaryHelper.getTotalReviewableUADEntitiesCount(
@@ -161,6 +187,8 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 				UADWebKeys.UAD_APPLICATION_SUMMARY_DISPLAY_LIST,
 				uadApplicationSummaryDisplays);
 			renderRequest.setAttribute(
+				UADWebKeys.UAD_INFO_PANEL_DISPLAY, uadInfoPanelDisplay);
+			renderRequest.setAttribute(
 				UADWebKeys.VIEW_UAD_ENTITIES_DISPLAY, viewUADEntitiesDisplay);
 		}
 		catch (Exception e) {
@@ -168,30 +196,6 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 		}
 
 		return "/review_uad_data.jsp";
-	}
-
-	private <T> UADEntity<T> _constructUADEntity(
-			T entity, UADDisplay<T> uadDisplay,
-			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse)
-		throws Exception {
-
-		UADEntity<T> uadEntity = new UADEntity(
-			entity, uadDisplay.getPrimaryKey(entity),
-			uadDisplay.getEditURL(
-				entity, liferayPortletRequest, liferayPortletResponse));
-
-		Map<String, Object> columnFieldValues = uadDisplay.getFieldValues(
-			entity, uadDisplay.getColumnFieldNames());
-
-		for (String columnFieldName : uadDisplay.getColumnFieldNames()) {
-			uadEntity.addColumnEntry(
-				columnFieldName,
-				SafeDisplayValueUtil.get(
-					columnFieldValues.get(columnFieldName)));
-		}
-
-		return uadEntity;
 	}
 
 	private long[] _getGroupIds(User user, String scope) {
@@ -228,100 +232,6 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 		return null;
 	}
 
-	private SearchContainer<UADEntity> _getSearchContainer(
-			RenderRequest renderRequest, PortletURL currentURL,
-			UADDisplay uadDisplay, User selectedUser, long[] groupIds,
-			LiferayPortletResponse liferayPortletResponse)
-		throws Exception {
-
-		LiferayPortletRequest liferayPortletRequest =
-			_portal.getLiferayPortletRequest(renderRequest);
-
-		DisplayTerms displayTerms = new DisplayTerms(renderRequest);
-
-		int cur = ParamUtil.getInteger(
-			renderRequest, SearchContainer.DEFAULT_CUR_PARAM,
-			SearchContainer.DEFAULT_CUR);
-
-		SearchContainer<UADEntity> searchContainer = new SearchContainer<>(
-			renderRequest, displayTerms, displayTerms,
-			SearchContainer.DEFAULT_CUR_PARAM, cur,
-			SearchContainer.DEFAULT_DELTA, currentURL, null,
-			"no-entities-remain-of-this-type", null);
-
-		searchContainer.setId("UADEntities");
-
-		String orderByCol = ParamUtil.getString(
-			renderRequest, SearchContainer.DEFAULT_ORDER_BY_COL_PARAM);
-
-		if (!ArrayUtil.contains(
-				uadDisplay.getSortingFieldNames(), orderByCol)) {
-
-			orderByCol = "modifiedDate";
-		}
-
-		searchContainer.setOrderByCol(orderByCol);
-
-		String orderByType = ParamUtil.getString(
-			renderRequest, SearchContainer.DEFAULT_ORDER_BY_TYPE_PARAM, "asc");
-
-		searchContainer.setOrderByType(orderByType);
-
-		Map<String, String> orderableHeaders = new LinkedHashMap<>();
-
-		for (String orderByColumn : uadDisplay.getSortingFieldNames()) {
-			orderableHeaders.put(
-				TextFormatter.format(orderByColumn, TextFormatter.K),
-				orderByColumn);
-		}
-
-		searchContainer.setOrderableHeaders(orderableHeaders);
-
-		try {
-			List entities = uadDisplay.search(
-				selectedUser.getUserId(), groupIds, displayTerms.getKeywords(),
-				searchContainer.getOrderByCol(),
-				searchContainer.getOrderByType(), searchContainer.getStart(),
-				searchContainer.getEnd());
-
-			List<UADEntity> uadEntities = new ArrayList<>();
-
-			for (Object entity : entities) {
-				uadEntities.add(
-					_constructUADEntity(
-						entity, uadDisplay, liferayPortletRequest,
-						liferayPortletResponse));
-			}
-
-			searchContainer.setResults(uadEntities);
-
-			searchContainer.setTotal(
-				(int)uadDisplay.searchCount(
-					selectedUser.getUserId(), groupIds,
-					displayTerms.getKeywords()));
-		}
-		catch (Exception e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(e, e);
-			}
-
-			searchContainer.setResults(Collections.emptyList());
-			searchContainer.setTotal(0);
-		}
-
-		RowChecker rowChecker = new EmptyOnClickRowChecker(
-			liferayPortletResponse);
-
-		Class<?> uadClass = uadDisplay.getTypeClass();
-
-		rowChecker.setRememberCheckBoxStateURLRegex(
-			"uadRegistryKey=" + uadClass.getName());
-
-		searchContainer.setRowChecker(rowChecker);
-
-		return searchContainer;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		ReviewUADDataMVCRenderCommand.class);
 
@@ -339,5 +249,8 @@ public class ReviewUADDataMVCRenderCommand implements MVCRenderCommand {
 
 	@Reference
 	private UADRegistry _uadRegistry;
+
+	@Reference
+	private UADReviewDataHelper _uadReviewDataHelper;
 
 }

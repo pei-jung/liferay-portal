@@ -16,12 +16,18 @@ package com.liferay.message.boards.uad.display;
 
 import com.liferay.message.boards.constants.MBPortletKeys;
 import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.model.MBThread;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.user.associated.data.display.UADDisplay;
 
 import java.io.Serializable;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -71,8 +77,43 @@ public class MBMessageUADDisplay extends BaseMBMessageUADDisplay {
 	}
 
 	@Override
+	public Map<String, Object> getFieldValues(
+		MBMessage mbMessage, String[] fieldNames, Locale locale) {
+
+		Map<String, Object> fieldValues = super.getFieldValues(
+			mbMessage, fieldNames, locale);
+
+		List<String> fieldNamesList = Arrays.asList(fieldNames);
+
+		if (fieldNamesList.contains("content")) {
+			fieldValues.put("content", mbMessage.getBody());
+		}
+
+		return fieldValues;
+	}
+
+	@Override
+	public String getName(MBMessage mbMessage, Locale locale) {
+		return mbMessage.getSubject();
+	}
+
+	@Override
+	public Class<?> getParentContainerClass() {
+		return MBThread.class;
+	}
+
+	@Override
 	public Serializable getParentContainerId(MBMessage mbMessage) {
 		return mbMessage.getThreadId();
+	}
+
+	@Override
+	public boolean isUserOwned(MBMessage mbMessage, long userId) {
+		if (mbMessage.getUserId() == userId) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Reference
