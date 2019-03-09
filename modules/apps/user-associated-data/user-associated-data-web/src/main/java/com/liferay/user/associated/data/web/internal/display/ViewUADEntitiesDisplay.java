@@ -14,7 +14,12 @@
 
 package com.liferay.user.associated.data.web.internal.display;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.search.ResultRowSplitter;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Drew Brokke
@@ -25,8 +30,16 @@ public class ViewUADEntitiesDisplay {
 		return _applicationKey;
 	}
 
+	public ResultRowSplitter getResultRowSplitter() {
+		return _resultRowSplitter;
+	}
+
 	public SearchContainer<UADEntity> getSearchContainer() {
 		return _searchContainer;
+	}
+
+	public Class<?>[] getTypeClasses() {
+		return _typeClasses;
 	}
 
 	public String getTypeName() {
@@ -37,12 +50,48 @@ public class ViewUADEntitiesDisplay {
 		return _uadRegistryKey;
 	}
 
+	public String getUserOwnedEntityPKsString() {
+		if (_searchContainer == null) {
+			return StringPool.BLANK;
+		}
+
+		List<String> userOwnedPKs = new ArrayList<>();
+
+		List<UADEntity> entities = _searchContainer.getResults();
+
+		for (UADEntity entity : entities) {
+			if (entity.isUserOwned()) {
+				userOwnedPKs.add(String.valueOf(entity.getPrimaryKey()));
+			}
+		}
+
+		return String.join(
+			StringPool.COMMA,
+			userOwnedPKs.toArray(new String[userOwnedPKs.size()]));
+	}
+
+	public boolean isHierarchy() {
+		return _hierarchy;
+	}
+
 	public void setApplicationKey(String applicationKey) {
 		_applicationKey = applicationKey;
 	}
 
+	public void setHierarchy(boolean hierarchy) {
+		_hierarchy = hierarchy;
+	}
+
+	public void setResultRowSplitter(ResultRowSplitter resultRowSplitter) {
+		_resultRowSplitter = resultRowSplitter;
+	}
+
 	public void setSearchContainer(SearchContainer<UADEntity> searchContainer) {
 		_searchContainer = searchContainer;
+	}
+
+	public void setTypeClasses(Class<?>[] typeClasses) {
+		_typeClasses = typeClasses;
 	}
 
 	public void setTypeName(String typeName) {
@@ -54,8 +103,11 @@ public class ViewUADEntitiesDisplay {
 	}
 
 	private String _applicationKey;
+	private boolean _hierarchy;
+	private ResultRowSplitter _resultRowSplitter;
 	private SearchContainer<UADEntity> _searchContainer;
+	private Class<?>[] _typeClasses;
 	private String _typeName;
-	private String _uadRegistryKey;
+	private String _uadRegistryKey = "";
 
 }

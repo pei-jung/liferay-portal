@@ -28,9 +28,13 @@ import com.liferay.user.associated.data.display.UADDisplay;
 import com.liferay.user.associated.data.web.internal.registry.UADRegistry;
 import com.liferay.user.associated.data.web.internal.util.SelectedUserHelper;
 import com.liferay.user.associated.data.web.internal.util.UADApplicationSummaryHelper;
+import com.liferay.user.associated.data.web.internal.util.UADReviewDataHelper;
+
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -44,12 +48,12 @@ import org.osgi.service.component.annotations.Reference;
 public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
 
 	protected void doMultipleAction(
-			ActionRequest actionRequest,
-			UnsafeConsumer<Object, Exception> unsafeConsumer)
+			List<Serializable> primaryKeys,
+			UnsafeConsumer<Serializable, Exception> unsafeConsumer)
 		throws Exception {
 
-		for (Object entity : getEntities(actionRequest)) {
-			unsafeConsumer.accept(entity);
+		for (Serializable primaryKey : primaryKeys) {
+			unsafeConsumer.accept(primaryKey);
 		}
 	}
 
@@ -130,29 +134,34 @@ public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
 			actionRequest, actionResponse, liferayPortletURL.toString());
 	}
 
-	protected List<Object> getEntities(ActionRequest actionRequest)
-		throws Exception {
+	protected List<String> getEntityTypes(ActionRequest actionRequest) {
+		List<String> entityTypes = new ArrayList<>();
 
-		List<Object> entities = new ArrayList<>();
+		Map<String, String[]> parameterMap = actionRequest.getParameterMap();
 
-		String[] primaryKeys = ParamUtil.getStringValues(
-			actionRequest, "primaryKeys");
-
-		for (String primaryKey : primaryKeys) {
-			UADDisplay uadDisplay = getUADDisplay(actionRequest);
-
-			entities.add(uadDisplay.get(primaryKey));
+		for (String key : parameterMap.keySet()) {
+			if (key.startsWith("uadRegistryKey__")) {
+				entityTypes.add(key.replace("uadRegistryKey__", ""));
+			}
 		}
 
-		return entities;
+		return entityTypes;
 	}
 
-	protected Object getEntity(ActionRequest actionRequest) throws Exception {
-		UADDisplay uadDisplay = getUADDisplay(actionRequest);
+	protected String[] getPrimaryKeys(
+		ActionRequest actionRequest, String entityType) {
 
-		String primaryKey = ParamUtil.getString(actionRequest, "primaryKey");
+		String primaryKey = ParamUtil.getString(
+			actionRequest, "primaryKey__" + entityType);
 
-		return uadDisplay.get(primaryKey);
+		if (Validator.isNotNull(primaryKey)) {
+			return new String[] {primaryKey};
+		}
+
+		String[] primaryKeys = ParamUtil.getStringValues(
+			actionRequest, "primaryKeys__" + entityType);
+
+		return primaryKeys;
 	}
 
 	protected User getSelectedUser(ActionRequest actionRequest)
@@ -167,16 +176,25 @@ public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
 		return selectedUserHelper.getSelectedUserId(actionRequest);
 	}
 
-	protected UADAnonymizer getUADAnonymizer(ActionRequest actionRequest) {
-		return uadRegistry.getUADAnonymizer(getUADRegistryKey(actionRequest));
+	protected UADAnonymizer getUADAnonymizer(
+		ActionRequest actionRequest, String entityType) {
+
+		return uadRegistry.getUADAnonymizer(
+			getUADRegistryKey(actionRequest, entityType));
 	}
 
-	protected UADDisplay getUADDisplay(ActionRequest actionRequest) {
-		return uadRegistry.getUADDisplay(getUADRegistryKey(actionRequest));
+	protected UADDisplay getUADDisplay(
+		ActionRequest actionRequest, String entityType) {
+
+		return uadRegistry.getUADDisplay(
+			getUADRegistryKey(actionRequest, entityType));
 	}
 
-	protected String getUADRegistryKey(ActionRequest actionRequest) {
-		return ParamUtil.getString(actionRequest, "uadRegistryKey");
+	protected String getUADRegistryKey(
+		ActionRequest actionRequest, String entityType) {
+
+		return ParamUtil.getString(
+			actionRequest, "uadRegistryKey__" + entityType);
 	}
 
 	@Reference
@@ -187,5 +205,8 @@ public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	protected UADRegistry uadRegistry;
+
+	@Reference
+	protected UADReviewDataHelper uadReviewDataHelper;
 
 }

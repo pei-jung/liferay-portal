@@ -17,6 +17,7 @@ package com.liferay.document.library.uad.display;
 import com.liferay.document.library.constants.DLPortletKeys;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -27,6 +28,7 @@ import java.io.Serializable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -71,10 +73,10 @@ public class DLFileEntryUADDisplay extends BaseDLFileEntryUADDisplay {
 
 	@Override
 	public Map<String, Object> getFieldValues(
-		DLFileEntry dlFileEntry, String[] fieldNames) {
+		DLFileEntry dlFileEntry, String[] fieldNames, Locale locale) {
 
 		Map<String, Object> fieldValues = super.getFieldValues(
-			dlFileEntry, fieldNames);
+			dlFileEntry, fieldNames, locale);
 
 		List<String> fieldNamesList = Arrays.asList(fieldNames);
 
@@ -86,7 +88,7 @@ public class DLFileEntryUADDisplay extends BaseDLFileEntryUADDisplay {
 			String typeName = "--";
 
 			if (dlFileEntryType != null) {
-				typeName = dlFileEntryType.getName();
+				typeName = dlFileEntryType.getName(locale);
 			}
 
 			fieldValues.put("type", typeName);
@@ -96,8 +98,27 @@ public class DLFileEntryUADDisplay extends BaseDLFileEntryUADDisplay {
 	}
 
 	@Override
+	public String getName(DLFileEntry dlFileEntry, Locale locale) {
+		return dlFileEntry.getFileName();
+	}
+
+	@Override
+	public Class<?> getParentContainerClass() {
+		return DLFolder.class;
+	}
+
+	@Override
 	public Serializable getParentContainerId(DLFileEntry dlFileEntry) {
 		return dlFileEntry.getFolderId();
+	}
+
+	@Override
+	public boolean isUserOwned(DLFileEntry dlFileEntry, long userId) {
+		if (dlFileEntry.getUserId() == userId) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Reference

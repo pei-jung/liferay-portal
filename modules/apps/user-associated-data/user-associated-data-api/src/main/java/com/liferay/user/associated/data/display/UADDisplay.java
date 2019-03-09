@@ -99,10 +99,20 @@ public interface UADDisplay<T> extends UADComponent<T> {
 	 *
 	 * @param t the entity of type {@code T}
 	 * @param fieldNames the field names for getting values from the entity
+	 * @param locale the current locale
 	 * @return a map of values to be displayed in the UI
 	 * @review
 	 */
-	public Map<String, Object> getFieldValues(T t, String[] fieldNames);
+	public Map<String, Object> getFieldValues(
+		T t, String[] fieldNames, Locale locale);
+
+	public default String getName(T t, Locale locale) {
+		throw new UnsupportedOperationException();
+	}
+
+	public default Class<?> getParentContainerClass() {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Returns the primary key of the parent container for the given
@@ -202,6 +212,10 @@ public interface UADDisplay<T> extends UADComponent<T> {
 	 */
 	public default boolean isSiteScoped() {
 		return false;
+	}
+
+	public default boolean isUserOwned(T t, long userId) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
