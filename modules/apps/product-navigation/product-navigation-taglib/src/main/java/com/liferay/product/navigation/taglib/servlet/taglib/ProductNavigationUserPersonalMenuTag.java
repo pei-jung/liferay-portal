@@ -15,7 +15,6 @@
 package com.liferay.product.navigation.taglib.servlet.taglib;
 
 import com.liferay.product.navigation.taglib.internal.servlet.ServletContextUtil;
-import com.liferay.product.navigation.taglib.util.UserPersonalMenuDropdownItemsProvider;
 import com.liferay.taglib.util.IncludeTag;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,14 +50,6 @@ public class ProductNavigationUserPersonalMenuTag extends IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		UserPersonalMenuDropdownItemsProvider
-			userPersonalMenuDropdownItemsProvider =
-				new UserPersonalMenuDropdownItemsProvider(request);
-
-		request.setAttribute(
-			"liferay-product-navigation:user-personal-menu:dropdownItems",
-			userPersonalMenuDropdownItemsProvider.getDropdownItems());
-
 		request.setAttribute(
 			"liferay-product-navigation:user-personal-menu:label", _label);
 	}

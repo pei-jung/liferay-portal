@@ -16,6 +16,5 @@
 
 <%@ include file="/init.jsp" %>
 
-<%@ taglib uri="http://liferay.com/tld/clay" prefix="clay" %>
-
-<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem" %>
+<%@ page import="com.liferay.portal.kernel.json.JSONArray" %><%@
+page import="com.liferay.product.navigation.taglib.util.UserPersonalMenuDropdownItemsProviderUtil" %>

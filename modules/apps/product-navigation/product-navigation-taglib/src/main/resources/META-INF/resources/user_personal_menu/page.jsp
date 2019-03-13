@@ -17,12 +17,39 @@
 <%@ include file="/user_personal_menu/init.jsp" %>
 
 <%
-List<DropdownItem> dropdownItems = (List<DropdownItem>)request.getAttribute("liferay-product-navigation:user-personal-menu:dropdownItems");
 String label = (String)request.getAttribute("liferay-product-navigation:user-personal-menu:label");
+
+JSONArray dropdownItems =
+	UserPersonalMenuDropdownItemsProviderUtil.getDropdownItemsJSONArray(request);
 %>
 
-<clay:dropdown-menu
-	dropdownItems="<%= dropdownItems %>"
-	label="<%= label %>"
-	showToggleIcon="<%= false %>"
-/>
+<div id="user_personal_menu_dropdown">
+	<div id="user_personal_menu_dropdown_toggle">
+		<%= label %>
+	</div>
+
+	<div id="clay_dropdown_portal"></div>
+</div>
+
+<aui:script require="clay-dropdown/src/ClayDropdown as ClayDropdown,metal-dom/src/dom as dom">
+	var toggle = document.getElementById('user_personal_menu_dropdown_toggle');
+
+	if (toggle) {
+		dom.once(
+			toggle,
+			'click',
+			function(event) {
+				window.dropdown = new ClayDropdown.default(
+					{
+						element: '#user_personal_menu_dropdown_toggle',
+						items: <%= dropdownItems.toJSONString() %>,
+						label: toggle.innerHTML,
+						showToggleIcon: false,
+						spritemap: '<%= themeDisplay.getPathThemeImages().concat("/clay/icons.svg") %>'
+					},
+					'#user_personal_menu_dropdown'
+				);
+			}
+		);
+	}
+</aui:script>
