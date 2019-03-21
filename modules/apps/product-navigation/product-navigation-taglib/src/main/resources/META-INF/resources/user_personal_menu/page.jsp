@@ -48,6 +48,10 @@ JSONArray dropdownItems =
 								if (<%= expanded %>) {
 									this.expanded = true;
 								}
+
+								var menu = this.refs.dropdown.refs.portal.refs.menu;
+
+								menu.style.maxHeight = 'fit-content';
 							}
 						},
 						items: <%= dropdownItems.toJSONString() %>,
