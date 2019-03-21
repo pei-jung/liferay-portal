@@ -37,6 +37,7 @@
 			</liferay-util:buffer>
 
 			<liferay-product-navigation:user-personal-menu
+				expanded="<%= true %>"
 				label="<%= userAvatar %>"
 			/>
 

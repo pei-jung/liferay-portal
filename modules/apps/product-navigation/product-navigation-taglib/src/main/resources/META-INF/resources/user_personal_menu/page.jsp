@@ -17,6 +17,7 @@
 <%@ include file="/user_personal_menu/init.jsp" %>
 
 <%
+boolean expanded = (boolean)request.getAttribute("liferay-product-navigation:user-personal-menu:expanded");
 String label = (String)request.getAttribute("liferay-product-navigation:user-personal-menu:label");
 
 JSONArray dropdownItems =
@@ -42,6 +43,13 @@ JSONArray dropdownItems =
 				window.dropdown = new ClayDropdown.default(
 					{
 						element: '#user_personal_menu_dropdown_toggle',
+						events: {
+							'willAttach': function(event) {
+								if (<%= expanded %>) {
+									this.expanded = true;
+								}
+							}
+						},
 						items: <%= dropdownItems.toJSONString() %>,
 						label: toggle.innerHTML,
 						showToggleIcon: false,
