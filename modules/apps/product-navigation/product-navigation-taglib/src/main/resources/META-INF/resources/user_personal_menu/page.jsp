@@ -24,8 +24,14 @@ JSONArray dropdownItems =
 	UserPersonalMenuDropdownItemsProviderUtil.getDropdownItemsJSONArray(request);
 %>
 
+<style type="text/css">
+	#user_personal_menu_dropdown .btn:focus {
+		box-shadow: none;
+	}
+</style>
+
 <div id="user_personal_menu_dropdown">
-	<div id="user_personal_menu_dropdown_toggle">
+	<div id="user_personal_menu_dropdown_toggle" style="cursor: pointer;">
 		<%= label %>
 	</div>
 
