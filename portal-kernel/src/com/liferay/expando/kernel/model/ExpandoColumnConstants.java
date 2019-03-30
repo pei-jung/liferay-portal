@@ -188,13 +188,20 @@ public class ExpandoColumnConstants {
 	public static final String UNKNOWN_LABEL = "Unknown";
 
 	public static final String getDataType(int type) {
-		if ((type == DOUBLE) || (type == FLOAT)) {
+		if ((type == DOUBLE) || (type == DOUBLE_ARRAY) || (type == FLOAT) ||
+			(type == FLOAT_ARRAY)) {
+
 			return DATA_TYPE_DECIMAL;
 		}
-		else if ((type == LONG) || (type == INTEGER) || (type == SHORT)) {
+		else if ((type == INTEGER) || (type == INTEGER_ARRAY) ||
+				 (type == LONG) || (type == LONG_ARRAY) || (type == SHORT) ||
+				 (type == SHORT_ARRAY)) {
+
 			return DATA_TYPE_INTEGER;
 		}
-		else if ((type == STRING) || (type == STRING_LOCALIZED)) {
+		else if ((type == STRING) || (type == STRING_ARRAY) ||
+				 (type == STRING_LOCALIZED)) {
+
 			return DATA_TYPE_TEXT;
 		}
 
@@ -236,13 +243,17 @@ public class ExpandoColumnConstants {
 	}
 
 	public static final String getPrecisionType(int type) {
-		if ((type == DOUBLE) || (type == LONG)) {
+		if ((type == DOUBLE) || (type == DOUBLE_ARRAY) || (type == LONG) ||
+			(type == LONG_ARRAY)) {
+
 			return PRECISION_64_BIT;
 		}
-		else if ((type == FLOAT) || (type == INTEGER)) {
+		else if ((type == FLOAT) || (type == FLOAT_ARRAY) ||
+				 (type == INTEGER) || (type == INTEGER_ARRAY)) {
+
 			return PRECISION_32_BIT;
 		}
-		else if (type == SHORT) {
+		else if ((type == SHORT) || (type == SHORT_ARRAY)) {
 			return PRECISION_16_BIT;
 		}
 
