@@ -71,26 +71,58 @@
 	</c:when>
 	<c:when test="<%= type == ExpandoColumnConstants.DATE_ARRAY %>">
 	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.DOUBLE_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((double[])defaultValue, StringPool.NEW_LINE) %>" />
-	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.FLOAT_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((float[])defaultValue, StringPool.NEW_LINE) %>" />
-	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.INTEGER_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((int[])defaultValue, StringPool.NEW_LINE) %>" />
-	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.LONG_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((long[])defaultValue, StringPool.NEW_LINE) %>" />
-	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.NUMBER_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((Number[])defaultValue, StringPool.NEW_LINE) %>" />
-	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.SHORT_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((short[])defaultValue, StringPool.NEW_LINE) %>" />
-	</c:when>
-	<c:when test="<%= type == ExpandoColumnConstants.STRING_ARRAY %>">
-		<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((String[])defaultValue, StringPool.NEW_LINE) %>" />
+	<c:when test="<%= (type == ExpandoColumnConstants.DOUBLE_ARRAY) || (type == ExpandoColumnConstants.FLOAT_ARRAY) || (type == ExpandoColumnConstants.INTEGER_ARRAY) || (type == ExpandoColumnConstants.LONG_ARRAY) || (type == ExpandoColumnConstants.SHORT_ARRAY) || (type == ExpandoColumnConstants.STRING_ARRAY) %>">
+		<aui:select disabled="<%= expandoColumn != null %>" id="dataArrayType" label="data-type" name="dataType" onChange="setDataArrayType()" value="<%= ExpandoColumnConstants.getDataType(type) %>">
+			<aui:option label="<%= ExpandoColumnConstants.DATA_TYPE_TEXT %>" />
+			<aui:option label="<%= ExpandoColumnConstants.DATA_TYPE_DECIMAL %>" />
+			<aui:option label="<%= ExpandoColumnConstants.DATA_TYPE_INTEGER %>" />
+		</aui:select>
+
+		<%
+		if (type == ExpandoColumnConstants.DOUBLE_ARRAY) {
+		%>
+
+			<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((double[])defaultValue, StringPool.NEW_LINE) %>" />
+
+		<%
+		}
+		else if (type == ExpandoColumnConstants.FLOAT_ARRAY) {
+		%>
+
+			<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((float[])defaultValue, StringPool.NEW_LINE) %>" />
+
+		<%
+		}
+		else if (type == ExpandoColumnConstants.LONG_ARRAY) {
+		%>
+
+			<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((long[])defaultValue, StringPool.NEW_LINE) %>" />
+
+		<%
+		}
+		else if (type == ExpandoColumnConstants.INTEGER_ARRAY) {
+		%>
+
+			<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((int[])defaultValue, StringPool.NEW_LINE) %>" />
+
+		<%
+		}
+		else if (type == ExpandoColumnConstants.SHORT_ARRAY) {
+		%>
+
+			<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((short[])defaultValue, StringPool.NEW_LINE) %>" />
+
+		<%
+		}
+		else if (type == ExpandoColumnConstants.STRING_ARRAY) {
+		%>
+
+			<aui:input cssClass="lfr-textarea-container" helpMessage="enter-one-value-per-line" label="values" name="defaultValue" required="<%= true %>" type="textarea" value="<%= StringUtil.merge((String[])defaultValue, StringPool.NEW_LINE) %>" />
+
+		<%
+		}
+		%>
+
 	</c:when>
 	<c:otherwise>
 		<aui:select disabled="<%= expandoColumn != null %>" label="data-type" name="dataType" onChange="setDataType()" value="<%= ExpandoColumnConstants.getDataType(type) %>">
@@ -172,6 +204,33 @@
 				updateElement(["searchableAsKeywordOrText", "textFieldLocalizedCheckbox", "widthAdvancedSetting"], "hide");
 
 				setPrecisionType(currentSelectedDataType);
+			}
+		}
+	}
+
+	function setDataArrayType() {
+		var dataArrayTypeElement = document.getElementById('<portlet:namespace />dataArrayType');
+
+		var currentSelectedDataArrayType = dataArrayTypeElement.value;
+
+		if (currentSelectedDataArrayType) {
+			if (currentSelectedDataArrayType == '<%= ExpandoColumnConstants.DATA_TYPE_TEXT %>') {
+				updateElement(["indexTypeSearchableAsKeyword", "indexTypeSearchableAsKeywordToggleSwitch", "precisionTypeSelect"], "disable")
+
+				updateElement(["indexTypeKeyword", "indexTypeText", "searchableKeyWordOrText"], "enable")
+
+				updateElement(["searchableAsKeywordOrText"], "unhide");
+
+				updateElement(["precisionTypeAdvanced", "searchableAsKeyword"], "hide");
+			}
+			else if ((currentSelectedDataArrayType == '<%= ExpandoColumnConstants.DATA_TYPE_DECIMAL %>') || (currentSelectedDataArrayType == '<%= ExpandoColumnConstants.DATA_TYPE_INTEGER %>')) {
+				updateElement(["indexTypeSearchableAsKeyword", "indexTypeSearchableAsKeywordToggleSwitch", "precisionTypeSelect"], "enable")
+
+				updateElement(["indexTypeKeyword", "indexTypeText", "searchableKeyWordOrText"], "disable")
+
+				updateElement(["precisionTypeAdvanced", "searchableAsKeyword"], "unhide");
+
+				updateElement(["searchableAsKeywordOrText"], "hide");
 			}
 		}
 	}
