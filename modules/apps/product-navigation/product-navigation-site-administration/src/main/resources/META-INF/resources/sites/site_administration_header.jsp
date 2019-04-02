@@ -23,60 +23,6 @@ Group group = siteAdministrationPanelCategoryDisplayContext.getGroup();
 PanelCategory panelCategory = siteAdministrationPanelCategoryDisplayContext.getPanelCategory();
 %>
 
-<c:if test="<%= siteAdministrationPanelCategoryDisplayContext.isShowSiteSelector() %>">
-	<div class="icon-sites">
-		<liferay-ui:icon
-			icon="sites"
-			id="manageSitesLink"
-			label="<%= false %>"
-			linkCssClass="icon-monospaced"
-			markupView="lexicon"
-			message="go-to-other-site"
-			url="javascript:;"
-		/>
-	</div>
-
-	<%
-	String eventName = liferayPortletResponse.getNamespace() + "selectSite";
-
-	ItemSelector itemSelector = (ItemSelector)request.getAttribute(SiteAdministrationWebKeys.ITEM_SELECTOR);
-
-	SiteItemSelectorCriterion siteItemSelectorCriterion = new SiteItemSelectorCriterion();
-
-	List<ItemSelectorReturnType> desiredItemSelectorReturnTypes = new ArrayList<ItemSelectorReturnType>();
-
-	desiredItemSelectorReturnTypes.add(new URLItemSelectorReturnType());
-
-	siteItemSelectorCriterion.setDesiredItemSelectorReturnTypes(desiredItemSelectorReturnTypes);
-
-	PortletURL itemSelectorURL = itemSelector.getItemSelectorURL(RequestBackedPortletURLFactoryUtil.create(liferayPortletRequest), eventName, siteItemSelectorCriterion);
-	%>
-
-	<aui:script sandbox="<%= true %>">
-		$('#<portlet:namespace />manageSitesLink').on(
-			'click',
-			function(event) {
-				Liferay.Util.selectEntity(
-					{
-						dialog: {
-							constrain: true,
-							destroyOnHide: true,
-							modal: true
-						},
-						eventName: '<%= eventName %>',
-						id: '<portlet:namespace />selectSite',
-						title: '<liferay-ui:message key="select-site" />',
-						uri: '<%= itemSelectorURL.toString() %>'
-					},
-					function(event) {
-						location.href = event.url;
-					}
-				);
-			}
-		);
-	</aui:script>
-</c:if>
-
 <c:choose>
 	<c:when test="<%= group != null %>">
 		<a aria-controls="<portlet:namespace /><%= AUIUtil.normalizeId(panelCategory.getKey()) %>Collapse" aria-expanded="<%= siteAdministrationPanelCategoryDisplayContext.isCollapsedPanel() %>" class="panel-toggler <%= (group != null) ? "collapse-icon collapse-icon-middle " : StringPool.BLANK %> <%= siteAdministrationPanelCategoryDisplayContext.isCollapsedPanel() ? StringPool.BLANK : "collapsed" %> site-administration-toggler" data-parent="#<portlet:namespace />Accordion" data-qa-id="productMenuSiteAdministrationPanelCategory" data-toggle="collapse" href="#<portlet:namespace /><%= AUIUtil.normalizeId(panelCategory.getKey()) %>Collapse" id="<portlet:namespace /><%= AUIUtil.normalizeId(panelCategory.getKey()) %>Toggler" <%= (group != null) ? "role=\"button\"" : StringPool.BLANK %>>
