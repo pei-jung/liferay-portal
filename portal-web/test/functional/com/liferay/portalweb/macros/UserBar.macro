@@ -55,6 +55,18 @@ definition {
 		}
 	}
 
+	@description = "Navigate to My Workflow Tasks."
+	macro gotoMyWorkflowTasks {
+		if (IsElementNotPresent(locator1 = "USER_AVATAR_DROPDOWN_EXPANDED")) {
+			Click(locator1 = "UserBar#USER_AVATAR_IMAGE");
+
+			AssertClick(locator1 = "UserBar#USER_AVATAR_DROPDOWN_MY_WORKFLOW_TASKS", value1 = "My Workflow Tasks");
+		}
+		else {
+			AssertClick(locator1 = "UserBar#USER_AVATAR_DROPDOWN_MY_WORKFLOW_TASKS", value1 = "My Workflow Tasks");
+		}
+	}
+
 	macro signOut {
 		if (IsElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE")) {
 			Click(locator1 = "UserBar#USER_AVATAR_IMAGE");
