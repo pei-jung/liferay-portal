@@ -1839,11 +1839,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			ddlDataDefinitionName = "To Do",
@@ -1854,11 +1850,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.rejectTaskByActions(
 			ddlDataDefinitionName = "To Do",
@@ -1873,11 +1865,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewRejectedTask(
 			ddlDataDefinitionName = "To Do",

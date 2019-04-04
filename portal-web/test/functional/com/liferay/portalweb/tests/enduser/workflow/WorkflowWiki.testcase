@@ -131,11 +131,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "FrontPage",
@@ -254,11 +250,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "FrontPage",
@@ -326,11 +318,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Wiki Page Title",
@@ -340,11 +328,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.rejectTaskByActions(
 			workflowAssetTitle = "Wiki Page Title",
@@ -354,11 +338,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewRejectedTask(
 			workflowAssetTitle = "Wiki Page Title",

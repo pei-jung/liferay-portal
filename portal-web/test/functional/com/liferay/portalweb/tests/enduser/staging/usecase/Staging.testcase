@@ -872,11 +872,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -892,11 +888,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -964,11 +956,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewAssignedToMyRolesTasksCP(
 			workflowAssetTitle = "Web Content Title",
@@ -1140,11 +1128,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Web Content Title 1",
@@ -1215,11 +1199,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Web Content Title 2",

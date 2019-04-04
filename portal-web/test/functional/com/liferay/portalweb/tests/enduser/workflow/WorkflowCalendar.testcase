@@ -108,11 +108,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Calendar Event Title",
@@ -122,11 +118,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Calendar Event Title",
@@ -165,11 +157,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewTaskAssignedToMyRoles(
 			workflowAssetTitle = "Calendar Event Title",
@@ -194,11 +182,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -223,11 +207,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Calendar Event Title",
@@ -258,11 +238,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -285,11 +261,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Calendar Event Title",
@@ -342,11 +314,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Calendar Event Title",
@@ -356,11 +324,7 @@ definition {
 
 		Navigator.openURL();
 
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoMyWorkflowTasks();
 
 		Workflow.rejectTaskByActions(
 			workflowAssetTitle = "Calendar Event Title",
