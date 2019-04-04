@@ -870,13 +870,7 @@ definition {
 			workflowResourceValue = "Page Revision"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -890,13 +884,7 @@ definition {
 
 		Staging.activateStagingCP(siteName = "Community Site Name");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -962,13 +950,7 @@ definition {
 
 		Staging.submitForPublicationPageRevision();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewAssignedToMyRolesTasksCP(
 			workflowAssetTitle = "Web Content Title",
@@ -1138,13 +1120,7 @@ definition {
 			webContentTitle = "Web Content Title 2"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Web Content Title 1",
@@ -1213,13 +1189,7 @@ definition {
 			AssertElementNotPresent(locator1 = "WCD#WEB_CONTENT_CONTENT");
 		}
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Web Content Title 2",

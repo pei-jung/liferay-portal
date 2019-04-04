@@ -72,13 +72,7 @@ definition {
 			entryTitle = "Blogs Entry Title"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title",
@@ -99,13 +93,7 @@ definition {
 			entryTitle = "Blogs Entry Title"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title",
@@ -166,13 +154,7 @@ definition {
 			entryTitle = "Blogs Entry Title"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title",
@@ -180,13 +162,7 @@ definition {
 			workflowTask = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.rejectTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title",
@@ -194,13 +170,7 @@ definition {
 			workflowTask = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewRejectedTask(
 			workflowAssetTitle = "Blogs Entry Title",

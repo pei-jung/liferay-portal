@@ -72,13 +72,7 @@ definition {
 			commentStatus = "Pending (Review)"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Page Comment Comment",
@@ -94,13 +88,7 @@ definition {
 			commentStatus = "Pending (Review)"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Page Comment Comment",
@@ -188,13 +176,7 @@ definition {
 			commentBody = "Page Comment Comment"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Page Comment Comment",
@@ -214,13 +196,7 @@ definition {
 
 		Button.clickSave();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewTaskAssignedToMeDetails(
 			workflowAssetContent = "EDIT Comment",
@@ -246,13 +222,7 @@ definition {
 			commentStatus = "Pending (Review)"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Page Comment Comment",
@@ -260,13 +230,7 @@ definition {
 			workflowTask = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.rejectTaskByActions(
 			workflowAssetTitle = "Page Comment Comment",
@@ -274,13 +238,7 @@ definition {
 			workflowTask = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewRejectedTask(
 			workflowAssetTitle = "Page Comment Comment",

@@ -64,12 +64,7 @@ definition {
 		User.searchCP(searchTerm = "usersn");
 
 		User.viewNoUsersFoundCP();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "userfn userln",

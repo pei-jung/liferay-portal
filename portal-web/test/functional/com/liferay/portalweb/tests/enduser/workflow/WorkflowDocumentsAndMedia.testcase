@@ -411,13 +411,7 @@ definition {
 
 		Alert.viewSuccessMessage();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "DM Document Title",
@@ -471,13 +465,7 @@ definition {
 
 		DMDocument.viewCategories(categoryNameList = "legal,Other");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "DM Document Title",

@@ -107,13 +107,7 @@ definition {
 
 		DDLRecord.submitForPublication();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			ddlDataDefinitionName = "Data Definition Name",
@@ -145,13 +139,7 @@ definition {
 			fieldName = "Text"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewTaskAssignedToMeDetails(
 			ddlDataDefinitionName = "Data Definition Name",
@@ -232,13 +220,7 @@ definition {
 
 		DDLRecord.submitForPublication();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			ddlDataDefinitionName = "DDL Definition",
@@ -265,13 +247,7 @@ definition {
 			workflowStatus = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.rejectTaskByActions(
 			ddlDataDefinitionName = "DDL Definition",
@@ -280,13 +256,7 @@ definition {
 			workflowTask = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewRejectedTask(
 			ddlDataDefinitionName = "DDL Definition",

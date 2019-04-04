@@ -135,13 +135,7 @@ definition {
 
 		Navigator.openURL();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "WC WebContent Title",
@@ -158,13 +152,7 @@ definition {
 			webContentTitleEdit = "WC WebContent Title Edit"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "WC WebContent Title Edit",

@@ -1837,13 +1837,7 @@ definition {
 
 		User.loginUserPG(password = "test", userEmailAddress = "test@liferay.com");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			ddlDataDefinitionName = "To Do",
@@ -1852,13 +1846,7 @@ definition {
 			workflowTask = "Review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.rejectTaskByActions(
 			ddlDataDefinitionName = "To Do",
@@ -1871,13 +1859,7 @@ definition {
 
 		User.loginUserPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewRejectedTask(
 			ddlDataDefinitionName = "To Do",

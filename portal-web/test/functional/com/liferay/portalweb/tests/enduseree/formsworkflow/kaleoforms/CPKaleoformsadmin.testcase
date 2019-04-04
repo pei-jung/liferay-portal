@@ -946,13 +946,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -971,13 +965,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",
@@ -2201,13 +2189,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -2226,13 +2208,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",
@@ -2355,13 +2331,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -2380,13 +2350,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",
@@ -2509,13 +2473,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -2534,13 +2492,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",
@@ -2664,13 +2616,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -2689,13 +2635,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",
@@ -2818,13 +2758,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -2843,13 +2777,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",
@@ -3198,13 +3126,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewDefaultMyWorkflowTasksCP();
 
@@ -3223,13 +3145,7 @@ definition {
 
 		KaleoFormsAdmin.saveProcessRecord();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Kaleo Forms Process",

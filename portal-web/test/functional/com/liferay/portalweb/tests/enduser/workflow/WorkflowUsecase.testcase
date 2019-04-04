@@ -95,13 +95,7 @@ definition {
 			entryTitle = "Blogs Entry Title - Liferay"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title - Liferay",
@@ -122,13 +116,7 @@ definition {
 			entryTitle = "Blogs Entry Title - Liferay"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title - Liferay",
@@ -180,13 +168,7 @@ definition {
 			entryTitle = "Blogs Entry Title - Site Name"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title - Site Name",
@@ -207,13 +189,7 @@ definition {
 			entryTitle = "Blogs Entry Title - Site Name"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title - Site Name",
@@ -238,13 +214,7 @@ definition {
 			entryTitle = "Blogs Entry Title - Site Name"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewCompletedTask(
 			workflowAssetTitle = "Blogs Entry Title - Liferay",
@@ -304,13 +274,7 @@ definition {
 			entryTitle = "Blogs Entry Title - Liferay"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title - Liferay",
@@ -326,13 +290,7 @@ definition {
 			portlet = "Blogs"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title - Liferay",
@@ -364,13 +322,7 @@ definition {
 			portlet = "Blogs"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewCompletedTask(
 			workflowAssetTitle = "Blogs Entry Title - Liferay",
@@ -460,13 +412,7 @@ definition {
 
 		DDLRecord.submitForPublication();
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			ddlDataDefinitionName = "Data Definition Name",
@@ -493,13 +439,7 @@ definition {
 			workflowStatus = "marketing-review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			ddlDataDefinitionName = "Data Definition Name",
@@ -527,13 +467,7 @@ definition {
 			workflowStatus = "legal-review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			ddlDataDefinitionName = "Data Definition Name",
@@ -560,13 +494,7 @@ definition {
 			workflowStatus = "legal-review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			ddlDataDefinitionName = "Data Definition Name",
@@ -756,13 +684,7 @@ definition {
 			workflowTask = "content-review"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewTaskAssignedToMyRoles(
 			workflowAssetTitle = "WC With Legal Category",
@@ -916,13 +838,7 @@ definition {
 			userScreenName = "usersn"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Wiki Page Title",
@@ -940,13 +856,7 @@ definition {
 			wikiPageUsername = "userfn userln"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Wiki Page Title",
@@ -1102,13 +1012,7 @@ definition {
 
 		Notifications.viewBadgeCount(notificationCount = "0");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.viewTaskAssignedToMeDetails(
 			workflowAssetContent = "Blogs Entry Content",
@@ -1237,13 +1141,7 @@ definition {
 			portlet = "Process Builder"
 		);
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		for (var number : list "1,2,3") {
 			Workflow.viewTaskAssignedToMyRoles(
@@ -1656,13 +1554,7 @@ definition {
 
 		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "WC WebContent Title",
@@ -1681,13 +1573,7 @@ definition {
 
 		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "WC WebContent Title",

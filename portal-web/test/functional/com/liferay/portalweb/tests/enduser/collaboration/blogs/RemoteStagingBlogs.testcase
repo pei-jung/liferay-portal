@@ -147,12 +147,7 @@ definition {
 		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Assign to Me");
 
 		Workflow.confirmWorkflowAction();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.approveTaskByActions(
 			workflowActivityComment = "Process is approved",

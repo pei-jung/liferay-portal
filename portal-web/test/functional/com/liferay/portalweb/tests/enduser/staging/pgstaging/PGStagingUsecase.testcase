@@ -314,13 +314,7 @@ definition {
 
 		User.loginPG(password = "test", userEmailAddress = "usereacr@liferay.com");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Workflow Tasks"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Blogs Entry Title",
