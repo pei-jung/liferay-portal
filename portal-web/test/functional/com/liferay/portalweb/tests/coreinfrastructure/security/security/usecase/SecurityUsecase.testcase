@@ -141,7 +141,7 @@ out.println(PortalUtil.escapeRedirect("/"));
 			userLoginFullName = "userfn userln"
 		);
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		WaitForSPARefresh();
 
@@ -153,7 +153,7 @@ out.println(PortalUtil.escapeRedirect("/"));
 			url = '''${portalURL}/c/portal/update_layout?cmd=add&p_p_col_id=column-1&p_p_col_pos=0&p_p_id=com_liferay_marketplace_store_web_portlet_MarketplacePurchasedPortlet&p_auth=${authToken}&p_l_id=${plid}'''
 		);
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		AssertElementNotPresent(
 			locator1 = "Portlet#BODY",

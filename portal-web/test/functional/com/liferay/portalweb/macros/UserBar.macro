@@ -1,20 +1,4 @@
 definition {
-	@description = "Navigate to My Profile."
-	macro gotoProfile {
-		Navigator.openURL();
-
-		if (IsElementNotPresent(locator1 = "ProductMenu#PANEL_EXPANDED", key_category = "${key_category}")) {
-			if (IsElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE")) {
-				Click(locator1 = "UserBar#USER_AVATAR_IMAGE");
-
-				AssertClick(locator1 = "UserBar#USER_PROFILE", value1 = "My Profile");
-			}
-		}
-		else {
-			AssertClick(locator1 = "UserBar#USER_PROFILE", value1 = "My Profile");
-		}
-	}
-
 	@description = "Navigate to a dropdown item in the User Personal Bar."
 	macro gotoDropdownItem {
 		if (IsElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE")) {

@@ -281,7 +281,7 @@ definition {
 
 		User.firstLoginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		ProductMenu.gotoPortlet(
 			category = "Site Builder",

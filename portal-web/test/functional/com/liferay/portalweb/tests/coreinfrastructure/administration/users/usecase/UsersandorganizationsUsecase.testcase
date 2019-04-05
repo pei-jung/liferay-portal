@@ -117,7 +117,7 @@ definition {
 
 		User.loginUserPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		AssertTextEquals(locator1 = "Home#USER_NAME_HEADER", value1 = "<userfn> userln");
 	}

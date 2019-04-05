@@ -638,7 +638,7 @@ definition {
 			userLoginFullName = "userfn userln"
 		);
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		Portlet.addPG(portletName = "Calendar");
 

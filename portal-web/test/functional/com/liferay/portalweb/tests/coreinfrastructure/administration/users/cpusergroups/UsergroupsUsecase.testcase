@@ -523,7 +523,7 @@ definition {
 			userGroupSite = "Community Site"
 		);
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		var key_pageName = "Welcome";
 
@@ -549,7 +549,7 @@ definition {
 
 		User.loginUserPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		var key_pageName = "Welcome";
 
@@ -594,7 +594,7 @@ definition {
 
 		User.loginUserPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoProfile();
+		UserBar.gotoDropdownItem(dropdownItem = "My Profile");
 
 		var key_pageName = "Welcome";
 
