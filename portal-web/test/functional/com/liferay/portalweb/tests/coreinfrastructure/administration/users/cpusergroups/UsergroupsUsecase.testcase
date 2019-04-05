@@ -181,7 +181,7 @@ definition {
 
 		User.loginUserPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		AssertTextEquals(locator1 = "Home#PAGE_1", value1 = "Test User Group Page 1");
 
@@ -533,7 +533,7 @@ definition {
 
 		AssertTextPresent(locator1 = "Home#PAGE_3", value1 = "Wiki");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		AssertTextPresent(locator1 = "Home#PAGE_1", value1 = "Welcome");
 
@@ -563,7 +563,7 @@ definition {
 			AssertTextNotEquals(locator1 = "Home#PAGE_3", value1 = "Wiki");
 		}
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		AssertTextPresent(locator1 = "Home#PAGE_1", value1 = "Welcome");
 
@@ -604,7 +604,7 @@ definition {
 
 		AssertTextPresent(locator1 = "Home#PAGE_3", value1 = "Wiki");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		AssertTextPresent(locator1 = "Home#PAGE_1", value1 = "Welcome");
 

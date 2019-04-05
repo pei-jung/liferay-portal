@@ -818,7 +818,7 @@ definition {
 
 		User.firstLoginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		AssertLocation(value1 = "${portalURL}/user/usersn");
 

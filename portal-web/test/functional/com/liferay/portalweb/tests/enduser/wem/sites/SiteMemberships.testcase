@@ -1126,7 +1126,7 @@ definition {
 			userScreenName = "usersn"
 		);
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.joinViaMySitesPG(membershipType = "Restricted", siteName = "Site Name 1");
 

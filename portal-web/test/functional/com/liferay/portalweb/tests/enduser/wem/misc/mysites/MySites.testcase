@@ -86,7 +86,7 @@ definition {
 
 		User.loginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.joinViaMySitesPG(siteName = "Site Name");
 
@@ -131,7 +131,7 @@ definition {
 
 		User.loginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.joinViaMySitesPG(membershipType = "Private", siteName = "Site Name");
 
@@ -175,13 +175,13 @@ definition {
 
 		User.loginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.joinViaMySitesPG(membershipType = "Restricted", siteName = "Site Name");
 
 		// View that the user's membership request is sent
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		NavItem.gotoAvailableSites();
 
@@ -208,7 +208,7 @@ definition {
 
 		User.loginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.viewMySitesViaMySitesPG(memberCount = "2", siteName = "Site Name");
 
@@ -251,13 +251,13 @@ definition {
 
 		User.loginPG(password = "test", userEmailAddress = "userea@liferay.com");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.joinViaMySitesPG(siteName = "Site Name");
 
 		// Leave site
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.leaveViaMySitesPG(siteName = "Site Name");
 

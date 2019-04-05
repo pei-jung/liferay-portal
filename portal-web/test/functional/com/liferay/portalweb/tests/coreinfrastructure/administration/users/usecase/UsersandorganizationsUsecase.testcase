@@ -1145,7 +1145,7 @@ definition {
 
 		ProductMenu.viewNoSite(site = "Organization Name 2");
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.viewNoMySitesViaMySitesPG(siteName = "Organization Name 1");
 
@@ -1167,7 +1167,7 @@ definition {
 			userScreenName = "test"
 		);
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Site.viewNoMySitesViaMySitesPG(siteName = "Organization Name 1");
 

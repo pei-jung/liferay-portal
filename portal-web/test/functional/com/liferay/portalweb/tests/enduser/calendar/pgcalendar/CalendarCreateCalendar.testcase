@@ -281,7 +281,7 @@ definition {
 			userScreenName = "usersn"
 		);
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Portlet.addPG(portletName = "Calendar");
 
@@ -290,7 +290,7 @@ definition {
 			userScreenName = "usersn"
 		);
 
-		UserBar.gotoDashboard();
+		UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
 
 		Calendar.searchOtherCalendars(searchValue = "site");
 
