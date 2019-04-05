@@ -1768,18 +1768,14 @@ definition {
 	macro logoutAndLoginPG {
 		Navigator.openURL();
 
-		ProductMenuHelper.expandPanel(panel = "User");
+		UserBar.signOut();
 
-		if (IsTextNotEqual(locator1 = "ControlMenu#USER_NAME", value1 = "${userLoginFullName}")) {
-			User.logoutPG();
-
-			User.loginPG(
-				authenticationMethod = "${authenticationMethod}",
-				nodePort = "${nodePort}",
-				userEmailAddress = "${userLoginEmailAddress}",
-				userScreenName = "${userScreenName}"
-			);
-		}
+		User.loginPG(
+			authenticationMethod = "${authenticationMethod}",
+			nodePort = "${nodePort}",
+			userEmailAddress = "${userLoginEmailAddress}",
+			userScreenName = "${userScreenName}"
+		);
 	}
 
 	@description = "Log out of Liferay Portal."
