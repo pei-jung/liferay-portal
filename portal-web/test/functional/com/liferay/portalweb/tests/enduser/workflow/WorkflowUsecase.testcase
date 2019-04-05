@@ -796,13 +796,7 @@ definition {
 			wikiPageUsername = "userfn userln"
 		);
 
-		UserBar.gotoMyAccount();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Submissions"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
 		var key_workflowAssetTitle = "Wiki Page Title";
 

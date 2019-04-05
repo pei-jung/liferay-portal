@@ -109,13 +109,7 @@ definition {
 
 		WikiPage.addFrontPageWithWorkflowPG(wikiPageContent = "Front Page Wiki Content");
 
-		UserBar.gotoMyAccount();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Submissions"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
 		Workflow.viewMySubmissions(
 			workflowAssetTitle = "FrontPage",
@@ -156,13 +150,7 @@ definition {
 			wikiPageTitle = "FrontPage"
 		);
 
-		UserBar.gotoMyAccount();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Submissions"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
 		Workflow.viewCannotWithdrawTaskByActions(
 			workflowAssetTitle = "FrontPage",
@@ -226,13 +214,7 @@ definition {
 
 		WikiPage.addFrontPageWithWorkflowPG(wikiPageContent = "Front Page Wiki Content");
 
-		UserBar.gotoMyAccount();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Submissions"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
 		Workflow.viewMySubmissions(
 			workflowAssetTitle = "FrontPage",
@@ -269,13 +251,7 @@ definition {
 
 		WikiPage.viewFrontPageDefaultCP(wikiPageTitle = "FrontPage");
 
-		UserBar.gotoMyAccount();
-
-		ProductMenu.gotoPortlet(
-			category = "My Account",
-			panel = "User",
-			portlet = "My Submissions"
-		);
+		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
 		Workflow.viewMySubmissions(
 			workflowAssetTitle = "FrontPage",

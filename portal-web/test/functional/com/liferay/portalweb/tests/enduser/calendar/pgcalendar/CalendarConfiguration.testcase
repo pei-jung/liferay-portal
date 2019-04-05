@@ -265,7 +265,7 @@ definition {
 	test ViewCalendarTimeZoneDefaults {
 		property test.name.skip.portal.instance = "CalendarConfiguration#ViewCalendarTimeZoneDefaults";
 
-		UserBar.gotoMyAccount();
+		UserBar.gotoDropdownItem(dropdownItem = "Account Settings");
 
 		User.editUserDisplaySettingsTimeZonePacific(
 			displaySettingsGreeting = "Welcome Test Test!"
@@ -293,7 +293,7 @@ definition {
 	test ViewEventDetailsAllDayWithModifiedUserTimeZone {
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 
-		UserBar.gotoMyAccount();
+		UserBar.gotoDropdownItem(dropdownItem = "Account Settings");
 
 		User.editUserDisplaySettingsTimeZonePacific(
 			displaySettingsGreeting = "Welcome Test Test!"
