@@ -16,28 +16,28 @@
 
 <%@ include file="/init.jsp" %>
 
-<span class="user-avatar-link">
-	<liferay-util:buffer
-		var="userAvatar"
-	>
-		<span class="sticker">
-			<span class="inline-item">
+<li class="control-menu-nav-item">
+	<span class="user-avatar-link">
+		<liferay-util:buffer
+			var="userAvatar"
+		>
+			<span class="sticker">
 				<liferay-ui:user-portrait
 					cssClass="sticker"
 					user="<%= user %>"
 				/>
+
+				<c:if test="<%= themeDisplay.isImpersonated() %>">
+					<span class="sticker sticker-bottom-right sticker-circle sticker-outside sticker-sm sticker-user-icon">
+						<aui:icon image="user" markupView="lexicon" />
+					</span>
+				</c:if>
 			</span>
+		</liferay-util:buffer>
 
-			<c:if test="<%= themeDisplay.isImpersonated() %>">
-				<span class="sticker sticker-bottom-right sticker-circle sticker-outside sticker-sm sticker-user-icon">
-					<aui:icon image="user" markupView="lexicon" />
-				</span>
-			</c:if>
-		</span>
-	</liferay-util:buffer>
-
-	<liferay-product-navigation:personal-menu
-		expanded="<%= true %>"
-		label="<%= userAvatar %>"
-	/>
-</span>
+		<liferay-product-navigation:personal-menu
+			expanded="<%= true %>"
+			label="<%= userAvatar %>"
+		/>
+	</span>
+</li>
