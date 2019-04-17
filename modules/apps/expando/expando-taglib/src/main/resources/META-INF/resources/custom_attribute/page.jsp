@@ -302,6 +302,10 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 								<div class="glyphicon glyphicon-map-marker" id="<%= portletDisplay.getNamespace()+"ExpandoAttribute--" + name + "--Location" %>">
 								</div>
 
+								<%
+								name = StringUtil.replace(name, ' ', "-");
+								%>
+
 								<liferay-map:map-display
 									geolocation="<%= true %>"
 									latitude='<%= geolocationJSONObject.getDouble("latitude", 0) %>'
