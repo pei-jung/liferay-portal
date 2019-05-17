@@ -15,7 +15,11 @@
 package com.liferay.user.associated.data.web.internal.portlet.action;
 
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
@@ -25,6 +29,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
 import com.liferay.user.associated.data.display.UADDisplay;
+import com.liferay.user.associated.data.web.internal.display.UADHierarchyDisplay;
 import com.liferay.user.associated.data.web.internal.registry.UADRegistry;
 import com.liferay.user.associated.data.web.internal.util.SelectedUserHelper;
 import com.liferay.user.associated.data.web.internal.util.UADApplicationSummaryHelper;
@@ -45,6 +50,107 @@ import org.osgi.service.component.annotations.Reference;
  * @author Drew Brokke
  */
 public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
+
+	protected void anonymizeEntity(
+			User anonymousUser, UADAnonymizer entityUADAnonymizer,
+			UADDisplay<?> entityUADDisplay, Serializable primaryKey,
+			long selectedUserId, UADHierarchyDisplay uadHierarchyDisplay)
+		throws Exception {
+
+		Object entity = entityUADDisplay.get(primaryKey);
+
+		if (uadHierarchyDisplay != null) {
+			if (uadHierarchyDisplay.isUserOwned(entity, selectedUserId)) {
+				entityUADAnonymizer.autoAnonymize(
+					entity, selectedUserId, anonymousUser);
+			}
+
+			Map<Class<?>, List<Serializable>> containerItemPKsMap =
+				uadHierarchyDisplay.getContainerItemPKsMap(
+					entityUADDisplay.getTypeClass(),
+					uadHierarchyDisplay.getPrimaryKey(entity), selectedUserId);
+
+			for (Map.Entry<Class<?>, List<Serializable>> entry :
+					containerItemPKsMap.entrySet()) {
+
+				Class<?> containerItemClass = entry.getKey();
+
+				UADAnonymizer containerItemUADAnonymizer =
+					uadRegistry.getUADAnonymizer(containerItemClass.getName());
+				UADDisplay containerItemUADDisplay = uadRegistry.getUADDisplay(
+					containerItemClass.getName());
+
+				doMultipleAction(
+					entry.getValue(),
+					containerItemPK -> {
+						Object containerItem = containerItemUADDisplay.get(
+							containerItemPK);
+
+						containerItemUADAnonymizer.autoAnonymize(
+							containerItem, selectedUserId, anonymousUser);
+					});
+			}
+		}
+		else {
+			entityUADAnonymizer.autoAnonymize(
+				entity, selectedUserId, anonymousUser);
+		}
+	}
+
+	protected void deleteEntity(
+			UADAnonymizer entityUADAnonymizer, UADDisplay<?> entityUADDisplay,
+			Serializable primaryKey, long selectedUserId,
+			UADHierarchyDisplay uadHierarchyDisplay)
+		throws Exception {
+
+		Object entity = entityUADDisplay.get(primaryKey);
+
+		if (uadHierarchyDisplay != null) {
+			if (uadHierarchyDisplay.isUserOwned(entity, selectedUserId)) {
+				entityUADAnonymizer.delete(entity);
+			}
+			else {
+				Map<Class<?>, List<Serializable>> containerItemPKsMap =
+					uadHierarchyDisplay.getContainerItemPKsMap(
+						entityUADDisplay.getTypeClass(),
+						uadHierarchyDisplay.getPrimaryKey(entity),
+						selectedUserId);
+
+				for (Map.Entry<Class<?>, List<Serializable>> entry :
+						containerItemPKsMap.entrySet()) {
+
+					Class<?> containerItemClass = entry.getKey();
+
+					UADAnonymizer containerItemUADAnonymizer =
+						uadRegistry.getUADAnonymizer(
+							containerItemClass.getName());
+					UADDisplay containerItemUADDisplay =
+						uadRegistry.getUADDisplay(containerItemClass.getName());
+
+					doMultipleAction(
+						entry.getValue(),
+						containerItemPK -> {
+							try {
+								Object containerItem =
+									containerItemUADDisplay.get(
+										containerItemPK);
+
+								containerItemUADAnonymizer.delete(
+									containerItem);
+							}
+							catch (NoSuchModelException nsme) {
+								if (_log.isDebugEnabled()) {
+									_log.debug(nsme, nsme);
+								}
+							}
+						});
+				}
+			}
+		}
+		else {
+			entityUADAnonymizer.delete(entity);
+		}
+	}
 
 	protected void doMultipleAction(
 			List<Serializable> primaryKeys,
@@ -144,6 +250,28 @@ public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
 		return ParamUtil.getStringValues(actionRequest, "applicationKeys");
 	}
 
+	protected List<Object> getApplicationUADHierarchyEntities(
+			long[] groupIds, long selectedUserId,
+			UADHierarchyDisplay uadHierarchyDisplay)
+		throws Exception {
+
+		List<Object> entities = new ArrayList<>();
+
+		entities.addAll(
+			uadHierarchyDisplay.search(
+				uadHierarchyDisplay.getFirstContainerTypeClass(), 0L,
+				selectedUserId, groupIds, null, null, null, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS));
+
+		entities.addAll(
+			uadHierarchyDisplay.search(
+				uadHierarchyDisplay.getFirstContainerTypeClass(), -1L,
+				selectedUserId, groupIds, null, null, null, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS));
+
+		return entities;
+	}
+
 	protected List<String> getEntityTypes(ActionRequest actionRequest) {
 		List<String> entityTypes = new ArrayList<>();
 
@@ -213,5 +341,8 @@ public abstract class BaseUADMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	protected UADRegistry uadRegistry;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BaseUADMVCActionCommand.class);
 
 }

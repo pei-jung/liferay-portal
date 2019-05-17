@@ -14,10 +14,14 @@
 
 package com.liferay.user.associated.data.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
+import com.liferay.user.associated.data.display.UADDisplay;
+import com.liferay.user.associated.data.web.internal.display.UADHierarchyDisplay;
 import com.liferay.user.associated.data.web.internal.util.UADAnonymizerHelper;
 
 import java.util.List;
@@ -47,19 +51,55 @@ public class AnonymizeUADApplicationsMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		long[] groupIds = ParamUtil.getLongValues(actionRequest, "groupIds");
+
 		User selectedUser = getSelectedUser(actionRequest);
 
 		User anonymousUser = _uadAnonymizerHelper.getAnonymousUser(
 			selectedUser.getCompanyId());
 
 		for (String applicationKey : getApplicationKeys(actionRequest)) {
-			List<UADAnonymizer> uadAnonymizers =
-				uadApplicationSummaryHelper.getApplicationUADAnonymizers(
-					applicationKey);
+			UADHierarchyDisplay uadHierarchyDisplay =
+				uadRegistry.getUADHierarchyDisplay(applicationKey);
 
-			for (UADAnonymizer uadAnonymizer : uadAnonymizers) {
-				uadAnonymizer.autoAnonymizeAll(
-					selectedUser.getUserId(), anonymousUser);
+			if (uadHierarchyDisplay != null) {
+				List<Object> entities = getApplicationUADHierarchyEntities(
+					groupIds, selectedUser.getUserId(), uadHierarchyDisplay);
+
+				for (Object entity : entities) {
+					Class<?> typeClass = uadHierarchyDisplay.getTypeClass(
+						entity);
+
+					UADAnonymizer uadAnonymizer = uadRegistry.getUADAnonymizer(
+						typeClass.getName());
+					UADDisplay uadDisplay = uadRegistry.getUADDisplay(
+						typeClass.getName());
+
+					anonymizeEntity(
+						anonymousUser, uadAnonymizer, uadDisplay,
+						uadDisplay.getPrimaryKey(
+							uadHierarchyDisplay.unwrap(entity)),
+						selectedUser.getUserId(), uadHierarchyDisplay);
+				}
+			}
+			else {
+				for (UADDisplay uadDisplay :
+						uadRegistry.getApplicationUADDisplays(applicationKey)) {
+
+					Class<?> typeClass = uadDisplay.getTypeClass();
+
+					UADAnonymizer uadAnonymizer = uadRegistry.getUADAnonymizer(
+						typeClass.getName());
+
+					List<Object> entities = uadDisplay.search(
+						selectedUser.getUserId(), groupIds, null, null, null,
+						QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+					for (Object entity : entities) {
+						uadAnonymizer.autoAnonymize(
+							entity, selectedUser.getUserId(), anonymousUser);
+					}
+				}
 			}
 		}
 

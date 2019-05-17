@@ -23,11 +23,6 @@ import com.liferay.user.associated.data.display.UADDisplay;
 import com.liferay.user.associated.data.web.internal.display.UADHierarchyDisplay;
 import com.liferay.user.associated.data.web.internal.util.UADAnonymizerHelper;
 
-import java.io.Serializable;
-
-import java.util.List;
-import java.util.Map;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
@@ -73,59 +68,13 @@ public class AnonymizeUADEntitiesMVCActionCommand
 				actionRequest, entityType);
 
 			for (String primaryKey : primaryKeys) {
-				_anonymize(
+				anonymizeEntity(
 					anonymousUser, entityUADAnonymizer, entityUADDisplay,
 					primaryKey, selectedUser.getUserId(), uadHierarchyDisplay);
 			}
 		}
 
 		doReviewableRedirect(actionRequest, actionResponse);
-	}
-
-	private void _anonymize(
-			User anonymousUser, UADAnonymizer entityUADAnonymizer,
-			UADDisplay<?> entityUADDisplay, String primaryKey,
-			long selectedUserId, UADHierarchyDisplay uadHierarchyDisplay)
-		throws Exception {
-
-		Object entity = entityUADDisplay.get(primaryKey);
-
-		if (uadHierarchyDisplay != null) {
-			if (uadHierarchyDisplay.isUserOwned(entity, selectedUserId)) {
-				entityUADAnonymizer.autoAnonymize(
-					entity, selectedUserId, anonymousUser);
-			}
-
-			Map<Class<?>, List<Serializable>> containerItemPKsMap =
-				uadHierarchyDisplay.getContainerItemPKsMap(
-					entityUADDisplay.getTypeClass(),
-					uadHierarchyDisplay.getPrimaryKey(entity), selectedUserId);
-
-			for (Map.Entry<Class<?>, List<Serializable>> entry :
-					containerItemPKsMap.entrySet()) {
-
-				Class<?> containerItemClass = entry.getKey();
-
-				UADAnonymizer containerItemUADAnonymizer =
-					uadRegistry.getUADAnonymizer(containerItemClass.getName());
-				UADDisplay containerItemUADDisplay = uadRegistry.getUADDisplay(
-					containerItemClass.getName());
-
-				doMultipleAction(
-					entry.getValue(),
-					containerItemPK -> {
-						Object containerItem = containerItemUADDisplay.get(
-							containerItemPK);
-
-						containerItemUADAnonymizer.autoAnonymize(
-							containerItem, selectedUserId, anonymousUser);
-					});
-			}
-		}
-		else {
-			entityUADAnonymizer.autoAnonymize(
-				entity, selectedUserId, anonymousUser);
-		}
 	}
 
 	@Reference

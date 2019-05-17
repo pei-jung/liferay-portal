@@ -14,9 +14,13 @@
 
 package com.liferay.user.associated.data.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
+import com.liferay.user.associated.data.display.UADDisplay;
+import com.liferay.user.associated.data.web.internal.display.UADHierarchyDisplay;
 
 import java.util.List;
 
@@ -44,15 +48,51 @@ public class DeleteUADApplicationsMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		long[] groupIds = ParamUtil.getLongValues(actionRequest, "groupIds");
+
 		long selectedUserId = getSelectedUserId(actionRequest);
 
 		for (String applicationKey : getApplicationKeys(actionRequest)) {
-			List<UADAnonymizer> uadAnonymizers =
-				uadApplicationSummaryHelper.getApplicationUADAnonymizers(
-					applicationKey);
+			UADHierarchyDisplay uadHierarchyDisplay =
+				uadRegistry.getUADHierarchyDisplay(applicationKey);
 
-			for (UADAnonymizer uadAnonymizer : uadAnonymizers) {
-				uadAnonymizer.deleteAll(selectedUserId);
+			if (uadHierarchyDisplay != null) {
+				List<Object> entities = getApplicationUADHierarchyEntities(
+					groupIds, selectedUserId, uadHierarchyDisplay);
+
+				for (Object entity : entities) {
+					Class<?> typeClass = uadHierarchyDisplay.getTypeClass(
+						entity);
+
+					UADAnonymizer uadAnonymizer = uadRegistry.getUADAnonymizer(
+						typeClass.getName());
+					UADDisplay uadDisplay = uadRegistry.getUADDisplay(
+						typeClass.getName());
+
+					deleteEntity(
+						uadAnonymizer, uadDisplay,
+						uadDisplay.getPrimaryKey(
+							uadHierarchyDisplay.unwrap(entity)),
+						selectedUserId, uadHierarchyDisplay);
+				}
+			}
+			else {
+				for (UADDisplay uadDisplay :
+						uadRegistry.getApplicationUADDisplays(applicationKey)) {
+
+					Class<?> typeClass = uadDisplay.getTypeClass();
+
+					UADAnonymizer uadAnonymizer = uadRegistry.getUADAnonymizer(
+						typeClass.getName());
+
+					List<Object> entities = uadDisplay.search(
+						selectedUserId, groupIds, null, null, null,
+						QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+					for (Object entity : entities) {
+						uadAnonymizer.delete(entity);
+					}
+				}
 			}
 		}
 
