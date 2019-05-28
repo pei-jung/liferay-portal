@@ -14,11 +14,17 @@
 
 package com.liferay.user.associated.data.web.internal.portlet.action;
 
+import com.liferay.message.boards.exception.NoSuchThreadException;
+import com.liferay.message.boards.model.MBCategory;
+import com.liferay.message.boards.model.MBThread;
+import com.liferay.message.boards.service.MBThreadLocalService;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
 import com.liferay.user.associated.data.display.UADDisplay;
@@ -31,8 +37,10 @@ import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletURL;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Noah Sherrill
@@ -52,6 +60,27 @@ public class DeleteUADEntitiesMVCActionCommand extends BaseUADMVCActionCommand {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		String parentContainerClass = ParamUtil.getString(
+			actionRequest, "parentContainerClass");
+		long parentContainerId = ParamUtil.getLong(
+			actionRequest, "parentContainerId");
+
+		long mbCategoryId = 0;
+		MBThread mbThread = null;
+
+		if (parentContainerClass.equals(MBThread.class.getName())) {
+			try {
+				mbThread = _mbThreadLocalService.getMBThread(parentContainerId);
+
+				mbCategoryId = mbThread.getCategoryId();
+			}
+			catch (NoSuchThreadException nste) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(nste, nste);
+				}
+			}
+		}
+
 		String applicationKey = ParamUtil.getString(
 			actionRequest, "applicationKey");
 
@@ -70,6 +99,18 @@ public class DeleteUADEntitiesMVCActionCommand extends BaseUADMVCActionCommand {
 				_delete(
 					entityUADAnonymizer, entityUADDisplay, primaryKey,
 					getSelectedUserId(actionRequest), uadHierarchyDisplay);
+			}
+		}
+
+		if (mbThread != null) {
+			try {
+				_mbThreadLocalService.getMBThread(parentContainerId);
+			}
+			catch (NoSuchThreadException nste) {
+				String redirect = _getParentMBCategoryURL(
+					actionRequest, actionResponse, mbCategoryId);
+
+				sendRedirect(actionRequest, actionResponse, redirect);
 			}
 		}
 
@@ -131,7 +172,48 @@ public class DeleteUADEntitiesMVCActionCommand extends BaseUADMVCActionCommand {
 		}
 	}
 
+	private String _getParentMBCategoryURL(
+		ActionRequest actionRequest, ActionResponse actionResponse,
+		long mbCategoryId) {
+
+		String applicationKey = ParamUtil.getString(
+			actionRequest, "applicationKey");
+
+		LiferayPortletResponse liferayPortletResponse =
+			_portal.getLiferayPortletResponse(actionResponse);
+
+		PortletURL portletURL = liferayPortletResponse.createRenderURL();
+
+		String puid = ParamUtil.getString(actionRequest, "p_u_i_d");
+		String scope = ParamUtil.getString(actionRequest, "scope");
+
+		portletURL.setParameter("applicationKey", applicationKey);
+		portletURL.setParameter("p_u_i_d", puid);
+		portletURL.setParameter("scope", scope);
+
+		if (mbCategoryId < 1) {
+			portletURL.setParameter("mvcRenderCommandName", "/review_uad_data");
+		}
+		else {
+			portletURL.setParameter(
+				"mvcRenderCommandName", "/view_uad_hierarchy");
+
+			portletURL.setParameter(
+				"parentContainerClass", MBCategory.class.getName());
+			portletURL.setParameter(
+				"parentContainerId", String.valueOf(mbCategoryId));
+		}
+
+		return portletURL.toString();
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DeleteUADEntitiesMVCActionCommand.class);
+
+	@Reference
+	private MBThreadLocalService _mbThreadLocalService;
+
+	@Reference
+	private Portal _portal;
 
 }
