@@ -82,19 +82,44 @@
 	/>
 
 	<%
-	String deleteSingleMessage = "are-you-sure-you-want-to-delete-this-entity";
+	boolean deleteDisabled = false;
 
-	if (applicationKey.equals(UADConstants.ALL_APPLICATIONS)) {
-		deleteSingleMessage = "are-you-sure-you-want-to-delete-the-entities-of-this-application";
-	}
-	else if (!uadEntity.isUserOwned()) {
-		deleteSingleMessage = "only-items-belonging-to-the-user-will-be-deleted";
-	}
+		if (Objects.equals(uadEntity.getTypeClass(), MBMessage.class)) {
+			MBMessage mbMessage = (MBMessage)uadEntity.getEntity();
+
+			MBThread mbThread = mbMessage.getThread();
+
+			if (mbMessage.isRoot() && (mbThread.getMessageCount() > 2)) {
+				deleteDisabled = true;
+			}
+		}
 	%>
 
-	<liferay-ui:icon
-		message="delete"
-		onClick='<%= liferayPortletResponse.getNamespace() + "confirmAction('viewUADEntitiesFm', '" + deleteURL.toString() + "', '" + UnicodeLanguageUtil.get(request, deleteSingleMessage) + "')" %>'
-		url="javascript:;"
-	/>
+	<c:choose>
+		<c:when test="<%= deleteDisabled %>">
+			<liferay-ui:icon
+				cssClass="disabled dropdown-item"
+				message="delete"
+			/>
+		</c:when>
+		<c:otherwise>
+
+			<%
+			String deleteSingleMessage = "are-you-sure-you-want-to-delete-this-entity";
+
+			if (applicationKey.equals(UADConstants.ALL_APPLICATIONS)) {
+				deleteSingleMessage = "are-you-sure-you-want-to-delete-the-entities-of-this-application";
+			}
+			else if (!uadEntity.isUserOwned()) {
+				deleteSingleMessage = "only-items-belonging-to-the-user-will-be-deleted";
+			}
+			%>
+
+			<liferay-ui:icon
+				message="delete"
+				onClick='<%= liferayPortletResponse.getNamespace() + "confirmAction('viewUADEntitiesFm', '" + deleteURL.toString() + "', '" + UnicodeLanguageUtil.get(request, deleteSingleMessage) + "')" %>'
+				url="javascript:;"
+			/>
+		</c:otherwise>
+	</c:choose>
 </liferay-ui:icon-menu>

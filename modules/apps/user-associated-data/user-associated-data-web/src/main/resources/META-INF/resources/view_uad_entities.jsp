@@ -115,6 +115,28 @@ long[] groupIds = (long[])request.getAttribute(UADWebKeys.GROUP_IDS);
 						showUserIcon = true;
 					}
 
+					boolean deleteDisabled = false;
+
+					String actions = "anonymize,delete";
+
+					if (Objects.equals(uadEntity.getTypeClass(), MBMessage.class)) {
+						MBMessage mbMessage = (MBMessage)uadEntity.getEntity();
+
+						MBThread mbThread = mbMessage.getThread();
+
+						if (mbMessage.isRoot() && (mbThread.getMessageCount() > 2)) {
+							deleteDisabled = true;
+
+							actions = "anonymize";
+						}
+					}
+
+					Map<String, Object> rowData = new HashMap<String, Object>();
+
+					rowData.put("actions", actions);
+
+					row.setData(rowData);
+
 					for (KeyValuePair columnEntry : columnEntries) {
 						String columnEntryKey = columnEntry.getKey();
 
@@ -137,6 +159,16 @@ long[] groupIds = (long[])request.getAttribute(UADWebKeys.GROUP_IDS);
 									icon="user"
 									markupView="lexicon"
 									message="this-parent-item-does-not-belong-to-the-user-but-contains-children-items-belonging-to-the-user"
+									toolTip="<%= true %>"
+								/>
+							</c:if>
+
+							<c:if test='<%= columnEntryKey.equals("name") && deleteDisabled %>'>
+								<liferay-ui:icon
+									cssClass="disabled"
+									icon="info-circle"
+									markupView="lexicon"
+									message="root-messages-with-multiple-replies-cannot-be-deleted.-delete-the-thread-instead"
 									toolTip="<%= true %>"
 								/>
 							</c:if>
