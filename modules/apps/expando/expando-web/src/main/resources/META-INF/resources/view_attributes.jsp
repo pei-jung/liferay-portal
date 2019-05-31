@@ -128,7 +128,3 @@ ExpandoDisplayContext expandoDisplayContext = new ExpandoDisplayContext(request)
 		}
 	}
 </aui:script>
-
-<%
-PortalUtil.addPortletBreadcrumbEntry(request, modelResourceName, portletURL.toString());
-%>

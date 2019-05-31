@@ -39,11 +39,9 @@ if (expandoColumn != null) {
 ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.getCompanyId(), modelResource);
 
 UnicodeProperties properties = new UnicodeProperties(true);
-Serializable defaultValue = null;
 
 if (expandoColumn != null) {
 	properties = expandoBridge.getAttributeProperties(expandoColumn.getName());
-	defaultValue = expandoBridge.getAttributeDefault(expandoColumn.getName());
 }
 
 boolean propertyHidden = GetterUtil.getBoolean(properties.get(ExpandoColumnConstants.PROPERTY_HIDDEN));
@@ -73,42 +71,6 @@ portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 
 renderResponse.setTitle(modelResourceName + ": " + ((expandoColumn == null) ? LanguageUtil.get(request, "new-custom-field") : expandoColumn.getName()));
-
-PortletURL customFieldURL = renderResponse.createRenderURL();
-
-customFieldURL.setParameter("mvcPath", "/view.jsp");
-customFieldURL.setParameter("redirect", redirect);
-
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "custom-field"), customFieldURL.toString());
-
-PortletURL viewAttributesURL = renderResponse.createRenderURL();
-
-viewAttributesURL.setParameter("mvcPath", "/view_attributes.jsp");
-viewAttributesURL.setParameter("redirect", redirect);
-viewAttributesURL.setParameter("modelResource", modelResource);
-
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "view-attributes"), viewAttributesURL.toString());
-
-PortletURL newCustomFieldURL = renderResponse.createRenderURL();
-
-newCustomFieldURL.setParameter("mvcPath", "/edit/select_field_type.jsp");
-newCustomFieldURL.setParameter("redirect", redirect);
-newCustomFieldURL.setParameter("modelResource", modelResource);
-
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "new-custom-field"), newCustomFieldURL.toString());
-
-String displayType = LanguageUtil.get(request, propertyDisplayType);
-
-if (expandoColumn != null) {
-	String editAttributeBreadcrumb = LanguageUtil.format(request, "edit-x", new Object[] {expandoColumn.getName()}, false);
-
-	PortalUtil.addPortletBreadcrumbEntry(request, editAttributeBreadcrumb, null);
-}
-else {
-	String newAttributeBreadcrumb = LanguageUtil.format(request, "new-x", new Object[] {displayType}, false);
-
-	PortalUtil.addPortletBreadcrumbEntry(request, newAttributeBreadcrumb, null);
-}
 %>
 
 <liferay-ui:error exception="<%= ColumnNameException.class %>" message="please-enter-a-valid-name" />
@@ -129,15 +91,6 @@ else {
 <portlet:actionURL name='<%= (expandoColumn == null) ? "addExpando" : "updateExpando" %>' var="editExpandoURL">
 	<portlet:param name="mvcPath" value="/edit/expando.jsp" />
 </portlet:actionURL>
-
-<div class="container-fluid container-fluid-max-xl">
-	<liferay-ui:breadcrumb
-		showCurrentGroup="<%= false %>"
-		showGuestGroup="<%= false %>"
-		showLayout="<%= false %>"
-		showPortletBreadcrumb="<%= true %>"
-	/>
-</div>
 
 <liferay-frontend:edit-form
 	action="<%= editExpandoURL %>"
@@ -189,13 +142,3 @@ else {
 		<aui:button href="<%= redirect %>" type="cancel" />
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
-
-<%
-PortalUtil.addPortletBreadcrumbEntry(request, modelResourceName, portletURL.toString());
-
-if (expandoColumn != null) {
-	PortalUtil.addPortletBreadcrumbEntry(request, expandoColumn.getName(), null);
-}
-
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, ((expandoColumn == null) ? "add-attribute" : "edit")), currentURL);
-%>
