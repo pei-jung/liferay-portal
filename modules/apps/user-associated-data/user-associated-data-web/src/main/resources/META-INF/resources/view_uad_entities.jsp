@@ -21,6 +21,8 @@ ViewUADEntitiesDisplay viewUADEntitiesDisplay = (ViewUADEntitiesDisplay)request.
 
 boolean topLevelView = true;
 
+String parentContainerClass = ParamUtil.getString(request, "parentContainerClass");
+
 long parentContainerId = ParamUtil.getLong(request, "parentContainerId");
 
 if (parentContainerId > 0) {
@@ -32,6 +34,8 @@ if (parentContainerId > 0) {
 }
 
 long[] groupIds = (long[])request.getAttribute(UADWebKeys.GROUP_IDS);
+
+String scope = ParamUtil.getString(request, "scope", UADConstants.SCOPE_PERSONAL_SITE);
 %>
 
 <clay:management-toolbar
@@ -42,6 +46,9 @@ long[] groupIds = (long[])request.getAttribute(UADWebKeys.GROUP_IDS);
 	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 	<aui:input name="p_u_i_d" type="hidden" value="<%= String.valueOf(selectedUser.getUserId()) %>" />
 	<aui:input name="groupIds" type="hidden" value='<%= (groupIds != null) ? StringUtil.merge(groupIds) : "" %>' />
+	<aui:input name="parentContainerClass" type="hidden" value="<%= parentContainerClass %>" />
+	<aui:input name="parentContainerId" type="hidden" value="<%= String.valueOf(parentContainerId) %>" />
+	<aui:input name="scope" type="hidden" value="<%= scope %>" />
 
 	<c:choose>
 		<c:when test="<%= Objects.equals(viewUADEntitiesDisplay.getApplicationKey(), UADConstants.ALL_APPLICATIONS) %>">
@@ -115,6 +122,28 @@ long[] groupIds = (long[])request.getAttribute(UADWebKeys.GROUP_IDS);
 						showUserIcon = true;
 					}
 
+					boolean deleteDisabled = false;
+
+					String actions = "anonymize,delete";
+
+					if (Objects.equals(uadEntity.getTypeClass(), MBMessage.class)) {
+						MBMessage mbMessage = (MBMessage)uadEntity.getEntity();
+
+						MBThread mbThread = mbMessage.getThread();
+
+						if (mbMessage.isRoot() && (mbThread.getMessageCount() > 2)) {
+							deleteDisabled = true;
+
+							actions = "anonymize";
+						}
+					}
+
+					Map<String, Object> rowData = new HashMap<String, Object>();
+
+					rowData.put("actions", actions);
+
+					row.setData(rowData);
+
 					for (KeyValuePair columnEntry : columnEntries) {
 						String columnEntryKey = columnEntry.getKey();
 
@@ -137,6 +166,16 @@ long[] groupIds = (long[])request.getAttribute(UADWebKeys.GROUP_IDS);
 									icon="user"
 									markupView="lexicon"
 									message="this-parent-item-does-not-belong-to-the-user-but-contains-children-items-belonging-to-the-user"
+									toolTip="<%= true %>"
+								/>
+							</c:if>
+
+							<c:if test='<%= columnEntryKey.equals("name") && deleteDisabled %>'>
+								<liferay-ui:icon
+									cssClass="disabled"
+									icon="info-circle"
+									markupView="lexicon"
+									message="root-messages-with-multiple-replies-cannot-be-deleted.-delete-the-thread-instead"
 									toolTip="<%= true %>"
 								/>
 							</c:if>
