@@ -89,14 +89,6 @@ viewAttributesURL.setParameter("modelResource", modelResource);
 
 PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "view-attributes"), viewAttributesURL.toString());
 
-PortletURL newCustomFieldURL = renderResponse.createRenderURL();
-
-newCustomFieldURL.setParameter("mvcPath", "/edit/select_field_type.jsp");
-newCustomFieldURL.setParameter("redirect", redirect);
-newCustomFieldURL.setParameter("modelResource", modelResource);
-
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "new-custom-field"), newCustomFieldURL.toString());
-
 String displayType = LanguageUtil.get(request, propertyDisplayType);
 
 if (expandoColumn != null) {
