@@ -1,5 +1,10 @@
 package ${entity.UADPackagePath}.uad.anonymizer;
 
+<#if hasAssetEntry>
+	import com.liferay.asset.kernel.model.AssetEntry;
+	import com.liferay.asset.kernel.service.AssetEntryLocalService;
+</#if>
+
 import ${apiPackagePath}.model.${entity.name};
 import ${apiPackagePath}.service.${entity.name}LocalService;
 import ${entity.UADPackagePath}.uad.constants.${entity.UADApplicationName}UADConstants;
@@ -38,6 +43,17 @@ public abstract class Base${entity.name}UADAnonymizer extends DynamicQueryUADAno
 								${entity.varName}.set${uadAnonymizableEntityColumn.methodName}(anonymousUser.get${textFormatter.format(uadAnonymizableEntityColumn.UADAnonymizeFieldName, 6)}());
 							</#list>
 						</#if>
+
+						<#if hasAssetEntry && stringUtil.equals(uadUserIdEntityColumn.name, "userId")>
+							AssetEntry assetEntry = assetEntryLocalService.fetchEntry(${entity.name}.class.getName(), ${entity.varName}.get${entity.getPKMethodName()}());
+
+							if (assetEntry != null) {
+								assetEntry.setUserId(anonymousUser.getUserId());
+								assetEntry.setUserName(anonymousUser.getFullName());
+
+								assetEntryLocalService.updateAssetEntry(assetEntry);
+							}
+						</#if>
 					}
 		</#list>
 
@@ -65,6 +81,11 @@ public abstract class Base${entity.name}UADAnonymizer extends DynamicQueryUADAno
 	protected String[] doGetUserIdFieldNames() {
 		return ${entity.UADApplicationName}UADConstants.USER_ID_FIELD_NAMES_${entity.constantName};
 	}
+
+	<#if hasAssetEntry>
+		@Reference
+		protected AssetEntryLocalService assetEntryLocalService;
+	</#if>
 
 	@Reference
 	protected ${entity.name}LocalService ${entity.varName}LocalService;
