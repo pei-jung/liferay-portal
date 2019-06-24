@@ -31,10 +31,11 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.CompanyProvider;
+import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.TableMapper;
 import com.liferay.portal.kernel.service.persistence.impl.TableMapperFactory;
@@ -12659,7 +12660,7 @@ public class DLFolderPersistenceImpl
 
 		dlFolder.setUuid(uuid);
 
-		dlFolder.setCompanyId(CompanyThreadLocal.getCompanyId());
+		dlFolder.setCompanyId(companyProvider.getCompanyId());
 
 		return dlFolder;
 	}
@@ -13595,7 +13596,7 @@ public class DLFolderPersistenceImpl
 
 		if (dlFolder == null) {
 			dlFolderToDLFileEntryTypeTableMapper.addTableMapping(
-				CompanyThreadLocal.getCompanyId(), pk, dlFileEntryTypePK);
+				companyProvider.getCompanyId(), pk, dlFileEntryTypePK);
 		}
 		else {
 			dlFolderToDLFileEntryTypeTableMapper.addTableMapping(
@@ -13619,7 +13620,7 @@ public class DLFolderPersistenceImpl
 
 		if (dlFolder == null) {
 			dlFolderToDLFileEntryTypeTableMapper.addTableMapping(
-				CompanyThreadLocal.getCompanyId(), pk,
+				companyProvider.getCompanyId(), pk,
 				dlFileEntryType.getPrimaryKey());
 		}
 		else {
@@ -13641,7 +13642,7 @@ public class DLFolderPersistenceImpl
 		DLFolder dlFolder = fetchByPrimaryKey(pk);
 
 		if (dlFolder == null) {
-			companyId = CompanyThreadLocal.getCompanyId();
+			companyId = companyProvider.getCompanyId();
 		}
 		else {
 			companyId = dlFolder.getCompanyId();
@@ -13770,7 +13771,7 @@ public class DLFolderPersistenceImpl
 		DLFolder dlFolder = fetchByPrimaryKey(pk);
 
 		if (dlFolder == null) {
-			companyId = CompanyThreadLocal.getCompanyId();
+			companyId = companyProvider.getCompanyId();
 		}
 		else {
 			companyId = dlFolder.getCompanyId();
@@ -14307,6 +14308,9 @@ public class DLFolderPersistenceImpl
 
 		TableMapperFactory.removeTableMapper("DLFileEntryTypes_DLFolders");
 	}
+
+	@BeanReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 
 	@BeanReference(type = DLFileEntryTypePersistence.class)
 	protected DLFileEntryTypePersistence dlFileEntryTypePersistence;
