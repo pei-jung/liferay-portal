@@ -14,6 +14,8 @@
 
 package com.liferay.wiki.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
@@ -47,6 +49,14 @@ public abstract class BaseWikiPageUADAnonymizer
 		if (wikiPage.getUserId() == userId) {
 			wikiPage.setUserId(anonymousUser.getUserId());
 			wikiPage.setUserName(anonymousUser.getFullName());
+
+			AssetEntry assetEntry = assetEntryLocalService.getEntry(
+				WikiPage.class.getName(), wikiPage.getPageId());
+
+			assetEntry.setUserId(anonymousUser.getUserId());
+			assetEntry.setUserName(anonymousUser.getFullName());
+
+			assetEntryLocalService.updateAssetEntry(assetEntry);
 		}
 
 		if (wikiPage.getStatusByUserId() == userId) {
@@ -76,6 +86,9 @@ public abstract class BaseWikiPageUADAnonymizer
 	protected String[] doGetUserIdFieldNames() {
 		return WikiUADConstants.USER_ID_FIELD_NAMES_WIKI_PAGE;
 	}
+
+	@Reference
+	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Reference
 	protected WikiPageLocalService wikiPageLocalService;
