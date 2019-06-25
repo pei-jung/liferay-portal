@@ -24,7 +24,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
-import com.liferay.user.associated.data.test.util.BaseUADAnonymizerTestCase;
+import com.liferay.user.associated.data.test.util.BaseHasAssetEntryUADAnonymizerTestCase;
 import com.liferay.user.associated.data.test.util.WhenHasStatusByUserIdField;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class BlogsEntryUADAnonymizerTest
-	extends BaseUADAnonymizerTestCase<BlogsEntry>
+	extends BaseHasAssetEntryUADAnonymizerTestCase<BlogsEntry>
 	implements WhenHasStatusByUserIdField {
 
 	@ClassRule
@@ -100,7 +100,12 @@ public class BlogsEntryUADAnonymizerTest
 			(blogsEntry.getStatusByUserId() != user.getUserId()) &&
 			!statusByUserName.equals(user.getFullName())) {
 
-			return true;
+			if (isAssetEntryAutoAnonymized(
+					BlogsEntry.class.getName(), blogsEntry.getEntryId(),
+					user)) {
+
+				return true;
+			}
 		}
 
 		return false;
