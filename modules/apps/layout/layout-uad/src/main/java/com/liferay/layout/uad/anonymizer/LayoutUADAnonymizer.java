@@ -14,6 +14,7 @@
 
 package com.liferay.layout.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
@@ -32,6 +33,14 @@ public class LayoutUADAnonymizer extends BaseLayoutUADAnonymizer {
 		throws PortalException {
 
 		layoutLocalService.anonymizeLayout(layout, userId, anonymousUser);
+
+		AssetEntry assetEntry = assetEntryLocalService.getEntry(
+			Layout.class.getName(), layout.getPlid());
+
+		assetEntry.setUserId(anonymousUser.getUserId());
+		assetEntry.setUserName(anonymousUser.getFullName());
+
+		assetEntryLocalService.updateAssetEntry(assetEntry);
 	}
 
 }
