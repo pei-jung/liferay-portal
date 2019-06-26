@@ -40,7 +40,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
-import com.liferay.user.associated.data.test.util.BaseUADAnonymizerTestCase;
+import com.liferay.user.associated.data.test.util.BaseHasAssetEntryUADAnonymizerTestCase;
 
 import java.io.InputStream;
 
@@ -59,7 +59,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class DLFileEntryUADAnonymizerTest
-	extends BaseUADAnonymizerTestCase<DLFileEntry> {
+	extends BaseHasAssetEntryUADAnonymizerTestCase<DLFileEntry> {
 
 	@ClassRule
 	@Rule
@@ -215,7 +215,12 @@ public class DLFileEntryUADAnonymizerTest
 		if ((dlFileEntry.getUserId() != user.getUserId()) &&
 			!userName.equals(user.getFullName())) {
 
-			return true;
+			if (isAssetEntryAutoAnonymized(
+					DLFileEntry.class.getName(), dlFileEntry.getFileEntryId(),
+					user)) {
+
+				return true;
+			}
 		}
 
 		return false;

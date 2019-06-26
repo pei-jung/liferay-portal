@@ -26,7 +26,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
-import com.liferay.user.associated.data.test.util.BaseUADAnonymizerTestCase;
+import com.liferay.user.associated.data.test.util.BaseHasAssetEntryUADAnonymizerTestCase;
 import com.liferay.user.associated.data.test.util.WhenHasStatusByUserIdField;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class DLFileShortcutUADAnonymizerTest
-	extends BaseUADAnonymizerTestCase<DLFileShortcut>
+	extends BaseHasAssetEntryUADAnonymizerTestCase<DLFileShortcut>
 	implements WhenHasStatusByUserIdField {
 
 	@ClassRule
@@ -121,7 +121,12 @@ public class DLFileShortcutUADAnonymizerTest
 			(dlFileShortcut.getStatusByUserId() != user.getUserId()) &&
 			!statusByUserName.equals(user.getFullName())) {
 
-			return true;
+			if (isAssetEntryAutoAnonymized(
+					DLFileShortcut.class.getName(),
+					dlFileShortcut.getFileShortcutId(), user)) {
+
+				return true;
+			}
 		}
 
 		return false;
