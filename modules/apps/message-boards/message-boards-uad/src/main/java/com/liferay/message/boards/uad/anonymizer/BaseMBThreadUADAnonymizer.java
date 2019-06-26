@@ -14,6 +14,8 @@
 
 package com.liferay.message.boards.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.MBThreadLocalService;
 import com.liferay.message.boards.uad.constants.MBUADConstants;
@@ -47,6 +49,14 @@ public abstract class BaseMBThreadUADAnonymizer
 		if (mbThread.getUserId() == userId) {
 			mbThread.setUserId(anonymousUser.getUserId());
 			mbThread.setUserName(anonymousUser.getFullName());
+
+			AssetEntry assetEntry = assetEntryLocalService.getEntry(
+				MBThread.class.getName(), mbThread.getThreadId());
+
+			assetEntry.setUserId(anonymousUser.getUserId());
+			assetEntry.setUserName(anonymousUser.getFullName());
+
+			assetEntryLocalService.updateAssetEntry(assetEntry);
 		}
 
 		if (mbThread.getRootMessageUserId() == userId) {
@@ -84,6 +94,9 @@ public abstract class BaseMBThreadUADAnonymizer
 	protected String[] doGetUserIdFieldNames() {
 		return MBUADConstants.USER_ID_FIELD_NAMES_MB_THREAD;
 	}
+
+	@Reference
+	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Reference
 	protected MBThreadLocalService mbThreadLocalService;

@@ -14,6 +14,8 @@
 
 package com.liferay.bookmarks.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.bookmarks.model.BookmarksFolder;
 import com.liferay.bookmarks.service.BookmarksFolderLocalService;
 import com.liferay.bookmarks.uad.constants.BookmarksUADConstants;
@@ -47,6 +49,14 @@ public abstract class BaseBookmarksFolderUADAnonymizer
 		if (bookmarksFolder.getUserId() == userId) {
 			bookmarksFolder.setUserId(anonymousUser.getUserId());
 			bookmarksFolder.setUserName(anonymousUser.getFullName());
+
+			AssetEntry assetEntry = assetEntryLocalService.getEntry(
+				BookmarksFolder.class.getName(), bookmarksFolder.getFolderId());
+
+			assetEntry.setUserId(anonymousUser.getUserId());
+			assetEntry.setUserName(anonymousUser.getFullName());
+
+			assetEntryLocalService.updateAssetEntry(assetEntry);
 		}
 
 		if (bookmarksFolder.getStatusByUserId() == userId) {
@@ -76,6 +86,9 @@ public abstract class BaseBookmarksFolderUADAnonymizer
 	protected String[] doGetUserIdFieldNames() {
 		return BookmarksUADConstants.USER_ID_FIELD_NAMES_BOOKMARKS_FOLDER;
 	}
+
+	@Reference
+	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Reference
 	protected BookmarksFolderLocalService bookmarksFolderLocalService;

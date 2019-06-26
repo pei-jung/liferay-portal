@@ -14,6 +14,8 @@
 
 package com.liferay.blogs.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.blogs.uad.constants.BlogsUADConstants;
@@ -47,6 +49,14 @@ public abstract class BaseBlogsEntryUADAnonymizer
 		if (blogsEntry.getUserId() == userId) {
 			blogsEntry.setUserId(anonymousUser.getUserId());
 			blogsEntry.setUserName(anonymousUser.getFullName());
+
+			AssetEntry assetEntry = assetEntryLocalService.getEntry(
+				BlogsEntry.class.getName(), blogsEntry.getEntryId());
+
+			assetEntry.setUserId(anonymousUser.getUserId());
+			assetEntry.setUserName(anonymousUser.getFullName());
+
+			assetEntryLocalService.updateAssetEntry(assetEntry);
 		}
 
 		if (blogsEntry.getStatusByUserId() == userId) {
@@ -76,6 +86,9 @@ public abstract class BaseBlogsEntryUADAnonymizer
 	protected String[] doGetUserIdFieldNames() {
 		return BlogsUADConstants.USER_ID_FIELD_NAMES_BLOGS_ENTRY;
 	}
+
+	@Reference
+	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Reference
 	protected BlogsEntryLocalService blogsEntryLocalService;
