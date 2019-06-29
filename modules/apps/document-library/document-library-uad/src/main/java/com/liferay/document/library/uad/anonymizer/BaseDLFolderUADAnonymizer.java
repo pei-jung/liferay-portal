@@ -14,6 +14,8 @@
 
 package com.liferay.document.library.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.document.library.uad.constants.DLUADConstants;
@@ -47,6 +49,16 @@ public abstract class BaseDLFolderUADAnonymizer
 		if (dlFolder.getUserId() == userId) {
 			dlFolder.setUserId(anonymousUser.getUserId());
 			dlFolder.setUserName(anonymousUser.getFullName());
+
+			AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DLFolder.class.getName(), dlFolder.getFolderId());
+
+			if (assetEntry != null) {
+				assetEntry.setUserId(anonymousUser.getUserId());
+				assetEntry.setUserName(anonymousUser.getFullName());
+
+				assetEntryLocalService.updateAssetEntry(assetEntry);
+			}
 		}
 
 		if (dlFolder.getStatusByUserId() == userId) {
@@ -76,6 +88,9 @@ public abstract class BaseDLFolderUADAnonymizer
 	protected String[] doGetUserIdFieldNames() {
 		return DLUADConstants.USER_ID_FIELD_NAMES_DL_FOLDER;
 	}
+
+	@Reference
+	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Reference
 	protected DLFolderLocalService dlFolderLocalService;

@@ -14,6 +14,8 @@
 
 package com.liferay.document.library.uad.anonymizer;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.uad.constants.DLUADConstants;
@@ -47,6 +49,16 @@ public abstract class BaseDLFileEntryUADAnonymizer
 		if (dlFileEntry.getUserId() == userId) {
 			dlFileEntry.setUserId(anonymousUser.getUserId());
 			dlFileEntry.setUserName(anonymousUser.getFullName());
+
+			AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DLFileEntry.class.getName(), dlFileEntry.getFileEntryId());
+
+			if (assetEntry != null) {
+				assetEntry.setUserId(anonymousUser.getUserId());
+				assetEntry.setUserName(anonymousUser.getFullName());
+
+				assetEntryLocalService.updateAssetEntry(assetEntry);
+			}
 		}
 
 		dlFileEntryLocalService.updateDLFileEntry(dlFileEntry);
@@ -71,6 +83,9 @@ public abstract class BaseDLFileEntryUADAnonymizer
 	protected String[] doGetUserIdFieldNames() {
 		return DLUADConstants.USER_ID_FIELD_NAMES_DL_FILE_ENTRY;
 	}
+
+	@Reference
+	protected AssetEntryLocalService assetEntryLocalService;
 
 	@Reference
 	protected DLFileEntryLocalService dlFileEntryLocalService;
