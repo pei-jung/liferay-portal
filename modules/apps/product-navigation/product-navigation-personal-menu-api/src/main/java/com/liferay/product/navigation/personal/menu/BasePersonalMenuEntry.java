@@ -54,6 +54,14 @@ public abstract class BasePersonalMenuEntry implements PersonalMenuEntry {
 				getPortletId());
 	}
 
+	/**
+	 * Returns the portlet's ID associated with the user personal menu entry.
+	 *
+	 * @return the portlet's ID associated with the user personal menu entry
+	 * @review
+	 */
+	public abstract String getPortletId();
+
 	@Override
 	public String getPortletURL(HttpServletRequest httpServletRequest)
 		throws PortalException {
@@ -88,14 +96,6 @@ public abstract class BasePersonalMenuEntry implements PersonalMenuEntry {
 
 		return false;
 	}
-
-	/**
-	 * Returns the portlet's ID associated with the user personal menu entry.
-	 *
-	 * @return the portlet's ID associated with the user personal menu entry
-	 * @review
-	 */
-	protected abstract String getPortletId();
 
 	protected ResourceBundle getResourceBundle(Locale locale) {
 		return ResourceBundleUtil.getBundle(locale, getClass());
