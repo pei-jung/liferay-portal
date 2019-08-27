@@ -30,6 +30,8 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 page import="com.liferay.account.admin.web.internal.dao.search.AccountDisplaySearchContainerFactory" %><%@
 page import="com.liferay.account.admin.web.internal.display.AccountDisplay" %><%@
 page import="com.liferay.account.admin.web.internal.display.context.ViewAccountsManagementToolbarDisplayContext" %><%@
+page import="com.liferay.account.model.AccountEntry" %><%@
+page import="com.liferay.account.service.AccountEntryLocalServiceUtil" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
