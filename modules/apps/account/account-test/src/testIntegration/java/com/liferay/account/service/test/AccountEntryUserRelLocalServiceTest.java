@@ -87,6 +87,24 @@ public class AccountEntryUserRelLocalServiceTest {
 			_accountEntry.getAccountEntryId(), _user.getUserId());
 	}
 
+	@Test(expected = NoSuchEntryException.class)
+	public void testAddAccountEntryUserRelThrowsNoSuchEntryException()
+		throws Exception {
+
+		_accountEntryUserRelLocalService.addAccountEntryUserRel(
+			_accountEntry.getAccountEntryId() + RandomTestUtil.nextLong(),
+			_user.getUserId());
+	}
+
+	@Test(expected = NoSuchUserException.class)
+	public void testAddAccountEntryUserRelThrowsNoSuchUserException()
+		throws Exception {
+
+		_accountEntryUserRelLocalService.addAccountEntryUserRel(
+			_accountEntry.getAccountEntryId(),
+			_user.getUserId() + RandomTestUtil.nextLong());
+	}
+
 	@Test
 	public void testGetByAccountEntryId() throws Exception {
 		List<User> users = new ArrayList<>();
@@ -119,24 +137,6 @@ public class AccountEntryUserRelLocalServiceTest {
 		Arrays.sort(actualUserIds);
 
 		Assert.assertArrayEquals(expectedUserIds, actualUserIds);
-	}
-
-	@Test(expected = NoSuchEntryException.class)
-	public void testAddAccountEntryUserRelThrowsNoSuchEntryException()
-		throws Exception {
-
-		_accountEntryUserRelLocalService.addAccountEntryUserRel(
-			_accountEntry.getAccountEntryId() + RandomTestUtil.nextLong(),
-			_user.getUserId());
-	}
-
-	@Test(expected = NoSuchUserException.class)
-	public void testAddAccountEntryUserRelThrowsNoSuchUserException()
-		throws Exception {
-
-		_accountEntryUserRelLocalService.addAccountEntryUserRel(
-			_accountEntry.getAccountEntryId(),
-			_user.getUserId() + RandomTestUtil.nextLong());
 	}
 
 	@DeleteAfterTestRun
