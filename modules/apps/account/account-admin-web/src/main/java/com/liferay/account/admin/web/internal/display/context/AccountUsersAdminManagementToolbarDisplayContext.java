@@ -17,6 +17,7 @@ package com.liferay.account.admin.web.internal.display.context;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalServiceUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.display.context.SearchContainerManagementToolbarDisplayContext;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItem;
@@ -66,6 +67,39 @@ public class AccountUsersAdminManagementToolbarDisplayContext
 		clearResultsURL.setParameter("keywords", StringPool.BLANK);
 
 		return clearResultsURL.toString();
+	}
+
+	public CreationMenu getCreationMenu() {
+		return new CreationMenu() {
+			{
+				addPrimaryDropdownItem(
+					dropdownItem -> {
+						PortletURL accountSelectorURL =
+							liferayPortletResponse.createRenderURL();
+
+						accountSelectorURL.setParameter(
+							"mvcPath",
+							"/account_users_admin/select_account_entry.jsp");
+						accountSelectorURL.setParameter(
+							"accountNavigation", "accounts");
+						accountSelectorURL.setWindowState(
+							LiferayWindowState.POP_UP);
+
+						dropdownItem.putData(
+							"redirectURL", currentURLObj.toString());
+						dropdownItem.putData(
+							"accountSelectorURL",
+							accountSelectorURL.toString());
+						dropdownItem.putData(
+							"dialogTitle",
+							LanguageUtil.get(request, "select-an-account"));
+						dropdownItem.putData("action", "selectAccount");
+
+						dropdownItem.setLabel(
+							LanguageUtil.get(request, "add-user"));
+					});
+			}
+		};
 	}
 
 	@Override
