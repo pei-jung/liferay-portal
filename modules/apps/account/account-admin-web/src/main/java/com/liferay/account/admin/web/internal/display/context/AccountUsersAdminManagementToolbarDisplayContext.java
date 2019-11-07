@@ -252,6 +252,9 @@ public class AccountUsersAdminManagementToolbarDisplayContext
 						dropdownItem.putData(
 							"accountEntrySelectorURL",
 							accountEntriesSelectorURL.toString());
+						dropdownItem.putData(
+							"dialogTitle",
+							LanguageUtil.get(request, "select-accounts"));
 						dropdownItem.putData("action", "selectAccountEntries");
 
 						dropdownItem.setLabel(
