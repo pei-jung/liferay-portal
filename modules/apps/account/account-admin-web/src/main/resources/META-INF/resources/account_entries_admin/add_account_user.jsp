@@ -21,9 +21,13 @@ AccountEntryDisplay accountEntryDisplay = (AccountEntryDisplay)request.getAttrib
 
 PortletURL backURL = renderResponse.createRenderURL();
 
-backURL.setParameter("mvcRenderCommandName", "/account_admin/edit_account_entry");
-backURL.setParameter("screenNavigationCategoryKey", AccountScreenNavigationEntryConstants.CATEGORY_KEY_USERS);
-backURL.setParameter("accountEntryId", String.valueOf(accountEntryDisplay.getAccountEntryId()));
+String getBackURL = ParamUtil.getString(request, "backURL");
+
+if (getBackURL == null) {
+	backURL.setParameter("mvcRenderCommandName", "/account_admin/edit_account_entry");
+	backURL.setParameter("screenNavigationCategoryKey", AccountScreenNavigationEntryConstants.CATEGORY_KEY_USERS);
+	backURL.setParameter("accountEntryId", String.valueOf(accountEntryDisplay.getAccountEntryId()));
+}
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(String.valueOf(backURL));
