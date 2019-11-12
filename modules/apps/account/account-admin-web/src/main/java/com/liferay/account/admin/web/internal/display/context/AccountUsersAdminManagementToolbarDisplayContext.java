@@ -77,6 +77,9 @@ public class AccountUsersAdminManagementToolbarDisplayContext
 						PortletURL accountSelectorURL =
 							liferayPortletResponse.createRenderURL();
 
+						PortletURL backURL =
+							liferayPortletResponse.createRenderURL();
+
 						accountSelectorURL.setParameter(
 							"mvcPath",
 							"/account_users_admin/select_account_entry.jsp");
@@ -90,10 +93,11 @@ public class AccountUsersAdminManagementToolbarDisplayContext
 						dropdownItem.putData(
 							"accountSelectorURL",
 							accountSelectorURL.toString());
+						dropdownItem.putData("backURL", backURL.toString());
 						dropdownItem.putData(
 							"dialogTitle",
 							LanguageUtil.get(request, "select-an-account"));
-						dropdownItem.putData("action", "selectAccount");
+						dropdownItem.putData("action", "selectAccountEntry");
 
 						dropdownItem.setLabel(
 							LanguageUtil.get(request, "add-user"));
