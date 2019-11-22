@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.comparator.UserEmailAddressComparator;
+import com.liferay.portal.kernel.util.comparator.UserScreenNameComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -65,27 +66,32 @@ public class AccountUserRetrieverWhenSearchingByEmailAddressDomainsTest {
 		throws Exception {
 
 		_users.add(UserTestUtil.addUser());
-		_users.add(_addAccountUser("liferay.com"));
-		_users.add(_addAccountUser("test.com"));
+
+		List<User> expectedUsers = new ArrayList<>();
+
+		expectedUsers.add(_addAccountUser("liferay.com"));
+		expectedUsers.add(_addAccountUser("test.com"));
+
+		expectedUsers.sort(new UserScreenNameComparator());
+
+		_users.addAll(expectedUsers);
 
 		_accountEntry = AccountEntryTestUtil.addAccountEntry(
 			_accountEntryLocalService, new String[] {"test.com"});
 
-		BaseModelSearchResult<User> users =
+		BaseModelSearchResult<User> userBaseModelSearchResult =
 			_accountUserRetriever.searchAccountUsers(
 				AccountConstants.ACCOUNT_ENTRY_ID_ANY, null,
 				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS, "screen-name", false);
 
-		BaseModelSearchResult<User> expectedUsers =
-			_accountUserRetriever.searchAccountUsers(
-				AccountConstants.ACCOUNT_ENTRY_ID_ANY, null,
-				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, "screen-name", false);
+		List<User> actualUsers = userBaseModelSearchResult.getBaseModels();
 
-		Assert.assertEquals(expectedUsers.getLength(), users.getLength());
+		actualUsers.sort(new UserScreenNameComparator());
+
 		Assert.assertEquals(
-			expectedUsers.getBaseModels(), users.getBaseModels());
+			expectedUsers.size(), userBaseModelSearchResult.getLength());
+		Assert.assertEquals(expectedUsers, actualUsers);
 	}
 
 	@Test
@@ -116,8 +122,7 @@ public class AccountUserRetrieverWhenSearchingByEmailAddressDomainsTest {
 				null, WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS, "email-address", false);
 
-		Assert.assertEquals(
-			users.size(), baseModelSearchResult.getLength());
+		Assert.assertEquals(users.size(), baseModelSearchResult.getLength());
 		Assert.assertEquals(
 			ListUtil.sort(users, new UserEmailAddressComparator(true)),
 			baseModelSearchResult.getBaseModels());
@@ -162,9 +167,8 @@ public class AccountUserRetrieverWhenSearchingByEmailAddressDomainsTest {
 			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
 			StringPool.BLANK,
 			RandomTestUtil.randomString() + StringPool.AT + emailAddressDomain,
-			RandomTestUtil.randomString(),
-			LocaleUtil.getDefault(), RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), null,
+			RandomTestUtil.randomString(), LocaleUtil.getDefault(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(), null,
 			ServiceContextTestUtil.getServiceContext());
 	}
 
