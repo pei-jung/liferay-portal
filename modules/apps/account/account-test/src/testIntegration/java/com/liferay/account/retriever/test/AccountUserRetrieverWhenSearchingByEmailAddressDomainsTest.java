@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -98,20 +99,20 @@ public class AccountUserRetrieverWhenSearchingByEmailAddressDomainsTest {
 	public void testShouldReturnAccountUsersWithMatchingEmailAddressDomain()
 		throws Exception {
 
-		_users.add(_addUser("liferay.com"));
-		_users.add(_addAccountUser("liferay.com"));
+		List<User> accountUsers = new ArrayList<>();
+		List<User> nonAccountUsers = new ArrayList<>();
 
 		String[] emailAddressDomains = {"test1.com", "test2.com"};
 
-		List<User> users = new ArrayList<>();
+		for (String emailAddressDomain :
+				ArrayUtil.append(emailAddressDomains, "liferay.com")) {
 
-		for (String emailAddressDomain : emailAddressDomains) {
-			users.add(_addAccountUser(emailAddressDomain));
-
-			_users.add(_addUser(emailAddressDomain));
+			accountUsers.add(_addAccountUser(emailAddressDomain));
+			nonAccountUsers.add(_addUser(emailAddressDomain));
 		}
 
-		_users.addAll(users);
+		_users.addAll(accountUsers);
+		_users.addAll(nonAccountUsers);
 
 		_accountEntry = AccountEntryTestUtil.addAccountEntry(
 			_accountEntryLocalService, emailAddressDomains);
@@ -122,10 +123,17 @@ public class AccountUserRetrieverWhenSearchingByEmailAddressDomainsTest {
 				null, WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS, "email-address", false);
 
-		Assert.assertEquals(users.size(), baseModelSearchResult.getLength());
 		Assert.assertEquals(
-			ListUtil.sort(users, new UserEmailAddressComparator(true)),
-			baseModelSearchResult.getBaseModels());
+			accountUsers.size(), baseModelSearchResult.getLength());
+
+		UserEmailAddressComparator userEmailAddressComparator =
+			new UserEmailAddressComparator(true);
+
+		Assert.assertEquals(
+			ListUtil.sort(accountUsers, userEmailAddressComparator),
+			ListUtil.sort(
+				baseModelSearchResult.getBaseModels(),
+				userEmailAddressComparator));
 	}
 
 	@Test
