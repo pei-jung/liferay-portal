@@ -28,6 +28,10 @@ import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -89,6 +93,14 @@ public class OrganizationModelPreFilterContributor
 				booleanFilter.add(new QueryFilter(termQuery));
 			}
 
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+			PermissionChecker permissionChecker =
+				themeDisplay.getPermissionChecker();
+
 			for (Organization organization : organizationsTree) {
 				String treePath;
 
@@ -97,6 +109,14 @@ public class OrganizationModelPreFilterContributor
 				}
 				catch (PortalException pe) {
 					throw new RuntimeException(pe);
+				}
+
+				if (permissionChecker.isOrganizationAdmin(
+						organization.getOrganizationId()) ||
+					permissionChecker.isOrganizationOwner(
+						organization.getOrganizationId())) {
+
+					treePath = treePath + "*";
 				}
 
 				WildcardQuery wildcardQuery = new WildcardQueryImpl(
