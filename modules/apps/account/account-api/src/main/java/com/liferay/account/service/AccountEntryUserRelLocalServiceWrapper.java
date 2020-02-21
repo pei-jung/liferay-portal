@@ -382,6 +382,16 @@ public class AccountEntryUserRelLocalServiceWrapper
 	}
 
 	@Override
+	public void UpdateAccountEntryUserRels(
+			long[] addAccountEntryIds, long[] deleteAccountEntryIds,
+			long accountUserId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_accountEntryUserRelLocalService.UpdateAccountEntryUserRels(
+			addAccountEntryIds, deleteAccountEntryIds, accountUserId);
+	}
+
+	@Override
 	public AccountEntryUserRelLocalService getWrappedService() {
 		return _accountEntryUserRelLocalService;
 	}
