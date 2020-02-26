@@ -31,6 +31,7 @@ page import="com.liferay.account.admin.web.internal.constants.AccountWebKeys" %>
 page import="com.liferay.account.admin.web.internal.dao.search.AccountEntryDisplaySearchContainerFactory" %><%@
 page import="com.liferay.account.admin.web.internal.dao.search.AccountOrganizationSearchContainerFactory" %><%@
 page import="com.liferay.account.admin.web.internal.dao.search.AccountRoleDisplaySearchContainerFactory" %><%@
+page import="com.liferay.account.admin.web.internal.dao.search.AccountUserAccountEntryDisplaySearchContainerFactory" %><%@
 page import="com.liferay.account.admin.web.internal.dao.search.AccountUserDisplaySearchContainerFactory" %><%@
 page import="com.liferay.account.admin.web.internal.dao.search.AssignableAccountOrganizationSearchContainerFactory" %><%@
 page import="com.liferay.account.admin.web.internal.dao.search.AssignableAccountUserDisplaySearchContainerFactory" %><%@
