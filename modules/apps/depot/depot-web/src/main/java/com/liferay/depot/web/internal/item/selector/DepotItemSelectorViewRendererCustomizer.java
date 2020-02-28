@@ -15,13 +15,12 @@
 package com.liferay.depot.web.internal.item.selector;
 
 import com.liferay.depot.web.internal.application.controller.DepotApplicationController;
-import com.liferay.depot.web.internal.constants.DepotAdminWebKeys;
-import com.liferay.depot.web.internal.display.context.DepotApplicationDisplayContext;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.ItemSelectorView;
 import com.liferay.item.selector.ItemSelectorViewRenderer;
 import com.liferay.item.selector.ItemSelectorViewRendererCustomizer;
 import com.liferay.item.selector.PortletItemSelectorView;
+import com.liferay.item.selector.criteria.asset.criterion.AssetEntryItemSelectorCriterion;
 import com.liferay.item.selector.criteria.audio.criterion.AudioItemSelectorCriterion;
 import com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriterion;
 import com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion;
@@ -29,28 +28,15 @@ import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelect
 import com.liferay.item.selector.criteria.video.criterion.VideoItemSelectorCriterion;
 import com.liferay.layout.item.selector.criterion.LayoutItemSelectorCriterion;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.GroupConstants;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.taglib.util.PortalIncludeUtil;
-
-import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
-import javax.portlet.PortletURL;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -65,6 +51,19 @@ public class DepotItemSelectorViewRendererCustomizer
 	@Override
 	public ItemSelectorViewRenderer customizeItemSelectorViewRenderer(
 		ItemSelectorViewRenderer itemSelectorViewRenderer) {
+
+		ItemSelectorCriterion itemSelectorCriterion =
+			itemSelectorViewRenderer.getItemSelectorCriterion();
+
+		if (itemSelectorCriterion instanceof AssetEntryItemSelectorCriterion) {
+			AssetEntryItemSelectorCriterion assetEntryItemSelectorCriterion =
+				(AssetEntryItemSelectorCriterion)itemSelectorCriterion;
+
+			return new DepotItemSelectorViewRenderer(
+				assetEntryItemSelectorCriterion.getTypeSelection(),
+				_depotApplicationController, itemSelectorViewRenderer, _portal,
+				Collections.emptyList(), _servletContext);
+		}
 
 		ItemSelectorView<ItemSelectorCriterion> itemSelectorView =
 			itemSelectorViewRenderer.getItemSelectorView();
@@ -83,94 +82,9 @@ public class DepotItemSelectorViewRendererCustomizer
 			return itemSelectorViewRenderer;
 		}
 
-		return new ItemSelectorViewRenderer() {
-
-			@Override
-			public String getItemSelectedEventName() {
-				return itemSelectorViewRenderer.getItemSelectedEventName();
-			}
-
-			@Override
-			public ItemSelectorCriterion getItemSelectorCriterion() {
-				return itemSelectorViewRenderer.getItemSelectorCriterion();
-			}
-
-			@Override
-			public ItemSelectorView<ItemSelectorCriterion>
-				getItemSelectorView() {
-
-				return itemSelectorViewRenderer.getItemSelectorView();
-			}
-
-			@Override
-			public PortletURL getPortletURL() {
-				return itemSelectorViewRenderer.getPortletURL();
-			}
-
-			@Override
-			public void renderHTML(PageContext pageContext)
-				throws IOException, ServletException {
-
-				PortalIncludeUtil.include(
-					pageContext,
-					(httpServletRequest, httpServletResponse) -> {
-						ThemeDisplay themeDisplay =
-							(ThemeDisplay)httpServletRequest.getAttribute(
-								WebKeys.THEME_DISPLAY);
-
-						Group scopeGroup = themeDisplay.getScopeGroup();
-
-						if (scopeGroup.getType() != GroupConstants.TYPE_DEPOT) {
-							itemSelectorViewRenderer.renderHTML(pageContext);
-
-							return;
-						}
-
-						String portletId = _getPortletId(
-							scopeGroup.getGroupId());
-
-						if (Validator.isNotNull(portletId)) {
-							itemSelectorViewRenderer.renderHTML(pageContext);
-
-							return;
-						}
-
-						RequestDispatcher requestDispatcher =
-							_servletContext.getRequestDispatcher(
-								"/item/selector/application_disabled.jsp");
-
-						DepotApplicationDisplayContext
-							depotApplicationDisplayContext =
-								new DepotApplicationDisplayContext(
-									httpServletRequest, _portal);
-
-						depotApplicationDisplayContext.setPortletId(
-							portletIds.get(0));
-						depotApplicationDisplayContext.setPortletURL(
-							itemSelectorViewRenderer.getPortletURL());
-
-						httpServletRequest.setAttribute(
-							DepotAdminWebKeys.DEPOT_APPLICATION_DISPLAY_CONTEXT,
-							depotApplicationDisplayContext);
-
-						requestDispatcher.include(
-							httpServletRequest, httpServletResponse);
-					});
-			}
-
-			private String _getPortletId(long groupId) {
-				Stream<String> stream = portletIds.stream();
-
-				return stream.filter(
-					portletId -> _depotApplicationController.isEnabled(
-						portletId, groupId)
-				).findFirst(
-				).orElse(
-					StringPool.BLANK
-				);
-			}
-
-		};
+		return new DepotItemSelectorViewRenderer(
+			StringPool.BLANK, _depotApplicationController,
+			itemSelectorViewRenderer, _portal, portletIds, _servletContext);
 	}
 
 	@Override
@@ -182,6 +96,7 @@ public class DepotItemSelectorViewRendererCustomizer
 
 	private static final List<Class<? extends ItemSelectorCriterion>>
 		_supportedItemSelectorCriterionClasses = Arrays.asList(
+			AssetEntryItemSelectorCriterion.class,
 			AudioItemSelectorCriterion.class, FileItemSelectorCriterion.class,
 			ImageItemSelectorCriterion.class,
 			InfoItemItemSelectorCriterion.class,

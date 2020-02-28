@@ -54,7 +54,7 @@
 
 						uniqueLanguageIds.add(defaultLanguageId);
 
-						Set<Locale> availableLocales;
+						Set<Locale> availableLocales = null;
 
 						if (defaultEditLocale == null) {
 							availableLocales = ddmForm.getAvailableLocales();

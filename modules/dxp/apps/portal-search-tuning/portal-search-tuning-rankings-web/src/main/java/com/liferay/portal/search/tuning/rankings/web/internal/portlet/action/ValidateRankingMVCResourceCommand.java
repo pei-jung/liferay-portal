@@ -31,6 +31,8 @@ import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsPortletKeys;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.DuplicateQueryStringsDetector;
+import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
+import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexNameBuilder;
 
 import java.io.IOException;
 
@@ -132,6 +134,9 @@ public class ValidateRankingMVCResourceCommand implements MVCResourceCommand {
 	protected Portal portal;
 
 	@Reference
+	protected RankingIndexNameBuilder rankingIndexNameBuilder;
+
+	@Reference
 	protected SearchRequestBuilderFactory searchRequestBuilderFactory;
 
 	private List<String> _getAliases(
@@ -155,8 +160,6 @@ public class ValidateRankingMVCResourceCommand implements MVCResourceCommand {
 		ResourceRequest resourceRequest,
 		ValidateRankingMVCResourceRequest validateRankingMVCResourceRequest) {
 
-		String index = _getIndexName(resourceRequest);
-
 		List<String> aliases = _getAliases(validateRankingMVCResourceRequest);
 
 		Collection<String> queryStrings = Stream.concat(
@@ -173,9 +176,11 @@ public class ValidateRankingMVCResourceCommand implements MVCResourceCommand {
 		return duplicateQueryStringsDetector.detect(
 			duplicateQueryStringsDetector.builder(
 			).index(
-				index
+				_getIndexName(resourceRequest)
 			).queryStrings(
 				queryStrings
+			).rankingIndexName(
+				_getRankingIndexName(resourceRequest)
 			).unlessRankingId(
 				validateRankingMVCResourceRequest.getResultsRankingUid()
 			).build());
@@ -184,6 +189,13 @@ public class ValidateRankingMVCResourceCommand implements MVCResourceCommand {
 	private String _getIndexName(ResourceRequest resourceRequest) {
 		return indexNameBuilder.getIndexName(
 			portal.getCompanyId(resourceRequest));
+	}
+
+	private RankingIndexName _getRankingIndexName(
+		ResourceRequest resourceRequest) {
+
+		return rankingIndexNameBuilder.getRankingIndexName(
+			_getIndexName(resourceRequest));
 	}
 
 	private boolean _isUpdateSpecial(String string) {

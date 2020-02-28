@@ -18,15 +18,18 @@ import AppContext, {createReducer, initialState} from './AppContext.es';
 import {
 	UPDATE_DATA_DEFINITION,
 	UPDATE_DATA_LAYOUT,
+	UPDATE_FIELDSETS,
 	UPDATE_IDS,
 } from './actions.es';
 import {getItem} from './utils/client.es';
 
 export default ({
 	children,
+	contentType,
 	dataDefinitionId,
 	dataLayoutBuilder,
 	dataLayoutId,
+	groupId,
 }) => {
 	const reducer = createReducer(dataLayoutBuilder);
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -65,6 +68,43 @@ export default ({
 			);
 		}
 	}, [dataDefinitionId, dispatch]);
+
+	useEffect(() => {
+		if (contentType) {
+			const globalFieldSetsPromise = getItem(
+				`/o/data-engine/v2.0/sites/${groupId}/data-definitions/by-content-type/${contentType}`
+			);
+
+			const groupFieldSetsPromise = getItem(
+				`/o/data-engine/v2.0/data-definitions/by-content-type/${contentType}`
+			);
+
+			Promise.all([globalFieldSetsPromise, groupFieldSetsPromise])
+				.then(
+					([
+						{items: globalFieldSets = []},
+						{items: groupFieldSets = []},
+					]) => {
+						dispatch({
+							payload: {
+								fieldsets: [
+									...globalFieldSets,
+									...groupFieldSets,
+								],
+							},
+							type: UPDATE_FIELDSETS,
+						});
+					}
+				)
+				.catch(error => {
+					if (process.env.NODE_ENV === 'development') {
+						console.warn(
+							`AppContextProvider: promise rejected: ${error}`
+						);
+					}
+				});
+		}
+	}, [contentType, dispatch, groupId]);
 
 	return (
 		<AppContext.Provider value={[state, dispatch]}>

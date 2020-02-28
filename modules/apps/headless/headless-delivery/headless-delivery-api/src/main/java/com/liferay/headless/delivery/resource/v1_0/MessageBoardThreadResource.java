@@ -61,8 +61,8 @@ public interface MessageBoardThreadResource {
 		throws Exception;
 
 	public Page<MessageBoardThread> getMessageBoardThreadsRankedPage(
-			Date dateCreated, Date dateModified, Pagination pagination,
-			Sort[] sorts)
+			Date dateCreated, Date dateModified, Long messageBoardSectionId,
+			Pagination pagination, Sort[] sorts)
 		throws Exception;
 
 	public void deleteMessageBoardThread(Long messageBoardThreadId)
@@ -118,6 +118,10 @@ public interface MessageBoardThreadResource {
 
 	public Response postSiteMessageBoardThreadBatch(
 			Long siteId, String callbackURL, Object object)
+		throws Exception;
+
+	public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
+			Long siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

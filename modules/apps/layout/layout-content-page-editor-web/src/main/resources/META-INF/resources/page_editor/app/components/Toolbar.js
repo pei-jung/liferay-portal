@@ -40,18 +40,20 @@ function ToolbarBody() {
 	const selectItem = useSelectItem();
 	const store = useSelector(state => state);
 
-	const {layoutData, segmentsExperienceId, segmentsExperimentStatus} = store;
+	const {
+		layoutData,
+		network,
+		segmentsExperienceId,
+		segmentsExperimentStatus,
+	} = store;
 
 	const [enableDiscard, setEnableDiscard] = useState(false);
 
 	useEffect(() => {
-		const mainItemId = layoutData.rootItems.main;
-		const mainItem = layoutData.items[mainItemId];
-
 		const isConversionPage = config.pageType === PAGE_TYPES.conversion;
 
-		setEnableDiscard(isConversionPage || mainItem.children.length > 0);
-	}, [layoutData]);
+		setEnableDiscard(network.lastFetch || config.draft || isConversionPage);
+	}, [layoutData, network.lastFetch]);
 
 	const loading = useRef(() => {
 		Promise.all(
@@ -208,7 +210,7 @@ function ToolbarBody() {
 			</ul>
 
 			<ul className="navbar-nav" onClick={deselectItem}>
-				<NetworkStatusBar {...store.network} />
+				<NetworkStatusBar {...network} />
 				<li className="nav-item">
 					<form action={config.discardDraftURL} method="POST">
 						<input

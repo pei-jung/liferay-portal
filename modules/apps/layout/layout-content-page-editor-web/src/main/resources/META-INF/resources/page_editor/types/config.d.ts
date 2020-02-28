@@ -41,6 +41,7 @@ export interface Config {
 	deleteSegmentsExperienceURL: string;
 	discardDraftRedirectURL: string;
 	discardDraftURL: string;
+	draft: boolean;
 	duplicateItemURL: string;
 	editFragmentEntryLinkCommentURL: string;
 	editFragmentEntryLinkURL: string;

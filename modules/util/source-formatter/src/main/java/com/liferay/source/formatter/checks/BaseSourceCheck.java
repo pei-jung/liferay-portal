@@ -163,7 +163,8 @@ public abstract class BaseSourceCheck implements SourceCheck {
 		sourceFormatterMessages.add(
 			new SourceFormatterMessage(
 				fileName, message, CheckType.SOURCE_CHECK,
-				clazz.getSimpleName(), _getDocumentationURLString(clazz),
+				clazz.getSimpleName(),
+				SourceFormatterUtil.getDocumentationURLString(clazz),
 				lineNumber));
 
 		_sourceFormatterMessagesMap.put(fileName, sourceFormatterMessages);
@@ -709,20 +710,6 @@ public abstract class BaseSourceCheck implements SourceCheck {
 
 	protected static final String RUN_OUTSIDE_PORTAL_EXCLUDES =
 		"run.outside.portal.excludes";
-
-	private String _getDocumentationURLString(Class<?> checkClass) {
-		String markdownURLString = SourceFormatterUtil.getMarkdownURLString(
-			checkClass.getSimpleName());
-
-		if (markdownURLString != null) {
-			return markdownURLString;
-		}
-
-		Class<?> superclass = checkClass.getSuperclass();
-
-		return SourceFormatterUtil.getMarkdownURLString(
-			superclass.getSimpleName());
-	}
 
 	private String _getVariableTypeName(
 		String content, String variableName,

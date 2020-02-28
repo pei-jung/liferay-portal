@@ -189,11 +189,13 @@ public class MessageBoardThreadResourceImpl
 
 	@Override
 	public Page<MessageBoardThread> getMessageBoardThreadsRankedPage(
-		Date dateCreated, Date dateModified, Pagination pagination,
-		Sort[] sorts) {
+			Date dateCreated, Date dateModified, Long messageBoardSectionId,
+			Pagination pagination, Sort[] sorts)
+		throws Exception {
 
 		DynamicQuery dynamicQuery = _getDynamicQuery(
-			dateCreated, dateModified, pagination, sorts);
+			dateCreated, dateModified, messageBoardSectionId, pagination,
+			sorts);
 
 		return Page.of(
 			transform(
@@ -202,6 +204,16 @@ public class MessageBoardThreadResourceImpl
 					_mbMessageService.getMessage(ratingsStats.getClassPK()))),
 			pagination,
 			_ratingsStatsLocalService.dynamicQueryCount(dynamicQuery));
+	}
+
+	@Override
+	public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
+			Long siteId, String friendlyUrlPath)
+		throws Exception {
+
+		return _toMessageBoardThread(
+			_mbMessageService.fetchMBMessageByUrlSubject(
+				siteId, friendlyUrlPath));
 	}
 
 	@Override
@@ -389,8 +401,8 @@ public class MessageBoardThreadResourceImpl
 	}
 
 	private DynamicQuery _getDynamicQuery(
-		Date dateCreated, Date dateModified, Pagination pagination,
-		Sort[] sorts) {
+		Date dateCreated, Date dateModified, Long messageBoardSectionId,
+		Pagination pagination, Sort[] sorts) {
 
 		DynamicQuery dynamicQuery = _ratingsStatsLocalService.dynamicQuery();
 
@@ -411,10 +423,16 @@ public class MessageBoardThreadResourceImpl
 				RestrictionsFactoryUtil.gt("modifiedDate", dateModified));
 		}
 
-		dynamicQuery.add(
-			RestrictionsFactoryUtil.sqlRestriction(
-				"EXISTS (select 1 from MBMessage where this_.classPK = " +
-					"messageId AND parentMessageId = 0 AND status = 0)"));
+		String sql =
+			"EXISTS (select 1 from MBMessage where this_.classPK = messageId";
+
+		if (messageBoardSectionId != null) {
+			sql += " AND categoryId = " + messageBoardSectionId;
+		}
+
+		sql += " AND parentMessageId = 0 AND status = 0)";
+
+		dynamicQuery.add(RestrictionsFactoryUtil.sqlRestriction(sql));
 
 		dynamicQuery.setLimit(
 			pagination.getStartPosition(), pagination.getEndPosition());
@@ -567,6 +585,7 @@ public class MessageBoardThreadResourceImpl
 				dateCreated = mbMessage.getCreateDate();
 				dateModified = mbMessage.getModifiedDate();
 				encodingFormat = mbMessage.getFormat();
+				friendlyUrlPath = mbMessage.getUrlSubject();
 				headline = mbMessage.getSubject();
 				id = mbThread.getThreadId();
 				keywords = ListUtil.toArray(

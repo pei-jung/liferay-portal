@@ -76,13 +76,15 @@ public interface MessageBoardThreadResource {
 
 	public Page<MessageBoardThread> getMessageBoardThreadsRankedPage(
 			java.util.Date dateCreated, java.util.Date dateModified,
-			Pagination pagination, String sortString)
+			Long messageBoardSectionId, Pagination pagination,
+			String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getMessageBoardThreadsRankedPageHttpResponse(
 				java.util.Date dateCreated, java.util.Date dateModified,
-				Pagination pagination, String sortString)
+				Long messageBoardSectionId, Pagination pagination,
+				String sortString)
 		throws Exception;
 
 	public void deleteMessageBoardThread(Long messageBoardThreadId)
@@ -206,6 +208,15 @@ public interface MessageBoardThreadResource {
 
 	public HttpInvoker.HttpResponse postSiteMessageBoardThreadBatchHttpResponse(
 			Long siteId, String callbackURL, Object object)
+		throws Exception;
+
+	public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
+			Long siteId, String friendlyUrlPath)
+		throws Exception;
+
+	public HttpInvoker.HttpResponse
+			getSiteMessageBoardThreadByFriendlyUrlPathHttpResponse(
+				Long siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public static class Builder {
@@ -490,12 +501,14 @@ public interface MessageBoardThreadResource {
 
 		public Page<MessageBoardThread> getMessageBoardThreadsRankedPage(
 				java.util.Date dateCreated, java.util.Date dateModified,
-				Pagination pagination, String sortString)
+				Long messageBoardSectionId, Pagination pagination,
+				String sortString)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
 				getMessageBoardThreadsRankedPageHttpResponse(
-					dateCreated, dateModified, pagination, sortString);
+					dateCreated, dateModified, messageBoardSectionId,
+					pagination, sortString);
 
 			String content = httpResponse.getContent();
 
@@ -520,7 +533,8 @@ public interface MessageBoardThreadResource {
 		public HttpInvoker.HttpResponse
 				getMessageBoardThreadsRankedPageHttpResponse(
 					java.util.Date dateCreated, java.util.Date dateModified,
-					Pagination pagination, String sortString)
+					Long messageBoardSectionId, Pagination pagination,
+					String sortString)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -556,6 +570,12 @@ public interface MessageBoardThreadResource {
 				httpInvoker.parameter(
 					"dateModified",
 					liferayToJSONDateFormat.format(dateModified));
+			}
+
+			if (messageBoardSectionId != null) {
+				httpInvoker.parameter(
+					"messageBoardSectionId",
+					String.valueOf(messageBoardSectionId));
 			}
 
 			if (pagination != null) {
@@ -1588,6 +1608,72 @@ public interface MessageBoardThreadResource {
 					_builder._port +
 						"/o/headless-delivery/v1.0/sites/{siteId}/message-board-threads/batch",
 				siteId);
+
+			httpInvoker.userNameAndPassword(
+				_builder._login + ":" + _builder._password);
+
+			return httpInvoker.invoke();
+		}
+
+		public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
+				Long siteId, String friendlyUrlPath)
+			throws Exception {
+
+			HttpInvoker.HttpResponse httpResponse =
+				getSiteMessageBoardThreadByFriendlyUrlPathHttpResponse(
+					siteId, friendlyUrlPath);
+
+			String content = httpResponse.getContent();
+
+			_logger.fine("HTTP response content: " + content);
+
+			_logger.fine("HTTP response message: " + httpResponse.getMessage());
+			_logger.fine(
+				"HTTP response status code: " + httpResponse.getStatusCode());
+
+			try {
+				return MessageBoardThreadSerDes.toDTO(content);
+			}
+			catch (Exception e) {
+				_logger.log(
+					Level.WARNING,
+					"Unable to process HTTP response: " + content, e);
+
+				throw new Problem.ProblemException(Problem.toDTO(content));
+			}
+		}
+
+		public HttpInvoker.HttpResponse
+				getSiteMessageBoardThreadByFriendlyUrlPathHttpResponse(
+					Long siteId, String friendlyUrlPath)
+			throws Exception {
+
+			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
+
+			if (_builder._locale != null) {
+				httpInvoker.header(
+					"Accept-Language", _builder._locale.toLanguageTag());
+			}
+
+			for (Map.Entry<String, String> entry :
+					_builder._headers.entrySet()) {
+
+				httpInvoker.header(entry.getKey(), entry.getValue());
+			}
+
+			for (Map.Entry<String, String> entry :
+					_builder._parameters.entrySet()) {
+
+				httpInvoker.parameter(entry.getKey(), entry.getValue());
+			}
+
+			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
+
+			httpInvoker.path(
+				_builder._scheme + "://" + _builder._host + ":" +
+					_builder._port +
+						"/o/headless-delivery/v1.0/sites/{siteId}/message-board-threads/by-friendly-url-path/{friendlyUrlPath}",
+				siteId, friendlyUrlPath);
 
 			httpInvoker.userNameAndPassword(
 				_builder._login + ":" + _builder._password);

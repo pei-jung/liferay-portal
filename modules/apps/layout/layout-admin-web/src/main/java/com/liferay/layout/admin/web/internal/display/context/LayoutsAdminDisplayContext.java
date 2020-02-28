@@ -1717,6 +1717,9 @@ public class LayoutsAdminDisplayContext {
 		if (isShowCopyLayoutAction(layout)) {
 			jsonObject.put("copyLayoutURL", getCopyLayoutRenderURL(layout));
 		}
+		else {
+			jsonObject.put("copyLayoutURL", StringPool.BLANK);
+		}
 
 		if (isShowDeleteAction(layout)) {
 			jsonObject.put("deleteURL", getDeleteLayoutURL(layout));
@@ -1726,7 +1729,11 @@ public class LayoutsAdminDisplayContext {
 			jsonObject.put("editConversionLayoutURL", getEditLayoutURL(layout));
 		}
 		else if (isShowConfigureAction(layout)) {
-			jsonObject.put("editLayoutURL", getEditLayoutURL(layout));
+			String editLayoutURL = getEditLayoutURL(layout);
+
+			if (Validator.isNotNull(editLayoutURL)) {
+				jsonObject.put("editLayoutURL", editLayoutURL);
+			}
 		}
 
 		if (isShowOrphanPortletsAction(layout)) {
@@ -1744,8 +1751,11 @@ public class LayoutsAdminDisplayContext {
 			boolean published = GetterUtil.getBoolean(
 				layout.getTypeSettingsProperty("published"));
 
-			if (published) {
+			if (!layout.isTypeContent() || published) {
 				jsonObject.put("viewLayoutURL", getViewLayoutURL(layout));
+			}
+			else {
+				jsonObject.put("viewLayoutURL", StringPool.BLANK);
 			}
 		}
 

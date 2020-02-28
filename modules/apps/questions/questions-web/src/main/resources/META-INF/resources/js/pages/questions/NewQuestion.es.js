@@ -58,6 +58,7 @@ export default withRouter(({history}) => {
 					</label>
 
 					<ClayInput
+						maxLength={75}
 						onChange={event => setHeadline(event.target.value)}
 						placeholder={Liferay.Language.get(
 							'what-is-your-question'
@@ -134,8 +135,9 @@ export default withRouter(({history}) => {
 				</ClayForm.Group>
 			</ClayForm>
 
-			<ClayButton.Group className="c-mt-4" spaced={true}>
+			<div className="c-mt-4 d-flex flex-column-reverse flex-sm-row">
 				<ClayButton
+					className="c-mt-4 c-mt-sm-0"
 					disabled={!articleBody || !headline}
 					displayType="primary"
 					onClick={submit}
@@ -143,12 +145,10 @@ export default withRouter(({history}) => {
 					{Liferay.Language.get('post-your-question')}
 				</ClayButton>
 
-				<Link to={`/`}>
-					<ClayButton displayType="secondary">
-						{Liferay.Language.get('cancel')}
-					</ClayButton>
+				<Link className="btn btn-secondary c-ml-sm-3" to={`/`}>
+					{Liferay.Language.get('cancel')}
 				</Link>
-			</ClayButton.Group>
+			</div>
 		</section>
 	);
 });

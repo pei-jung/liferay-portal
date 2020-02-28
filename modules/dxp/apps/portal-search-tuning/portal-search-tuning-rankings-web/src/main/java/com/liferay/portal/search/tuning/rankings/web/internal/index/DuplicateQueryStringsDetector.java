@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.index;
 
+import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +34,8 @@ public interface DuplicateQueryStringsDetector {
 
 		public Collection<String> getQueryStrings();
 
+		public RankingIndexName getRankingIndexName();
+
 		public String getUnlessRankingId();
 
 		public interface Builder {
@@ -41,6 +45,8 @@ public interface DuplicateQueryStringsDetector {
 			public Builder index(String index);
 
 			public Builder queryStrings(Collection<String> queryStrings);
+
+			public Builder rankingIndexName(RankingIndexName rankingIndexName);
 
 			public Builder unlessRankingId(String unlessRankingId);
 

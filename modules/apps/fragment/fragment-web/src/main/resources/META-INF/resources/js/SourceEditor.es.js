@@ -93,6 +93,16 @@ SourceEditor.STATE = {
 	initialContent: Config.string().required(),
 
 	/**
+	 * List of resource names custom autocompletion in the HTML editor.
+	 *
+	 * @default []
+	 * @instance
+	 * @memberOf SourceEditor
+	 * @type Array
+	 */
+	resources: Config.arrayOf(Config.string()),
+
+	/**
 	 * Path of the available icons.
 	 *
 	 * @default undefined

@@ -18,6 +18,7 @@ import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentResponse;
+import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -29,20 +30,20 @@ import org.osgi.service.component.annotations.Reference;
 public class RankingIndexWriterImpl implements RankingIndexWriter {
 
 	@Override
-	public String create(Ranking ranking) {
+	public String create(RankingIndexName rankingIndexName, Ranking ranking) {
 		IndexDocumentResponse indexDocumentResponse =
 			_searchEngineAdapter.execute(
 				new IndexDocumentRequest(
-					RankingIndexDefinition.INDEX_NAME,
+					rankingIndexName.getIndexName(),
 					_rankingToDocumentTranslator.translate(ranking)));
 
 		return indexDocumentResponse.getUid();
 	}
 
 	@Override
-	public void remove(String id) {
+	public void remove(RankingIndexName rankingIndexName, String id) {
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
-			RankingIndexDefinition.INDEX_NAME, id);
+			rankingIndexName.getIndexName(), id);
 
 		deleteDocumentRequest.setRefresh(true);
 
@@ -50,9 +51,9 @@ public class RankingIndexWriterImpl implements RankingIndexWriter {
 	}
 
 	@Override
-	public void update(Ranking ranking) {
+	public void update(RankingIndexName rankingIndexName, Ranking ranking) {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
-			RankingIndexDefinition.INDEX_NAME, ranking.getId(),
+			rankingIndexName.getIndexName(), ranking.getId(),
 			_rankingToDocumentTranslator.translate(ranking));
 
 		indexDocumentRequest.setRefresh(true);

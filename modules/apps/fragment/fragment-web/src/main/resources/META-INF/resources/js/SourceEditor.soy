@@ -17,6 +17,7 @@
 	{@param? codeFooter: string}
 	{@param? freeMarkerTaglibs: list<string>}
 	{@param? freeMarkerVariables: list<string>}
+	{@param? resources: list<string>}
 	{@param? _handleContentChanged: any}
 
 	<div class="source-editor {$syntax}">
@@ -40,6 +41,7 @@
 			{param freeMarkerVariables: $freeMarkerVariables /}
 			{param initialContent: $initialContent /}
 			{param readOnly: $readOnly /}
+			{param resources: $resources /}
 			{param syntax: $syntax /}
 		{/call}
 

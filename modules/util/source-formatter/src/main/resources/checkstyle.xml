@@ -303,11 +303,16 @@
 		<module name="com.liferay.source.formatter.checkstyle.checks.FullyQualifiedNameCheck">
 			<message key="import.statement.use" value="Use import statement instead of Fully Qualified Name for ''{0}'" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.IfStatementCheck">
-			<message key="if.statements.combine" value="Combine if-statements" />
-		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.InstanceofOrderCheck">
 			<message key="instanceof.order" value="''{0}'' should come before ''{1}''" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.ItemListBuilderCheck">
+			<property name="checkInline" value="true" />
+			<property name="enabled" value="false" />
+			<message key="builder.include" value="Include method call ''{0}'' ({1}) in ''{2}'' ({3})" />
+			<message key="builder.inline" value="Inline variable definition ''{0}'' ({1}) inside ''{2}'' ({3})" />
+			<message key="builder.use" value="Use ''{0}'' ({1}, {2})" />
+			<message key="builder.use.instead" value="Use ''{0}'' instead of new instance of ''{1}''" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.JavadocCheck">
 			<message key="javadoc.empty.line" value="First or last line in javadoc should not be empty" />
@@ -395,6 +400,9 @@
 		<module name="com.liferay.source.formatter.checkstyle.checks.MissingParenthesesCheck">
 			<message key="parentheses.missing.1" value="Missing parentheses between the ''{0}'' operator and the ''{1}'' operator" />
 			<message key="parentheses.missing.2" value="Missing parentheses around the {0} hand side argument of the ''{1}'' operator" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.NestedIfStatementCheck">
+			<message key="if.statements.combine" value="Combine nested if-statements" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.NotRequireThisCheck">
 			<message key="variable.not.require.this" value="Reference to variable ''{0}'' does not need ''.this''" />

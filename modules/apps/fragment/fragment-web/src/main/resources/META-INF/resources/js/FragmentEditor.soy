@@ -29,6 +29,7 @@
 	{@param? cacheable: bool}
 	{@param? freeMarkerTaglibs: list<string>}
 	{@param? freeMarkerVariables: list<string>}
+	{@param? resources: list<string>}
 	{@param? _configuration: string}
 	{@param? _css: string}
 	{@param? _handleCacheableChanged: any}
@@ -157,6 +158,7 @@
 						{param freeMarkerVariables: $freeMarkerVariables /}
 						{param initialContent: $initialHTML /}
 						{param readOnly: $readOnly /}
+						{param resources: $resources /}
 						{param spritemap: $spritemap /}
 						{param syntax: 'html' /}
 					{/call}

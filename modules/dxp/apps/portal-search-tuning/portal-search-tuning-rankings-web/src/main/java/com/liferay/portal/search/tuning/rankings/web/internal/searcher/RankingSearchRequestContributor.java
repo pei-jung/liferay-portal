@@ -16,12 +16,15 @@ package com.liferay.portal.search.tuning.rankings.web.internal.searcher;
 
 import com.liferay.portal.kernel.search.SearchEngine;
 import com.liferay.portal.kernel.search.SearchEngineHelper;
+import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.spi.searcher.SearchRequestContributor;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexReader;
+import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
+import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexNameBuilder;
 
 import java.util.Optional;
 
@@ -45,9 +48,15 @@ public class RankingSearchRequestContributor
 			return searchRequest;
 		}
 
+		RankingIndexName rankingIndexName = getRankingIndexName(searchRequest);
+
+		if (!rankingIndexReader.isExists(rankingIndexName)) {
+			return searchRequest;
+		}
+
 		Optional<Ranking> optional =
 			rankingIndexReader.fetchByQueryStringOptional(
-				searchRequest.getQueryString());
+				rankingIndexName, searchRequest.getQueryString());
 
 		return optional.map(
 			ranking -> contribute(searchRequest, ranking)
@@ -67,6 +76,21 @@ public class RankingSearchRequestContributor
 		return searchRequestBuilder.build();
 	}
 
+	protected RankingIndexName getRankingIndexName(
+		SearchRequest searchRequest) {
+
+		SearchRequestBuilder builder = searchRequestBuilderFactory.builder(
+			searchRequest);
+
+		long[] companyIds = new long[1];
+
+		builder.withSearchContext(
+			searchContext -> companyIds[0] = searchContext.getCompanyId());
+
+		return rankingIndexNameBuilder.getRankingIndexName(
+			indexNameBuilder.getIndexName(companyIds[0]));
+	}
+
 	protected boolean isSearchEngine(String engine) {
 		SearchEngine searchEngine = searchEngineHelper.getSearchEngine(
 			searchEngineHelper.getDefaultSearchEngineId());
@@ -75,6 +99,12 @@ public class RankingSearchRequestContributor
 
 		return vendor.equals(engine);
 	}
+
+	@Reference
+	protected IndexNameBuilder indexNameBuilder;
+
+	@Reference
+	protected RankingIndexNameBuilder rankingIndexNameBuilder;
 
 	@Reference
 	protected RankingIndexReader rankingIndexReader;

@@ -34,6 +34,12 @@ data.put("groupId", groupId);
 data.put("localizable", localizable);
 data.put("singlePage", singlePage);
 data.put("spritemap", themeDisplay.getPathThemeImages() + "/lexicon/icons.svg");
+
+Map<String, Object> successPageSettings = new HashMap<>();
+
+successPageSettings.put("enabled", enableSuccessPage);
+
+data.put("successPageSettings", successPageSettings);
 %>
 
 <div id="<%= componentId + "container" %>">

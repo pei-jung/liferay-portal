@@ -25,6 +25,7 @@ const FragmentAutocompleteProcessor = function(...args) {
 	FragmentAutocompleteProcessor.superclass.constructor.apply(this, args);
 };
 
+const MATCH_RESOURCE = 'resource';
 const MATCH_TAG = 'tag';
 const MATCH_TAGLIB = 'taglib';
 const MATCH_VARIABLE = 'variable';
@@ -150,25 +151,36 @@ class AceEditor extends Component {
 		if (
 			matchContent.indexOf('<') >= 0 ||
 			matchContent.indexOf('${') >= 0 ||
-			matchContent.indexOf('[@') >= 0
+			matchContent.indexOf('[@') >= 0 ||
+			matchContent.indexOf('[resources:') >= 0
 		) {
 			matchContent = matchContent.trim();
 
-			if (/<lfr[\w]*[^<lfr]*$/.test(matchContent)) {
+			if (/.*?\[resources:[^\]]*$/.test(matchContent)) {
+				const index = matchContent.indexOf('[resources:') + 11;
+
+				match = {
+					content: matchContent.substring(index),
+					type: MATCH_RESOURCE,
+				};
+			}
+			else if (/<lfr[\w]*[^<lfr]*$/.test(matchContent)) {
 				match = {
 					content: matchContent.substring(1),
 					type: MATCH_TAG,
 				};
 			}
-			else if (/\[@[^\]]+$/.test(matchContent)) {
+			else if (/\[@[^\]]*$/.test(matchContent)) {
 				match = {
 					content: matchContent.substring(2),
 					type: MATCH_TAGLIB,
 				};
 			}
-			else if (/\${[^}]+$/.test(matchContent)) {
+			else if (/.*?\${[^}]*$/.test(matchContent)) {
+				const index = matchContent.indexOf('${') + 2;
+
 				match = {
-					content: matchContent.substring(2),
+					content: matchContent.substring(index),
 					type: MATCH_VARIABLE,
 				};
 			}
@@ -191,9 +203,17 @@ class AceEditor extends Component {
 	_getAutocompleteResults(match, callbackSuccess, callbackError) {
 		let matchDirectives = null;
 
-		const regex = new RegExp(match.content || '', 'i');
+		const escapedContent = match.content.replace(
+			/[.*+?^${}()|[\]\\]/g,
+			'\\$&'
+		);
 
-		if (match.type === MATCH_TAG) {
+		const regex = new RegExp(escapedContent || '', 'i');
+
+		if (match.type === MATCH_RESOURCE) {
+			matchDirectives = this.resources;
+		}
+		else if (match.type === MATCH_TAG) {
 			matchDirectives = this.autocompleteTags.map(tag => tag.name);
 		}
 		else if (match.type === MATCH_TAGLIB) {
@@ -237,7 +257,12 @@ class AceEditor extends Component {
 			result = [
 				...this.freeMarkerTaglibs,
 				...this.freeMarkerVariables,
+				...this.resources,
 			].find(variable => variable === selectedSuggestion);
+
+			if (result && match.type === MATCH_RESOURCE) {
+				result += ']';
+			}
 		}
 
 		return result || '';
@@ -386,6 +411,16 @@ AceEditor.STATE = {
 	 * @type {boolean}
 	 */
 	readOnly: Config.bool().required(),
+
+	/**
+	 * List of resource names custom autocompletion in the HTML editor.
+	 *
+	 * @default []
+	 * @instance
+	 * @memberOf AceEditor
+	 * @type Array
+	 */
+	resources: Config.arrayOf(Config.string()),
 
 	/**
 	 * Syntax used for the Ace Editor that is rendered on the interface.

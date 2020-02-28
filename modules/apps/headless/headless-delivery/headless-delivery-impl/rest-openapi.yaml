@@ -971,7 +971,6 @@ components:
                 value:
                     oneOf:
                         - $ref: "#/components/schemas/FragmentFieldBackgroundImage"
-                        - $ref: "#/components/schemas/FragmentFieldCustom"
                         - $ref: "#/components/schemas/FragmentFieldHTML"
                         - $ref: "#/components/schemas/FragmentFieldImage"
                         - $ref: "#/components/schemas/FragmentFieldText"
@@ -981,19 +980,11 @@ components:
                 backgroundImage:
                     $ref: "#/components/schemas/FragmentImage"
             type: object
-        FragmentFieldCustom:
-            properties:
-                type:
-                    type: string
-                value:
-                    type: object
-            type: object
         FragmentFieldHTML:
             properties:
                 html:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
-                        - $ref: "#/components/schemas/MappedValue"
             type: object
         FragmentFieldImage:
             properties:
@@ -1009,18 +1000,15 @@ components:
                 text:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
-                        - $ref: "#/components/schemas/MappedValue"
             type: object
         FragmentImage:
             properties:
                 title:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
-                        - $ref: "#/components/schemas/MappedValue"
                 url:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
-                        - $ref: "#/components/schemas/MappedValue"
             type: object
         FragmentInstanceDefinition:
             properties:
@@ -1050,7 +1038,6 @@ components:
                 value:
                     oneOf:
                         - $ref: "#/components/schemas/InlineLink"
-                        - $ref: "#/components/schemas/MappedValue"
         InlineLink:
             properties:
                 href:
@@ -1336,19 +1323,6 @@ components:
             required:
                 - name
             type: object
-        MappedValue:
-            properties:
-                classNameId:
-                    format: int64
-                    readOnly: true
-                    type: integer
-                classPK:
-                    format: int64
-                    readOnly: true
-                    type: integer
-                fieldId:
-                    readOnly: true
-                    type: string
         MessageBoardAttachment:
             description:
                 A binary file attached to a message on a message board (`MessageBoardMessage`).
@@ -1438,6 +1412,8 @@ components:
                 encodingFormat:
                     description:
                         The message's media format (e.g., HTML, BBCode, etc.).
+                    type: string
+                friendlyUrlPath:
                     type: string
                 headline:
                     description:
@@ -1630,6 +1606,8 @@ components:
                 encodingFormat:
                     description:
                         The media format of the thread's content (e.g., HTML, BBCode, etc.).
+                    type: string
+                friendlyUrlPath:
                     type: string
                 headline:
                     description:
@@ -5187,6 +5165,11 @@ paths:
                       format: date-time
                       type: string
                 - in: query
+                  name: messageBoardSectionId
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
                   name: page
                   schema:
                       type: integer
@@ -6369,6 +6352,37 @@ paths:
                     description:
                         ""
             tags: ["MessageBoardMessage"]
+    "/sites/{siteId}/message-board-messages/by-friendly-url-path/{friendlyUrlPath}":
+        get:
+            operationId: getSiteMessageBoardMessageByFriendlyUrlPath
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: friendlyUrlPath
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: Accept-Language
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MessageBoardMessage"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/MessageBoardMessage"
+                    description:
+                        ""
+            tags: ["MessageBoardMessage"]
     "/sites/{siteId}/message-board-sections":
         get:
             description:
@@ -6525,6 +6539,37 @@ paths:
                     application/xml:
                         schema:
                             $ref: "#/components/schemas/MessageBoardThread"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MessageBoardThread"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/MessageBoardThread"
+                    description:
+                        ""
+            tags: ["MessageBoardThread"]
+    "/sites/{siteId}/message-board-threads/by-friendly-url-path/{friendlyUrlPath}":
+        get:
+            operationId: getSiteMessageBoardThreadByFriendlyUrlPath
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: friendlyUrlPath
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: Accept-Language
+                  schema:
+                      type: string
             responses:
                 200:
                     content:

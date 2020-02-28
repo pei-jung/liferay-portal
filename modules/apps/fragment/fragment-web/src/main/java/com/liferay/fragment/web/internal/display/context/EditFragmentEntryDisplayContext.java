@@ -21,6 +21,7 @@ import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
+import com.liferay.fragment.service.FragmentCollectionServiceUtil;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
 import com.liferay.fragment.web.internal.constants.FragmentWebKeys;
 import com.liferay.petra.string.StringBundler;
@@ -28,6 +29,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.template.StringTemplateResource;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -45,6 +47,7 @@ import com.liferay.portal.template.soy.util.SoyContext;
 import com.liferay.portal.template.soy.util.SoyContextFactoryUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +183,25 @@ public class EditFragmentEntryDisplayContext {
 			fragmentServiceConfiguration.propagateChanges()
 		).put(
 			"readOnly", _isReadOnlyFragmentEntry()
+		).put(
+			"resources",
+			() -> {
+				FragmentCollection fragmentCollection =
+					FragmentCollectionServiceUtil.fetchFragmentCollection(
+						getFragmentCollectionId());
+
+				if (fragmentCollection == null) {
+					return Collections.<String>emptyList();
+				}
+
+				List<String> resources = new ArrayList<>();
+
+				for (FileEntry fileEntry : fragmentCollection.getResources()) {
+					resources.add(fileEntry.getFileName());
+				}
+
+				return resources;
+			}
 		).put(
 			"spritemap",
 			_themeDisplay.getPathThemeImages() + "/lexicon/icons.svg"

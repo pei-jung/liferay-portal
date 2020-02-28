@@ -14,6 +14,7 @@
 
 package com.liferay.portal.util;
 
+import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.petra.memory.FinalizeAction;
 import com.liferay.petra.memory.FinalizeManager;
 import com.liferay.petra.string.CharPool;
@@ -53,6 +54,7 @@ import java.nio.charset.Charset;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -469,26 +471,19 @@ public class HttpImpl implements Http {
 			return url;
 		}
 
-		url = url.trim();
+		URI uri = getURI(url);
 
-		if (_getProtocolDelimiterIndex(url) < 0) {
-			url = Http.HTTPS_WITH_SLASH + url;
-		}
-
-		try {
-			URI uri = new URI(url);
-
-			String host = uri.getHost();
-
-			if (host == null) {
-				return StringPool.BLANK;
-			}
-
-			return host;
-		}
-		catch (URISyntaxException uriSyntaxException) {
+		if (uri == null) {
 			return StringPool.BLANK;
 		}
+
+		String host = uri.getHost();
+
+		if (host == null) {
+			return StringPool.BLANK;
+		}
+
+		return host;
 	}
 
 	@Override
@@ -556,20 +551,19 @@ public class HttpImpl implements Http {
 			return url;
 		}
 
-		if (url.startsWith(Http.HTTP)) {
-			int pos = url.indexOf(
-				CharPool.SLASH, Http.HTTPS_WITH_SLASH.length());
+		URI uri = getURI(url);
 
-			url = url.substring(pos);
+		if (uri == null) {
+			return StringPool.BLANK;
 		}
 
-		int pos = url.indexOf(CharPool.QUESTION);
+		String path = uri.getPath();
 
-		if (pos == -1) {
-			return url;
+		if (path == null) {
+			return StringPool.BLANK;
 		}
 
-		return url.substring(0, pos);
+		return path;
 	}
 
 	@Override
@@ -598,15 +592,23 @@ public class HttpImpl implements Http {
 
 	@Override
 	public String getProtocol(String url) {
-		url = url.trim();
-
-		int index = _getProtocolDelimiterIndex(url);
-
-		if (index > 0) {
-			return url.substring(0, index);
+		if (Validator.isNull(url)) {
+			return url;
 		}
 
-		return StringPool.BLANK;
+		URI uri = getURI(url);
+
+		if (uri == null) {
+			return StringPool.BLANK;
+		}
+
+		String scheme = uri.getScheme();
+
+		if (scheme == null) {
+			return StringPool.BLANK;
+		}
+
+		return scheme;
 	}
 
 	@Override
@@ -615,18 +617,34 @@ public class HttpImpl implements Http {
 			return url;
 		}
 
-		int pos = url.indexOf(CharPool.QUESTION);
+		URI uri = getURI(url);
 
-		if (pos == -1) {
+		if (uri == null) {
 			return StringPool.BLANK;
 		}
 
-		return url.substring(pos + 1);
+		String queryString = uri.getQuery();
+
+		if (queryString == null) {
+			return StringPool.BLANK;
+		}
+
+		return queryString;
 	}
 
 	@Override
 	public String getRequestURL(HttpServletRequest httpServletRequest) {
 		return String.valueOf(httpServletRequest.getRequestURL());
+	}
+
+	@Override
+	public URI getURI(String uriString) {
+		try {
+			return _getURI(uriString);
+		}
+		catch (URISyntaxException uriSyntaxException) {
+			return null;
+		}
 	}
 
 	@Override
@@ -640,11 +658,11 @@ public class HttpImpl implements Http {
 
 	@Override
 	public boolean hasProtocol(String url) {
-		if (_getProtocolDelimiterIndex(url) > 0) {
-			return true;
+		if (Validator.isNull(url)) {
+			return false;
 		}
 
-		return false;
+		return Validator.isNotNull(getProtocol(url));
 	}
 
 	@Override
@@ -1042,12 +1060,20 @@ public class HttpImpl implements Http {
 
 	@Override
 	public String removeProtocol(String url) {
-		url = url.trim();
+		String protocol = getProtocol(url);
 
-		int index = _getProtocolDelimiterIndex(url);
+		if (Validator.isNotNull(protocol)) {
+			url = url.trim();
 
-		if (index > 0) {
-			return url.substring(index + PROTOCOL_DELIMITER.length());
+			if (url.regionMatches(
+					protocol.length(), PROTOCOL_DELIMITER, 0,
+					PROTOCOL_DELIMITER.length())) {
+
+				return url.substring(
+					protocol.length() + PROTOCOL_DELIMITER.length());
+			}
+
+			return url.substring(protocol.length() + StringPool.COLON.length());
 		}
 
 		return url;
@@ -1592,7 +1618,7 @@ public class HttpImpl implements Http {
 		URI uri = null;
 
 		try {
-			uri = new URI(location);
+			uri = _getURI(location);
 		}
 		catch (URISyntaxException uriSyntaxException) {
 			throw new IOException(
@@ -1614,7 +1640,7 @@ public class HttpImpl implements Http {
 
 				location = Http.HTTP_WITH_SLASH + location;
 
-				uri = new URI(location);
+				uri = _getURI(location);
 			}
 
 			HttpHost targetHttpHost = new HttpHost(
@@ -1872,32 +1898,20 @@ public class HttpImpl implements Http {
 		}
 	}
 
-	private int _getProtocolDelimiterIndex(String url) {
-		if (Validator.isNull(url)) {
-			return -1;
+	private URI _getURI(String uriString) throws URISyntaxException {
+		Map<String, URI> uris = _uris.get();
+
+		uriString = uriString.trim();
+
+		URI uri = uris.get(uriString);
+
+		if (uri == null) {
+			uri = new URI(uriString);
+
+			uris.put(uriString, uri);
 		}
 
-		// Define protocol as "[a-zA-Z][a-zA-Z0-9]*://"
-
-		int pos = url.indexOf(Http.PROTOCOL_DELIMITER);
-
-		if (pos <= 0) {
-			return -1;
-		}
-
-		if (!Validator.isChar(url.charAt(0))) {
-			return -1;
-		}
-
-		for (int i = 1; i < pos; ++i) {
-			if (!Validator.isChar(url.charAt(i)) &&
-				!Validator.isDigit(url.charAt(i))) {
-
-				return -1;
-			}
-		}
-
-		return pos;
+		return uri;
 	}
 
 	private String _shortenURL(
@@ -2028,6 +2042,8 @@ public class HttpImpl implements Http {
 	private static final Log _log = LogFactoryUtil.getLog(HttpImpl.class);
 
 	private static final ThreadLocal<Cookie[]> _cookies = new ThreadLocal<>();
+	private static final ThreadLocal<Map<String, URI>> _uris =
+		new CentralizedThreadLocal<>(HttpImpl.class + "._uris", HashMap::new);
 
 	private final CloseableHttpClient _closeableHttpClient;
 	private final Pattern _nonProxyHostsPattern;

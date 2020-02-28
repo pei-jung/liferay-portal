@@ -602,16 +602,12 @@ public class EditAssetListDisplayContext {
 
 		List<AssetRendererFactory<?>> assetRendererFactories = ListUtil.sort(
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
-				_themeDisplay.getCompanyId()),
+				_themeDisplay.getCompanyId(), true),
 			new AssetRendererFactoryTypeNameComparator(
 				_themeDisplay.getLocale()));
 
 		for (AssetRendererFactory<?> curRendererFactory :
 				assetRendererFactories) {
-
-			if (!curRendererFactory.isSelectable()) {
-				continue;
-			}
 
 			if (!curRendererFactory.isSupportsClassTypes()) {
 				manualAddIconDataMap.put(
@@ -884,7 +880,7 @@ public class EditAssetListDisplayContext {
 			}
 
 			portletURL.setParameter(
-				"groupIds", String.valueOf(_themeDisplay.getScopeGroupId()));
+				"groupIds", StringUtil.merge(getSelectedGroupIds()));
 			portletURL.setParameter(
 				"eventName", _portletResponse.getNamespace() + "selectTag");
 			portletURL.setParameter("selectedTagNames", "{selectedTagNames}");

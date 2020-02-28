@@ -369,6 +369,16 @@ FragmentEditor.STATE = {
 	name: Config.string().required(),
 
 	/**
+	 * List of resource names custom autocompletion in the HTML editor.
+	 *
+	 * @default []
+	 * @instance
+	 * @memberOf FragmentEditor
+	 * @type Array
+	 */
+	resources: Config.arrayOf(Config.string()),
+
+	/**
 	 * URLs used for communicating with back-end logic.
 	 *
 	 * @instance

@@ -20,6 +20,7 @@ import {
 } from 'data-engine-taglib';
 import React, {useContext} from 'react';
 
+import useDoubleClick from '../../hooks/useDoubleClick.es';
 import DataLayoutBuilderContext from './DataLayoutBuilderInstanceContext.es';
 import FormViewContext from './FormViewContext.es';
 import {dropCustomObjectField} from './actions.es';
@@ -90,6 +91,11 @@ export default ({keywords}) => {
 		);
 	};
 
+	const [handleOnClick, handleOnDoubleClick] = useDoubleClick(
+		onClick,
+		onDoubleClick
+	);
+
 	const deleteField = useDeleteDefinitionField({dataLayoutBuilder});
 
 	const onDeleteDefinitionField = useDeleteDefinitionFieldModal(fieldName =>
@@ -101,9 +107,9 @@ export default ({keywords}) => {
 			deleteLabel={Liferay.Language.get('delete-from-object')}
 			fieldTypes={fieldTypes}
 			keywords={keywords}
-			onClick={onClick}
+			onClick={handleOnClick}
 			onDelete={onDeleteDefinitionField}
-			onDoubleClick={onDoubleClick}
+			onDoubleClick={handleOnDoubleClick}
 		/>
 	);
 };

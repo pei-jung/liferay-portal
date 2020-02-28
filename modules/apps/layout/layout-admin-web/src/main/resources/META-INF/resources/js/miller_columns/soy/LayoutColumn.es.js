@@ -36,8 +36,9 @@ class LayoutColumn extends Component {
 		const {actionURLs = {}} = layoutColumnItem;
 
 		const dropdownItems = LAYOUT_COLUMN_ITEM_DROPDOWN_ITEMS.filter(
-			dropdownItem => actionURLs[dropdownItem.name]
+			dropdownItem => Object.keys(actionURLs).includes(dropdownItem.name)
 		).map(dropdownItem => ({
+			disabled: !actionURLs[dropdownItem.name],
 			handleClick: dropdownItem.handleClick || null,
 			href: actionURLs[dropdownItem.name],
 			label: dropdownItem.label,

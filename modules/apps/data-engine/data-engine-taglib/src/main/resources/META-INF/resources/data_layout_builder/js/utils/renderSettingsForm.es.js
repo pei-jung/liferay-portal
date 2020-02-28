@@ -25,6 +25,42 @@ const UNIMPLEMENTED_PROPERTIES = [
 	'visibilityExpression',
 ];
 
+export const getEvents = (dispatchEvent, settingsContext) => {
+	const handleFieldBlurred = ({fieldInstance, value}) => {
+		if (fieldInstance && !fieldInstance.isDisposed()) {
+			const {fieldName} = fieldInstance;
+
+			dispatchEvent('fieldBlurred', {
+				editingLanguageId: settingsContext.editingLanguageId,
+				propertyName: fieldName,
+				propertyValue: value,
+			});
+		}
+	};
+
+	const handleFieldEdited = ({fieldInstance, value}) => {
+		if (fieldInstance && !fieldInstance.isDisposed()) {
+			const {fieldName} = fieldInstance;
+
+			dispatchEvent('fieldEdited', {
+				editingLanguageId: settingsContext.editingLanguageId,
+				propertyName: fieldName,
+				propertyValue: value,
+			});
+		}
+	};
+
+	const handleFormAttached = function() {
+		this.evaluate();
+	};
+
+	return {
+		attached: handleFormAttached,
+		fieldBlurred: handleFieldBlurred,
+		fieldEdited: handleFieldEdited,
+	};
+};
+
 export const getFilteredSettingsContext = settingsContext => {
 	const visitor = new PagesVisitor(settingsContext.pages);
 
@@ -54,46 +90,14 @@ export const getFilteredSettingsContext = settingsContext => {
 	};
 };
 
-export default ({dispatchEvent, settingsContext}, container) => {
-	const handleFieldBlurred = ({fieldInstance, value}) => {
-		if (fieldInstance && !fieldInstance.isDisposed()) {
-			const {fieldName} = fieldInstance;
-
-			dispatchEvent('fieldBlurred', {
-				editingLanguageId: settingsContext.editingLanguageId,
-				propertyName: fieldName,
-				propertyValue: value,
-			});
-		}
-	};
-
-	const handleFieldEdited = ({fieldInstance, value}) => {
-		if (fieldInstance && !fieldInstance.isDisposed()) {
-			const {fieldName} = fieldInstance;
-
-			dispatchEvent('fieldEdited', {
-				editingLanguageId: settingsContext.editingLanguageId,
-				propertyName: fieldName,
-				propertyValue: value,
-			});
-		}
-	};
-
-	const handleFormAttached = function() {
-		this.evaluate();
-	};
-
+export default (events, settingsContext, container) => {
 	const spritemap = `${Liferay.ThemeDisplay.getPathThemeImages()}/lexicon/icons.svg`;
 
 	return new Form(
 		{
 			...settingsContext,
 			editable: true,
-			events: {
-				attached: handleFormAttached,
-				fieldBlurred: handleFieldBlurred,
-				fieldEdited: handleFieldEdited,
-			},
+			events,
 			spritemap,
 		},
 		container

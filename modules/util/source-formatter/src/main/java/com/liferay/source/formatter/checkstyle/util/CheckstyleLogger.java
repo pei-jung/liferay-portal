@@ -154,22 +154,11 @@ public class CheckstyleLogger extends DefaultLogger {
 			return _getCheckstyleDocumentationURLString(simpleCheckName);
 		}
 
-		String markdownURLString = SourceFormatterUtil.getMarkdownURLString(
-			simpleCheckName);
-
-		if (markdownURLString != null) {
-			return markdownURLString;
-		}
-
 		ClassLoader classLoader = CheckstyleLogger.class.getClassLoader();
 
 		try {
-			Class<?> checkClass = classLoader.loadClass(checkName);
-
-			Class<?> superClass = checkClass.getSuperclass();
-
-			return SourceFormatterUtil.getMarkdownURLString(
-				superClass.getSimpleName());
+			return SourceFormatterUtil.getDocumentationURLString(
+				classLoader.loadClass(checkName));
 		}
 		catch (Exception exception) {
 			return null;

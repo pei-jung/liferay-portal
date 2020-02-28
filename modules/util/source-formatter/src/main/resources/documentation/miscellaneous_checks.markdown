@@ -65,9 +65,9 @@ GradleStylingCheck | .gradle | |
 GradleTestDependencyVersionCheck | .gradle | |
 HTMLEmptyLinesCheck | .html | |
 HTMLWhitespaceCheck | .html | |
-[IfStatementCheck](checks/if_statement_check.markdown#ifstatementcheck) | .java, .jsp, .jspf, .tag, .tpl or .vm | |
 IncorrectFileLocationCheck | | |
 InstanceofOrderCheck | .java, .jsp, .jspf, .tag, .tpl or .vm | |
+ItemListBuilderCheck | .java | |
 JSLodashDependencyCheck | .js or .jsx | |
 JSONDeprecatedPackagesCheck | .json or .npmbridgerc | |
 JSONIndentationCheck | .json or .npmbridgerc | |
@@ -221,6 +221,7 @@ MissingDiamondOperatorCheck | .java, .jsp, .jspf, .tag, .tpl or .vm | |
 MissingModifierCheck | .java | |
 MissingOverrideCheck | .java | |
 MissingParenthesesCheck | .java, .jsp, .jspf, .tag, .tpl or .vm | |
+NestedIfStatementCheck | .java, .jsp, .jspf, .tag, .tpl or .vm | |
 NewFileCheck | | |
 NonbreakingSpaceCheck | | |
 NotRequireThisCheck | .java | |
