@@ -24,6 +24,9 @@ import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.SearchException;
 
 import java.util.List;
 
@@ -79,6 +82,23 @@ public class AccountEntryModelListener extends BaseModelListener<AccountEntry> {
 		for (AccountEntryUserRel accountEntryUserRel : accountEntryUserRels) {
 			_accountEntryUserRelLocalService.deleteAccountEntryUserRel(
 				accountEntryUserRel);
+		}
+	}
+
+	@Override
+	public void onAfterUpdate(AccountEntry accountEntry) {
+		_reindexAccountEntry(accountEntry.getAccountEntryId());
+	}
+
+	private void _reindexAccountEntry(long accountEntryId) {
+		try {
+			Indexer<AccountEntry> indexer =
+				IndexerRegistryUtil.nullSafeGetIndexer(AccountEntry.class);
+
+			indexer.reindex(AccountEntry.class.getName(), accountEntryId);
+		}
+		catch (SearchException searchException) {
+			throw new ModelListenerException(searchException);
 		}
 	}
 
