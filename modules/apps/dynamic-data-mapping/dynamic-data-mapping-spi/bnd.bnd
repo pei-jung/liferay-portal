@@ -3,4 +3,5 @@ Bundle-SymbolicName: com.liferay.dynamic.data.mapping.spi
 Bundle-Version: 1.0.2
 Export-Package:\
 	com.liferay.dynamic.data.mapping.spi.converter.model,\
-	com.liferay.dynamic.data.mapping.spi.converter.serializer
+	com.liferay.dynamic.data.mapping.spi.converter.serializer,\
+	com.liferay.dynamic.data.mapping.spi.form.builder.settings

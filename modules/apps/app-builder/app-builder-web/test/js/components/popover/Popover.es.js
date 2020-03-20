@@ -40,12 +40,12 @@ describe('Popover', () => {
 			/>
 		);
 
-		expect(queryByText('Title')).not.toBeNull();
+		expect(queryByText('Title')).toBeTruthy();
 
-		expect(container.querySelector('div.arrow')).not.toBeNull();
-		expect(container.querySelector('.clay-popover-top')).not.toBeNull();
-		expect(container.querySelector('.no-content')).not.toBeNull();
-		expect(container.querySelector('.popover-body')).not.toBeNull();
+		expect(container.querySelector('div.arrow')).toBeTruthy();
+		expect(container.querySelector('.clay-popover-top')).toBeTruthy();
+		expect(container.querySelector('.no-content')).toBeTruthy();
+		expect(container.querySelector('.popover-body')).toBeTruthy();
 	});
 
 	it('renders popover on the right with children', () => {
@@ -63,16 +63,16 @@ describe('Popover', () => {
 			/>
 		);
 
-		expect(queryByText('Title')).not.toBeNull();
-		expect(queryByText('Content')).not.toBeNull();
-		expect(queryByText('Footer')).not.toBeNull();
+		expect(queryByText('Title')).toBeTruthy();
+		expect(queryByText('Content')).toBeTruthy();
+		expect(queryByText('Footer')).toBeTruthy();
 
-		expect(container.querySelector('div.arrow')).not.toBeNull();
-		expect(container.querySelector('.clay-popover-right')).not.toBeNull();
-		expect(container.querySelector('.no-content')).toBeNull();
-		expect(container.querySelector('.popover-header')).not.toBeNull();
-		expect(container.querySelector('.popover-body')).not.toBeNull();
-		expect(container.querySelector('.popover-footer')).not.toBeNull();
+		expect(container.querySelector('div.arrow')).toBeTruthy();
+		expect(container.querySelector('.clay-popover-right')).toBeTruthy();
+		expect(container.querySelector('.no-content')).toBeFalsy();
+		expect(container.querySelector('.popover-header')).toBeTruthy();
+		expect(container.querySelector('.popover-body')).toBeTruthy();
+		expect(container.querySelector('.popover-footer')).toBeTruthy();
 	});
 
 	it('renders popover with no ref', () => {
@@ -82,10 +82,10 @@ describe('Popover', () => {
 			<Popover title={getTitle} visible />
 		);
 
-		expect(queryByText('Title')).not.toBeNull();
+		expect(queryByText('Title')).toBeTruthy();
 
-		expect(container.querySelector('div.arrow')).not.toBeNull();
-		expect(container.querySelector('.no-content')).not.toBeNull();
-		expect(container.querySelector('.hide')).toBeNull();
+		expect(container.querySelector('div.arrow')).toBeTruthy();
+		expect(container.querySelector('.no-content')).toBeTruthy();
+		expect(container.querySelector('.hide')).toBeFalsy();
 	});
 });

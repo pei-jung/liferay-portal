@@ -1293,8 +1293,16 @@ public class PropsValues {
 		GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN));
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final boolean LAYOUT_PARALLEL_RENDER_ENABLE = false;
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final int
 		LAYOUT_PARALLEL_RENDER_THREAD_POOL_CORE_THREAD_COUNT =
 			GetterUtil.getInteger(
@@ -1302,16 +1310,28 @@ public class PropsValues {
 					PropsKeys.
 						LAYOUT_PARALLEL_RENDER_THREAD_POOL_CORE_THREAD_COUNT));
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final long
 		LAYOUT_PARALLEL_RENDER_THREAD_POOL_KEEP_ALIVE_TIME = GetterUtil.getLong(
 			PropsUtil.get(
 				PropsKeys.LAYOUT_PARALLEL_RENDER_THREAD_POOL_KEEP_ALIVE_TIME));
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final int LAYOUT_PARALLEL_RENDER_THREAD_POOL_MAX_QUEUE_SIZE =
 		GetterUtil.getInteger(
 			PropsUtil.get(
 				PropsKeys.LAYOUT_PARALLEL_RENDER_THREAD_POOL_MAX_QUEUE_SIZE));
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final int
 		LAYOUT_PARALLEL_RENDER_THREAD_POOL_MAX_THREAD_COUNT =
 			GetterUtil.getInteger(
@@ -1319,6 +1339,10 @@ public class PropsValues {
 					PropsKeys.
 						LAYOUT_PARALLEL_RENDER_THREAD_POOL_MAX_THREAD_COUNT));
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final int LAYOUT_PARALLEL_RENDER_TIMEOUT =
 		GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.LAYOUT_PARALLEL_RENDER_TIMEOUT));
@@ -2410,7 +2434,7 @@ public class PropsValues {
 
 	public static final int SEARCH_CONTAINER_PAGE_DEFAULT_DELTA =
 		GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.SEARCH_CONTAINER_PAGE_DEFAULT_DELTA), 16);
+			PropsUtil.get(PropsKeys.SEARCH_CONTAINER_PAGE_DEFAULT_DELTA), 20);
 
 	public static final int[] SEARCH_CONTAINER_PAGE_DELTA_VALUES =
 		GetterUtil.getIntegerValues(

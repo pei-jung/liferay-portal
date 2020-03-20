@@ -134,6 +134,8 @@ definition {
 
 		Navigator.gotoPage(pageName = "Form Page");
 
+		Pause(locator1 = "5000");
+
 		FormFields.viewTextLabel(
 			fieldLabel = "Text Field",
 			fieldName = "TextField");
@@ -331,6 +333,8 @@ definition {
 
 		Navigator.gotoPage(pageName = "Form Page");
 
+		Pause(locator1 = "5000");
+
 		FormFields.viewRequiredAsteriskNotPresent();
 
 		FormFields.editText(
@@ -438,6 +442,8 @@ definition {
 		PortletEntry.save();
 
 		Navigator.gotoPage(pageName = "Form Page");
+
+		Pause(locator1 = "5000");
 
 		FormFields.editText(
 			fieldName = "TextField1",
@@ -554,6 +560,8 @@ definition {
 
 		Navigator.gotoPage(pageName = "Form Page");
 
+		Pause(locator1 = "5000");
+
 		FormFields.viewTextField(
 			fieldLabel = "Public",
 			fieldName = "Public");
@@ -572,6 +580,8 @@ definition {
 			userScreenName = "test");
 
 		Navigator.gotoPage(pageName = "Form Page");
+
+		Pause(locator1 = "5000");
 
 		FormFields.viewTextField(
 			fieldLabel = "Public",
@@ -906,6 +916,8 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
+		Pause(locator1 = "5000");
+
 		FormFields.viewRequiredAsterisk();
 
 		FormPortlet.submit();
@@ -1090,6 +1102,8 @@ definition {
 		Form.publishForm();
 
 		FormsAdminNavigator.gotoPublishedForm();
+
+		Pause(locator1 = "5000");
 
 		FormFields.editText(
 			fieldName = "TextField2",

@@ -52,7 +52,7 @@ const WorkloadByAssigneeCard = ({routeParams}) => {
 	const filterKeys = ['processStep'];
 
 	const {
-		filterValues: {taskKeys: [taskKey] = []},
+		filterValues: {taskKeys: [taskKey] = ['allSteps']},
 	} = useFilter({filterKeys});
 
 	const sort = useMemo(() => {
@@ -65,7 +65,7 @@ const WorkloadByAssigneeCard = ({routeParams}) => {
 		return items[currentTab];
 	}, [currentTab]);
 
-	const taskKeys = taskKey !== 'allSteps' ? taskKey : undefined;
+	const taskKeys = taskKey !== 'allSteps' ? [taskKey] : undefined;
 
 	const {data, postData} = usePost({
 		body: {taskKeys},
@@ -101,7 +101,7 @@ const WorkloadByAssigneeCard = ({routeParams}) => {
 				<WorkloadByAssigneeCard.Body
 					currentTab={currentTab}
 					data={data}
-					processStepKey={taskKeys}
+					processStepKey={taskKey}
 					{...routeParams}
 				/>
 			</Panel>

@@ -234,8 +234,7 @@ buildChangelogs {
 			if (ticketNumbers.size > 0) {
 				text += """\
 					|
-					|
-					|## Markdown Links""".stripMargin()
+					|""".stripMargin()
 
 				Matcher matcher = ticketNumbers =~ /([A-Z]+-\d+)/
 
@@ -264,7 +263,7 @@ buildChangelogs {
 				tickets.each {
 					String ticket ->
 
-					text += "\n[" + ticket + "](https://issues.liferay.com/browse/" + ticket + ")"
+					text += "\n[" + ticket + "]: https://issues.liferay.com/browse/" + ticket
 				}
 			}
 

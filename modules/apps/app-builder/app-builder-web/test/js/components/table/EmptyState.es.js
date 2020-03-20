@@ -36,7 +36,7 @@ describe('EmptyState', () => {
 			<EmptyState emptyState={{description: 'description'}} />
 		);
 
-		expect(queryByText('title')).toBeNull();
+		expect(queryByText('title')).toBeFalsy();
 		expect(queryByText('description')).toBeTruthy();
 	});
 });

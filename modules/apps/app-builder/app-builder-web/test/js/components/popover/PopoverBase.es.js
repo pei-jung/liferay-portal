@@ -37,12 +37,12 @@ describe('PopoverBase', () => {
 			</PopoverBase>
 		);
 
-		expect(container.querySelector('div.arrow')).not.toBeNull();
-		expect(container.querySelector('.hide')).toBeNull();
-		expect(container.querySelector('.clay-popover-bottom')).not.toBeNull();
-		expect(queryByText('Header')).not.toBeNull();
-		expect(queryByText('Body')).not.toBeNull();
-		expect(queryByText('Footer')).not.toBeNull();
+		expect(container.querySelector('div.arrow')).toBeTruthy();
+		expect(container.querySelector('.hide')).toBeFalsy();
+		expect(container.querySelector('.clay-popover-bottom')).toBeTruthy();
+		expect(queryByText('Header')).toBeTruthy();
+		expect(queryByText('Body')).toBeTruthy();
+		expect(queryByText('Footer')).toBeTruthy();
 	});
 
 	it('renders with placement as none', () => {
@@ -60,11 +60,11 @@ describe('PopoverBase', () => {
 			</PopoverBase>
 		);
 
-		expect(container.querySelector('div.arrow')).toBeNull();
-		expect(container.querySelector('.hide')).not.toBeNull();
-		expect(container.querySelector('.clay-popover-none')).not.toBeNull();
-		expect(queryByText('Header')).not.toBeNull();
-		expect(queryByText('Body')).not.toBeNull();
-		expect(queryByText('Footer')).not.toBeNull();
+		expect(container.querySelector('div.arrow')).toBeFalsy();
+		expect(container.querySelector('.hide')).toBeTruthy();
+		expect(container.querySelector('.clay-popover-none')).toBeTruthy();
+		expect(queryByText('Header')).toBeTruthy();
+		expect(queryByText('Body')).toBeTruthy();
+		expect(queryByText('Footer')).toBeTruthy();
 	});
 });

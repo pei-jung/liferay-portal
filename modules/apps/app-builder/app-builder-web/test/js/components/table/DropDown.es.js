@@ -12,7 +12,7 @@
  * details.
  */
 
-import {act, cleanup, render} from '@testing-library/react';
+import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
 import DropDown from '../../../../src/main/resources/META-INF/resources/js/components/table/DropDown.es';
@@ -23,7 +23,7 @@ describe('DropDown', () => {
 		jest.restoreAllMocks();
 	});
 
-	it('shows dropdown when trigger is clicked and action is called', async () => {
+	it('shows dropdown when trigger is clicked and action is called', () => {
 		const actionCallback = jest.fn();
 
 		const {baseElement, getAllByRole} = render(
@@ -38,39 +38,33 @@ describe('DropDown', () => {
 		);
 
 		const dropDownMenu = baseElement.querySelector('.dropdown-menu');
+
 		expect(dropDownMenu.classList.contains('show')).toBe(false);
 
 		const [trigger, action] = getAllByRole('button');
-
-		act(() => {
-			trigger.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(trigger);
 
 		expect(dropDownMenu.classList.contains('show')).toBe(true);
 
-		act(() => {
-			action.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(action);
 
 		expect(actionCallback.mock.calls.length).toBe(1);
 	});
 
-	it('shows dropdown trigger with no action', async () => {
+	it('shows dropdown trigger with no action', () => {
 		const {baseElement, getByRole} = render(<DropDown actions={[]} />);
 
 		const dropDownMenu = baseElement.querySelector('.dropdown-menu');
-		expect(dropDownMenu).toBeNull();
+		expect(dropDownMenu).toBeFalsy();
 
 		const trigger = getByRole('button');
 
-		act(() => {
-			trigger.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(trigger);
 
-		expect(dropDownMenu).toBeNull();
+		expect(dropDownMenu).toBeFalsy();
 	});
 
-	it('shows dropdown with hidden action', async () => {
+	it('shows dropdown with hidden action', () => {
 		const {queryByText} = render(
 			<DropDown
 				actions={[
@@ -87,11 +81,11 @@ describe('DropDown', () => {
 			/>
 		);
 
-		expect(queryByText('action 1')).not.toBeNull();
-		expect(queryByText('action 2')).toBeNull();
+		expect(queryByText('action 1')).toBeTruthy();
+		expect(queryByText('action 2')).toBeFalsy();
 	});
 
-	it('shows dropdown with divider', async () => {
+	it('shows dropdown with divider', () => {
 		const {baseElement, queryByText} = render(
 			<DropDown
 				actions={[
@@ -110,12 +104,12 @@ describe('DropDown', () => {
 			/>
 		);
 
-		expect(queryByText('action 1')).not.toBeNull();
-		expect(baseElement.querySelector('.dropdown-divider')).not.toBeNull();
-		expect(queryByText('action 2')).not.toBeNull();
+		expect(queryByText('action 1')).toBeTruthy();
+		expect(baseElement.querySelector('.dropdown-divider')).toBeTruthy();
+		expect(queryByText('action 2')).toBeTruthy();
 	});
 
-	it('shows dropdown with name as a function', async () => {
+	it('shows dropdown with name as a function', () => {
 		const {queryByText} = render(
 			<DropDown
 				actions={[
@@ -127,6 +121,6 @@ describe('DropDown', () => {
 			/>
 		);
 
-		expect(queryByText('action')).not.toBeNull();
+		expect(queryByText('action')).toBeTruthy();
 	});
 });

@@ -14,8 +14,8 @@
 
 import ClayLink from '@clayui/link';
 import ClayNavigationBar from '@clayui/navigation-bar';
-import React, {useContext} from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import React, {useContext, useEffect} from 'react';
+import {withRouter} from 'react-router-dom';
 
 import {AppContext} from '../AppContext.es';
 
@@ -31,6 +31,12 @@ export default withRouter(
 
 		const context = useContext(AppContext);
 
+		useEffect(() => {
+			if (sectionTitle) {
+				context.setSection(sectionTitle);
+			}
+		}, [context, sectionTitle]);
+
 		return (
 			<section className="border-bottom questions-section questions-section-nav">
 				<div className="questions-container">
@@ -39,18 +45,12 @@ export default withRouter(
 							<div className="align-items-center col d-flex justify-content-between">
 								<ClayNavigationBar triggerLabel="Questions">
 									<ClayNavigationBar.Item
-										active={!isActive('tags')}
-										onClick={() => {
-											if (!sectionTitle) {
-												return history.push(
-													'/questions'
-												);
-											}
-
-											return history.push(
-												`/questions/${sectionTitle}`
-											);
-										}}
+										active={!isActive('activity')}
+										onClick={() =>
+											history.push(
+												`/questions/${context.section}`
+											)
+										}
 									>
 										<ClayLink
 											className="nav-link"
@@ -61,35 +61,23 @@ export default withRouter(
 									</ClayNavigationBar.Item>
 
 									<ClayNavigationBar.Item
-										active={isActive('tags')}
-										onClick={() => {
-											if (!sectionTitle) {
-												return history.push(
-													'/questions'
-												);
-											}
-
-											return history.push(
-												`/questions/${sectionTitle}/tags`
-											);
-										}}
+										active={isActive('activity')}
+										onClick={() =>
+											history.push(
+												`/activity/${context.userId}`
+											)
+										}
 									>
 										<ClayLink
 											className="nav-link"
 											displayType="unstyled"
 										>
-											{Liferay.Language.get('tags')}
+											{Liferay.Language.get(
+												'my-activity'
+											)}
 										</ClayLink>
 									</ClayNavigationBar.Item>
 								</ClayNavigationBar>
-
-								<Link
-									className="nav-link small text-secondary"
-									displayType="unstyled"
-									to={`/activity/${context.userId}`}
-								>
-									{Liferay.Language.get('my-activity')}
-								</Link>
 							</div>
 						)}
 					</div>

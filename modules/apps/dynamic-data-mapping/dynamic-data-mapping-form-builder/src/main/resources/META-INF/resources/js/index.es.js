@@ -13,5 +13,8 @@
  */
 
 import FormBuilderWithLayoutProvider from './components/FormBuilder/FormBuilderWithLayoutProvider.es';
+import RuleEditor from './components/RuleEditor/RuleEditor.es';
 
 export default FormBuilderWithLayoutProvider;
+
+export {RuleEditor};

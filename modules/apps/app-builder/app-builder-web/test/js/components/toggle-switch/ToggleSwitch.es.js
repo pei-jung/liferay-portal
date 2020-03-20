@@ -12,7 +12,7 @@
  * details.
  */
 
-import {act, cleanup, render} from '@testing-library/react';
+import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
 import ToggleSwitch from '../../../../src/main/resources/META-INF/resources/js/components/toggle-switch/ToggleSwitch.es';
@@ -23,7 +23,7 @@ describe('ToggleSwitch', () => {
 		jest.restoreAllMocks();
 	});
 
-	it('onChange is called when clicked', async () => {
+	it('onChange is called when clicked', () => {
 		const onChangeCallback = jest.fn();
 
 		const {container} = render(
@@ -35,16 +35,12 @@ describe('ToggleSwitch', () => {
 		expect(input.checked).toBe(false);
 		expect(input.title).toBe('turn-on');
 
-		act(() => {
-			input.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(input);
 
 		expect(input.checked).toBe(true);
 		expect(input.title).toBe('turn-off');
 
-		act(() => {
-			input.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(input);
 
 		expect(input.checked).toBe(false);
 		expect(onChangeCallback.mock.calls.length).toBe(2);

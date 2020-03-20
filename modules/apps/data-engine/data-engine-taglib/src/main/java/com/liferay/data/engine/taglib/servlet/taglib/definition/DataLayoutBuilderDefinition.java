@@ -28,6 +28,10 @@ public interface DataLayoutBuilderDefinition {
 		return false;
 	}
 
+	public default boolean allowRules() {
+		return false;
+	}
+
 	public default String[] getDisabledProperties() {
 		return new String[0];
 	}

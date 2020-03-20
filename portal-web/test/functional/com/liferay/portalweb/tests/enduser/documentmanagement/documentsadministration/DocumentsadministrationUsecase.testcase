@@ -228,7 +228,7 @@ definition {
 		DMPortlet.configureDisplaySettingsPG(
 			enableDisplaySettingsRelatedAssets = "false",
 			enableDisplaySettingsShowSearch = "false",
-			entriesToDisplayCount = "75");
+			entriesToDisplayCount = "60");
 
 		Navigator.gotoSitePage(
 			pageName = "Site Page 2",
@@ -1609,7 +1609,7 @@ definition {
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
-		Pagination.changePagination(itemsPerPage = "16");
+		Pagination.changePagination(itemsPerPage = "20");
 
 		Pagination.viewResults(results = "Showing 1 to 11 of 11 entries.");
 

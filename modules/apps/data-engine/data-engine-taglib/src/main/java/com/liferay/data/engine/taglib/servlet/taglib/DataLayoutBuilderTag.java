@@ -74,7 +74,7 @@ public class DataLayoutBuilderTag extends BaseDataLayoutBuilderTag {
 		setNamespacedAttribute(
 			httpServletRequest, "config",
 			DataLayoutTaglibUtil.getDataLayoutConfigJSONObject(
-				getContentType()));
+				getContentType(), request.getLocale()));
 		setNamespacedAttribute(
 			httpServletRequest, "dataLayout",
 			DataLayoutTaglibUtil.getDataLayoutJSONObject(

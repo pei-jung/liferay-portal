@@ -32,6 +32,7 @@ import {
 import Button from '../components/button/Button.es';
 import FieldSets from '../components/field-sets/FieldSets.es';
 import FieldTypeList from '../components/field-types/FieldTypeList.es';
+import RulesEditorModal from '../components/rules/RuleEditorModal.es';
 import Sidebar from '../components/sidebar/Sidebar.es';
 import {useSidebarContent} from '../hooks/index.es';
 import isClickOutside from '../utils/clickOutside.es';
@@ -42,8 +43,14 @@ import renderSettingsForm, {
 import DataLayoutBuilderContext from './DataLayoutBuilderContext.es';
 
 const DefaultSidebarBody = ({keywords}) => {
+	const [isRulesEditorVisible, setRulesEditorVisible] = useState(false);
 	const [dataLayoutBuilder] = useContext(DataLayoutBuilderContext);
-	const [{config}] = useContext(AppContext);
+
+	const [
+		{
+			config: {allowFieldSets, allowRules},
+		},
+	] = useContext(AppContext);
 
 	const onDoubleClick = ({name}) => {
 		const {activePage, pages} = dataLayoutBuilder.getStore();
@@ -82,14 +89,39 @@ const DefaultSidebarBody = ({keywords}) => {
 		},
 	];
 
-	if (config.allowFieldSets) {
+	if (allowFieldSets) {
 		tabs.push({
 			label: Liferay.Language.get('fieldsets'),
 			render: () => <FieldSets />,
 		});
 	}
 
-	return <Sidebar.Tabs tabs={tabs} />;
+	if (allowRules) {
+		tabs.push({
+			label: Liferay.Language.get('rules'),
+			render: () => (
+				<Button
+					displayType="primary"
+					monospaced={false}
+					onClick={() => setRulesEditorVisible(!isRulesEditorVisible)}
+				>
+					{Liferay.Language.get('add')}
+				</Button>
+			),
+		});
+	}
+
+	return (
+		<>
+			{allowRules && (
+				<RulesEditorModal
+					isVisible={isRulesEditorVisible}
+					onClose={() => setRulesEditorVisible(false)}
+				/>
+			)}
+			<Sidebar.Tabs tabs={tabs} />
+		</>
+	);
 };
 
 const SettingsSidebarBody = () => {

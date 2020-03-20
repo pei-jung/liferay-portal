@@ -62,7 +62,6 @@ export const ITEMS = {
 
 export const RESPONSES = {
 	NO_ITEMS: {
-		items: [],
 		lastPage: 1,
 		page: 1,
 		pageSize: 20,

@@ -19,6 +19,7 @@ import com.liferay.layout.page.template.validator.PageDefinitionValidator;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.util.FileImpl;
 
+import org.hamcrest.core.StringContains;
 import org.hamcrest.core.StringStartsWith;
 
 import org.junit.Before;
@@ -48,6 +49,26 @@ public class PageDefinitionValidatorTest {
 
 		PageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_invalid_column_extra_properties.json"));
+	}
+
+	@Test
+	public void testValidatePageDefinitionInvalidDropZoneAllowedFragmentsUnallowedFragments()
+		throws Exception {
+
+		expectedException.expect(PageDefinitionValidatorException.class);
+		expectedException.expectMessage(
+			new StringContains(
+				"/pageElement/pageElements/0/definition/fragmentSettings: " +
+					"extraneous key [allowedFragments] is not permitted"));
+		expectedException.expectMessage(
+			new StringContains(
+				"/pageElement/pageElements/0/definition/fragmentSettings: " +
+					"extraneous key [unallowedFragments] is not permitted"));
+
+		PageDefinitionValidator.validatePageDefinition(
+			_read(
+				"page_definition_invalid_drop_zone_allowed_fragments_" +
+					"unallowed_fragments.json"));
 	}
 
 	@Test
@@ -168,6 +189,26 @@ public class PageDefinitionValidatorTest {
 
 		PageDefinitionValidator.validatePageDefinition(
 			_read("page_definition_valid_column_complete.json"));
+	}
+
+	@Test
+	public void testValidatePageDefinitionValidDropZoneAllowedFragmentsComplete()
+		throws Exception {
+
+		PageDefinitionValidator.validatePageDefinition(
+			_read(
+				"page_definition_valid_drop_zone_allowed_fragments_complete." +
+					"json"));
+	}
+
+	@Test
+	public void testValidatePageDefinitionValidDropZoneUnallowedFragmentsComplete()
+		throws Exception {
+
+		PageDefinitionValidator.validatePageDefinition(
+			_read(
+				"page_definition_valid_drop_zone_unallowed_fragments_" +
+					"complete.json"));
 	}
 
 	@Test

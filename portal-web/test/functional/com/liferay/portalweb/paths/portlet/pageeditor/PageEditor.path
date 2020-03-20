@@ -323,12 +323,12 @@
 </tr>
 <tr>
 	<td>ROW_COLUMN</td>
-	<td>//div[contains(@class,'page-editor__topper') and contains(.,'Row')][${key_position}]//div[contains(@class,'col-4')][${key_columnNumber}]</td>
+	<td>//div[contains(@class,'page-editor__topper') and contains(.,'Row')][${key_position}]//div[contains(@class,'page-editor__col')][${key_columnNumber}]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ROW_COLUMN_NESTED_ELEMENT</td>
-	<td>//div[contains(@class,'page-editor__topper') and contains(.,'Row')][${key_position}]//div[contains(@class,'col-4')][${key_columnNumber}]${key_elementHeader}</td>
+	<td>//div[contains(@class,'page-editor__topper') and contains(.,'Row')][${key_position}]//div[contains(@class,'page-editor__col')][${key_columnNumber}]${key_elementHeader}</td>
 	<td></td>
 </tr>
 <tr>
@@ -347,6 +347,11 @@
 	<td></td>
 </tr>
 <!--LAYOUT_ELEMENTS_CONFIGURATION-->
+<tr>
+	<td>ROW_CONFIGURATION_COLUMNS_NO_GUTTER</td>
+	<td>//div[contains(@class,'page-editor__topper')]/div[contains(.,'Row')][${key_position}]//div[contains(@class,'page-editor__row') and contains(@class,'no-gutters')]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>SECTION_CONFIGURATION_BACKGROUND_COLOR</td>
 	<td>//div[contains(@class,'page-editor__topper')]/div[contains(.,'Section')][${key_position}]//div[contains(@class,'page-editor__container')][contains(@class,'bg-${key_paletteItem}')]</td>
@@ -374,7 +379,7 @@
 </tr>
 <tr>
 	<td>SECTION_CONFIGURATION_PADDING_TOP</td>
-	<td>//div[contains(@class,'page-editor__topper')]/div[contains(.,'Section')][${key_position}]//div[contains(@class,'page-editor__container')][contains(@class,'px-${key_paddingTop}')]</td>
+	<td>//div[contains(@class,'page-editor__topper')]/div[contains(.,'Section')][${key_position}]//div[contains(@class,'page-editor__container')][contains(@class,'pt-${key_paddingTop}')]</td>
 	<td></td>
 </tr>
 <tr>

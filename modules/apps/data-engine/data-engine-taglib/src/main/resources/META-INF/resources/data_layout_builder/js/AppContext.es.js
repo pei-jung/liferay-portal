@@ -40,9 +40,11 @@ const AppContext = createContext();
 const initialState = {
 	config: {
 		allowFieldSets: false,
+		allowRules: false,
 		disabledProperties: [],
 		disabledTabs: [],
 		multiPage: true,
+		ruleSettings: {},
 		unimplementedProperties: [],
 	},
 	dataDefinition: {

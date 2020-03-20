@@ -14,6 +14,7 @@
 
 package com.liferay.users.admin.web.internal.display.context;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
@@ -62,13 +63,14 @@ public class ViewUsersManagementToolbarDisplayContext {
 
 	public ViewUsersManagementToolbarDisplayContext(
 		HttpServletRequest httpServletRequest, RenderRequest renderRequest,
-		RenderResponse renderResponse, String displayStyle, String navigation,
-		int status) {
+		RenderResponse renderResponse, String displayStyle, String domain,
+		String navigation, int status) {
 
 		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
 		_displayStyle = displayStyle;
+		_domain = domain;
 		_navigation = navigation;
 		_status = status;
 
@@ -153,6 +155,13 @@ public class ViewUsersManagementToolbarDisplayContext {
 				dropdownGroupItem.setLabel(
 					LanguageUtil.get(
 						_httpServletRequest, "filter-by-navigation"));
+			}
+		).addGroup(
+			dropdownGroupItem -> {
+				dropdownGroupItem.setDropdownItems(
+					_getFilterDomainDropdownItems());
+				dropdownGroupItem.setLabel(
+					LanguageUtil.get(_httpServletRequest, "filter-by-domain"));
 			}
 		).addGroup(
 			dropdownGroupItem -> {
@@ -258,17 +267,27 @@ public class ViewUsersManagementToolbarDisplayContext {
 			searchTerms.setStatus(WorkflowConstants.STATUS_INACTIVE);
 		}
 
+		LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+
+		if (_domain.equals("company-users")) {
+			params.put("accountEntryIds", new Long[0]);
+		}
+		else if (_domain.equals("account-users")) {
+			params.put(
+				"accountEntryIds",
+				new Long[] {AccountConstants.ACCOUNT_ENTRY_ID_ANY});
+		}
+
 		int total = UserLocalServiceUtil.searchCount(
 			themeDisplay.getCompanyId(), searchTerms.getKeywords(),
-			searchTerms.getStatus(), new LinkedHashMap<String, Object>());
+			searchTerms.getStatus(), params);
 
 		userSearch.setTotal(total);
 
 		List<User> results = UserLocalServiceUtil.search(
 			themeDisplay.getCompanyId(), searchTerms.getKeywords(),
-			searchTerms.getStatus(), new LinkedHashMap<String, Object>(),
-			userSearch.getStart(), userSearch.getEnd(),
-			userSearch.getOrderByComparator());
+			searchTerms.getStatus(), params, userSearch.getStart(),
+			userSearch.getEnd(), userSearch.getOrderByComparator());
 
 		userSearch.setResults(results);
 
@@ -333,6 +352,24 @@ public class ViewUsersManagementToolbarDisplayContext {
 			themeDisplay.getPermissionChecker(), ActionKeys.ADD_USER);
 	}
 
+	private List<DropdownItem> _getFilterDomainDropdownItems() {
+		DropdownItemList domainDropdownitems = new DropdownItemList();
+
+		for (String domain :
+				new String[] {"all", "company-users", "account-users"}) {
+
+			domainDropdownitems.add(
+				dropdownItem -> {
+					dropdownItem.setActive(domain.equals(_domain));
+					dropdownItem.setHref(getPortletURL(), "domain", domain);
+					dropdownItem.setLabel(
+						LanguageUtil.get(_httpServletRequest, domain));
+				});
+		}
+
+		return domainDropdownitems;
+	}
+
 	private List<DropdownItem> _getFilterNavigationDropdownItems() {
 		DropdownItemList navigationDropdownitems = new DropdownItemList();
 
@@ -386,6 +423,7 @@ public class ViewUsersManagementToolbarDisplayContext {
 
 	private final PortletURL _currentURL;
 	private final String _displayStyle;
+	private final String _domain;
 	private final HttpServletRequest _httpServletRequest;
 	private final String _navigation;
 	private final RenderRequest _renderRequest;

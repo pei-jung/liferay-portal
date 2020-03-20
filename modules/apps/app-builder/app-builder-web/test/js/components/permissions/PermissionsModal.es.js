@@ -12,7 +12,7 @@
  * details.
  */
 
-import {act, cleanup, render} from '@testing-library/react';
+import {act, cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
 import PermissionsModal from '../../../../src/main/resources/META-INF/resources/js/components/permissions/PermissionsModal.es';
@@ -70,7 +70,7 @@ describe('PermissionsModal', () => {
 
 		fetch.mockResponseOnce(JSON.stringify(PERMISSIONS));
 
-		const {getAllByRole, getByText} = render(
+		const {getAllByRole, queryByText} = render(
 			<PermissionsModal
 				actions={ACTIONS}
 				endpoint={'/permissions'}
@@ -85,13 +85,12 @@ describe('PermissionsModal', () => {
 			jest.runAllTimers();
 		});
 
-		getByText('title');
-		getByText('role');
-		getByText('add');
-		getByText('view');
-		getByText('Administrator');
-		getByText('Power User');
-
+		expect(queryByText('title')).toBeTruthy();
+		expect(queryByText('role')).toBeTruthy();
+		expect(queryByText('add')).toBeTruthy();
+		expect(queryByText('view')).toBeTruthy();
+		expect(queryByText('Administrator')).toBeTruthy();
+		expect(queryByText('Power User')).toBeTruthy();
 		expect(getAllByRole('button').length).toBe(4);
 	});
 
@@ -113,12 +112,12 @@ describe('PermissionsModal', () => {
 			jest.runAllTimers();
 		});
 
-		expect(queryByText('title')).toBeNull();
-		expect(queryByText('role')).toBeNull();
-		expect(queryByText('add')).toBeNull();
-		expect(queryByText('view')).toBeNull();
-		expect(queryByText('Administrator')).toBeNull();
-		expect(queryByText('Power User')).toBeNull();
+		expect(queryByText('title')).toBeFalsy();
+		expect(queryByText('role')).toBeFalsy();
+		expect(queryByText('add')).toBeFalsy();
+		expect(queryByText('view')).toBeFalsy();
+		expect(queryByText('Administrator')).toBeFalsy();
+		expect(queryByText('Power User')).toBeFalsy();
 		expect(queryAllByRole('button').length).toBe(0);
 	});
 
@@ -151,20 +150,14 @@ describe('PermissionsModal', () => {
 
 		const saveButton = getAllByRole('button')[3];
 
-		act(() => {
-			saveButton.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(saveButton);
 
 		expect(onSaveCallback.mock.calls.length).toBe(1);
 		expect(onSaveCallback.mock.calls[0][0]).toEqual(PERMISSIONS.items);
 
 		const cancelButton = getAllByRole('button')[2];
 
-		act(() => {
-			cancelButton.dispatchEvent(
-				new MouseEvent('click', {bubbles: true})
-			);
-		});
+		fireEvent.click(cancelButton);
 
 		expect(onCloseCallback.mock.calls.length).toBe(1);
 	});
@@ -197,11 +190,7 @@ describe('PermissionsModal', () => {
 			'table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type=checkbox]'
 		);
 
-		act(() => {
-			powerUserAddPermissionCheckbox.dispatchEvent(
-				new MouseEvent('click', {bubbles: true})
-			);
-		});
+		fireEvent.click(powerUserAddPermissionCheckbox);
 
 		expect(powerUserAddPermissionCheckbox.checked).toBe(true);
 
@@ -209,9 +198,7 @@ describe('PermissionsModal', () => {
 
 		const saveButton = getAllByRole('button')[3];
 
-		act(() => {
-			saveButton.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(saveButton);
 
 		const powerUserPermissions = onSaveCallback.mock.calls[0][0][1];
 
@@ -247,11 +234,7 @@ describe('PermissionsModal', () => {
 			'table > tbody > tr:nth-child(2) > td:nth-child(3) > input[type=checkbox]'
 		);
 
-		act(() => {
-			powerUserViewPermissionCheckbox.dispatchEvent(
-				new MouseEvent('click', {bubbles: true})
-			);
-		});
+		fireEvent.click(powerUserViewPermissionCheckbox);
 
 		expect(powerUserViewPermissionCheckbox.checked).toBe(false);
 
@@ -259,9 +242,7 @@ describe('PermissionsModal', () => {
 
 		const saveButton = getAllByRole('button')[3];
 
-		act(() => {
-			saveButton.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		});
+		fireEvent.click(saveButton);
 
 		const powerUserPermissions = onSaveCallback.mock.calls[0][0][1];
 

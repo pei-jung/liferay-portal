@@ -13,7 +13,7 @@
  */
 
 import {waitForElementToBeRemoved} from '@testing-library/dom';
-import {act, cleanup, render} from '@testing-library/react';
+import {act, cleanup, fireEvent, render} from '@testing-library/react';
 import {createMemoryHistory} from 'history';
 import React from 'react';
 import {HashRouter, Router} from 'react-router-dom';
@@ -40,7 +40,6 @@ describe('ListView', () => {
 		const {queryByText} = render(
 			<HashRouter>
 				<ListView
-					actions={ACTIONS}
 					columns={COLUMNS}
 					emptyState={EMPTY_STATE}
 					endpoint={ENDPOINT}
@@ -156,7 +155,12 @@ describe('ListView', () => {
 			},
 		];
 
-		const {getAllByRole} = render(
+		const {
+			container,
+			getAllByRole,
+			queryAllByText,
+			queryByPlaceholderText,
+		} = render(
 			<HashRouter>
 				<ListView
 					actions={actions}
@@ -175,27 +179,35 @@ describe('ListView', () => {
 		});
 
 		let buttons = getAllByRole('button');
-
 		const refreshButton = buttons[buttons.length - 2];
 
 		await act(async () => {
-			refreshButton.dispatchEvent(
-				new MouseEvent('click', {bubbles: true})
-			);
+			fireEvent.click(refreshButton);
 		});
 
 		expect(refreshAction.mock.calls.length).toBe(1);
 
 		buttons = getAllByRole('button');
 		const nonRefreshButton = buttons[buttons.length - 1];
-
-		await act(async () => {
-			nonRefreshButton.dispatchEvent(
-				new MouseEvent('click', {bubbles: true})
-			);
-		});
+		fireEvent.click(nonRefreshButton);
 
 		expect(nonRefreshAction.mock.calls.length).toBe(1);
 		expect(fetch.mock.calls.length).toEqual(2);
+
+		const input = queryByPlaceholderText('search...');
+		fireEvent.change(input, {target: {value: 'value'}});
+
+		expect(input.value).toBe('value');
+		expect(container.querySelector('.subnav-tbar')).toBeFalsy();
+
+		const submit = container.querySelector('span > button:nth-child(2)');
+		fireEvent.click(submit);
+
+		expect(container.querySelector('.subnav-tbar')).toBeTruthy();
+
+		const [clear] = queryAllByText('Clear');
+		fireEvent.click(clear);
+
+		expect(input.value).toBe('');
 	});
 });

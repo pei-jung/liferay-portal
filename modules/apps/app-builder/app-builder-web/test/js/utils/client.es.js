@@ -22,13 +22,20 @@ import {
 	request,
 	updateItem,
 } from '../../../src/main/resources/META-INF/resources/js/utils/client.es';
+import * as toast from '../../../src/main/resources/META-INF/resources/js/utils/toast.es';
 
 describe('client', () => {
-	afterEach(() => {
-		cleanup();
+	beforeEach(() => {
+		jest.spyOn(toast, 'successToast').mockImplementation(() => {});
+		jest.spyOn(toast, 'errorToast').mockImplementation(() => {});
 	});
 
-	it('addItem', async () => {
+	afterEach(() => {
+		cleanup();
+		jest.clearAllMocks();
+	});
+
+	it('addItem', () => {
 		const item = {data: 'hello'};
 		fetch.mockResponseOnce(JSON.stringify(item));
 
@@ -39,6 +46,7 @@ describe('client', () => {
 		expect(fetch.mock.calls.length).toEqual(1);
 
 		const call = fetch.mock.calls[0];
+
 		expect(call[0]).toMatch(
 			'http://localhost/test?p_auth=default-mocked-auth-token&t='
 		);
@@ -55,7 +63,7 @@ describe('client', () => {
 		expect(headers.get('Content-Type')).toEqual('application/json');
 	});
 
-	it('confirmDelete', async () => {
+	it('confirmDelete', () => {
 		const item = {id: 123};
 		window.confirm = jest.fn(() => false);
 		confirmDelete('/test')(item).then(confirmed =>
@@ -64,6 +72,7 @@ describe('client', () => {
 
 		fetch.mockResponseOnce('');
 		window.confirm = jest.fn(() => true);
+
 		confirmDelete('/test')(item).then(confirmed =>
 			expect(confirmed).toBeTruthy()
 		);
@@ -74,7 +83,7 @@ describe('client', () => {
 		);
 	});
 
-	it('deleteItem', async () => {
+	it('deleteItem', () => {
 		fetch.mockResponseOnce('');
 
 		deleteItem('/test').then(res => {
@@ -84,6 +93,7 @@ describe('client', () => {
 		expect(fetch.mock.calls.length).toEqual(1);
 
 		const call = fetch.mock.calls[0];
+
 		expect(call[0]).toMatch(
 			'http://localhost/test?p_auth=default-mocked-auth-token&t='
 		);
@@ -99,7 +109,7 @@ describe('client', () => {
 		expect(headers.get('Content-Type')).toEqual('application/json');
 	});
 
-	it('getItem', async () => {
+	it('getItem', () => {
 		const item = {data: 'hello'};
 		fetch.mockResponseOnce(JSON.stringify(item));
 
@@ -125,7 +135,7 @@ describe('client', () => {
 		expect(headers.get('Content-Type')).toEqual('application/json');
 	});
 
-	it('invalid response body', async () => {
+	it('invalid response body', () => {
 		fetch.mockResponseOnce('not a valid json object');
 
 		addItem('/', {}).catch(error => {
@@ -135,7 +145,7 @@ describe('client', () => {
 		});
 	});
 
-	it('reject', async () => {
+	it('reject', () => {
 		fetch.mockReject(new Error('error'));
 
 		addItem('/', {}).catch(error => {
@@ -143,7 +153,7 @@ describe('client', () => {
 		});
 	});
 
-	it('request', async () => {
+	it('request', () => {
 		const item = {data: 'hello'};
 		fetch.mockResponseOnce(JSON.stringify(item));
 
@@ -154,6 +164,7 @@ describe('client', () => {
 		expect(fetch.mock.calls.length).toEqual(1);
 
 		const call = fetch.mock.calls[0];
+
 		expect(call[0]).toMatch(
 			'http://localhost/test?p_auth=default-mocked-auth-token&t='
 		);
@@ -169,7 +180,7 @@ describe('client', () => {
 		expect(headers.get('Content-Type')).toEqual('application/json');
 	});
 
-	it('status not ok', async () => {
+	it('status not ok', () => {
 		const res = {message: 'server error'};
 
 		fetch.mockResponseOnce(JSON.stringify(res), {status: 404});
@@ -179,7 +190,7 @@ describe('client', () => {
 		});
 	});
 
-	it('updateItem', async () => {
+	it('updateItem', () => {
 		const item = {data: 'hello'};
 		fetch.mockResponseOnce(JSON.stringify(item));
 
@@ -190,6 +201,7 @@ describe('client', () => {
 		expect(fetch.mock.calls.length).toEqual(1);
 
 		const call = fetch.mock.calls[0];
+
 		expect(call[0]).toMatch(
 			'http://localhost/test?p_auth=default-mocked-auth-token&t='
 		);

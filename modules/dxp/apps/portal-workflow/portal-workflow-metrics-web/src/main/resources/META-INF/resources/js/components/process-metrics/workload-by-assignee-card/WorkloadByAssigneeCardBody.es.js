@@ -105,7 +105,9 @@ const Footer = ({processId, processStepKey, totalCount}) => {
 
 	const filters = {};
 
-	filters.taskKeys = [processStepKey];
+	if (processStepKey && processStepKey !== 'allSteps') {
+		filters.taskKeys = [processStepKey];
+	}
 
 	const viewAllAssigneesQuery = {filters};
 	const viewAllAssigneesUrl = `/workload/assignee/${processId}/${defaultDelta}/1/overdueTaskCount:desc`;

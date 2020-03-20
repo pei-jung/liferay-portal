@@ -16,6 +16,47 @@
 			"title": "The ColumnDefinition Schema",
 			"type": "object"
 		},
+		"DropZoneDefinition": {
+			"additionalProperties": false,
+			"properties": {
+				"fragmentSettings": {
+					"oneOf": [
+						{
+							"$ref": "#/definitions/FragmentSettingsAllowed"
+						},
+						{
+							"$ref": "#/definitions/FragmentSettingsUnallowed"
+						}
+					],
+					"title": "The fragmentSettings Schema",
+					"type": "object"
+				}
+			},
+			"title": "The DropZoneDefinition Schema",
+			"type": "object"
+		},
+		"Fragment": {
+			"additionalProperties": false,
+			"properties": {
+				"collectionName": {
+					"title": "The collectionName Schema",
+					"type": "string"
+				},
+				"key": {
+					"title": "The key Schema",
+					"type": "string"
+				},
+				"name": {
+					"title": "The name Schema",
+					"type": "string"
+				}
+			},
+			"required": [
+				"key"
+			],
+			"title": "The fragment Schema",
+			"type": "object"
+		},
 		"FragmentField": {
 			"oneOf": [
 				{
@@ -122,26 +163,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"fragment": {
-					"additionalProperties": false,
-					"properties": {
-						"collectionName": {
-							"title": "The collectionName Schema",
-							"type": "string"
-						},
-						"key": {
-							"title": "The key Schema",
-							"type": "string"
-						},
-						"name": {
-							"title": "The name Schema",
-							"type": "string"
-						}
-					},
-					"required": [
-						"key"
-					],
-					"title": "The fragment Schema",
-					"type": "object"
+					"$ref": "#/definitions/Fragment"
 				},
 				"fragmentConfig": {
 					"title": "The fragmentConfig Schema",
@@ -196,6 +218,40 @@
 			"title": "The FragmentLink Schema",
 			"type": "object"
 		},
+		"FragmentSettingsAllowed": {
+			"additionalProperties": false,
+			"properties": {
+				"allowedFragments": {
+					"items": {
+						"$ref": "#/definitions/Fragment"
+					},
+					"title": "The allowedFragments Schema",
+					"type": "array"
+				}
+			},
+			"required": [
+				"allowedFragments"
+			],
+			"title": "The FragmentSettingsAllowed Schema",
+			"type": "object"
+		},
+		"FragmentSettingsUnallowed": {
+			"additionalProperties": false,
+			"properties": {
+				"unallowedFragments": {
+					"items": {
+						"$ref": "#/definitions/Fragment"
+					},
+					"title": "The unallowedFragments Schema",
+					"type": "array"
+				}
+			},
+			"required": [
+				"unallowedFragments"
+			],
+			"title": "The FragmentSettingsUnallowed Schema",
+			"type": "object"
+		},
 		"InlineLink": {
 			"additionalProperties": false,
 			"properties": {
@@ -240,6 +296,22 @@
 						"properties": {
 							"definition": {
 								"$ref": "#/definitions/ColumnDefinition"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "DropZone"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"definition": {
+								"$ref": "#/definitions/DropZoneDefinition"
 							}
 						}
 					}

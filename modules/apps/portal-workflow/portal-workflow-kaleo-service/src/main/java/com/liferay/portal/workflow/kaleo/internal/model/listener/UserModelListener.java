@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.workflow.kaleo.runtime.internal.model.listener;
+package com.liferay.portal.workflow.kaleo.internal.model.listener;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.workflow.kaleo.definition.ExecutionType;
@@ -81,16 +83,14 @@ public class UserModelListener extends BaseModelListener<User> {
 			KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance)
 		throws PortalException {
 
-		KaleoTask kaleoTask = _kaleoTaskLocalService.getKaleoTask(
-			kaleoTaskAssignmentInstance.getKaleoTaskId());
-
 		KaleoInstanceToken kaleoInstanceToken =
 			_kaleoInstanceTokenLocalService.getKaleoInstanceToken(
 				kaleoTaskAssignmentInstance.getKaleoInstanceTokenId());
-
 		KaleoTaskInstanceToken kaleoTaskInstanceToken =
 			_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
 				kaleoTaskAssignmentInstance.getKaleoTaskInstanceTokenId());
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
 
 		ExecutionContext executionContext = new ExecutionContext(
 			kaleoInstanceToken, kaleoTaskInstanceToken,
@@ -100,11 +100,14 @@ public class UserModelListener extends BaseModelListener<User> {
 				{
 					setCompanyId(kaleoInstanceToken.getCompanyId());
 					setScopeGroupId(kaleoInstanceToken.getGroupId());
-					setUserId(kaleoInstanceToken.getUserId());
+					setUserId(permissionChecker.getUserId());
 				}
 			});
 
 		List<KaleoTaskAssignment> kaleoTaskAssignments = new ArrayList<>();
+
+		KaleoTask kaleoTask = _kaleoTaskLocalService.getKaleoTask(
+			kaleoTaskAssignmentInstance.getKaleoTaskId());
 
 		for (KaleoTaskAssignment kaleoTaskAssignment :
 				kaleoTask.getKaleoTaskAssignments()) {
