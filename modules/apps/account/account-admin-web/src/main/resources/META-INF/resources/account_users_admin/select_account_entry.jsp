@@ -54,6 +54,10 @@ SelectAccountEntryManagementToolbarDisplayContext selectAccountEntryManagementTo
 				<%
 				Map<String, Object> data = HashMapBuilder.<String, Object>put(
 					"accountentryid", accountEntryDisplay.getAccountEntryId()
+				).put(
+					"entityid", accountEntryDisplay.getAccountEntryId()
+				).put(
+					"entityname", accountEntryDisplay.getName()
 				).build();
 				%>
 
@@ -70,6 +74,6 @@ SelectAccountEntryManagementToolbarDisplayContext selectAccountEntryManagementTo
 <aui:script>
 	Liferay.Util.selectEntityHandler(
 		'#<portlet:namespace />selectAccountEntry',
-		'<%= HtmlUtil.escapeJS(liferayPortletResponse.getNamespace() + "addAccountUser") %>'
+		'<%= HtmlUtil.escapeJS(liferayPortletResponse.getNamespace() + "selectAccountEntry") %>'
 	);
 </aui:script>
