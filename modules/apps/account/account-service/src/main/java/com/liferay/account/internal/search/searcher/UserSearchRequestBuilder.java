@@ -17,16 +17,14 @@ package com.liferay.account.internal.search.searcher;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
-import com.liferay.portal.search.sort.FieldSort;
 import com.liferay.portal.search.sort.SortFieldBuilder;
-import com.liferay.portal.search.sort.SortOrder;
-import com.liferay.portal.search.sort.Sorts;
 
 import java.io.Serializable;
 
@@ -68,21 +66,6 @@ public class UserSearchRequestBuilder {
 		if (_cur != QueryUtil.ALL_POS) {
 			searchRequestBuilder.from(_cur);
 			searchRequestBuilder.size(_delta);
-		}
-
-		if (Validator.isNotNull(_sortField)) {
-			SortOrder sortOrder = SortOrder.ASC;
-
-			if (_reverse) {
-				sortOrder = SortOrder.DESC;
-			}
-
-			FieldSort fieldSort = _sorts.field(
-				_sortFieldBuilder.getSortField(
-					User.class.getName(), _sortField),
-				sortOrder);
-
-			searchRequestBuilder.sorts(fieldSort);
 		}
 
 		return searchRequestBuilder.build();
@@ -170,6 +153,14 @@ public class UserSearchRequestBuilder {
 		searchContext.setAttributes(attributes);
 
 		searchContext.setCompanyId(CompanyThreadLocal.getCompanyId());
+
+		if (Validator.isNotNull(_sortField)) {
+			searchContext.setSorts(
+				new Sort(
+					_sortFieldBuilder.getSortField(
+						User.class.getName(), _sortField),
+					_reverse));
+		}
 	}
 
 	private Map<String, Serializable> _attributes = new HashMap<>();
@@ -185,9 +176,6 @@ public class UserSearchRequestBuilder {
 
 	@Reference
 	private SortFieldBuilder _sortFieldBuilder;
-
-	@Reference
-	private Sorts _sorts;
 
 	private int _status;
 
