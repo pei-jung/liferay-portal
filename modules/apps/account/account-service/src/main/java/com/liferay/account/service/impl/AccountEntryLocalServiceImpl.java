@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -50,9 +51,7 @@ import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
-import com.liferay.portal.search.sort.FieldSort;
 import com.liferay.portal.search.sort.SortFieldBuilder;
-import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.vulcan.util.TransformUtil;
 import com.liferay.users.admin.kernel.file.uploads.UserFileUploadsSettings;
@@ -336,27 +335,13 @@ public class AccountEntryLocalServiceImpl
 			false
 		).withSearchContext(
 			searchContext -> _populateSearchContext(
-				searchContext, companyId, keywords, params)
+				searchContext, companyId, keywords, params, orderByField,
+				reverse)
 		);
 
 		if (cur != QueryUtil.ALL_POS) {
 			searchRequestBuilder.from(cur);
 			searchRequestBuilder.size(delta);
-		}
-
-		if (Validator.isNotNull(orderByField)) {
-			SortOrder sortOrder = SortOrder.ASC;
-
-			if (reverse) {
-				sortOrder = SortOrder.DESC;
-			}
-
-			FieldSort fieldSort = _sorts.field(
-				_sortFieldBuilder.getSortField(
-					AccountEntry.class.getName(), orderByField),
-				sortOrder);
-
-			searchRequestBuilder.sorts(fieldSort);
 		}
 
 		return searchRequestBuilder.build();
@@ -382,12 +367,21 @@ public class AccountEntryLocalServiceImpl
 
 	private void _populateSearchContext(
 		SearchContext searchContext, long companyId, String keywords,
-		LinkedHashMap<String, Object> params) {
+		LinkedHashMap<String, Object> params, String orderbyField,
+		boolean reverse) {
 
 		searchContext.setCompanyId(companyId);
 
 		if (Validator.isNotNull(keywords)) {
 			searchContext.setKeywords(keywords);
+		}
+
+		if (Validator.isNotNull(orderbyField)) {
+			searchContext.setSorts(
+				new Sort(
+					_sortFieldBuilder.getSortField(
+						AccountEntry.class.getName(), orderbyField),
+					reverse));
 		}
 
 		if (MapUtil.isEmpty(params)) {
