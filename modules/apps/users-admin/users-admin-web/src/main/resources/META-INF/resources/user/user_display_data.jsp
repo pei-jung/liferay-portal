@@ -18,6 +18,8 @@
 
 <%
 User selUser = (User)request.getAttribute(UsersAdminWebKeys.SELECTED_USER);
+
+String emailAddress = ParamUtil.getString(request, "emailAddress");
 %>
 
 <aui:model-context bean="<%= selUser %>" model="<%= User.class %>" />
@@ -126,13 +128,20 @@ User selUser = (User)request.getAttribute(UsersAdminWebKeys.SELECTED_USER);
 				}
 				%>
 
-				<aui:input bean="<%= displayEmailAddressUser %>" model="<%= User.class %>" name="emailAddress">
+				<aui:input bean="<%= displayEmailAddressUser %>" model="<%= User.class %>" name="emailAddress" onChange='<%= renderResponse.getNamespace() + "onChangeEmailAddress(this.value);" %>' type="text">
 					<c:if test="<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_EMAIL_ADDRESS_REQUIRED) %>">
 						<aui:validator name="required" />
 					</c:if>
 				</aui:input>
+
+				<div class="<%= (StringUtil.equals(displayEmailAddressUser.getDisplayEmailAddress(), emailAddress) || Validator.isNull(emailAddress)) ? "hide" : StringPool.BLANK %>" id="<portlet:namespace />currentPasswordWrapper">
+					<aui:input autocomplete="off" id="currentPassword" label="password" name="currentPassword" required="<%= true %>" size="30" type="password" />
+				</div>
 			</c:otherwise>
 		</c:choose>
+
+		<liferay-ui:error exception="<%= UserPasswordException.MustMatchCurrentPassword.class %>" message="the-password-you-entered-for-the-current-password-does-not-match-your-current-password" />
+		<liferay-ui:error exception="<%= UserPasswordException.MustNotBeNull.class %>" message="the-password-cannot-be-blank" />
 
 		<c:if test="<%= selUser != null %>">
 			<liferay-ui:error exception="<%= UserIdException.MustNotBeNull.class %>" message="please-enter-a-user-id" />
@@ -175,3 +184,39 @@ User selUser = (User)request.getAttribute(UsersAdminWebKeys.SELECTED_USER);
 		</div>
 	</clay:col>
 </clay:row>
+
+<aui:script>
+	var currentPasswordWrapper = document.getElementById(
+		'<portlet:namespace />currentPasswordWrapper'
+	);
+	var currentPassword = document.getElementById(
+		'<portlet:namespace />currentPassword'
+	);
+
+	var currentPasswordNode = currentPassword.cloneNode(true);
+
+	var currentPasswordDiv = currentPasswordWrapper.children[0];
+
+	if (<%= Validator.isNull(emailAddress) %>) {
+		currentPasswordDiv.removeChild(currentPassword);
+	}
+
+	function <portlet:namespace />onChangeEmailAddress(emailValue) {
+		var fieldClassList = currentPasswordWrapper.classList;
+
+		if (emailValue != '<%= selUser.getDisplayEmailAddress() %>') {
+			if (fieldClassList.contains('hide')) {
+				fieldClassList.remove('hide');
+				currentPasswordDiv.appendChild(currentPasswordNode);
+			}
+		}
+		else {
+			if (!fieldClassList.contains('hide')) {
+				fieldClassList.add('hide');
+				currentPasswordDiv.removeChild(
+					document.getElementById('<portlet:namespace />currentPassword')
+				);
+			}
+		}
+	}
+</aui:script>

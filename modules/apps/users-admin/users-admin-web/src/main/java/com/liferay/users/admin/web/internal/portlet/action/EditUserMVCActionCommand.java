@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.exception.RequiredUserException;
 import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.exception.UserFieldException;
 import com.liferay.portal.kernel.exception.UserIdException;
+import com.liferay.portal.kernel.exception.UserPasswordException;
 import com.liferay.portal.kernel.exception.UserReminderQueryException;
 import com.liferay.portal.kernel.exception.UserScreenNameException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -321,6 +322,7 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 					 exception instanceof UserEmailAddressException ||
 					 exception instanceof UserFieldException ||
 					 exception instanceof UserIdException ||
+					 exception instanceof UserPasswordException ||
 					 exception instanceof UserReminderQueryException ||
 					 exception instanceof UserScreenNameException) {
 
@@ -470,6 +472,13 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			User.class.getName(), actionRequest);
+
+		if (!StringUtil.equalsIgnoreCase(emailAddress, oldEmailAddress)) {
+			String currentPassword = ParamUtil.getString(
+				actionRequest, "currentPassword");
+
+			oldPassword = currentPassword;
+		}
 
 		user = _userService.updateUser(
 			user.getUserId(), oldPassword, null, null, user.isPasswordReset(),
