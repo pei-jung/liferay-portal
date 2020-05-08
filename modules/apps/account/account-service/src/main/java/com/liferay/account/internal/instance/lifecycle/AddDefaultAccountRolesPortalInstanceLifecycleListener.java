@@ -185,7 +185,7 @@ public class AddDefaultAccountRolesPortalInstanceLifecycleListener
 			new String[] {ActionKeys.ACCESS_IN_CONTROL_PANEL}
 		).put(
 			Organization.class.getName(),
-			new String[] {ActionKeys.MANAGE_ACCOUNTS}
+			new String[] {AccountActionKeys.MANAGE_ACCOUNTS}
 		).build();
 	private static final Map<String, String[]>
 		_accountMemberResourceActionsMap = HashMapBuilder.put(

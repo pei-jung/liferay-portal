@@ -14,6 +14,7 @@
 
 package com.liferay.account.admin.web.internal.portlet;
 
+import com.liferay.account.constants.AccountActionKeys;
 import com.liferay.account.constants.AccountPortletKeys;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
@@ -54,7 +55,7 @@ public class AccountsControlPanelEntry extends BaseControlPanelEntry {
 		for (Organization organization : organizations) {
 			if (OrganizationPermissionUtil.contains(
 					permissionChecker, organization,
-					ActionKeys.MANAGE_ACCOUNTS) &&
+					AccountActionKeys.MANAGE_ACCOUNTS) &&
 				permissionChecker.hasPermission(
 					organization.getGroupId(), portlet.getPortletId(), 0,
 					ActionKeys.ACCESS_IN_CONTROL_PANEL)) {

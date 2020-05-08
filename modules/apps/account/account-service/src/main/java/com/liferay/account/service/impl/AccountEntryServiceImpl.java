@@ -171,7 +171,8 @@ public class AccountEntryServiceImpl extends AccountEntryServiceBaseImpl {
 
 		try {
 			_organizationPermission.check(
-				permissionChecker, organization, ActionKeys.MANAGE_ACCOUNTS);
+				permissionChecker, organization,
+				AccountActionKeys.MANAGE_ACCOUNTS);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {

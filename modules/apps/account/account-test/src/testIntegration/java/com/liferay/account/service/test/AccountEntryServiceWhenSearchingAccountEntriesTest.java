@@ -14,6 +14,7 @@
 
 package com.liferay.account.service.test;
 
+import com.liferay.account.constants.AccountActionKeys;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
@@ -142,7 +143,7 @@ public class AccountEntryServiceWhenSearchingAccountEntriesTest {
 			RandomTestUtil.randomString(), RoleConstants.TYPE_ORGANIZATION,
 			Organization.class.getName(),
 			ResourceConstants.SCOPE_GROUP_TEMPLATE, "0",
-			ActionKeys.MANAGE_ACCOUNTS);
+			AccountActionKeys.MANAGE_ACCOUNTS);
 
 		UserTestUtil.addUserGroupRole(
 			_user.getUserId(), rootOrganization.getGroupId(), _role.getName());
