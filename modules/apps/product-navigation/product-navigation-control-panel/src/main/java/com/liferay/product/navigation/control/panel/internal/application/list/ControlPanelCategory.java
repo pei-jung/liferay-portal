@@ -21,10 +21,8 @@ import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.service.permission.OrganizationPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
 
 import java.util.Locale;
@@ -61,15 +59,6 @@ public class ControlPanelCategory extends BasePanelCategory {
 
 		if (PortalPermissionUtil.contains(
 				permissionChecker, ActionKeys.VIEW_CONTROL_PANEL)) {
-
-			return true;
-		}
-
-		User user = permissionChecker.getUser();
-
-		if (OrganizationPermissionUtil.contains(
-				permissionChecker, user.getOrganizationIds(true),
-				ActionKeys.MANAGE_ACCOUNTS)) {
 
 			return true;
 		}
