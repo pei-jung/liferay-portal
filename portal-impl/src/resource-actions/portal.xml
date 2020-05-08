@@ -217,7 +217,6 @@
 				<action-key>ASSIGN_MEMBERS</action-key>
 				<action-key>ASSIGN_USER_ROLES</action-key>
 				<action-key>DELETE</action-key>
-				<action-key>MANAGE_ACCOUNTS</action-key>
 				<action-key>MANAGE_ANNOUNCEMENTS</action-key>
 				<action-key>MANAGE_SUBORGANIZATIONS</action-key>
 				<action-key>MANAGE_USERS</action-key>
@@ -233,7 +232,6 @@
 				<action-key>ASSIGN_MEMBERS</action-key>
 				<action-key>ASSIGN_USER_ROLES</action-key>
 				<action-key>DELETE</action-key>
-				<action-key>MANAGE_ACCOUNTS</action-key>
 				<action-key>MANAGE_ANNOUNCEMENTS</action-key>
 				<action-key>MANAGE_SUBORGANIZATIONS</action-key>
 				<action-key>MANAGE_USERS</action-key>
