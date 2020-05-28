@@ -44,7 +44,7 @@ public class AccountEntryModelDocumentContributor
 	@Override
 	public void contribute(Document document, AccountEntry accountEntry) {
 		document.addText(Field.DESCRIPTION, accountEntry.getDescription());
-		document.addText(Field.NAME, accountEntry.getName());
+		document.addTextSortable(Field.NAME, accountEntry.getName());
 		document.addKeyword(Field.STATUS, accountEntry.getStatus());
 		document.addKeyword("accountUserIds", _getAccountUserIds(accountEntry));
 		document.addKeyword("domains", _getDomains(accountEntry));
