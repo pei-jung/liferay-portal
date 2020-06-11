@@ -1737,7 +1737,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		if (user.hasCompanyMx()) {
 			mailService.addUser(
-				user.getCompanyId(), user.getUserId(), password,
+				user.getCompanyId(), user.getUserId(), StringPool.BLANK,
 				user.getFirstName(), user.getMiddleName(), user.getLastName(),
 				user.getEmailAddress());
 		}
