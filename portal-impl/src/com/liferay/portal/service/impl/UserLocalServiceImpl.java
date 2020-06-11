@@ -1183,16 +1183,23 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			workflowServiceContext = (ServiceContext)serviceContext.clone();
 		}
 
-		workflowServiceContext.setAttribute("autoPassword", autoPassword);
-		workflowServiceContext.setAttribute("passwordUnencrypted", password1);
-		workflowServiceContext.setAttribute("sendEmail", sendEmail);
-
 		Map<String, Serializable> workflowContext =
 			(Map<String, Serializable>)workflowServiceContext.removeAttribute(
 				"workflowContext");
 
 		if (workflowContext == null) {
 			workflowContext = Collections.emptyMap();
+		}
+
+		workflowServiceContext.setAttributes(
+			new HashMap<String, Serializable>());
+
+		workflowServiceContext.setAttribute("autoPassword", autoPassword);
+		workflowServiceContext.setAttribute("sendEmail", sendEmail);
+
+		if (autoPassword) {
+			workflowServiceContext.setAttribute(
+				"passwordUnencrypted", password1);
 		}
 
 		user = WorkflowHandlerRegistryUtil.startWorkflowInstance(
@@ -1684,10 +1691,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		boolean autoPassword = ParamUtil.getBoolean(
 			serviceContext, "autoPassword");
 
-		String password = (String)serviceContext.getAttribute(
-			"passwordUnencrypted");
-
 		if (autoPassword) {
+			String password = (String)serviceContext.getAttribute(
+				"passwordUnencrypted");
+
 			if (LDAPSettingsUtil.isPasswordPolicyEnabled(user.getCompanyId())) {
 				if (_log.isWarnEnabled()) {
 					StringBundler sb = new StringBundler(4);
