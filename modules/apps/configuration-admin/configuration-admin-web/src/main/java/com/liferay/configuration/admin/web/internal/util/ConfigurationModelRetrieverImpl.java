@@ -279,10 +279,6 @@ public class ConfigurationModelRetrieverImpl
 			extendedMetaTypeInformation.getObjectClassDefinition(pid, locale),
 			factory);
 
-		if (!ConfigurationVisibilityUtil.isVisible(pid, scope, scopePK)) {
-			return null;
-		}
-
 		if (scope.equals(scope.COMPANY) && configurationModel.isSystemScope()) {
 			return null;
 		}
