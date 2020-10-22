@@ -277,14 +277,26 @@ create table Counter (
 
 create table Country (
 	mvccVersion LONG default 0 not null,
+	uuid_ VARCHAR(75) null,
 	countryId LONG not null primary key,
-	name VARCHAR(75) null,
+	companyId LONG,
+	userId LONG,
+	userName VARCHAR(75) null,
+	createDate DATE null,
+	modifiedDate DATE null,
+	name STRING null,
+	billingAllowed BOOLEAN,
+	shippingAllowed BOOLEAN,
 	a2 VARCHAR(75) null,
 	a3 VARCHAR(75) null,
 	number_ VARCHAR(75) null,
+	subjectToVAT BOOLEAN,
 	idd_ VARCHAR(75) null,
 	zipRequired BOOLEAN,
-	active_ BOOLEAN
+	position DOUBLE,
+	active_ BOOLEAN,
+	groupFilterEnabled BOOLEAN,
+	lastPublishDate DATE null
 );
 
 create table DLFileEntry (
