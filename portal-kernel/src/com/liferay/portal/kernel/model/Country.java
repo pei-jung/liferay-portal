@@ -55,13 +55,4 @@ public interface Country extends CountryModel {
 
 		};
 
-	public String getName(java.util.Locale locale);
-
-	public String getNameCurrentLanguageId();
-
-	@com.liferay.portal.kernel.json.JSON
-	public String getNameCurrentValue();
-
-	public void setNameCurrentLanguageId(String languageId);
-
 }

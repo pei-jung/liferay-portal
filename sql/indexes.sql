@@ -94,6 +94,7 @@ create unique index IX_717B97E1 on Country (a2[$COLUMN_LENGTH:75$]);
 create unique index IX_717B9BA2 on Country (a3[$COLUMN_LENGTH:75$]);
 create index IX_25D734CD on Country (active_);
 create unique index IX_19DA007B on Country (name[$COLUMN_LENGTH:75$]);
+create index IX_BEAF8B0 on Country (uuid_[$COLUMN_LENGTH:75$], companyId);
 
 create index IX_33E8A112 on DLFileEntry (companyId, ctCollectionId);
 create index IX_5444C427 on DLFileEntry (companyId, fileEntryTypeId);
