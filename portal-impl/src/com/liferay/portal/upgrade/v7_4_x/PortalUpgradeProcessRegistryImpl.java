@@ -31,6 +31,8 @@ public class PortalUpgradeProcessRegistryImpl
 		TreeMap<Version, UpgradeProcess> upgradeProcesses) {
 
 		upgradeProcesses.put(new Version(9, 0, 0), new UpgradeAddress());
+
+		upgradeProcesses.put(new Version(9, 1, 0), new UpgradeCountry());
 	}
 
 }
