@@ -14,6 +14,9 @@
 
 package com.liferay.portal.upgrade.v7_4_x;
 
+import com.liferay.portal.kernel.dao.db.DB;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ListType;
@@ -35,10 +38,21 @@ public class UpgradeListType extends UpgradeProcess {
 	}
 
 	private void _addListType(String name, String type) {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(9);
 
 		sb.append("insert into ListType (listTypeId, name, type_) select ?, ");
-		sb.append("?, ? where not exists (select null from ListType where ");
+		sb.append("?, ? from ");
+
+		DB db = DBManagerUtil.getDB();
+
+		if (db.getDBType() == DBType.DB2) {
+			sb.append("sysibm.sysdummy1 ");
+		}
+		else {
+			sb.append("dual ");
+		}
+
+		sb.append("where not exists (select null from ListType where ");
 		sb.append("name = ");
 		sb.append(StringUtil.quote(name));
 		sb.append("and type_ = ");
