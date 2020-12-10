@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.RegionCodeException;
 import com.liferay.portal.kernel.exception.RegionNameException;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
@@ -68,11 +69,17 @@ public class RegionLocalServiceImpl extends RegionLocalServiceBaseImpl {
 
 	@Override
 	public Region deleteRegion(long regionId) {
-		return null;
+		Region region = regionPersistence.fetchByPrimaryKey(regionId);
+
+		return deleteRegion(region);
 	}
 
 	@Override
 	public Region deleteRegion(Region region) {
+
+		regionPersistence.remove(region);
+
+		AddressLocalService.de
 		return null;
 	}
 

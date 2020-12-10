@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.service.BaseServiceImpl;
 import com.liferay.portal.kernel.service.RegionService;
+import com.liferay.portal.kernel.service.persistence.AddressPersistence;
 import com.liferay.portal.kernel.service.persistence.CountryPersistence;
 import com.liferay.portal.kernel.service.persistence.RegionPersistence;
 import com.liferay.portal.kernel.service.persistence.UserFinder;
@@ -132,6 +133,69 @@ public abstract class RegionServiceBaseImpl
 			counterLocalService) {
 
 		this.counterLocalService = counterLocalService;
+	}
+
+	/**
+	 * Returns the address local service.
+	 *
+	 * @return the address local service
+	 */
+	public com.liferay.portal.kernel.service.AddressLocalService
+		getAddressLocalService() {
+
+		return addressLocalService;
+	}
+
+	/**
+	 * Sets the address local service.
+	 *
+	 * @param addressLocalService the address local service
+	 */
+	public void setAddressLocalService(
+		com.liferay.portal.kernel.service.AddressLocalService
+			addressLocalService) {
+
+		this.addressLocalService = addressLocalService;
+	}
+
+	/**
+	 * Returns the address remote service.
+	 *
+	 * @return the address remote service
+	 */
+	public com.liferay.portal.kernel.service.AddressService
+		getAddressService() {
+
+		return addressService;
+	}
+
+	/**
+	 * Sets the address remote service.
+	 *
+	 * @param addressService the address remote service
+	 */
+	public void setAddressService(
+		com.liferay.portal.kernel.service.AddressService addressService) {
+
+		this.addressService = addressService;
+	}
+
+	/**
+	 * Returns the address persistence.
+	 *
+	 * @return the address persistence
+	 */
+	public AddressPersistence getAddressPersistence() {
+		return addressPersistence;
+	}
+
+	/**
+	 * Sets the address persistence.
+	 *
+	 * @param addressPersistence the address persistence
+	 */
+	public void setAddressPersistence(AddressPersistence addressPersistence) {
+		this.addressPersistence = addressPersistence;
 	}
 
 	/**
@@ -340,6 +404,20 @@ public abstract class RegionServiceBaseImpl
 	)
 	protected com.liferay.counter.kernel.service.CounterLocalService
 		counterLocalService;
+
+	@BeanReference(
+		type = com.liferay.portal.kernel.service.AddressLocalService.class
+	)
+	protected com.liferay.portal.kernel.service.AddressLocalService
+		addressLocalService;
+
+	@BeanReference(
+		type = com.liferay.portal.kernel.service.AddressService.class
+	)
+	protected com.liferay.portal.kernel.service.AddressService addressService;
+
+	@BeanReference(type = AddressPersistence.class)
+	protected AddressPersistence addressPersistence;
 
 	@BeanReference(
 		type = com.liferay.portal.kernel.service.CountryLocalService.class

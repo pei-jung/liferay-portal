@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
 import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.kernel.service.RegionLocalService;
+import com.liferay.portal.kernel.service.persistence.AddressPersistence;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.CountryPersistence;
 import com.liferay.portal.kernel.service.persistence.RegionPersistence;
@@ -519,6 +520,47 @@ public abstract class RegionLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the address local service.
+	 *
+	 * @return the address local service
+	 */
+	public com.liferay.portal.kernel.service.AddressLocalService
+		getAddressLocalService() {
+
+		return addressLocalService;
+	}
+
+	/**
+	 * Sets the address local service.
+	 *
+	 * @param addressLocalService the address local service
+	 */
+	public void setAddressLocalService(
+		com.liferay.portal.kernel.service.AddressLocalService
+			addressLocalService) {
+
+		this.addressLocalService = addressLocalService;
+	}
+
+	/**
+	 * Returns the address persistence.
+	 *
+	 * @return the address persistence
+	 */
+	public AddressPersistence getAddressPersistence() {
+		return addressPersistence;
+	}
+
+	/**
+	 * Sets the address persistence.
+	 *
+	 * @param addressPersistence the address persistence
+	 */
+	public void setAddressPersistence(AddressPersistence addressPersistence) {
+		this.addressPersistence = addressPersistence;
+	}
+
+	/**
 	 * Returns the country local service.
 	 *
 	 * @return the country local service
@@ -680,6 +722,15 @@ public abstract class RegionLocalServiceBaseImpl
 	)
 	protected com.liferay.counter.kernel.service.CounterLocalService
 		counterLocalService;
+
+	@BeanReference(
+		type = com.liferay.portal.kernel.service.AddressLocalService.class
+	)
+	protected com.liferay.portal.kernel.service.AddressLocalService
+		addressLocalService;
+
+	@BeanReference(type = AddressPersistence.class)
+	protected AddressPersistence addressPersistence;
 
 	@BeanReference(
 		type = com.liferay.portal.kernel.service.CountryLocalService.class
