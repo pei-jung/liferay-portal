@@ -121,10 +121,12 @@ public class RegionLocalServiceWrapper
 	 *
 	 * @param region the region
 	 * @return the region that was removed
+	 * @throws PortalException
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Region deleteRegion(
-		com.liferay.portal.kernel.model.Region region) {
+			com.liferay.portal.kernel.model.Region region)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _regionLocalService.deleteRegion(region);
 	}
@@ -311,7 +313,8 @@ public class RegionLocalServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.model.Region getRegion(
-		long countryId, java.lang.String regionCode) {
+			long countryId, java.lang.String regionCode)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _regionLocalService.getRegion(countryId, regionCode);
 	}
@@ -352,7 +355,8 @@ public class RegionLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.portal.kernel.model.Region> getRegions(
-		long countryId, boolean active) {
+			long countryId, boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _regionLocalService.getRegions(countryId, active);
 	}
@@ -379,7 +383,8 @@ public class RegionLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.portal.kernel.model.Region> getRegions(
-		long companyId, java.lang.String a2, boolean active) {
+			long companyId, java.lang.String a2, boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _regionLocalService.getRegions(companyId, a2, active);
 	}
@@ -406,9 +411,19 @@ public class RegionLocalServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.model.Region updateActive(
-		long regionCode, boolean active) {
+		long regionId, boolean active) {
 
-		return _regionLocalService.updateActive(regionCode, active);
+		return _regionLocalService.updateActive(regionId, active);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.Region updateRegion(
+			long regionId, boolean active, java.lang.String name,
+			double position, java.lang.String regionCode)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _regionLocalService.updateRegion(
+			regionId, active, name, position, regionCode);
 	}
 
 	/**

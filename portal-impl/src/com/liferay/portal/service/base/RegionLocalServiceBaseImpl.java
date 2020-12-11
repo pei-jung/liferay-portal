@@ -135,10 +135,11 @@ public abstract class RegionLocalServiceBaseImpl
 	 *
 	 * @param region the region
 	 * @return the region that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Region deleteRegion(Region region) {
+	public Region deleteRegion(Region region) throws PortalException {
 		return regionPersistence.remove(region);
 	}
 

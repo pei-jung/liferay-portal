@@ -126,9 +126,10 @@ public interface RegionLocalService
 	 *
 	 * @param region the region
 	 * @return the region that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
-	public Region deleteRegion(Region region);
+	public Region deleteRegion(Region region) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> T dslQuery(DSLQuery dslQuery);
@@ -251,7 +252,8 @@ public interface RegionLocalService
 	public Region getRegion(long regionId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Region getRegion(long countryId, String regionCode);
+	public Region getRegion(long countryId, String regionCode)
+		throws PortalException;
 
 	/**
 	 * Returns the region with the matching UUID and company.
@@ -280,7 +282,8 @@ public interface RegionLocalService
 	public List<Region> getRegions(int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Region> getRegions(long countryId, boolean active);
+	public List<Region> getRegions(long countryId, boolean active)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Region> getRegions(
@@ -293,7 +296,8 @@ public interface RegionLocalService
 		OrderByComparator<Region> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Region> getRegions(long companyId, String a2, boolean active);
+	public List<Region> getRegions(long companyId, String a2, boolean active)
+		throws PortalException;
 
 	/**
 	 * Returns the number of regions.
@@ -309,7 +313,12 @@ public interface RegionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegionsCount(long countryId, boolean active);
 
-	public Region updateActive(long regionCode, boolean active);
+	public Region updateActive(long regionId, boolean active);
+
+	public Region updateRegion(
+			long regionId, boolean active, String name, double position,
+			String regionCode)
+		throws PortalException;
 
 	/**
 	 * Updates the region in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

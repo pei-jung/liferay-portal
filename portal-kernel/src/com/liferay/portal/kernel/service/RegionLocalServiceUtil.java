@@ -124,9 +124,11 @@ public class RegionLocalServiceUtil {
 	 *
 	 * @param region the region
 	 * @return the region that was removed
+	 * @throws PortalException
 	 */
 	public static com.liferay.portal.kernel.model.Region deleteRegion(
-		com.liferay.portal.kernel.model.Region region) {
+			com.liferay.portal.kernel.model.Region region)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().deleteRegion(region);
 	}
@@ -302,7 +304,8 @@ public class RegionLocalServiceUtil {
 	}
 
 	public static com.liferay.portal.kernel.model.Region getRegion(
-		long countryId, String regionCode) {
+			long countryId, String regionCode)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getRegion(countryId, regionCode);
 	}
@@ -340,7 +343,8 @@ public class RegionLocalServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.portal.kernel.model.Region>
-		getRegions(long countryId, boolean active) {
+			getRegions(long countryId, boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getRegions(countryId, active);
 	}
@@ -366,7 +370,8 @@ public class RegionLocalServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.portal.kernel.model.Region>
-		getRegions(long companyId, String a2, boolean active) {
+			getRegions(long companyId, String a2, boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getRegions(companyId, a2, active);
 	}
@@ -389,9 +394,18 @@ public class RegionLocalServiceUtil {
 	}
 
 	public static com.liferay.portal.kernel.model.Region updateActive(
-		long regionCode, boolean active) {
+		long regionId, boolean active) {
 
-		return getService().updateActive(regionCode, active);
+		return getService().updateActive(regionId, active);
+	}
+
+	public static com.liferay.portal.kernel.model.Region updateRegion(
+			long regionId, boolean active, String name, double position,
+			String regionCode)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updateRegion(
+			regionId, active, name, position, regionCode);
 	}
 
 	/**
