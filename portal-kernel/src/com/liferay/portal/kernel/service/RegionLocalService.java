@@ -202,6 +202,9 @@ public interface RegionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Region fetchRegion(long regionId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Region fetchRegion(long countryId, String regionCode);
+
 	/**
 	 * Returns the region with the matching UUID and company.
 	 *
@@ -247,6 +250,9 @@ public interface RegionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Region getRegion(long regionId) throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Region getRegion(long countryId, String regionCode);
+
 	/**
 	 * Returns the region with the matching UUID and company.
 	 *
@@ -273,6 +279,22 @@ public interface RegionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Region> getRegions(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Region> getRegions(long countryId, boolean active);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Region> getRegions(
+		long countryId, boolean active, int start, int end,
+		OrderByComparator<Region> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Region> getRegions(
+		long countryId, int start, int end,
+		OrderByComparator<Region> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Region> getRegions(long companyId, String a2, boolean active);
+
 	/**
 	 * Returns the number of regions.
 	 *
@@ -280,6 +302,14 @@ public interface RegionLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegionsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegionsCount(long countryId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegionsCount(long countryId, boolean active);
+
+	public Region updateActive(long regionCode, boolean active);
 
 	/**
 	 * Updates the region in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

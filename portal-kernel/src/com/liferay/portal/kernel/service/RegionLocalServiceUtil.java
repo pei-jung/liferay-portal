@@ -228,6 +228,12 @@ public class RegionLocalServiceUtil {
 		return getService().fetchRegion(regionId);
 	}
 
+	public static com.liferay.portal.kernel.model.Region fetchRegion(
+		long countryId, String regionCode) {
+
+		return getService().fetchRegion(countryId, regionCode);
+	}
+
 	/**
 	 * Returns the region with the matching UUID and company.
 	 *
@@ -295,6 +301,12 @@ public class RegionLocalServiceUtil {
 		return getService().getRegion(regionId);
 	}
 
+	public static com.liferay.portal.kernel.model.Region getRegion(
+		long countryId, String regionCode) {
+
+		return getService().getRegion(countryId, regionCode);
+	}
+
 	/**
 	 * Returns the region with the matching UUID and company.
 	 *
@@ -327,6 +339,38 @@ public class RegionLocalServiceUtil {
 		return getService().getRegions(start, end);
 	}
 
+	public static java.util.List<com.liferay.portal.kernel.model.Region>
+		getRegions(long countryId, boolean active) {
+
+		return getService().getRegions(countryId, active);
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.Region>
+		getRegions(
+			long countryId, boolean active, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.portal.kernel.model.Region> orderByComparator) {
+
+		return getService().getRegions(
+			countryId, active, start, end, orderByComparator);
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.Region>
+		getRegions(
+			long countryId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.portal.kernel.model.Region> orderByComparator) {
+
+		return getService().getRegions(
+			countryId, start, end, orderByComparator);
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.Region>
+		getRegions(long companyId, String a2, boolean active) {
+
+		return getService().getRegions(companyId, a2, active);
+	}
+
 	/**
 	 * Returns the number of regions.
 	 *
@@ -334,6 +378,20 @@ public class RegionLocalServiceUtil {
 	 */
 	public static int getRegionsCount() {
 		return getService().getRegionsCount();
+	}
+
+	public static int getRegionsCount(long countryId) {
+		return getService().getRegionsCount(countryId);
+	}
+
+	public static int getRegionsCount(long countryId, boolean active) {
+		return getService().getRegionsCount(countryId, active);
+	}
+
+	public static com.liferay.portal.kernel.model.Region updateActive(
+		long regionCode, boolean active) {
+
+		return getService().updateActive(regionCode, active);
 	}
 
 	/**
