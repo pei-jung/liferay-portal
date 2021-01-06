@@ -14,6 +14,13 @@
 
 package com.liferay.portal.service.impl;
 
+import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.expression.Predicate;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.petra.sql.dsl.query.FromStep;
+import com.liferay.petra.sql.dsl.query.GroupByStep;
+import com.liferay.petra.sql.dsl.query.JoinStep;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -25,6 +32,8 @@ import com.liferay.portal.kernel.exception.CountryNumberException;
 import com.liferay.portal.kernel.exception.DuplicateCountryException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Country;
+import com.liferay.portal.kernel.model.CountryLocalizationTable;
+import com.liferay.portal.kernel.model.CountryTable;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
@@ -34,6 +43,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.base.CountryLocalServiceBaseImpl;
+import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.util.List;
 
@@ -125,6 +135,11 @@ public class CountryLocalServiceImpl extends CountryLocalServiceBaseImpl {
 	}
 
 	@Override
+	public <T> T dslQuery(DSLQuery dslQuery) {
+		return countryPersistence.dslQuery(dslQuery);
+	}
+
+	@Override
 	public Country fetchCountryByA2(long companyId, String a2) {
 		return countryPersistence.fetchByC_A2(companyId, a2);
 	}
@@ -211,6 +226,23 @@ public class CountryLocalServiceImpl extends CountryLocalServiceBaseImpl {
 	}
 
 	@Override
+	public List<Country> searchCountries(
+			long companyId, Boolean active, String keywords, int start, int end,
+			OrderByComparator<Country> orderByComparator)
+		throws PortalException {
+
+		return dslQuery(
+			_getGroupByStep(
+				DSLQueryFactoryUtil.selectDistinct(CountryTable.INSTANCE),
+				companyId, active, keywords
+			).orderBy(
+				CountryTable.INSTANCE, orderByComparator
+			).limit(
+				start, end
+			));
+	}
+
+	@Override
 	public Country updateActive(long countryId, boolean active)
 		throws PortalException {
 
@@ -281,6 +313,66 @@ public class CountryLocalServiceImpl extends CountryLocalServiceBaseImpl {
 		if (Validator.isNull(number)) {
 			throw new CountryNumberException();
 		}
+	}
+
+	private GroupByStep _getGroupByStep(
+			FromStep fromStep, long companyId, boolean active, String keywords)
+		throws PortalException {
+
+		JoinStep joinStep = fromStep.from(
+			CountryTable.INSTANCE
+		).leftJoinOn(
+			CountryLocalizationTable.INSTANCE,
+			CountryTable.INSTANCE.countryId.eq(
+				CountryLocalizationTable.INSTANCE.countryId)
+		);
+
+		return joinStep.where(
+			() -> {
+				Predicate predicate = CountryTable.INSTANCE.companyId.eq(
+					companyId);
+
+				predicate = predicate.and(
+					CountryTable.INSTANCE.active.eq(active));
+
+				if (Validator.isNotNull(keywords)) {
+					String[] terms = CustomSQLUtil.keywords(keywords, true);
+
+					Predicate keywordsPredicate = null;
+
+					for (String term : terms) {
+						Predicate namePredicate = DSLFunctionFactoryUtil.lower(
+							CountryTable.INSTANCE.name
+						).like(
+							term
+						);
+
+						Predicate titlePredicate = DSLFunctionFactoryUtil.lower(
+							CountryLocalizationTable.INSTANCE.title
+						).like(
+							term
+						);
+
+						Predicate termPredicate = namePredicate.or(
+							titlePredicate);
+
+						if (keywordsPredicate == null) {
+							keywordsPredicate = termPredicate;
+						}
+						else {
+							keywordsPredicate = keywordsPredicate.or(
+								termPredicate);
+						}
+					}
+
+					if (keywordsPredicate != null) {
+						predicate = predicate.and(
+							keywordsPredicate.withParentheses());
+					}
+				}
+
+				return predicate;
+			});
 	}
 
 	private void _updateOrganizations(long countryId) throws PortalException {
