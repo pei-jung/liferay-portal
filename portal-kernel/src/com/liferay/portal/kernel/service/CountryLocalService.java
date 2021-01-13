@@ -352,6 +352,12 @@ public interface CountryLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Country> searchCountries(
+			long companyId, Boolean active, String keywords, int start, int end,
+			OrderByComparator<Country> orderByComparator)
+		throws PortalException;
+
 	public Country updateActive(long countryId, boolean active)
 		throws PortalException;
 
