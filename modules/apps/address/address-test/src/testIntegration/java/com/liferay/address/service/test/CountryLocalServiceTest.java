@@ -25,14 +25,21 @@ import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.RegionService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.OrganizationTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -141,6 +148,76 @@ public class CountryLocalServiceTest {
 	}
 
 	@Test
+	public void testSearchCountries() throws Exception {
+		String keywords1 = RandomTestUtil.randomString();
+		String keywords2 = RandomTestUtil.randomString();
+		String keywords3 = keywords1 + RandomTestUtil.randomString();
+
+		Country country1 = _addCountry("a1", "a11", true, keywords1);
+		Country country2 = _addCountry("a2", "a22", true, keywords2);
+		Country country3 = _addCountry("a3", "a33", true, keywords3);
+
+		List<Country> expectedCountries = Arrays.asList(country1, country3);
+
+		List<Country> actualCountries = _countryLocalService.searchCountries(
+			country1.getCompanyId(), country1.isActive(), keywords1,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		Assert.assertEquals(
+			actualCountries.toString(), expectedCountries.size(),
+			actualCountries.size());
+
+		String localizedCountryName = RandomTestUtil.randomString();
+
+		_countryLocalService.updateCountryLocalization(
+			country2, "de_DE", localizedCountryName);
+
+		List<Country> actualLocalizedCountries =
+			_countryLocalService.searchCountries(
+				country1.getCompanyId(), country1.isActive(),
+				localizedCountryName, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+				null);
+
+		Assert.assertEquals(
+			actualLocalizedCountries.toString(), 1,
+			actualLocalizedCountries.size());
+
+		for (Country country : actualLocalizedCountries) {
+			Assert.assertEquals(
+				country2.getCountryId(), country.getCountryId());
+		}
+	}
+
+	@Test
+	public void testSearchCountriesPagination() throws Exception {
+		String keywords = RandomTestUtil.randomString();
+
+		List<Country> expectedCountries = Arrays.asList(
+			_addCountry(
+				"a1", "a11", true, keywords + RandomTestUtil.randomString()),
+			_addCountry(
+				"a2", "a22", true, keywords + RandomTestUtil.randomString()),
+			_addCountry(
+				"a3", "a33", true, keywords + RandomTestUtil.randomString()),
+			_addCountry(
+				"a4", "a44", true, keywords + RandomTestUtil.randomString()),
+			_addCountry(
+				"a5", "a55", true, keywords + RandomTestUtil.randomString()));
+
+		Comparator<Country> comparator = Comparator.comparing(
+			Country::getName, String.CASE_INSENSITIVE_ORDER);
+
+		_assertSearchCountriesPaginationSort(
+			ListUtil.sort(expectedCountries, comparator), keywords,
+			OrderByComparatorFactoryUtil.create("Country", "name", true),
+			ServiceContextTestUtil.getServiceContext());
+		_assertSearchCountriesPaginationSort(
+			ListUtil.sort(expectedCountries, comparator.reversed()), keywords,
+			OrderByComparatorFactoryUtil.create("Country", "name", false),
+			ServiceContextTestUtil.getServiceContext());
+	}
+
+	@Test
 	public void testUpdateCountry() throws Exception {
 		boolean billingAllowed = RandomTestUtil.randomBoolean();
 		boolean shippingAllowed = RandomTestUtil.randomBoolean();
@@ -177,6 +254,40 @@ public class CountryLocalServiceTest {
 			RandomTestUtil.randomString(), number, position, shippingAllowed,
 			subjectToVAT, zipRequired,
 			ServiceContextTestUtil.getServiceContext());
+	}
+
+	private Country _addCountry(
+			String a2, String a3, boolean active, String name)
+		throws Exception {
+
+		return _countryLocalService.addCountry(
+			a2, a3, active, RandomTestUtil.randomBoolean(),
+			RandomTestUtil.randomString(), name, RandomTestUtil.randomString(),
+			RandomTestUtil.randomDouble(), RandomTestUtil.randomBoolean(),
+			RandomTestUtil.randomBoolean(), RandomTestUtil.randomBoolean(),
+			ServiceContextTestUtil.getServiceContext());
+	}
+
+	private void _assertSearchCountriesPaginationSort(
+			List<Country> expectedCountries, String keywords,
+			OrderByComparator<Country> orderByComparator,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		int end = 3;
+		int start = 1;
+
+		List<Country> actualCountries = _countryLocalService.searchCountries(
+			serviceContext.getCompanyId(), true, keywords, start, end,
+			orderByComparator);
+
+		Assert.assertEquals(
+			actualCountries.toString(), end - start, actualCountries.size());
+
+		for (int i = 0; i < (end - start); i++) {
+			Assert.assertEquals(
+				expectedCountries.get(start + i), actualCountries.get(i));
+		}
 	}
 
 	@Inject
