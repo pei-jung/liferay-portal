@@ -673,8 +673,8 @@ public class CommerceShipmentServiceHttp {
 	public static com.liferay.commerce.model.CommerceShipment updateAddress(
 			HttpPrincipal httpPrincipal, long commerceShipmentId, String name,
 			String description, String street1, String street2, String street3,
-			String city, String zip, long commerceRegionId,
-			long commerceCountryId, String phoneNumber)
+			String city, String zip, long regionId, long countryId,
+			String phoneNumber)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		try {
@@ -684,8 +684,7 @@ public class CommerceShipmentServiceHttp {
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceShipmentId, name, description, street1,
-				street2, street3, city, zip, commerceRegionId,
-				commerceCountryId, phoneNumber);
+				street2, street3, city, zip, regionId, countryId, phoneNumber);
 
 			Object returnObj = null;
 
@@ -812,8 +811,8 @@ public class CommerceShipmentServiceHttp {
 			updateCommerceShipment(
 				HttpPrincipal httpPrincipal, long commerceShipmentId,
 				String name, String description, String street1, String street2,
-				String street3, String city, String zip, long commerceRegionId,
-				long commerceCountryId, String phoneNumber, String carrier,
+				String street3, String city, String zip, long regionId,
+				long countryId, String phoneNumber, String carrier,
 				String trackingNumber, int status, int shippingDateMonth,
 				int shippingDateDay, int shippingDateYear, int shippingDateHour,
 				int shippingDateMinute, int expectedDateMonth,
@@ -828,12 +827,11 @@ public class CommerceShipmentServiceHttp {
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceShipmentId, name, description, street1,
-				street2, street3, city, zip, commerceRegionId,
-				commerceCountryId, phoneNumber, carrier, trackingNumber, status,
-				shippingDateMonth, shippingDateDay, shippingDateYear,
-				shippingDateHour, shippingDateMinute, expectedDateMonth,
-				expectedDateDay, expectedDateYear, expectedDateHour,
-				expectedDateMinute);
+				street2, street3, city, zip, regionId, countryId, phoneNumber,
+				carrier, trackingNumber, status, shippingDateMonth,
+				shippingDateDay, shippingDateYear, shippingDateHour,
+				shippingDateMinute, expectedDateMonth, expectedDateDay,
+				expectedDateYear, expectedDateHour, expectedDateMinute);
 
 			Object returnObj = null;
 

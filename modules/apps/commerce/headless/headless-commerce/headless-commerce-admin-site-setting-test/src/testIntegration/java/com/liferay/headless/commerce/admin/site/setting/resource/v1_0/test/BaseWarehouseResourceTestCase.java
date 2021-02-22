@@ -556,17 +556,17 @@ public abstract class BaseWarehouseResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"commerceCountryId", additionalAssertFieldName)) {
+					"countryId", additionalAssertFieldName)) {
 
-				if (warehouse.getCommerceCountryId() == null) {
+				if (warehouse.getCountryId() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("commerceRegionId", additionalAssertFieldName)) {
-				if (warehouse.getCommerceRegionId() == null) {
+			if (Objects.equals("regionId", additionalAssertFieldName)) {
+				if (warehouse.getRegionId() == null) {
 					valid = false;
 				}
 
@@ -772,11 +772,11 @@ public abstract class BaseWarehouseResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"commerceCountryId", additionalAssertFieldName)) {
+					"countryId", additionalAssertFieldName)) {
 
 				if (!Objects.deepEquals(
-						warehouse1.getCommerceCountryId(),
-						warehouse2.getCommerceCountryId())) {
+						warehouse1.getCountryId(),
+						warehouse2.getCountryId())) {
 
 					return false;
 				}
@@ -784,10 +784,10 @@ public abstract class BaseWarehouseResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("commerceRegionId", additionalAssertFieldName)) {
+			if (Objects.equals("regionId", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						warehouse1.getCommerceRegionId(),
-						warehouse2.getCommerceRegionId())) {
+						warehouse1.getRegionId(),
+						warehouse2.getRegionId())) {
 
 					return false;
 				}
@@ -1014,12 +1014,12 @@ public abstract class BaseWarehouseResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("commerceCountryId")) {
+		if (entityFieldName.equals("countryId")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("commerceRegionId")) {
+		if (entityFieldName.equals("regionId")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -1148,8 +1148,8 @@ public abstract class BaseWarehouseResourceTestCase {
 			{
 				active = RandomTestUtil.randomBoolean();
 				city = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				commerceCountryId = RandomTestUtil.randomLong();
-				commerceRegionId = RandomTestUtil.randomLong();
+				countryId = RandomTestUtil.randomLong();
+				regionId = RandomTestUtil.randomLong();
 				description = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				groupId = RandomTestUtil.randomLong();

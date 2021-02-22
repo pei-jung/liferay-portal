@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Generated("")
 @GraphQLName("Warehouse")
 @JsonFilter("Liferay.Vulcan")
-@Schema(requiredProperties = {"commerceCountryId", "name"})
+@Schema(requiredProperties = {"countryId", "name"})
 @XmlRootElement(name = "Warehouse")
 public class Warehouse implements Serializable {
 
@@ -113,20 +113,20 @@ public class Warehouse implements Serializable {
 
 	@DecimalMin("0")
 	@Schema
-	public Long getCommerceCountryId() {
-		return commerceCountryId;
+	public Long getCountryId() {
+		return countryId;
 	}
 
-	public void setCommerceCountryId(Long commerceCountryId) {
-		this.commerceCountryId = commerceCountryId;
+	public void setCountryId(Long countryId) {
+		this.countryId = countryId;
 	}
 
 	@JsonIgnore
-	public void setCommerceCountryId(
-		UnsafeSupplier<Long, Exception> commerceCountryIdUnsafeSupplier) {
+	public void setCountryId(
+		UnsafeSupplier<Long, Exception> countryIdUnsafeSupplier) {
 
 		try {
-			commerceCountryId = commerceCountryIdUnsafeSupplier.get();
+			countryId = countryIdUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -139,24 +139,24 @@ public class Warehouse implements Serializable {
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	@NotNull
-	protected Long commerceCountryId;
+	protected Long countryId;
 
 	@DecimalMin("0")
 	@Schema
-	public Long getCommerceRegionId() {
-		return commerceRegionId;
+	public Long getRegionId() {
+		return regionId;
 	}
 
-	public void setCommerceRegionId(Long commerceRegionId) {
-		this.commerceRegionId = commerceRegionId;
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
 	}
 
 	@JsonIgnore
-	public void setCommerceRegionId(
-		UnsafeSupplier<Long, Exception> commerceRegionIdUnsafeSupplier) {
+	public void setRegionId(
+		UnsafeSupplier<Long, Exception> regionIdUnsafeSupplier) {
 
 		try {
-			commerceRegionId = commerceRegionIdUnsafeSupplier.get();
+			regionId = regionIdUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -168,7 +168,7 @@ public class Warehouse implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Long commerceRegionId;
+	protected Long regionId;
 
 	@Schema
 	public String getDescription() {
@@ -555,24 +555,24 @@ public class Warehouse implements Serializable {
 			sb.append("\"");
 		}
 
-		if (commerceCountryId != null) {
+		if (countryId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"commerceCountryId\": ");
+			sb.append("\"countryId\": ");
 
-			sb.append(commerceCountryId);
+			sb.append(countryId);
 		}
 
-		if (commerceRegionId != null) {
+		if (regionId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"commerceRegionId\": ");
+			sb.append("\"regionId\": ");
 
-			sb.append(commerceRegionId);
+			sb.append(regionId);
 		}
 
 		if (description != null) {

@@ -235,13 +235,8 @@ components:
                 city:
                     example: Diamond Bar
                     type: string
-                commerceCountryId:
+                countryId:
                     example: 30130
-                    format: int64
-                    minimum: 0
-                    type: integer
-                commerceRegionId:
-                    example: 30234
                     format: int64
                     minimum: 0
                     type: integer
@@ -276,6 +271,11 @@ components:
                 primary:
                     example: true
                     type: boolean
+                regionId:
+                    example: 30234
+                    format: int64
+                    minimum: 0
+                    type: integer
                 street1:
                     example: 1400 Montefino Ave
                     type: string
@@ -289,7 +289,7 @@ components:
                     example: "91765"
                     type: string
             required:
-                - commerceCountryId
+                - countryId
                 - name
             type: object
     securitySchemes:

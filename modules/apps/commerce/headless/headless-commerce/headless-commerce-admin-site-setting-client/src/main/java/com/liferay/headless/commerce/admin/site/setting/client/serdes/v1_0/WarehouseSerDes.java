@@ -77,24 +77,24 @@ public class WarehouseSerDes {
 			sb.append("\"");
 		}
 
-		if (warehouse.getCommerceCountryId() != null) {
+		if (warehouse.getCountryId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"commerceCountryId\": ");
+			sb.append("\"countryId\": ");
 
-			sb.append(warehouse.getCommerceCountryId());
+			sb.append(warehouse.getCountryId());
 		}
 
-		if (warehouse.getCommerceRegionId() != null) {
+		if (warehouse.getRegionId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"commerceRegionId\": ");
+			sb.append("\"regionId\": ");
 
-			sb.append(warehouse.getCommerceRegionId());
+			sb.append(warehouse.getRegionId());
 		}
 
 		if (warehouse.getDescription() != null) {
@@ -273,22 +273,22 @@ public class WarehouseSerDes {
 			map.put("city", String.valueOf(warehouse.getCity()));
 		}
 
-		if (warehouse.getCommerceCountryId() == null) {
-			map.put("commerceCountryId", null);
+		if (warehouse.getCountryId() == null) {
+			map.put("countryId", null);
 		}
 		else {
 			map.put(
-				"commerceCountryId",
-				String.valueOf(warehouse.getCommerceCountryId()));
+				"countryId",
+				String.valueOf(warehouse.getCountryId()));
 		}
 
-		if (warehouse.getCommerceRegionId() == null) {
-			map.put("commerceRegionId", null);
+		if (warehouse.getRegionId() == null) {
+			map.put("regionId", null);
 		}
 		else {
 			map.put(
-				"commerceRegionId",
-				String.valueOf(warehouse.getCommerceRegionId()));
+				"regionId",
+				String.valueOf(warehouse.getRegionId()));
 		}
 
 		if (warehouse.getDescription() == null) {
@@ -405,15 +405,15 @@ public class WarehouseSerDes {
 					warehouse.setCity((String)jsonParserFieldValue);
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "commerceCountryId")) {
+			else if (Objects.equals(jsonParserFieldName, "countryId")) {
 				if (jsonParserFieldValue != null) {
-					warehouse.setCommerceCountryId(
+					warehouse.setCountryId(
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "commerceRegionId")) {
+			else if (Objects.equals(jsonParserFieldName, "regionId")) {
 				if (jsonParserFieldValue != null) {
-					warehouse.setCommerceRegionId(
+					warehouse.setRegionId(
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
