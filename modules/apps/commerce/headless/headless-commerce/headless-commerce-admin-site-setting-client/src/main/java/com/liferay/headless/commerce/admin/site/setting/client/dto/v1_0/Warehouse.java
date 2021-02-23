@@ -74,47 +74,47 @@ public class Warehouse implements Cloneable, Serializable {
 
 	protected String city;
 
-	public Long getCommerceCountryId() {
-		return commerceCountryId;
+	public Long getCountryId() {
+		return countryId;
 	}
 
-	public void setCommerceCountryId(Long commerceCountryId) {
-		this.commerceCountryId = commerceCountryId;
+	public void setCountryId(Long countryId) {
+		this.countryId = countryId;
 	}
 
-	public void setCommerceCountryId(
-		UnsafeSupplier<Long, Exception> commerceCountryIdUnsafeSupplier) {
+	public void setCountryId(
+		UnsafeSupplier<Long, Exception> countryIdUnsafeSupplier) {
 
 		try {
-			commerceCountryId = commerceCountryIdUnsafeSupplier.get();
+			countryId = countryIdUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected Long commerceCountryId;
+	protected Long countryId;
 
-	public Long getCommerceRegionId() {
-		return commerceRegionId;
+	public Long getRegionId() {
+		return regionId;
 	}
 
-	public void setCommerceRegionId(Long commerceRegionId) {
-		this.commerceRegionId = commerceRegionId;
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
 	}
 
-	public void setCommerceRegionId(
-		UnsafeSupplier<Long, Exception> commerceRegionIdUnsafeSupplier) {
+	public void setRegionId(
+		UnsafeSupplier<Long, Exception> regionIdUnsafeSupplier) {
 
 		try {
-			commerceRegionId = commerceRegionIdUnsafeSupplier.get();
+			regionId = regionIdUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected Long commerceRegionId;
+	protected Long regionId;
 
 	public String getDescription() {
 		return description;
