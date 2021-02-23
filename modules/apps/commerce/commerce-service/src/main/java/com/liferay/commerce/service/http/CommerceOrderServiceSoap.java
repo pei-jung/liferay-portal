@@ -731,8 +731,7 @@ public class CommerceOrderServiceSoap {
 			updateBillingAddress(
 				long commerceOrderId, String name, String description,
 				String street1, String street2, String street3, String city,
-				String zip, long commerceRegionId, long commerceCountryId,
-				String phoneNumber,
+				String zip, long regionId, long countryId, String phoneNumber,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 
@@ -740,8 +739,8 @@ public class CommerceOrderServiceSoap {
 			com.liferay.commerce.model.CommerceOrder returnValue =
 				CommerceOrderServiceUtil.updateBillingAddress(
 					commerceOrderId, name, description, street1, street2,
-					street3, city, zip, commerceRegionId, commerceCountryId,
-					phoneNumber, serviceContext);
+					street3, city, zip, regionId, countryId, phoneNumber,
+					serviceContext);
 
 			return com.liferay.commerce.model.CommerceOrderSoap.toSoapModel(
 				returnValue);
@@ -1228,8 +1227,7 @@ public class CommerceOrderServiceSoap {
 			updateShippingAddress(
 				long commerceOrderId, String name, String description,
 				String street1, String street2, String street3, String city,
-				String zip, long commerceRegionId, long commerceCountryId,
-				String phoneNumber,
+				String zip, long regionId, long countryId, String phoneNumber,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 
@@ -1237,8 +1235,8 @@ public class CommerceOrderServiceSoap {
 			com.liferay.commerce.model.CommerceOrder returnValue =
 				CommerceOrderServiceUtil.updateShippingAddress(
 					commerceOrderId, name, description, street1, street2,
-					street3, city, zip, commerceRegionId, commerceCountryId,
-					phoneNumber, serviceContext);
+					street3, city, zip, regionId, countryId, phoneNumber,
+					serviceContext);
 
 			return com.liferay.commerce.model.CommerceOrderSoap.toSoapModel(
 				returnValue);

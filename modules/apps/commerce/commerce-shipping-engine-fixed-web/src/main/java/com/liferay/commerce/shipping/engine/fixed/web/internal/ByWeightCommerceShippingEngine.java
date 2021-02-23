@@ -128,9 +128,9 @@ public class ByWeightCommerceShippingEngine implements CommerceShippingEngine {
 				fetchCommerceShippingFixedOptionRel(
 					commerceShippingFixedOption.
 						getCommerceShippingFixedOptionId(),
-					commerceAddress.getCommerceCountryId(),
-					commerceAddress.getCommerceRegionId(),
-					commerceAddress.getZip(), orderWeight);
+					commerceAddress.getCountryId(),
+					commerceAddress.getRegionId(), commerceAddress.getZip(),
+					orderWeight);
 
 		if (commerceShippingFixedOptionRel == null) {
 			return null;
@@ -185,7 +185,7 @@ public class ByWeightCommerceShippingEngine implements CommerceShippingEngine {
 					isCommerceShippingMethodRestricted(
 						commerceShippingFixedOption.
 							getCommerceShippingMethodId(),
-						commerceAddress.getCommerceCountryId());
+						commerceAddress.getCountryId());
 
 			if (restricted) {
 				continue;

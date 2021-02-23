@@ -131,7 +131,7 @@ public class FixedCommerceShippingEngine implements CommerceShippingEngine {
 					isCommerceShippingMethodRestricted(
 						commerceShippingFixedOption.
 							getCommerceShippingMethodId(),
-						commerceAddress.getCommerceCountryId());
+						commerceAddress.getCountryId());
 
 			if (restricted) {
 				continue;
