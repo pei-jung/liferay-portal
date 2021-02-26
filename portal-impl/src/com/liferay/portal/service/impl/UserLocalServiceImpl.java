@@ -1914,6 +1914,14 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			user.getCompanyId());
 
 		if (company.isStrangersVerify() && (user.getLdapServerId() < 0)) {
+			if (serviceContext.getPathMain() == null) {
+				serviceContext.setPathMain(PortalUtil.getPathMain());
+			}
+
+			if (serviceContext.getPortalURL() == null) {
+				serviceContext.setPortalURL(company.getPortalURL(0));
+			}
+
 			sendEmailAddressVerification(
 				user, user.getEmailAddress(), serviceContext);
 		}
