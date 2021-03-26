@@ -147,8 +147,7 @@ public class PortalInstanceLifecycleListenerImpl
 					serviceContext.setUserId(country.getUserId());
 
 					Region region = _regionLocalService.addRegion(
-						country.getCountryId(),
-						regionJSONObject.getBoolean("active"),
+						country.getCountryId(), true,
 						regionJSONObject.getString("name"), 0,
 						regionJSONObject.getString("regionCode"),
 						serviceContext);
