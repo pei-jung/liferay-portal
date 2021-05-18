@@ -982,10 +982,12 @@ public class PortalImpl implements Portal {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
 
-		String securityMode = RedirectURLSettingsUtil.redirectURLSecurityMode(companyId);
+		String securityMode = RedirectURLSettingsUtil.redirectURLSecurityMode(
+			companyId);
 
 		if (securityMode.equals("domain")) {
-			String[] allowedDomains = RedirectURLSettingsUtil.redirectURLDomainsAllowed(companyId);
+			String[] allowedDomains =
+				RedirectURLSettingsUtil.redirectURLDomainsAllowed(companyId);
 
 			if (allowedDomains.length == 0) {
 				return url;
@@ -1014,7 +1016,8 @@ public class PortalImpl implements Portal {
 			url = null;
 		}
 		else {
-			String[] allowedIps = RedirectURLSettingsUtil.redirectURLIPsAllowed(companyId);
+			String[] allowedIps = RedirectURLSettingsUtil.redirectURLIPsAllowed(
+				companyId);
 
 			if (allowedIps.length == 0) {
 				return url;
