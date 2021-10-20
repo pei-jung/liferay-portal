@@ -31,6 +31,19 @@ public class UserServiceWrapper
 	}
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	@Override
+	public void addGroupUser(long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_userService.addGroupUser(groupId, userId);
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
@@ -1993,6 +2006,19 @@ public class UserServiceWrapper
 			birthdayDay, birthdayYear, smsSn, facebookSn, jabberSn, skypeSn,
 			twitterSn, jobTitle, groupIds, organizationIds, roleIds,
 			userGroupRoles, userGroupIds, serviceContext);
+	}
+
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	@Override
+	public User updateUser(User user)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _userService.updateUser(user);
 	}
 
 	@Override

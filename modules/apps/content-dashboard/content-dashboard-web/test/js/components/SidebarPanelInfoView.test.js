@@ -132,7 +132,6 @@ describe('SidebarPanelInfoView', () => {
 		expect(getByText('Mocked description')).toBeInTheDocument();
 		expect(getByText('download')).toBeInTheDocument();
 		expect(getByText('size')).toBeInTheDocument();
-		expect(getByText('url')).toBeInTheDocument();
 
 		expect(
 			queryByText('languages-translated-into')
@@ -174,6 +173,10 @@ describe('SidebarPanelInfoView', () => {
 		const previewFigureTag = container.querySelector('figure');
 
 		expect(previewFigureTag).toBe(null);
+
+		expect(
+			container.getElementsByClassName('lexicon-icon-copy').length
+		).toBe(1);
 
 		expect(getByText('Basic Document')).toBeInTheDocument();
 		expect(getByText('download')).toBeInTheDocument();

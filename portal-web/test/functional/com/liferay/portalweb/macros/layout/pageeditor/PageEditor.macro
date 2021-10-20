@@ -748,25 +748,8 @@ definition {
 				locator1 = "PageEditor#LAYOUT_ELEMENTS_HEADER");
 		}
 
-		if ("${fragmentName}" == "Collection Display") {
-			AssertElementPresent(
-				key_fragmentName = "${fragmentName}",
-				key_message = "No Collection Selected Yet",
-				locator1 = "Fragment#NOT_COLLECTION_SELECTED_MESSAGE");
-		}
-
-		if ("${fragmentName}" == "Content Display") {
-			AssertElementPresent(
-				key_fragmentName = "${fragmentName}",
-				key_messageIfo = "The selected content will be shown here.",
-				locator1 = "Fragment#MESSAGE_INFO");
-		}
-
-		if ("${fragmentName}" == "Display Page Content") {
-			AssertElementPresent(
-				key_fragmentName = "${fragmentName}",
-				key_messageIfo = "The display page content will be shown here.",
-				locator1 = "Fragment#MESSAGE_INFO");
+		if (("${fragmentName}" == "Content Display") || ("${fragmentName}" == "Collection Display") || ("${fragmentName}" == "Display Page Content")) {
+			PageEditor.viewFragmentMessageInfo(fragmentName = "${fragmentName}");
 		}
 
 		if (isSet(composition)) {
@@ -3703,6 +3686,48 @@ definition {
 					key_text = "${editableText}",
 					locator1 = "Fragment#CONTRIBUTED_FRAGMENT_INLINE_RICH_TEXT_STYLE");
 			}
+		}
+	}
+
+	macro viewFragmentMessageInfo {
+		if ("${fragmentName}" == "Collection Display") {
+			if (!(isSet(messageInfo))) {
+				var messageInfo = "No Collection Selected Yet";
+			}
+
+			AssertVisible(
+				key_fragmentName = "${fragmentName}",
+				key_messageInfo = "${messageInfo}",
+				locator1 = "Fragment#NO_COLLECTION_SELECTED_MESSAGE");
+		}
+
+		else if ("${fragmentName}" == "Content Display") {
+			if (!(isSet(messageInfo))) {
+				var messageInfo = "The selected content will be shown here.";
+			}
+
+			AssertVisible(
+				key_fragmentName = "${fragmentName}",
+				key_messageInfo = "${messageInfo}",
+				locator1 = "Fragment#MESSAGE_INFO");
+		}
+
+		else if ("${fragmentName}" == "Display Page Content") {
+			if (!(isSet(messageInfo))) {
+				var messageInfo = "The display page content will be shown here.";
+			}
+
+			AssertVisible(
+				key_fragmentName = "${fragmentName}",
+				key_messageInfo = "${messageInfo}",
+				locator1 = "Fragment#MESSAGE_INFO");
+		}
+
+		else {
+			AssertVisible(
+				key_fragmentName = "${fragmentName}",
+				key_messageInfo = "${messageInfo}",
+				locator1 = "Fragment#MESSAGE_INFO");
 		}
 	}
 

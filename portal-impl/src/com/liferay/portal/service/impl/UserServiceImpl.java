@@ -107,6 +107,16 @@ import java.util.Set;
 public class UserServiceImpl extends UserServiceBaseImpl {
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public void addGroupUser(long groupId, long userId) throws PortalException {
+		addGroupUsers(groupId, new long[] {userId}, null);
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
@@ -3144,6 +3154,21 @@ public class UserServiceImpl extends UserServiceBaseImpl {
 		}
 
 		return user;
+	}
+
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	@Override
+	public User updateUser(User user) throws PortalException {
+		UserPermissionUtil.check(
+			getPermissionChecker(), user.getUserId(),
+			user.getOrganizationIds(), ActionKeys.UPDATE);
+
+		return userLocalService.updateUser(user);
 	}
 
 	/**

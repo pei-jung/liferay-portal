@@ -142,6 +142,7 @@ export const mockedFileDocumentProps = {
 		extension: 'sh',
 		fileName: 'script.sh',
 		previewImageURL: '',
+		previewURL: 'mocked/download/url/demo.jpg&download=true',
 		size: '9 KB',
 		viewURL: 'mocked/view/url/in/portal',
 	},

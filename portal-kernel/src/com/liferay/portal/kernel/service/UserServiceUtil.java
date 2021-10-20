@@ -41,6 +41,18 @@ public class UserServiceUtil {
 	 */
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public static void addGroupUser(long groupId, long userId)
+		throws PortalException {
+
+		getService().addGroupUser(groupId, userId);
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
@@ -1899,6 +1911,16 @@ public class UserServiceUtil {
 			birthdayDay, birthdayYear, smsSn, facebookSn, jabberSn, skypeSn,
 			twitterSn, jobTitle, groupIds, organizationIds, roleIds,
 			userGroupRoles, userGroupIds, serviceContext);
+	}
+
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	public static User updateUser(User user) throws PortalException {
+		return getService().updateUser(user);
 	}
 
 	public static UserService getService() {

@@ -64,6 +64,14 @@ public interface UserService extends BaseService {
 	 */
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public void addGroupUser(long groupId, long userId) throws PortalException;
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
@@ -1591,5 +1599,13 @@ public interface UserService extends BaseService {
 			List<UserGroupRole> userGroupRoles, long[] userGroupIds,
 			ServiceContext serviceContext)
 		throws PortalException;
+
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	public User updateUser(User user) throws PortalException;
 
 }

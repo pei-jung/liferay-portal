@@ -72,11 +72,11 @@ renderResponse.setTitle(LanguageUtil.get(request, "export"));
 						<clay:row>
 							<clay:col>
 								<clay:select
-									label="external-type"
+									label="export-file-format"
 									name="externalType"
-									options='<%=
-										Arrays.asList(new SelectOption("CSV", "CSV"), new SelectOption("TXT", "TXT"), new SelectOption("XLS", "XLS"), new SelectOption("XML", "XML"))
-									%>'
+									options="<%=
+										editBatchPlannerPlanDisplayContext.getExternalTypeSelectOptions()
+									%>"
 								/>
 							</clay:col>
 						</clay:row>

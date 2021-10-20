@@ -65,6 +65,25 @@ import java.rmi.RemoteException;
 public class UserServiceSoap {
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public static void addGroupUser(long groupId, long userId)
+		throws RemoteException {
+
+		try {
+			UserServiceUtil.addGroupUser(groupId, userId);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
@@ -2577,6 +2596,31 @@ public class UserServiceSoap {
 					com.liferay.portal.model.impl.WebsiteModelImpl.toModels(
 						websites),
 					announcementsDelivers, serviceContext);
+
+			return com.liferay.portal.kernel.model.UserSoap.toSoapModel(
+				returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	public static com.liferay.portal.kernel.model.UserSoap updateUser(
+			com.liferay.portal.kernel.model.UserSoap user)
+		throws RemoteException {
+
+		try {
+			com.liferay.portal.kernel.model.User returnValue =
+				UserServiceUtil.updateUser(
+					com.liferay.portal.model.impl.UserModelImpl.toModel(user));
 
 			return com.liferay.portal.kernel.model.UserSoap.toSoapModel(
 				returnValue);
