@@ -1995,6 +1995,19 @@ public class UserServiceWrapper
 			userGroupRoles, userGroupIds, serviceContext);
 	}
 
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	@Override
+	public User updateUser(User user)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _userService.updateUser(user);
+	}
+
 	@Override
 	public UserService getWrappedService() {
 		return _userService;

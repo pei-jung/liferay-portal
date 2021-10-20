@@ -1592,4 +1592,12 @@ public interface UserService extends BaseService {
 			ServiceContext serviceContext)
 		throws PortalException;
 
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	public User updateUser(User user) throws PortalException;
+
 }

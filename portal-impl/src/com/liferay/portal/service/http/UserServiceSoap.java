@@ -2591,6 +2591,31 @@ public class UserServiceSoap {
 	/**
 	 * Updates the user.
 	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	public static com.liferay.portal.kernel.model.UserSoap updateUser(
+			com.liferay.portal.kernel.model.UserSoap user)
+		throws RemoteException {
+
+		try {
+			com.liferay.portal.kernel.model.User returnValue =
+				UserServiceUtil.updateUser(
+					com.liferay.portal.model.impl.UserModelImpl.toModel(user));
+
+			return com.liferay.portal.kernel.model.UserSoap.toSoapModel(
+				returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	/**
+	 * Updates the user.
+	 *
 	 * @param userId the primary key of the user
 	 * @param oldPassword the user's old password
 	 * @param newPassword1 the user's new password (optionally

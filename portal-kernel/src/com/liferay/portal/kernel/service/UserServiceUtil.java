@@ -1901,6 +1901,16 @@ public class UserServiceUtil {
 			userGroupRoles, userGroupIds, serviceContext);
 	}
 
+	/**
+	 * Updates the user.
+	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	public static User updateUser(User user) throws PortalException {
+		return getService().updateUser(user);
+	}
+
 	public static UserService getService() {
 		return _service;
 	}
