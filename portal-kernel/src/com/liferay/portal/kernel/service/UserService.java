@@ -64,6 +64,14 @@ public interface UserService extends BaseService {
 	 */
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public void addGroupUser(long groupId, long userId) throws PortalException;
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group

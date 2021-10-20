@@ -65,6 +65,25 @@ import java.rmi.RemoteException;
 public class UserServiceSoap {
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public static void addGroupUser(long groupId, long userId)
+		throws RemoteException {
+
+		try {
+			UserServiceUtil.addGroupUser(groupId, userId);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group

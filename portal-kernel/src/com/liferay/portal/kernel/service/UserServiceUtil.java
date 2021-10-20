@@ -41,6 +41,18 @@ public class UserServiceUtil {
 	 */
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public static void addGroupUser(long groupId, long userId)
+		throws PortalException {
+
+		getService().addGroupUser(groupId, userId);
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
