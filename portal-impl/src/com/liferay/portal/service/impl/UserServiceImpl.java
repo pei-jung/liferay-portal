@@ -107,6 +107,16 @@ import java.util.Set;
 public class UserServiceImpl extends UserServiceBaseImpl {
 
 	/**
+	 * Adds the user to the group.
+	 *
+	 * @param groupId  the primary key of the group
+	 * @param userId the primary key of the user
+	 */
+	public void addGroupUser(long groupId, long userId) throws PortalException {
+		addGroupUsers(groupId, new long[] {userId}, null);
+	}
+
+	/**
 	 * Adds the users to the group.
 	 *
 	 * @param groupId the primary key of the group
