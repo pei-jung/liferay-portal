@@ -3149,6 +3149,21 @@ public class UserServiceImpl extends UserServiceBaseImpl {
 	/**
 	 * Updates the user.
 	 *
+	 * @param user the user object
+	 * @return the updated user
+	 */
+	@Override
+	public User updateUser(User user) throws PortalException {
+		UserPermissionUtil.check(
+			getPermissionChecker(), user.getUserId(),
+			user.getOrganizationIds(), ActionKeys.UPDATE);
+
+		return userLocalService.updateUser(user);
+	}
+
+	/**
+	 * Updates the user.
+	 *
 	 * @param      userId the primary key of the user
 	 * @param      oldPassword the user's old password
 	 * @param      newPassword1 the user's new password (optionally
