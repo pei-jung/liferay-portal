@@ -209,12 +209,17 @@ public class ViewRolesManagementToolbarDisplayContext {
 
 		BaseModelSearchResult<Role> baseModelSearchResult =
 			_currentRoleTypeContributor.searchRoles(
-				themeDisplay.getCompanyId(), roleSearchTerms.getKeywords(),
-				roleSearch.getStart(), roleSearch.getEnd(),
-				roleSearch.getOrderByComparator());
+				themeDisplay.getCompanyId(), roleSearchTerms.getKeywords(), 0,
+				1, roleSearch.getOrderByComparator());
+
+		roleSearch.setTotal(baseModelSearchResult.getLength());
+
+		baseModelSearchResult = _currentRoleTypeContributor.searchRoles(
+			themeDisplay.getCompanyId(), roleSearchTerms.getKeywords(),
+			roleSearch.getStart(), roleSearch.getEnd(),
+			roleSearch.getOrderByComparator());
 
 		roleSearch.setResults(baseModelSearchResult.getBaseModels());
-		roleSearch.setTotal(baseModelSearchResult.getLength());
 
 		_roleSearch = roleSearch;
 
