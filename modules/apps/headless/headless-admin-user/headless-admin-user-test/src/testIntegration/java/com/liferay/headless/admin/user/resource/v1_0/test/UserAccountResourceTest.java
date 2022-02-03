@@ -27,6 +27,7 @@ import com.liferay.headless.admin.user.client.dto.v1_0.UserAccountContactInforma
 import com.liferay.headless.admin.user.client.dto.v1_0.WebUrl;
 import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.admin.user.client.pagination.Pagination;
+import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.user.client.serdes.v1_0.EmailAddressSerDes;
 import com.liferay.headless.admin.user.client.serdes.v1_0.PhoneSerDes;
 import com.liferay.headless.admin.user.client.serdes.v1_0.PostalAddressSerDes;
@@ -39,6 +40,7 @@ import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.auth.Authenticator;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.OrganizationTestUtil;
@@ -50,6 +52,7 @@ import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityField;
@@ -59,7 +62,9 @@ import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -568,6 +573,50 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 				_accountEntryUserRelLocalService.fetchAccountEntryUserRel(
 					_accountEntry.getAccountEntryId(), user.getUserId()));
 		}
+	}
+
+	@Override
+	@Test
+	public void testPostUserAccount() throws Exception {
+		UserAccount userAccount = randomUserAccount();
+
+		String password = RandomTestUtil.randomString();
+
+		userAccount.setPassword(password);
+
+		UserAccount postUserAccount = userAccountResource.postUserAccount(
+			userAccount);
+
+		assertEquals(userAccount, postUserAccount);
+		assertValid(postUserAccount);
+
+		Assert.assertEquals(
+			Authenticator.SUCCESS,
+			_userLocalService.authenticateByEmailAddress(
+				testCompany.getCompanyId(), postUserAccount.getEmailAddress(),
+				password, Collections.emptyMap(), Collections.emptyMap(),
+				new HashMap<>()));
+	}
+
+	@Test
+	public void testPostUserAccountAsGuest() throws Exception {
+		UserAccountResource.Builder builder = UserAccountResource.builder();
+
+		userAccountResource = builder.locale(
+			LocaleUtil.getDefault()
+		).build();
+
+		UserAccount userAccount = randomUserAccount();
+
+		Assert.assertNull(
+			_userLocalService.fetchUserByEmailAddress(
+				testCompany.getCompanyId(), userAccount.getEmailAddress()));
+
+		userAccountResource.postUserAccount(userAccount);
+
+		Assert.assertNotNull(
+			_userLocalService.fetchUserByEmailAddress(
+				testCompany.getCompanyId(), userAccount.getEmailAddress()));
 	}
 
 	@Override
