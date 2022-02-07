@@ -56,6 +56,8 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityField;
+import com.liferay.portal.security.service.access.policy.model.SAPEntry;
+import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
 import com.liferay.portal.vulcan.util.TransformUtil;
@@ -600,23 +602,38 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 
 	@Test
 	public void testPostUserAccountAsGuest() throws Exception {
-		UserAccountResource.Builder builder = UserAccountResource.builder();
+		SAPEntry sapEntry = _sapEntryLocalService.addSAPEntry(
+			_testUser.getUserId(),
+			"com.liferay.headless.admin.user.internal.resource.v1_0." +
+				"UserAccountResourceImpl#postUserAccount",
+			true, true, "Guest",
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), "Guest"
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
 
-		userAccountResource = builder.locale(
-			LocaleUtil.getDefault()
-		).build();
+		try {
+			UserAccountResource.Builder builder = UserAccountResource.builder();
 
-		UserAccount userAccount = randomUserAccount();
+			userAccountResource = builder.locale(
+				LocaleUtil.getDefault()
+			).build();
 
-		Assert.assertNull(
-			_userLocalService.fetchUserByEmailAddress(
-				testCompany.getCompanyId(), userAccount.getEmailAddress()));
+			UserAccount userAccount = randomUserAccount();
 
-		userAccountResource.postUserAccount(userAccount);
+			Assert.assertNull(
+				_userLocalService.fetchUserByEmailAddress(
+					testCompany.getCompanyId(), userAccount.getEmailAddress()));
 
-		Assert.assertNotNull(
-			_userLocalService.fetchUserByEmailAddress(
-				testCompany.getCompanyId(), userAccount.getEmailAddress()));
+			userAccountResource.postUserAccount(userAccount);
+
+			Assert.assertNotNull(
+				_userLocalService.fetchUserByEmailAddress(
+					testCompany.getCompanyId(), userAccount.getEmailAddress()));
+		}
+		finally {
+			_sapEntryLocalService.deleteSAPEntry(sapEntry);
+		}
 	}
 
 	@Override
@@ -1051,6 +1068,10 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 	private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
 
 	private Organization _organization;
+
+	@Inject
+	private SAPEntryLocalService _sapEntryLocalService;
+
 	private User _testUser;
 
 	@Inject
