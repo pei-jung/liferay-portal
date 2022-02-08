@@ -27,7 +27,6 @@ import com.liferay.headless.admin.user.client.dto.v1_0.UserAccountContactInforma
 import com.liferay.headless.admin.user.client.dto.v1_0.WebUrl;
 import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.admin.user.client.pagination.Pagination;
-import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.user.client.serdes.v1_0.EmailAddressSerDes;
 import com.liferay.headless.admin.user.client.serdes.v1_0.PhoneSerDes;
 import com.liferay.headless.admin.user.client.serdes.v1_0.PostalAddressSerDes;
@@ -52,12 +51,9 @@ import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityField;
-import com.liferay.portal.security.service.access.policy.model.SAPEntry;
-import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
 import com.liferay.portal.vulcan.util.TransformUtil;
@@ -600,42 +596,6 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 				new HashMap<>()));
 	}
 
-	@Test
-	public void testPostUserAccountAsGuest() throws Exception {
-		SAPEntry sapEntry = _sapEntryLocalService.addSAPEntry(
-			_testUser.getUserId(),
-			"com.liferay.headless.admin.user.internal.resource.v1_0." +
-				"UserAccountResourceImpl#postUserAccount",
-			true, true, "Guest",
-			HashMapBuilder.put(
-				LocaleUtil.getDefault(), "Guest"
-			).build(),
-			ServiceContextTestUtil.getServiceContext());
-
-		try {
-			UserAccountResource.Builder builder = UserAccountResource.builder();
-
-			userAccountResource = builder.locale(
-				LocaleUtil.getDefault()
-			).build();
-
-			UserAccount userAccount = randomUserAccount();
-
-			Assert.assertNull(
-				_userLocalService.fetchUserByEmailAddress(
-					testCompany.getCompanyId(), userAccount.getEmailAddress()));
-
-			userAccountResource.postUserAccount(userAccount);
-
-			Assert.assertNotNull(
-				_userLocalService.fetchUserByEmailAddress(
-					testCompany.getCompanyId(), userAccount.getEmailAddress()));
-		}
-		finally {
-			_sapEntryLocalService.deleteSAPEntry(sapEntry);
-		}
-	}
-
 	@Override
 	protected void assertEquals(
 		UserAccount userAccount1, UserAccount userAccount2) {
@@ -1068,10 +1028,6 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 	private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
 
 	private Organization _organization;
-
-	@Inject
-	private SAPEntryLocalService _sapEntryLocalService;
-
 	private User _testUser;
 
 	@Inject
