@@ -19,7 +19,6 @@ import com.liferay.account.configuration.AccountEntryEmailDomainsConfiguration;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.constants.AccountPortletKeys;
 import com.liferay.account.model.AccountEntry;
-import com.liferay.account.retriever.AccountUserRetriever;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
@@ -35,15 +34,19 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
-import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.util.TransformUtil;
+import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -88,18 +91,34 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 		String keywords = ParamUtil.getString(
 			liferayPortletRequest, "keywords", null);
 
-		BaseModelSearchResult<User> baseModelSearchResult =
-			_accountUserRetriever.searchAccountUsers(
-				AccountConstants.ACCOUNT_ENTRY_ID_ANY,
-				_getEmailAddressDomains(accountEntryId, navigation), keywords,
-				WorkflowConstants.STATUS_APPROVED, searchContainer.getStart(),
-				searchContainer.getDelta(), searchContainer.getOrderByCol(),
-				_isReverseOrder(searchContainer.getOrderByType()));
+		LinkedHashMap<String, Object> params =
+			LinkedHashMapBuilder.<String, Object>put(
+				"emailAddressDomains",
+				_getEmailAddressDomains(accountEntryId, navigation)
+			).build();
+
+		if (navigation.equals("account-users")) {
+			params.put(
+				"accountEntryIds",
+				new long[] {AccountConstants.ACCOUNT_ENTRY_ID_ANY});
+		}
+		else if (navigation.equals("company-users")) {
+			params.put("accountEntryIds", new long[0]);
+		}
+
+		List<User> users = _userLocalService.search(
+			PortalUtil.getCompanyId(liferayPortletRequest), keywords,
+			WorkflowConstants.STATUS_APPROVED, params,
+			searchContainer.getStart(), searchContainer.getEnd(),
+			UsersAdminUtil.getUserOrderByComparator(
+				searchContainer.getOrderByCol(),
+				searchContainer.getOrderByType()));
 
 		searchContainer.setResultsAndTotal(
-			() -> TransformUtil.transform(
-				baseModelSearchResult.getBaseModels(), AccountUserDisplay::of),
-			baseModelSearchResult.getLength());
+			() -> TransformUtil.transform(users, AccountUserDisplay::of),
+			_userLocalService.searchCount(
+				PortalUtil.getCompanyId(liferayPortletRequest), keywords,
+				WorkflowConstants.STATUS_APPROVED, params));
 
 		searchContainer.setRowChecker(rowChecker);
 
@@ -128,17 +147,15 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 	}
 
 	@Reference(unbind = "-")
-	protected void setAccountUserRetriever(
-		AccountUserRetriever accountUserRetriever) {
-
-		_accountUserRetriever = accountUserRetriever;
-	}
-
-	@Reference(unbind = "-")
 	protected void setUserGroupRoleLocalService(
 		UserGroupRoleLocalService userGroupRoleLocalService) {
 
 		_userGroupRoleLocalService = userGroupRoleLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setUserLocalService(UserLocalService userLocalService) {
+		_userLocalService = userLocalService;
 	}
 
 	private static String _getDefaultNavigation(
@@ -179,14 +196,6 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 		return null;
 	}
 
-	private static boolean _isReverseOrder(String orderByType) {
-		if (Objects.equals(orderByType, "desc")) {
-			return true;
-		}
-
-		return false;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		AssignableAccountUserDisplaySearchContainerFactory.class);
 
@@ -194,7 +203,7 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 	private static AccountEntryUserRelLocalService
 		_accountEntryUserRelLocalService;
 	private static AccountRoleLocalService _accountRoleLocalService;
-	private static AccountUserRetriever _accountUserRetriever;
 	private static UserGroupRoleLocalService _userGroupRoleLocalService;
+	private static UserLocalService _userLocalService;
 
 }
