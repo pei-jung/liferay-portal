@@ -97,7 +97,13 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 				_getEmailAddressDomains(accountEntryId, navigation)
 			).build();
 
-		if (navigation.equals("account-users")) {
+		long accountRoleId = ParamUtil.getLong(
+			liferayPortletRequest, "accountRoleId");
+
+		if ((accountEntryId > 0) && (accountRoleId > 0)) {
+			params.put("accountEntryIds", new long[] {accountEntryId});
+		}
+		else if (navigation.equals("account-users")) {
 			params.put(
 				"accountEntryIds",
 				new long[] {AccountConstants.ACCOUNT_ENTRY_ID_ANY});
