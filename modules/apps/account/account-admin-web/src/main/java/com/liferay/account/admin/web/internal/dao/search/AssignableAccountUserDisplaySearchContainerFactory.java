@@ -108,7 +108,7 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 				"accountEntryIds",
 				new long[] {AccountConstants.ACCOUNT_ENTRY_ID_ANY});
 		}
-		else if (navigation.equals("company-users")) {
+		else if (navigation.equals("no-assigned-account")) {
 			params.put("accountEntryIds", new long[0]);
 		}
 
