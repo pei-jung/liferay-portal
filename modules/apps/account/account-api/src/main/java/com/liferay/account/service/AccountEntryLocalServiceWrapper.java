@@ -337,19 +337,6 @@ public class AccountEntryLocalServiceWrapper
 				companyId, externalReferenceCode);
 	}
 
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountEntryByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	@Override
-	public com.liferay.account.model.AccountEntry
-		fetchAccountEntryByReferenceCode(
-			long companyId, String externalReferenceCode) {
-
-		return _accountEntryLocalService.fetchAccountEntryByReferenceCode(
-			companyId, externalReferenceCode);
-	}
-
 	@Override
 	public com.liferay.account.model.AccountEntry fetchPersonAccountEntry(
 		long userId) {

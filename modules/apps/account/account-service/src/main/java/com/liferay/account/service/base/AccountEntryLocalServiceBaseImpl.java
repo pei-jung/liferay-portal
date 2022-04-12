@@ -263,18 +263,6 @@ public abstract class AccountEntryLocalServiceBaseImpl
 	}
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountEntryByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	@Override
-	public AccountEntry fetchAccountEntryByReferenceCode(
-		long companyId, String externalReferenceCode) {
-
-		return fetchAccountEntryByExternalReferenceCode(
-			companyId, externalReferenceCode);
-	}
-
-	/**
 	 * Returns the account entry with the matching external reference code and company.
 	 *
 	 * @param companyId the primary key of the company

@@ -295,17 +295,6 @@ public class AccountEntryLocalServiceUtil {
 			companyId, externalReferenceCode);
 	}
 
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountEntryByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	public static AccountEntry fetchAccountEntryByReferenceCode(
-		long companyId, String externalReferenceCode) {
-
-		return getService().fetchAccountEntryByReferenceCode(
-			companyId, externalReferenceCode);
-	}
-
 	public static AccountEntry fetchPersonAccountEntry(long userId) {
 		return getService().fetchPersonAccountEntry(userId);
 	}

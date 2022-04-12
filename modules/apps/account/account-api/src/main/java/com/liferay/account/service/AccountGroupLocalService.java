@@ -227,14 +227,6 @@ public interface AccountGroupLocalService
 		long companyId, String externalReferenceCode);
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountGroupByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AccountGroup fetchAccountGroupByReferenceCode(
-		long companyId, String externalReferenceCode);
-
-	/**
 	 * Returns the account group with the primary key.
 	 *
 	 * @param accountGroupId the primary key of the account group

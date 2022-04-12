@@ -240,17 +240,6 @@ public class AccountGroupLocalServiceUtil {
 	}
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountGroupByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	public static AccountGroup fetchAccountGroupByReferenceCode(
-		long companyId, String externalReferenceCode) {
-
-		return getService().fetchAccountGroupByReferenceCode(
-			companyId, externalReferenceCode);
-	}
-
-	/**
 	 * Returns the account group with the primary key.
 	 *
 	 * @param accountGroupId the primary key of the account group

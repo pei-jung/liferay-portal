@@ -263,18 +263,6 @@ public abstract class AccountGroupLocalServiceBaseImpl
 	}
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountGroupByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	@Override
-	public AccountGroup fetchAccountGroupByReferenceCode(
-		long companyId, String externalReferenceCode) {
-
-		return fetchAccountGroupByExternalReferenceCode(
-			companyId, externalReferenceCode);
-	}
-
-	/**
 	 * Returns the account group with the matching external reference code and company.
 	 *
 	 * @param companyId the primary key of the company

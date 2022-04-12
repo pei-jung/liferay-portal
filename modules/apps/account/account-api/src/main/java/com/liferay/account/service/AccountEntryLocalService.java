@@ -254,14 +254,6 @@ public interface AccountEntryLocalService
 	public AccountEntry fetchAccountEntryByExternalReferenceCode(
 		long companyId, String externalReferenceCode);
 
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchAccountEntryByExternalReferenceCode(long, String)}
-	 */
-	@Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AccountEntry fetchAccountEntryByReferenceCode(
-		long companyId, String externalReferenceCode);
-
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public AccountEntry fetchPersonAccountEntry(long userId);
 
