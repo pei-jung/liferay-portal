@@ -109,6 +109,7 @@ import java.io.File;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -993,14 +994,25 @@ public class ServicePreAction extends Action {
 						"p_l_id");
 
 					if (originalPlid == plid) {
-						String message =
-							"User layouts cannot be accessed via p_l_id";
+						HttpServletRequest originalHttpServletRequest =
+							PortalUtil.getOriginalServletRequest(
+								httpServletRequest);
 
-						if (_log.isWarnEnabled()) {
-							_log.warn(message);
+						Map<String, String[]> parameterMap = new HashMap<>(
+							originalHttpServletRequest.getParameterMap());
+
+						parameterMap.remove("p_l_id");
+
+						if (parameterMap.isEmpty()) {
+							String message =
+								"User layouts cannot be accessed via p_l_id";
+
+							if (_log.isWarnEnabled()) {
+								_log.warn(message);
+							}
+
+							throw new NoSuchLayoutException(message);
 						}
-
-						throw new NoSuchLayoutException(message);
 					}
 				}
 
