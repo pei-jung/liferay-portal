@@ -2462,6 +2462,7 @@
 		<column name="lockoutDate" type="Date" />
 		<column name="agreedToTermsOfUse" type="boolean" />
 		<column name="emailAddressVerified" type="boolean" />
+		<column name="type" type="int" />
 		<column name="status" type="int" />
 
 		<!-- Relationships -->
