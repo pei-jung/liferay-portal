@@ -2527,6 +2527,10 @@
 			<finder-column name="companyId" />
 			<finder-column name="openId" />
 		</finder>
+		<finder name="C_T" return-type="Collection" where="defaultUser = [$FALSE$]">
+			<finder-column name="companyId"></finder-column>
+			<finder-column name="type"></finder-column>
+		</finder>
 		<finder name="C_S" return-type="Collection" where="defaultUser = [$FALSE$]">
 			<finder-column name="companyId" />
 			<finder-column name="status" />
