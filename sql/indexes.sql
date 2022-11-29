@@ -588,6 +588,7 @@ create index IX_79724177 on User_ (companyId, modifiedDate, ctCollectionId);
 create index IX_952F78E5 on User_ (companyId, openId[$COLUMN_LENGTH:1024$], ctCollectionId);
 create unique index IX_EEC1E477 on User_ (companyId, screenName[$COLUMN_LENGTH:75$], ctCollectionId);
 create index IX_BC478292 on User_ (companyId, status, ctCollectionId);
+create index IX_E4BA9B25 on User_ (companyId, type_, ctCollectionId);
 create unique index IX_C15FB5CF on User_ (contactId, ctCollectionId);
 create index IX_E1D5EE24 on User_ (emailAddress[$COLUMN_LENGTH:254$], ctCollectionId);
 create index IX_64D54302 on User_ (portraitId, ctCollectionId);

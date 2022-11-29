@@ -208,9 +208,9 @@ public class UserPersistenceTest {
 
 		newUser.setEmailAddressVerified(RandomTestUtil.randomBoolean());
 
-		newUser.setStatus(RandomTestUtil.nextInt());
-
 		newUser.setType(RandomTestUtil.nextInt());
+
+		newUser.setStatus(RandomTestUtil.nextInt());
 
 		_users.add(_persistence.update(newUser));
 
@@ -305,8 +305,8 @@ public class UserPersistenceTest {
 		Assert.assertEquals(
 			existingUser.isEmailAddressVerified(),
 			newUser.isEmailAddressVerified());
-		Assert.assertEquals(existingUser.getStatus(), newUser.getStatus());
 		Assert.assertEquals(existingUser.getType(), newUser.getType());
+		Assert.assertEquals(existingUser.getStatus(), newUser.getStatus());
 	}
 
 	@Test(expected = DuplicateUserExternalReferenceCodeException.class)
@@ -461,6 +461,14 @@ public class UserPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_T() throws Exception {
+		_persistence.countByC_T(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
+
+		_persistence.countByC_T(0L, 0);
+	}
+
+	@Test
 	public void testCountByC_S() throws Exception {
 		_persistence.countByC_S(
 			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
@@ -535,8 +543,8 @@ public class UserPersistenceTest {
 			"loginDate", true, "loginIP", true, "lastLoginDate", true,
 			"lastLoginIP", true, "lastFailedLoginDate", true,
 			"failedLoginAttempts", true, "lockout", true, "lockoutDate", true,
-			"agreedToTermsOfUse", true, "emailAddressVerified", true, "status",
-			true, "type", true);
+			"agreedToTermsOfUse", true, "emailAddressVerified", true, "type",
+			true, "status", true);
 	}
 
 	@Test
@@ -976,9 +984,9 @@ public class UserPersistenceTest {
 
 		user.setEmailAddressVerified(RandomTestUtil.randomBoolean());
 
-		user.setStatus(RandomTestUtil.nextInt());
-
 		user.setType(RandomTestUtil.nextInt());
+
+		user.setStatus(RandomTestUtil.nextInt());
 
 		_users.add(_persistence.update(user));
 
