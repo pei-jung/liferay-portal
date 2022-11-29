@@ -67,6 +67,7 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.SystemEvent;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.model.role.RoleConstants;
@@ -1825,6 +1826,22 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 	}
 
+	private User _addDefaultServiceAccountUser(Company company)
+		throws PortalException {
+
+		String userName = "service_account_user";
+
+		User serviceAccountUser = _userLocalService.addDefaultAdminUser(
+			company.getCompanyId(), userName,
+			userName + StringPool.AT + company.getMx(),
+			LocaleUtil.fromLanguageId(PropsValues.COMPANY_DEFAULT_LOCALE),
+			userName, StringPool.BLANK, userName);
+
+		serviceAccountUser.setType(UserConstants.TYPE_SERVICE_ACCOUNT);
+
+		return _userPersistence.updateImpl(serviceAccountUser);
+	}
+
 	private User _addDefaultUser(Company company) throws PortalException {
 		Date date = new Date();
 
@@ -1997,6 +2014,16 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 					PropsValues.DEFAULT_ADMIN_FIRST_NAME,
 					PropsValues.DEFAULT_ADMIN_MIDDLE_NAME,
 					PropsValues.DEFAULT_ADMIN_LAST_NAME);
+			}
+
+			// Default service account
+
+			User serviceAccountUser = _userPersistence.fetchByC_T_First(
+				company.getCompanyId(), UserConstants.TYPE_SERVICE_ACCOUNT,
+				null);
+
+			if (serviceAccountUser == null) {
+				_addDefaultServiceAccountUser(company);
 			}
 
 			// Portlets
