@@ -2002,9 +2002,10 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 			// Default admin
 
-			if (_userPersistence.countByCompanyId(company.getCompanyId()) ==
-					0) {
+			int count = _userPersistence.countByC_T(
+				company.getCompanyId(), UserConstants.TYPE_USER);
 
+			if (count == 0) {
 				String emailAddress =
 					PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
 
