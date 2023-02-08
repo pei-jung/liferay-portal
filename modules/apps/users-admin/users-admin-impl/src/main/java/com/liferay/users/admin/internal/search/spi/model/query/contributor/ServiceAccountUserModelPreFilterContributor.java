@@ -19,8 +19,11 @@ import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.spi.model.query.contributor.ModelPreFilterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
@@ -44,13 +47,26 @@ public class ServiceAccountUserModelPreFilterContributor
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		if ((permissionChecker != null) && permissionChecker.isCompanyAdmin()) {
+		if ((permissionChecker == null) ||
+			!permissionChecker.isCompanyAdmin()) {
+
+			booleanFilter.addTerm(
+				Field.TYPE, String.valueOf(UserConstants.TYPE_SERVICE_ACCOUNT),
+				BooleanClauseOccur.MUST_NOT);
+
 			return;
 		}
 
-		booleanFilter.addTerm(
-			Field.TYPE, String.valueOf(UserConstants.TYPE_SERVICE_ACCOUNT),
-			BooleanClauseOccur.MUST_NOT);
+		long[] types = GetterUtil.getLongValues(
+			searchContext.getAttribute("types"));
+
+		if (ArrayUtil.isNotEmpty(types)) {
+			TermsFilter termsFilter = new TermsFilter(Field.TYPE);
+
+			termsFilter.addValues(ArrayUtil.toStringArray(types));
+
+			booleanFilter.add(termsFilter, BooleanClauseOccur.MUST);
+		}
 	}
 
 }
