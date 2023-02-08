@@ -15,6 +15,7 @@
 package com.liferay.users.admin.internal.search.spi.model.query.contributor;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -22,6 +23,9 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -33,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Luan Maoski
@@ -50,9 +55,21 @@ public class UserModelPreFilterContributor
 		BooleanFilter contextBooleanFilter,
 		ModelSearchSettings modelSearchSettings, SearchContext searchContext) {
 
-		contextBooleanFilter.addTerm(
-			"defaultUser", Boolean.TRUE.toString(),
-			BooleanClauseOccur.MUST_NOT);
+		BooleanFilter defaultUserBooleanFilter = new BooleanFilter();
+
+		defaultUserBooleanFilter.addTerm("defaultUser", Boolean.TRUE);
+
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if ((permissionChecker != null) && permissionChecker.isCompanyAdmin()) {
+			defaultUserBooleanFilter.addTerm(
+				Field.TYPE, String.valueOf(UserConstants.TYPE_SERVICE_ACCOUNT),
+				BooleanClauseOccur.MUST_NOT);
+		}
+
+		contextBooleanFilter.add(
+			defaultUserBooleanFilter, BooleanClauseOccur.MUST_NOT);
 
 		_filterByEmailAddress(contextBooleanFilter, searchContext);
 
@@ -205,5 +222,8 @@ public class UserModelPreFilterContributor
 
 		booleanFilter.add(emailAddressBooleanFilter, BooleanClauseOccur.MUST);
 	}
+
+	@Reference
+	private PermissionCheckerFactory _permissionCheckerFactory;
 
 }
