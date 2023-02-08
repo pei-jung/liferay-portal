@@ -17,8 +17,12 @@ package com.liferay.users.admin.web.internal.portlet.action;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.users.admin.constants.UsersAdminManagementToolbarKeys;
 import com.liferay.users.admin.constants.UsersAdminPortletKeys;
+import com.liferay.users.admin.management.toolbar.FilterContributor;
 import com.liferay.users.admin.user.action.contributor.UserActionContributor;
 import com.liferay.users.admin.web.internal.constants.UsersAdminWebKeys;
 import com.liferay.users.admin.web.internal.users.admin.management.toolbar.FilterContributorRegistry;
@@ -49,10 +53,21 @@ public class ViewMVCRenderCommand implements MVCRenderCommand {
 	public String render(
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
+		FilterContributor[] filterContributors =
+			_filterContributorRegistry.getFilterContributors(
+				UsersAdminManagementToolbarKeys.VIEW_FLAT_USERS);
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		filterContributors = ArrayUtil.filter(
+			filterContributors,
+			filterContributor -> filterContributor.isShow(
+				themeDisplay.getPermissionChecker()));
+
 		renderRequest.setAttribute(
 			UsersAdminWebKeys.MANAGEMENT_TOOLBAR_FILTER_CONTRIBUTORS,
-			_filterContributorRegistry.getFilterContributors(
-				UsersAdminManagementToolbarKeys.VIEW_FLAT_USERS));
+			filterContributors);
 
 		renderRequest.setAttribute(
 			UsersAdminWebKeys.USER_ACTION_CONTRIBUTORS,
