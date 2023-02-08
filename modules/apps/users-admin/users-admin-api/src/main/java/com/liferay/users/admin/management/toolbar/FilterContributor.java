@@ -14,6 +14,7 @@
 
 package com.liferay.users.admin.management.toolbar;
 
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.ArrayUtil;
 
 import java.util.Locale;
@@ -44,5 +45,9 @@ public interface FilterContributor {
 	public String getValueLabel(Locale locale, String value);
 
 	public String[] getValues();
+
+	public default boolean isShow(PermissionChecker permissionChecker) {
+		return true;
+	}
 
 }
