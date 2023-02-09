@@ -70,6 +70,10 @@ String displayStyle = viewFlatUsersDisplayContext.getDisplayStyle();
 			if (!UserPermissionUtil.contains(permissionChecker, user2.getUserId(), ActionKeys.UPDATE)) {
 				rowURL = null;
 			}
+
+			if (user2.isDefaultUser()) {
+				row.setCssClass(row.getCssClass() + "table-info");
+			}
 			%>
 
 			<%@ include file="/user/search_columns.jspf" %>
