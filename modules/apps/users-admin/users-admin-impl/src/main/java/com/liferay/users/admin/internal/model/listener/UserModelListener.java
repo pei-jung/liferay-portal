@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.exception.RequiredUserException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.model.UserConstants;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -31,9 +30,7 @@ public class UserModelListener extends BaseModelListener<User> {
 
 	@Override
 	public void onBeforeRemove(User user) throws ModelListenerException {
-		if (user.isDefaultUser() &&
-			(user.getType() == UserConstants.TYPE_SERVICE_ACCOUNT)) {
-
+		if (user.isDefaultUser() && user.isServiceAccountUser()) {
 			throw new ModelListenerException(
 				new RequiredUserException(
 					"Default service account cannot be removed"));
@@ -45,7 +42,7 @@ public class UserModelListener extends BaseModelListener<User> {
 		throws ModelListenerException {
 
 		if (originalUser.isDefaultUser() &&
-			(originalUser.getType() == UserConstants.TYPE_SERVICE_ACCOUNT) &&
+			originalUser.isServiceAccountUser() &&
 			(originalUser.getScreenName() != user.getScreenName())) {
 
 			throw new ModelListenerException(
