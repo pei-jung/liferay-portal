@@ -41,6 +41,10 @@ public class UserModelListener extends BaseModelListener<User> {
 	public void onBeforeUpdate(User originalUser, User user)
 		throws ModelListenerException {
 
+		if (originalUser.getType() != user.getType()) {
+			throw new ModelListenerException("User's type cannot be changed");
+		}
+
 		if (originalUser.isDefaultUser() &&
 			originalUser.isServiceAccountUser() &&
 			(originalUser.getScreenName() != user.getScreenName())) {
