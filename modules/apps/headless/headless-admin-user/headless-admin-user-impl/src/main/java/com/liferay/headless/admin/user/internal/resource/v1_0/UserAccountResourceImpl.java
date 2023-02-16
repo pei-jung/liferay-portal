@@ -16,6 +16,8 @@ package com.liferay.headless.admin.user.internal.resource.v1_0;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryUserRel;
+import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountEntryService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountEntryUserRelService;
 import com.liferay.announcements.kernel.service.AnnouncementsDeliveryLocalService;
@@ -97,6 +99,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.fields.NestedFieldSupport;
+import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -114,6 +117,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+
+import org.omg.IOP;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -565,6 +571,18 @@ public class UserAccountResourceImpl
 			postAccountUserAccountByExternalReferenceCodeByEmailAddress(
 				externalReferenceCode, emailAddress);
 		}
+	}
+
+	@Override
+	public Response postProfileImage(Long id, MultipartBody multipartBody)
+		throws Exception {
+
+		_userLocalService.updatePortrait(
+			id, multipartBody.getBinaryFileAsBytes("image"));
+
+		Response.ResponseBuilder responseBuilder = Response.noContent();
+
+		return responseBuilder.build();
 	}
 
 	@Override
@@ -1235,6 +1253,9 @@ public class UserAccountResourceImpl
 	private static final EntityModel _entityModel =
 		new UserAccountEntityModel();
 
+	@Reference
+	private AccountEntryLocalService _accountEntryLocalService;
+
 	@Reference(
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY,
@@ -1242,6 +1263,9 @@ public class UserAccountResourceImpl
 	)
 	private volatile ModelResourcePermission<AccountEntry>
 		_accountEntryModelResourcePermission;
+
+	@Reference
+	private AccountEntryService _accountEntryService;
 
 	@Reference
 	private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
@@ -1285,6 +1309,9 @@ public class UserAccountResourceImpl
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private IOP.ServiceContextHelper _serviceContextHelper;
 
 	@Reference
 	private UserGroupRoleLocalService _userGroupRoleLocalService;
