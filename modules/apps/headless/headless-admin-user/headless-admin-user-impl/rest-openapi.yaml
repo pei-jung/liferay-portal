@@ -239,6 +239,12 @@ components:
                         The email address's type.
                     type: string
             type: object
+        Image:
+            properties:
+                image:
+                    format: binary
+                    type: string
+            type: object
         Organization:
             description:
                 Represents an organization. Organizations can contain other organizations (suborganizations). Properties
@@ -4169,6 +4175,42 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/Ticket"
             tags: ["Ticket"]
+    "/user-accounts/{userAccountId}/image":
+        post:
+            operationId: postProfileImage
+            parameters:
+                - in: path
+                  explode: false
+                  name: id
+                  required: true
+                  schema:
+                      description:
+                          Posts a profile pic
+                      example: 30130
+                      format: int64
+                      minimum: 0
+                      type: integer
+                  style: simple
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: "#/components/schemas/Image"
+                required: true
+            responses:
+                201:
+                    description:
+                        Created
+                202:
+                    description:
+                        Async
+                204:
+                    description:
+                        Updated
+                400:
+                    description:
+                        Invalid input
+            tags: ["UserAccount"]
     "/user-accounts/{userAccountId}/password-reset-ticket":
         get:
             description:
