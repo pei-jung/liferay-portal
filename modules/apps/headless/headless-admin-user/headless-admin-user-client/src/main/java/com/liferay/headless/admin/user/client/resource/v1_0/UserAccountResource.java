@@ -305,11 +305,13 @@ public interface UserAccountResource {
 		throws Exception;
 
 	public void postProfileImage(
-			Long id, UserAccount userAccount, Map<String, File> multipartFiles)
+			Long userAccountId, UserAccount userAccount,
+			Map<String, File> multipartFiles)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postProfileImageHttpResponse(
-			Long id, UserAccount userAccount, Map<String, File> multipartFiles)
+			Long userAccountId, UserAccount userAccount,
+			Map<String, File> multipartFiles)
 		throws Exception;
 
 	public static class Builder {
@@ -3029,12 +3031,13 @@ public interface UserAccountResource {
 		}
 
 		public void postProfileImage(
-				Long id, UserAccount userAccount,
+				Long userAccountId, UserAccount userAccount,
 				Map<String, File> multipartFiles)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				postProfileImageHttpResponse(id, userAccount, multipartFiles);
+				postProfileImageHttpResponse(
+					userAccountId, userAccount, multipartFiles);
 
 			String content = httpResponse.getContent();
 
@@ -3063,7 +3066,7 @@ public interface UserAccountResource {
 		}
 
 		public HttpInvoker.HttpResponse postProfileImageHttpResponse(
-				Long id, UserAccount userAccount,
+				Long userAccountId, UserAccount userAccount,
 				Map<String, File> multipartFiles)
 			throws Exception {
 
@@ -3102,7 +3105,7 @@ public interface UserAccountResource {
 					_builder._port + _builder._contextPath +
 						"/o/headless-admin-user/v1.0/user-accounts/{userAccountId}/image");
 
-			httpInvoker.path("id", id);
+			httpInvoker.path("userAccountId", userAccountId);
 
 			httpInvoker.userNameAndPassword(
 				_builder._login + ":" + _builder._password);

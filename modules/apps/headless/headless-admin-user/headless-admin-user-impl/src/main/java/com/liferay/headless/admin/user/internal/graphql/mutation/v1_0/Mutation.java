@@ -1292,10 +1292,11 @@ public class Mutation {
 
 	@GraphQLField
 	@GraphQLName(
-		description = "null", value = "postProfileImageIdMultipartBody"
+		description = "null",
+		value = "postProfileImageUserAccountIdMultipartBody"
 	)
 	public Response createProfileImage(
-			@GraphQLName("id") Long id,
+			@GraphQLName("userAccountId") Long userAccountId,
 			@GraphQLName("multipartBody") MultipartBody multipartBody)
 		throws Exception {
 
@@ -1303,7 +1304,7 @@ public class Mutation {
 			_userAccountResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			userAccountResource -> userAccountResource.postProfileImage(
-				id, multipartBody));
+				userAccountId, multipartBody));
 	}
 
 	@GraphQLField

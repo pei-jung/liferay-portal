@@ -175,7 +175,8 @@ public interface UserAccountResource {
 	public Response putUserAccountBatch(String callbackURL, Object object)
 		throws Exception;
 
-	public Response postProfileImage(Long id, MultipartBody multipartBody)
+	public Response postProfileImage(
+			Long userAccountId, MultipartBody multipartBody)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

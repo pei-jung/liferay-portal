@@ -1406,7 +1406,7 @@ public abstract class BaseUserAccountResourceImpl
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "id"
+				name = "userAccountId"
 			)
 		}
 	)
@@ -1419,8 +1419,9 @@ public abstract class BaseUserAccountResourceImpl
 	@Override
 	public Response postProfileImage(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
-			Long id,
+			@javax.validation.constraints.NotNull
+			@javax.ws.rs.PathParam("userAccountId")
+			Long userAccountId,
 			MultipartBody multipartBody)
 		throws Exception {
 
