@@ -4180,17 +4180,11 @@ paths:
             operationId: postProfileImage
             parameters:
                 - in: path
-                  explode: false
-                  name: id
+                  name: userAccountId
                   required: true
                   schema:
-                      description:
-                          Posts a profile pic
-                      example: 30130
                       format: int64
-                      minimum: 0
                       type: integer
-                  style: simple
             requestBody:
                 content:
                     multipart/form-data:
