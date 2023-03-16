@@ -2487,6 +2487,12 @@
 		<finder name="CompanyId" return-type="Collection" where="type_ = 1">
 			<finder-column name="companyId" />
 		</finder>
+		<finder name="CompanyId_Guest" return-type="User" where="type_ = 0">
+			<finder-column name="companyId" />
+		</finder>
+		<finder name="CompanyId_DefaultServiceAccount" return-type="User" where="type_ == 2">
+			<finder-column name="companyId" />
+		</finder>
 		<finder name="ContactId" return-type="User" unique="true">
 			<finder-column name="contactId" />
 		</finder>
