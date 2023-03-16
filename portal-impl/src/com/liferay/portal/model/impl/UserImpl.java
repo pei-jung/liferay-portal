@@ -784,6 +784,15 @@ public class UserImpl extends UserBaseImpl {
 		return false;
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #isGuestUser()}
+	 */
+	@Deprecated
+	@Override
+	public boolean isDefaultUser() {
+		return isGuestUser();
+	}
+
 	@Override
 	public boolean isEmailAddressComplete() {
 		if (isDefaultUser()) {
@@ -828,6 +837,15 @@ public class UserImpl extends UserBaseImpl {
 	@Override
 	public boolean isFemale() throws PortalException {
 		return getFemale();
+	}
+
+	@Override
+	public boolean isGuestUser() {
+		if (getType() == UserConstants.TYPE_GUEST) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
