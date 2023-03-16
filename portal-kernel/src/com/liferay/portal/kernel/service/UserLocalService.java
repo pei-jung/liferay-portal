@@ -1521,9 +1521,18 @@ public interface UserLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getUsers(int start, int end);
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsers(long, int, int, int, OrderByComparator)}
+	 */
+	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getUsers(
 		long companyId, boolean defaultUser, int status, int start, int end,
+		OrderByComparator<User> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<User> getUsers(
+		long companyId, int status, int start, int end,
 		OrderByComparator<User> orderByComparator);
 
 	/**
@@ -1534,8 +1543,15 @@ public interface UserLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getUsersCount();
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsersCount(long, int)}
+	 */
+	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getUsersCount(long companyId, boolean defaultUser, int status);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getUsersCount(long companyId, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasGroupUser(long groupId, long userId);

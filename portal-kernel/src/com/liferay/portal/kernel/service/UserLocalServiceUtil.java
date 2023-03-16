@@ -1877,12 +1877,24 @@ public class UserLocalServiceUtil {
 		return getService().getUsers(start, end);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsers(long, int, int, int, OrderByComparator)}
+	 */
+	@Deprecated
 	public static List<User> getUsers(
 		long companyId, boolean defaultUser, int status, int start, int end,
 		OrderByComparator<User> orderByComparator) {
 
 		return getService().getUsers(
 			companyId, defaultUser, status, start, end, orderByComparator);
+	}
+
+	public static List<User> getUsers(
+		long companyId, int status, int start, int end,
+		OrderByComparator<User> orderByComparator) {
+
+		return getService().getUsers(
+			companyId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -1894,10 +1906,18 @@ public class UserLocalServiceUtil {
 		return getService().getUsersCount();
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsersCount(long, int)}
+	 */
+	@Deprecated
 	public static int getUsersCount(
 		long companyId, boolean defaultUser, int status) {
 
 		return getService().getUsersCount(companyId, defaultUser, status);
+	}
+
+	public static int getUsersCount(long companyId, int status) {
+		return getService().getUsersCount(companyId, status);
 	}
 
 	public static boolean hasGroupUser(long groupId, long userId) {

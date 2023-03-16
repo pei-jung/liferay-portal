@@ -2073,6 +2073,10 @@ public class UserLocalServiceWrapper
 		return _userLocalService.getUsers(start, end);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsers(long, int, int, int, OrderByComparator)}
+	 */
+	@Deprecated
 	@Override
 	public java.util.List<User> getUsers(
 		long companyId, boolean defaultUser, int status, int start, int end,
@@ -2081,6 +2085,16 @@ public class UserLocalServiceWrapper
 
 		return _userLocalService.getUsers(
 			companyId, defaultUser, status, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<User> getUsers(
+		long companyId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return _userLocalService.getUsers(
+			companyId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2093,9 +2107,18 @@ public class UserLocalServiceWrapper
 		return _userLocalService.getUsersCount();
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsersCount(long, int)}
+	 */
+	@Deprecated
 	@Override
 	public int getUsersCount(long companyId, boolean defaultUser, int status) {
 		return _userLocalService.getUsersCount(companyId, defaultUser, status);
+	}
+
+	@Override
+	public int getUsersCount(long companyId, int status) {
+		return _userLocalService.getUsersCount(companyId, status);
 	}
 
 	@Override

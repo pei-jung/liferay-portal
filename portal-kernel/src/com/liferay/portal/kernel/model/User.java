@@ -334,12 +334,20 @@ public interface User extends PersistedModel, UserModel {
 
 	public boolean isActive();
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #isGuestUser()}
+	 */
+	@Deprecated
+	public boolean isDefaultUser();
+
 	public boolean isEmailAddressComplete();
 
 	public boolean isEmailAddressVerificationComplete();
 
 	public boolean isFemale()
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public boolean isGuestUser();
 
 	public boolean isMale()
 		throws com.liferay.portal.kernel.exception.PortalException;
