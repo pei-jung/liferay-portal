@@ -328,16 +328,32 @@ public class ThemeDisplay
 	}
 
 	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getGuestUser()}
+	 */
+	@Deprecated
+	public User getDefaultUser() throws PortalException {
+		return getGuestUser();
+	}
+
+	/**
 	 * Returns the portal instance's default user.
 	 *
 	 * @return the portal instance's default user
 	 */
-	public User getDefaultUser() throws PortalException {
-		if (_defaultUser == null) {
-			_defaultUser = _company.getGuestUser();
+	public User getGuestUser() throws PortalException {
+		if (_guestUser == null) {
+			_guestUser = _company.getGuestUser();
 		}
 
-		return _defaultUser;
+		return _guestUser;
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getGuestUserId()}
+	 */
+	@Deprecated
+	public long getDefaultUserId() throws PortalException {
+		return getGuestUserId();
 	}
 
 	/**
@@ -345,8 +361,8 @@ public class ThemeDisplay
 	 *
 	 * @return the ID of the portal instance's default user
 	 */
-	public long getDefaultUserId() throws PortalException {
-		return getDefaultUser().getUserId();
+	public long getGuestUserId() throws PortalException {
+		return getGuestUser().getUserId();
 	}
 
 	/**
@@ -1987,7 +2003,7 @@ public class ThemeDisplay
 	private Contact _contact;
 	private Group _controlPanelGroup;
 	private Layout _controlPanelLayout;
-	private User _defaultUser;
+	private User _guestUser;
 	private Device _device;
 	private long _doAsGroupId;
 	private String _doAsUserId = StringPool.BLANK;
