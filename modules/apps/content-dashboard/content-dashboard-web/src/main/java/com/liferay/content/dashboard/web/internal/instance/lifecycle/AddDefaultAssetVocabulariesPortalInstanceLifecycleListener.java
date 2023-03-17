@@ -96,7 +96,7 @@ public class AddDefaultAssetVocabulariesPortalInstanceLifecycleListener
 
 		Map<Locale, String> titleMap = new HashMap<>();
 
-		User defaultUser = company.getDefaultUser();
+		User defaultUser = company.getGuestUser();
 
 		for (Locale locale :
 				_language.getCompanyAvailableLocales(company.getCompanyId())) {

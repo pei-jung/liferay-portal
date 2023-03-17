@@ -157,7 +157,7 @@ public class AsahSegmentsEntryLocalServiceWrapper
 
 		serviceContext.setScopeGroupId(company.getGroupId());
 
-		User user = company.getDefaultUser();
+		User user = company.getGuestUser();
 
 		serviceContext.setUserId(user.getUserId());
 
