@@ -780,14 +780,21 @@ public interface UserLocalService
 	public String encryptUserId(String name) throws PortalException;
 
 	/**
-	 * Returns the default user for the company.
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchGuestUser(long)}
+	 */
+	@Deprecated
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public User fetchDefaultUser(long companyId);
+
+	/**
+	 * Returns the guest user for the company.
 	 *
 	 * @param companyId the primary key of the company
-	 * @return the default user for the company, or <code>null</code> if a user
+	 * @return the guest user for the company, or <code>null</code> if a user
 	 with the company key could not be found
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public User fetchDefaultUser(long companyId);
+	public User fetchGuestUser(long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User fetchUser(long userId);
@@ -928,20 +935,18 @@ public interface UserLocalService
 	public int getCompanyUsersCount(long companyId);
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getGuestUser(long)}
 	 */
+	@Deprecated
 	@Transactional(enabled = false)
 	public User getDefaultUser(long companyId) throws PortalException;
 
 	/**
-	 * Returns the primary key of the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the primary key of the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getGuestUserId(long)}
 	 */
+	@Deprecated
 	@Transactional(enabled = false)
 	public long getDefaultUserId(long companyId) throws PortalException;
 
@@ -1026,6 +1031,24 @@ public interface UserLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getGroupUsersCount(long groupId, int status)
 		throws PortalException;
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company
+	 */
+	@Transactional(enabled = false)
+	public User getGuestUser(long companyId) throws PortalException;
+
+	/**
+	 * Returns the primary key of the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the primary key of the guest user for the company
+	 */
+	@Transactional(enabled = false)
+	public long getGuestUserId(long companyId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -1522,7 +1545,8 @@ public interface UserLocalService
 	public List<User> getUsers(int start, int end);
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsers(long, int, int, int, OrderByComparator)}
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getUsers(long, int, int, int, OrderByComparator)}
 	 */
 	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -1544,7 +1568,8 @@ public interface UserLocalService
 	public int getUsersCount();
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsersCount(long, int)}
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getUsersCount(long, int)}
 	 */
 	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -1624,13 +1649,21 @@ public interface UserLocalService
 	public boolean isPasswordExpired(User user) throws PortalException;
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #loadGetGuestUser(long)} (Object)}
 	 */
+	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User loadGetDefaultUser(long companyId) throws PortalException;
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public User loadGetGuestUser(long companyId) throws PortalException;
 
 	/**
 	 * Returns an ordered range of all the users who match the keywords and

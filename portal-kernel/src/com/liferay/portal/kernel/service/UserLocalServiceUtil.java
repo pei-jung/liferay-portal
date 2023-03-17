@@ -974,14 +974,22 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company, or <code>null</code> if a user
-	 with the company key could not be found
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchGuestUser(long)}
 	 */
+	@Deprecated
 	public static User fetchDefaultUser(long companyId) {
 		return getService().fetchDefaultUser(companyId);
+	}
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company, or <code>null</code> if a user
+	 with the company key could not be found
+	 */
+	public static User fetchGuestUser(long companyId) {
+		return getService().fetchGuestUser(companyId);
 	}
 
 	public static User fetchUser(long userId) {
@@ -1151,21 +1159,19 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getGuestUser(long)}
 	 */
+	@Deprecated
 	public static User getDefaultUser(long companyId) throws PortalException {
 		return getService().getDefaultUser(companyId);
 	}
 
 	/**
-	 * Returns the primary key of the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the primary key of the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getGuestUserId(long)}
 	 */
+	@Deprecated
 	public static long getDefaultUserId(long companyId) throws PortalException {
 		return getService().getDefaultUserId(companyId);
 	}
@@ -1270,6 +1276,26 @@ public class UserLocalServiceUtil {
 		throws PortalException {
 
 		return getService().getGroupUsersCount(groupId, status);
+	}
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company
+	 */
+	public static User getGuestUser(long companyId) throws PortalException {
+		return getService().getGuestUser(companyId);
+	}
+
+	/**
+	 * Returns the primary key of the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the primary key of the guest user for the company
+	 */
+	public static long getGuestUserId(long companyId) throws PortalException {
+		return getService().getGuestUserId(companyId);
 	}
 
 	public static
@@ -1878,7 +1904,8 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsers(long, int, int, int, OrderByComparator)}
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getUsers(long, int, int, int, OrderByComparator)}
 	 */
 	@Deprecated
 	public static List<User> getUsers(
@@ -1907,7 +1934,8 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getUsersCount(long, int)}
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getUsersCount(long, int)}
 	 */
 	@Deprecated
 	public static int getUsersCount(
@@ -2009,15 +2037,24 @@ public class UserLocalServiceUtil {
 	}
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #loadGetGuestUser(long)} (Object)}
 	 */
+	@Deprecated
 	public static User loadGetDefaultUser(long companyId)
 		throws PortalException {
 
 		return getService().loadGetDefaultUser(companyId);
+	}
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company
+	 */
+	public static User loadGetGuestUser(long companyId) throws PortalException {
+		return getService().loadGetGuestUser(companyId);
 	}
 
 	/**
