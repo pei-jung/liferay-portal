@@ -1920,8 +1920,8 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 			// Default user
 
-			User defaultUser = _userPersistence.fetchByC_DU(
-				company.getCompanyId(), true);
+			User defaultUser = _userPersistence.fetchByCompanyId_Guest(
+				company.getCompanyId());
 
 			if (defaultUser != null) {
 				if (!defaultUser.isAgreedToTermsOfUse()) {

@@ -2094,7 +2094,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		User user = _defaultUsers.get(companyId);
 
 		if (user == null) {
-			user = userPersistence.fetchByC_DU(companyId, true);
+			user = userPersistence.fetchByCompanyId_Guest(companyId);
 
 			if (user != null) {
 				_defaultUsers.put(companyId, user);
@@ -2924,13 +2924,13 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		long companyId, boolean defaultUser, int status, int start, int end,
 		OrderByComparator<User> orderByComparator) {
 
-		return userPersistence.findByC_DU_S(
-			companyId, defaultUser, status, start, end, orderByComparator);
+		return userPersistence.findByC_S(
+			companyId, status, start, end, orderByComparator);
 	}
 
 	@Override
 	public int getUsersCount(long companyId, boolean defaultUser, int status) {
-		return userPersistence.countByC_DU_S(companyId, defaultUser, status);
+		return userPersistence.countByC_S(companyId, status);
 	}
 
 	/**
@@ -3015,7 +3015,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	 */
 	@Override
 	public User loadGetDefaultUser(long companyId) throws PortalException {
-		return userPersistence.findByC_DU(companyId, true);
+		return userPersistence.findByCompanyId_Guest(companyId);
 	}
 
 	/**
