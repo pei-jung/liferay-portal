@@ -117,9 +117,18 @@ public class CompanyImpl extends CompanyBaseImpl {
 		return _companySecurityBag;
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getGuestUser()}
+	 */
+	@Deprecated
 	@Override
 	public User getDefaultUser() throws PortalException {
-		return UserLocalServiceUtil.getDefaultUser(getCompanyId());
+		return getGuestUser();
+	}
+
+	@Override
+	public User getGuestUser() throws PortalException {
+		return UserLocalServiceUtil.getGuestUser(getCompanyId());
 	}
 
 	@Override
@@ -188,7 +197,7 @@ public class CompanyImpl extends CompanyBaseImpl {
 
 	@Override
 	public Locale getLocale() throws PortalException {
-		return getDefaultUser().getLocale();
+		return getGuestUser().getLocale();
 	}
 
 	@AutoEscape
@@ -272,7 +281,7 @@ public class CompanyImpl extends CompanyBaseImpl {
 
 	@Override
 	public TimeZone getTimeZone() throws PortalException {
-		return getDefaultUser().getTimeZone();
+		return getGuestUser().getTimeZone();
 	}
 
 	@Override
