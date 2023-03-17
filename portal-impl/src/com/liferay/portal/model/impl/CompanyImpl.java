@@ -127,11 +127,6 @@ public class CompanyImpl extends CompanyBaseImpl {
 	}
 
 	@Override
-	public User getGuestUser() throws PortalException {
-		return UserLocalServiceUtil.getGuestUser(getCompanyId());
-	}
-
-	@Override
 	public String getDefaultWebId() {
 		return PropsValues.COMPANY_DEFAULT_WEB_ID;
 	}
@@ -173,6 +168,11 @@ public class CompanyImpl extends CompanyBaseImpl {
 		Group group = getGroup();
 
 		return group.getGroupId();
+	}
+
+	@Override
+	public User getGuestUser() throws PortalException {
+		return UserLocalServiceUtil.getGuestUser(getCompanyId());
 	}
 
 	@Override

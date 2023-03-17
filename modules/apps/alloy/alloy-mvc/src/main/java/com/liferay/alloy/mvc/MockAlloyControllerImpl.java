@@ -34,7 +34,7 @@ public class MockAlloyControllerImpl
 		company = baseAlloyControllerImpl.company;
 
 		try {
-			user = UserLocalServiceUtil.getDefaultUser(company.getCompanyId());
+			user = UserLocalServiceUtil.getGuestUser(company.getCompanyId());
 
 			themeDisplay = baseAlloyControllerImpl.themeDisplay;
 

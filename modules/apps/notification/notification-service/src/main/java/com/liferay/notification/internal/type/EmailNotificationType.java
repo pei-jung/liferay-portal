@@ -276,7 +276,7 @@ public class EmailNotificationType extends BaseNotificationType {
 					}
 
 					prepareNotificationContext(
-						userLocalService.getDefaultUser(
+						userLocalService.getGuestUser(
 							CompanyThreadLocal.getCompanyId()),
 						body, notificationContext,
 						notificationRecipientSettingsEvaluatedMap, subject);
@@ -484,7 +484,7 @@ public class EmailNotificationType extends BaseNotificationType {
 
 			FileEntry fileEntry = _portletFileRepository.addPortletFileEntry(
 				null, repository.getGroupId(),
-				userLocalService.getDefaultUserId(companyId),
+				userLocalService.getGuestUserId(companyId),
 				NotificationTemplate.class.getName(), 0,
 				NotificationPortletKeys.NOTIFICATION_TEMPLATES,
 				repository.getDlFolderId(), dlFileEntry.getContentStream(),

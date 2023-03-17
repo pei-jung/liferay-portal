@@ -6398,7 +6398,7 @@ public class JournalArticleLocalServiceImpl
 		User user = _userLocalService.fetchUser(oldArticle.getUserId());
 
 		if (user == null) {
-			user = _userLocalService.getDefaultUser(oldArticle.getCompanyId());
+			user = _userLocalService.getGuestUser(oldArticle.getCompanyId());
 		}
 
 		if (incrementVersion) {
@@ -6450,7 +6450,7 @@ public class JournalArticleLocalServiceImpl
 				serviceContext.getUserId());
 
 			if (statusUser == null) {
-				statusUser = _userLocalService.getDefaultUser(
+				statusUser = _userLocalService.getGuestUser(
 					oldArticle.getCompanyId());
 			}
 

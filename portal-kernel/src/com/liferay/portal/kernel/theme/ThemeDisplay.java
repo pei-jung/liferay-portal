@@ -336,33 +336,11 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * Returns the portal instance's default user.
-	 *
-	 * @return the portal instance's default user
-	 */
-	public User getGuestUser() throws PortalException {
-		if (_guestUser == null) {
-			_guestUser = _company.getGuestUser();
-		}
-
-		return _guestUser;
-	}
-
-	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #getGuestUserId()}
 	 */
 	@Deprecated
 	public long getDefaultUserId() throws PortalException {
 		return getGuestUserId();
-	}
-
-	/**
-	 * Returns the ID of the portal instance's default user.
-	 *
-	 * @return the ID of the portal instance's default user
-	 */
-	public long getGuestUserId() throws PortalException {
-		return getGuestUser().getUserId();
 	}
 
 	/**
@@ -402,6 +380,28 @@ public class ThemeDisplay
 
 		return getPathThemeImages() + "/" +
 			PropsUtil.get(PropsKeys.THEME_SHORTCUT_ICON);
+	}
+
+	/**
+	 * Returns the portal instance's default user.
+	 *
+	 * @return the portal instance's default user
+	 */
+	public User getGuestUser() throws PortalException {
+		if (_guestUser == null) {
+			_guestUser = _company.getGuestUser();
+		}
+
+		return _guestUser;
+	}
+
+	/**
+	 * Returns the ID of the portal instance's default user.
+	 *
+	 * @return the ID of the portal instance's default user
+	 */
+	public long getGuestUserId() throws PortalException {
+		return getGuestUser().getUserId();
 	}
 
 	/**
@@ -2003,12 +2003,12 @@ public class ThemeDisplay
 	private Contact _contact;
 	private Group _controlPanelGroup;
 	private Layout _controlPanelLayout;
-	private User _guestUser;
 	private Device _device;
 	private long _doAsGroupId;
 	private String _doAsUserId = StringPool.BLANK;
 	private String _doAsUserLanguageId = StringPool.BLANK;
 	private String _faviconURL;
+	private User _guestUser;
 	private transient HttpServletRequest _httpServletRequest;
 	private transient HttpServletResponse _httpServletResponse;
 	private boolean _hubAction;

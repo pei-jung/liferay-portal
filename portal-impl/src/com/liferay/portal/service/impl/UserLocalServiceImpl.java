@@ -1918,7 +1918,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		Group group = null;
 
-		if (!user.isDefaultUser()) {
+		if (!user.isGuestUser()) {
 			group = user.getGroup();
 		}
 
@@ -2582,7 +2582,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 				User user = userPersistence.findByPrimaryKey(
 					socialRelation.getUserId2());
 
-				if (user.isDefaultUser() ||
+				if (user.isGuestUser() ||
 					(user.getStatus() != WorkflowConstants.STATUS_APPROVED)) {
 
 					continue;
@@ -6135,7 +6135,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	protected boolean isUserAllowedToAuthenticate(User user)
 		throws PortalException {
 
-		if (user.isDefaultUser()) {
+		if (user.isGuestUser()) {
 			if (_log.isInfoEnabled()) {
 				_log.info("Authentication is disabled for the default user");
 			}
@@ -6726,7 +6726,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		validateOpenId(user.getCompanyId(), userId, openId);
 
-		if (!user.isDefaultUser()) {
+		if (!user.isGuestUser()) {
 			if (Validator.isNotNull(emailAddress) &&
 				!StringUtil.equalsIgnoreCase(
 					user.getEmailAddress(), emailAddress)) {

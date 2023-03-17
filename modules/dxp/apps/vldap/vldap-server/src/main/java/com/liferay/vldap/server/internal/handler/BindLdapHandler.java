@@ -323,7 +323,7 @@ public class BindLdapHandler extends BaseLdapHandler {
 		}
 		else if (Validator.isNotNull(emailAddress)) {
 			if (_isEmailAddressWhitelisted(emailAddress)) {
-				user = UserLocalServiceUtil.getDefaultUser(
+				user = UserLocalServiceUtil.getGuestUser(
 					ldapHandlerContext.getCompanyId());
 
 				allowDefaultUser = true;
@@ -334,7 +334,7 @@ public class BindLdapHandler extends BaseLdapHandler {
 			}
 		}
 
-		if ((user != null) && (!user.isDefaultUser() || allowDefaultUser)) {
+		if ((user != null) && (!user.isGuestUser() || allowDefaultUser)) {
 			ldapHandlerContext.setUser(user);
 		}
 	}
