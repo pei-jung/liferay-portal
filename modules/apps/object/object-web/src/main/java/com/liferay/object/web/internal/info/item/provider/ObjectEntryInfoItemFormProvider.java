@@ -535,7 +535,7 @@ public class ObjectEntryInfoItemFormProvider
 			objectFieldSetting.getValue());
 
 		if ((maximumFileSizeForGuestUsers < maximumFileSize) &&
-			_isDefaultUser()) {
+			_isGuestUser()) {
 
 			maximumFileSize = maximumFileSizeForGuestUsers;
 		}
@@ -747,7 +747,7 @@ public class ObjectEntryInfoItemFormProvider
 			restContextPath;
 	}
 
-	private boolean _isDefaultUser() {
+	private boolean _isGuestUser() {
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
@@ -757,7 +757,7 @@ public class ObjectEntryInfoItemFormProvider
 
 		User user = _userLocalService.fetchUser(serviceContext.getUserId());
 
-		if ((user == null) || user.isDefaultUser()) {
+		if ((user == null) || user.isGuestUser()) {
 			return true;
 		}
 

@@ -105,7 +105,7 @@ public class DDLViewRecordsDisplayContext {
 		if (user == null) {
 			ThemeDisplay themeDisplay = _ddlRequestHelper.getThemeDisplay();
 
-			user = themeDisplay.getDefaultUser();
+			user = themeDisplay.getGuestUser();
 		}
 
 		_user = user;
@@ -419,7 +419,7 @@ public class DDLViewRecordsDisplayContext {
 				DDLRecordLocalServiceUtil.searchDDLRecords(searchContext));
 		}
 
-		if (!_user.isDefaultUser()) {
+		if (!_user.isGuestUser()) {
 			recordSearch.setRowChecker(
 				new EmptyOnClickRowChecker(_liferayPortletResponse));
 		}
@@ -516,7 +516,7 @@ public class DDLViewRecordsDisplayContext {
 	}
 
 	public boolean isSelectable() {
-		return !_user.isDefaultUser();
+		return !_user.isGuestUser();
 	}
 
 	protected List<DropdownItem> getFilterNavigationDropdownItems() {

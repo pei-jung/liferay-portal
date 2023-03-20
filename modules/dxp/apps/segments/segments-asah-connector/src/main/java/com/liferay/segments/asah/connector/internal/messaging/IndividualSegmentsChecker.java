@@ -349,7 +349,7 @@ public class IndividualSegmentsChecker {
 
 		serviceContext.setScopeGroupId(company.getGroupId());
 
-		User user = company.getDefaultUser();
+		User user = company.getGuestUser();
 
 		serviceContext.setUserId(user.getUserId());
 

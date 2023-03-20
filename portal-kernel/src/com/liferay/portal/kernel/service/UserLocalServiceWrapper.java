@@ -1067,15 +1067,24 @@ public class UserLocalServiceWrapper
 	}
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company, or <code>null</code> if a user
-	 with the company key could not be found
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchGuestUser(long)}
 	 */
+	@Deprecated
 	@Override
 	public User fetchDefaultUser(long companyId) {
 		return _userLocalService.fetchDefaultUser(companyId);
+	}
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company, or <code>null</code> if a user
+	 with the company key could not be found
+	 */
+	@Override
+	public User fetchGuestUser(long companyId) {
+		return _userLocalService.fetchGuestUser(companyId);
 	}
 
 	@Override
@@ -1253,11 +1262,10 @@ public class UserLocalServiceWrapper
 	}
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getGuestUser(long)}
 	 */
+	@Deprecated
 	@Override
 	public User getDefaultUser(long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -1266,11 +1274,10 @@ public class UserLocalServiceWrapper
 	}
 
 	/**
-	 * Returns the primary key of the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the primary key of the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getGuestUserId(long)}
 	 */
+	@Deprecated
 	@Override
 	public long getDefaultUserId(long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -1394,6 +1401,32 @@ public class UserLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _userLocalService.getGroupUsersCount(groupId, status);
+	}
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company
+	 */
+	@Override
+	public User getGuestUser(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _userLocalService.getGuestUser(companyId);
+	}
+
+	/**
+	 * Returns the primary key of the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the primary key of the guest user for the company
+	 */
+	@Override
+	public long getGuestUserId(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _userLocalService.getGuestUserId(companyId);
 	}
 
 	@Override
@@ -2073,6 +2106,11 @@ public class UserLocalServiceWrapper
 		return _userLocalService.getUsers(start, end);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getUsers(long, int, int, int, OrderByComparator)}
+	 */
+	@Deprecated
 	@Override
 	public java.util.List<User> getUsers(
 		long companyId, boolean defaultUser, int status, int start, int end,
@@ -2081,6 +2119,16 @@ public class UserLocalServiceWrapper
 
 		return _userLocalService.getUsers(
 			companyId, defaultUser, status, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<User> getUsers(
+		long companyId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return _userLocalService.getUsers(
+			companyId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2093,9 +2141,19 @@ public class UserLocalServiceWrapper
 		return _userLocalService.getUsersCount();
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #getUsersCount(long, int)}
+	 */
+	@Deprecated
 	@Override
 	public int getUsersCount(long companyId, boolean defaultUser, int status) {
 		return _userLocalService.getUsersCount(companyId, defaultUser, status);
+	}
+
+	@Override
+	public int getUsersCount(long companyId, int status) {
+		return _userLocalService.getUsersCount(companyId, status);
 	}
 
 	@Override
@@ -2200,16 +2258,28 @@ public class UserLocalServiceWrapper
 	}
 
 	/**
-	 * Returns the default user for the company.
-	 *
-	 * @param companyId the primary key of the company
-	 * @return the default user for the company
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #loadGetGuestUser(long)} (Object)}
 	 */
+	@Deprecated
 	@Override
 	public User loadGetDefaultUser(long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _userLocalService.loadGetDefaultUser(companyId);
+	}
+
+	/**
+	 * Returns the guest user for the company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @return the guest user for the company
+	 */
+	@Override
+	public User loadGetGuestUser(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _userLocalService.loadGetGuestUser(companyId);
 	}
 
 	/**

@@ -31,11 +31,11 @@ public class LocaleThreadLocal {
 		if ((_defaultLocale.get() == null) &&
 			(CompanyThreadLocal.getCompanyId() != CompanyConstants.SYSTEM)) {
 
-			User defaultUser = UserLocalServiceUtil.fetchDefaultUser(
+			User guestUser = UserLocalServiceUtil.fetchGuestUser(
 				CompanyThreadLocal.getCompanyId());
 
-			if (defaultUser != null) {
-				_defaultLocale.set(defaultUser.getLocale());
+			if (guestUser != null) {
+				_defaultLocale.set(guestUser.getLocale());
 			}
 		}
 

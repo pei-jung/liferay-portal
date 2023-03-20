@@ -95,9 +95,9 @@ public class PortalAddressOSGiCommands {
 
 				serviceContext.setCompanyId(company.getCompanyId());
 
-				User defaultUser = company.getDefaultUser();
+				User guestUser = company.getGuestUser();
 
-				serviceContext.setUserId(defaultUser.getUserId());
+				serviceContext.setUserId(guestUser.getUserId());
 
 				Country country = _countryLocalService.addCountry(
 					countryJSONObject.getString("a2"),

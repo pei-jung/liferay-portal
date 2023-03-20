@@ -31,11 +31,11 @@ public class TimeZoneThreadLocal {
 		if ((_defaultTimeZone.get() == null) &&
 			(CompanyThreadLocal.getCompanyId() != CompanyConstants.SYSTEM)) {
 
-			User defaultUser = UserLocalServiceUtil.fetchDefaultUser(
+			User guestUser = UserLocalServiceUtil.fetchGuestUser(
 				CompanyThreadLocal.getCompanyId());
 
-			if (defaultUser != null) {
-				_defaultTimeZone.set(defaultUser.getTimeZone());
+			if (guestUser != null) {
+				_defaultTimeZone.set(guestUser.getTimeZone());
 			}
 		}
 

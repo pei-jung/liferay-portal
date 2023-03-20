@@ -267,7 +267,6 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			queryPos.add(userId);
 			queryPos.add(socialRelationType);
 			queryPos.add(companyId);
-			queryPos.add(Boolean.FALSE);
 			queryPos.add(status);
 
 			Iterator<Long> iterator = sqlQuery.iterate();
@@ -605,7 +604,6 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 			queryPos.add(userId);
 			queryPos.add(socialRelationType);
 			queryPos.add(companyId);
-			queryPos.add(Boolean.FALSE);
 			queryPos.add(status);
 
 			return (List<User>)QueryUtil.list(
@@ -638,7 +636,6 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 			queryPos.add(organizationId);
 			queryPos.add(companyId);
-			queryPos.add(Boolean.FALSE);
 			queryPos.add(gtUserId);
 
 			return (List<User>)QueryUtil.list(sqlQuery, getDialect(), 0, size);
@@ -668,7 +665,6 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 			queryPos.add(userGroupId);
 			queryPos.add(companyId);
-			queryPos.add(Boolean.FALSE);
 			queryPos.add(gtUserId);
 
 			return (List<User>)QueryUtil.list(sqlQuery, getDialect(), 0, size);
@@ -811,7 +807,6 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 				setJoin(queryPos, paramsMap);
 
 				queryPos.add(companyId);
-				queryPos.add(false);
 				queryPos.add(firstNames, 2);
 				queryPos.add(middleNames, 2);
 				queryPos.add(lastNames, 2);

@@ -238,7 +238,7 @@ public class FriendlyURLServlet extends HttpServlet {
 					throw new LayoutPermissionException();
 				}
 
-				if (user.isDefaultUser() && layout.isSystem() &&
+				if (user.isGuestUser() && layout.isSystem() &&
 					Objects.equals(
 						layout.getFriendlyURL(),
 						PropsValues.CONTROL_PANEL_LAYOUT_FRIENDLY_URL)) {
@@ -885,7 +885,7 @@ public class FriendlyURLServlet extends HttpServlet {
 		User user = portal.getUser(httpServletRequest);
 
 		if (user == null) {
-			user = userLocalService.getDefaultUser(
+			user = userLocalService.getGuestUser(
 				portal.getCompanyId(httpServletRequest));
 		}
 

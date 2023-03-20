@@ -70,7 +70,7 @@ public class DDMFormInstanceSubmissionLimitStatusUtilTest {
 		User user = Mockito.mock(User.class);
 
 		Mockito.when(
-			user.isDefaultUser()
+			user.isGuestUser()
 		).thenReturn(
 			true
 		);
