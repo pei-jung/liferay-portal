@@ -184,6 +184,68 @@ public class Publication implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Date dateModified;
 
+	@Schema(
+		description = "The date that the publication was or will be published."
+	)
+	public Date getDatePublished() {
+		return datePublished;
+	}
+
+	public void setDatePublished(Date datePublished) {
+		this.datePublished = datePublished;
+	}
+
+	@JsonIgnore
+	public void setDatePublished(
+		UnsafeSupplier<Date, Exception> datePublishedUnsafeSupplier) {
+
+		try {
+			datePublished = datePublishedUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(
+		description = "The date that the publication was or will be published."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Date datePublished;
+
+	@Schema(description = "The date that the publication will be published.")
+	public Date getDateScheduled() {
+		return dateScheduled;
+	}
+
+	public void setDateScheduled(Date dateScheduled) {
+		this.dateScheduled = dateScheduled;
+	}
+
+	@JsonIgnore
+	public void setDateScheduled(
+		UnsafeSupplier<Date, Exception> dateScheduledUnsafeSupplier) {
+
+		try {
+			dateScheduled = dateScheduledUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(
+		description = "The date that the publication will be published."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Date dateScheduled;
+
 	@Schema
 	public String getDescription() {
 		return description;
@@ -367,6 +429,34 @@ public class Publication implements Serializable {
 			sb.append("\"");
 
 			sb.append(liferayToJSONDateFormat.format(dateModified));
+
+			sb.append("\"");
+		}
+
+		if (datePublished != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"datePublished\": ");
+
+			sb.append("\"");
+
+			sb.append(liferayToJSONDateFormat.format(datePublished));
+
+			sb.append("\"");
+		}
+
+		if (dateScheduled != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"dateScheduled\": ");
+
+			sb.append("\"");
+
+			sb.append(liferayToJSONDateFormat.format(dateScheduled));
 
 			sb.append("\"");
 		}

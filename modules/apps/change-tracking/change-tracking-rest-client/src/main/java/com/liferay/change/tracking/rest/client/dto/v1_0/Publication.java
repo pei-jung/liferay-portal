@@ -121,6 +121,48 @@ public class Publication implements Cloneable, Serializable {
 
 	protected Date dateModified;
 
+	public Date getDatePublished() {
+		return datePublished;
+	}
+
+	public void setDatePublished(Date datePublished) {
+		this.datePublished = datePublished;
+	}
+
+	public void setDatePublished(
+		UnsafeSupplier<Date, Exception> datePublishedUnsafeSupplier) {
+
+		try {
+			datePublished = datePublishedUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Date datePublished;
+
+	public Date getDateScheduled() {
+		return dateScheduled;
+	}
+
+	public void setDateScheduled(Date dateScheduled) {
+		this.dateScheduled = dateScheduled;
+	}
+
+	public void setDateScheduled(
+		UnsafeSupplier<Date, Exception> dateScheduledUnsafeSupplier) {
+
+		try {
+			dateScheduled = dateScheduledUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Date dateScheduled;
+
 	public String getDescription() {
 		return description;
 	}

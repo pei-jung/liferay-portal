@@ -111,6 +111,36 @@ public class PublicationSerDes {
 			sb.append("\"");
 		}
 
+		if (publication.getDatePublished() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"datePublished\": ");
+
+			sb.append("\"");
+
+			sb.append(
+				liferayToJSONDateFormat.format(publication.getDatePublished()));
+
+			sb.append("\"");
+		}
+
+		if (publication.getDateScheduled() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"dateScheduled\": ");
+
+			sb.append("\"");
+
+			sb.append(
+				liferayToJSONDateFormat.format(publication.getDateScheduled()));
+
+			sb.append("\"");
+		}
+
 		if (publication.getDescription() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -213,6 +243,24 @@ public class PublicationSerDes {
 				liferayToJSONDateFormat.format(publication.getDateModified()));
 		}
 
+		if (publication.getDatePublished() == null) {
+			map.put("datePublished", null);
+		}
+		else {
+			map.put(
+				"datePublished",
+				liferayToJSONDateFormat.format(publication.getDatePublished()));
+		}
+
+		if (publication.getDateScheduled() == null) {
+			map.put("dateScheduled", null);
+		}
+		else {
+			map.put(
+				"dateScheduled",
+				liferayToJSONDateFormat.format(publication.getDateScheduled()));
+		}
+
 		if (publication.getDescription() == null) {
 			map.put("description", null);
 		}
@@ -285,6 +333,18 @@ public class PublicationSerDes {
 			else if (Objects.equals(jsonParserFieldName, "dateModified")) {
 				if (jsonParserFieldValue != null) {
 					publication.setDateModified(
+						toDate((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "datePublished")) {
+				if (jsonParserFieldValue != null) {
+					publication.setDatePublished(
+						toDate((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "dateScheduled")) {
+				if (jsonParserFieldValue != null) {
+					publication.setDateScheduled(
 						toDate((String)jsonParserFieldValue));
 				}
 			}

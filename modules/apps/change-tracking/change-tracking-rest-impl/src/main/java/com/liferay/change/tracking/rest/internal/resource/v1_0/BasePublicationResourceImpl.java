@@ -344,6 +344,16 @@ public abstract class BasePublicationResourceImpl
 			existingPublication.setDateModified(publication.getDateModified());
 		}
 
+		if (publication.getDatePublished() != null) {
+			existingPublication.setDatePublished(
+				publication.getDatePublished());
+		}
+
+		if (publication.getDateScheduled() != null) {
+			existingPublication.setDateScheduled(
+				publication.getDateScheduled());
+		}
+
 		if (publication.getDescription() != null) {
 			existingPublication.setDescription(publication.getDescription());
 		}
