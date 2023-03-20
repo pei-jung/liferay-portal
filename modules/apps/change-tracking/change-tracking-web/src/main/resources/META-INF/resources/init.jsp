@@ -21,6 +21,7 @@
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/frontend-data-set" prefix="frontend-data-set" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -34,10 +35,10 @@ page import="com.liferay.change.tracking.model.CTCollectionTemplate" %><%@
 page import="com.liferay.change.tracking.model.CTProcess" %><%@
 page import="com.liferay.change.tracking.service.CTCollectionTemplateLocalServiceUtil" %><%@
 page import="com.liferay.change.tracking.web.internal.constants.CTWebKeys" %><%@
+page import="com.liferay.change.tracking.web.internal.constants.PublicationsFDSNames" %><%@
 page import="com.liferay.change.tracking.web.internal.display.CTDisplayRendererRegistry" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.PublicationsConfigurationDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.PublicationsDisplayContext" %><%@
-page import="com.liferay.change.tracking.web.internal.display.context.PublicationsManagementToolbarDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.ReschedulePublicationDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.ViewChangesDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.ViewConflictsDisplayContext" %><%@
