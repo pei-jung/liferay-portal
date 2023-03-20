@@ -62,8 +62,7 @@ components:
                     readOnly: true
                     type: object
                 creator:
-                    allOf:
-                        - $ref: "#/components/schemas/Creator"
+                    $ref: "#/components/schemas/Creator"
                     description:
                         The publication's creator.
                     readOnly: true
@@ -76,6 +75,18 @@ components:
                 dateModified:
                     description:
                         The last time any of the publication's fields were changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                datePublished:
+                    description:
+                        The date that the publication was or will be published.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateScheduled:
+                    description:
+                        The date that the publication will be published.
                     format: date-time
                     readOnly: true
                     type: string

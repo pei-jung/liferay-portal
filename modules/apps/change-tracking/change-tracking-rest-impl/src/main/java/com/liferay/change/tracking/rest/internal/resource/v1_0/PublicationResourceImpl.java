@@ -36,7 +36,9 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
+import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
+import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -94,7 +96,7 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 			Sort[] sorts)
 		throws Exception {
 
-		if ((statuses == null)) {
+		if (statuses == null) {
 			statuses = new Integer[] {
 				WorkflowConstants.STATUS_DRAFT, WorkflowConstants.STATUS_EXPIRED
 			};
@@ -154,6 +156,24 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 			ctCollectionId, _ctCollectionLocalService,
 			_ctPreferencesLocalService, _schedulerEngineHelper, publishDate,
 			_triggerFactory, contextUser.getUserId());
+	}
+
+	private Date _getDateScheduled(CTCollection ctCollection) throws Exception {
+		if (ctCollection.getStatus() != WorkflowConstants.STATUS_SCHEDULED) {
+			return null;
+		}
+
+		SchedulerResponse schedulerResponse =
+			_schedulerEngineHelper.getScheduledJob(
+				String.valueOf(ctCollection.getCtCollectionId()),
+				"liferay/ct_collection_scheduled_publish",
+				StorageType.PERSISTED);
+
+		if (schedulerResponse == null) {
+			return null;
+		}
+
+		return _schedulerEngineHelper.getStartTime(schedulerResponse);
 	}
 
 	private boolean _isPublishEnabled(long ctCollectionId) {
@@ -331,6 +351,7 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 					_userLocalService.fetchUser(ctCollection.getUserId()));
 				dateCreated = ctCollection.getCreateDate();
 				dateModified = ctCollection.getModifiedDate();
+				dateScheduled = _getDateScheduled(ctCollection);
 				description = ctCollection.getDescription();
 				id = ctCollection.getCtCollectionId();
 				name = ctCollection.getName();
