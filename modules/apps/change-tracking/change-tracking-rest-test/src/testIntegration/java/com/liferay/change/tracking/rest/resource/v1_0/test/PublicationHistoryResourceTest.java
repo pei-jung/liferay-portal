@@ -12,22 +12,18 @@
  * details.
  */
 
-package com.liferay.change.tracking.web.internal.constants;
+package com.liferay.change.tracking.rest.resource.v1_0.test;
 
-import com.liferay.change.tracking.constants.CTPortletKeys;
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
 
 /**
  * @author David Truong
  */
-public class PublicationsFDSNames {
-
-	public static final String PUBLICATIONS_HISTORY =
-		CTPortletKeys.PUBLICATIONS + "-publications-history";
-
-	public static final String PUBLICATIONS_ONGOING =
-		CTPortletKeys.PUBLICATIONS + "-publications-ongoing";
-
-	public static final String PUBLICATIONS_SCHEDULED =
-		CTPortletKeys.PUBLICATIONS + "-publications-scheduled";
-
+@Ignore
+@RunWith(Arquillian.class)
+public class PublicationHistoryResourceTest
+	extends BasePublicationHistoryResourceTestCase {
 }

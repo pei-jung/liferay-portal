@@ -14,8 +14,8 @@
 
 package com.liferay.change.tracking.rest.internal.resource.v1_0;
 
-import com.liferay.change.tracking.rest.dto.v1_0.Publication;
-import com.liferay.change.tracking.rest.resource.v1_0.PublicationResource;
+import com.liferay.change.tracking.rest.dto.v1_0.PublicationHistory;
+import com.liferay.change.tracking.rest.resource.v1_0.PublicationHistoryResource;
 import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
@@ -73,20 +73,24 @@ import javax.ws.rs.core.UriInfo;
  */
 @Generated("")
 @javax.ws.rs.Path("/v1.0")
-public abstract class BasePublicationResourceImpl
-	implements EntityModelResource, PublicationResource,
-			   VulcanBatchEngineTaskItemDelegate<Publication> {
+public abstract class BasePublicationHistoryResourceImpl
+	implements EntityModelResource, PublicationHistoryResource,
+			   VulcanBatchEngineTaskItemDelegate<PublicationHistory> {
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'GET' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications'  -u 'test@liferay.com:test'
+	 * curl -X 'GET' 'http://localhost:8080/o/change-tracking-rest/v1.0/publication-history'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
 				name = "status"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "filter"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
@@ -107,19 +111,22 @@ public abstract class BasePublicationResourceImpl
 		}
 	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "PublicationHistory")
+		}
 	)
 	@javax.ws.rs.GET
-	@javax.ws.rs.Path("/publications")
+	@javax.ws.rs.Path("/publication-history")
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public Page<Publication> getPublicationsPage(
+	public Page<PublicationHistory> getPublicationHistoryPage(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("status")
-			Integer[] status,
+			Integer status,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("search")
 			String search,
+			@javax.ws.rs.core.Context Filter filter,
 			@javax.ws.rs.core.Context Pagination pagination,
 			@javax.ws.rs.core.Context Sort[] sorts)
 		throws Exception {
@@ -130,26 +137,29 @@ public abstract class BasePublicationResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications' -d $'{"description": ___, "name": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publication-history' -d $'{"description": ___, "name": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "PublicationHistory")
+		}
 	)
 	@javax.ws.rs.Consumes({"application/json", "application/xml"})
-	@javax.ws.rs.Path("/publications")
+	@javax.ws.rs.Path("/publication-history")
 	@javax.ws.rs.POST
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public Publication postPublication(Publication publication)
+	public PublicationHistory postPublicationHistory(
+			PublicationHistory publicationHistory)
 		throws Exception {
 
-		return new Publication();
+		return new PublicationHistory();
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/batch'  -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publication-history/batch'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -160,14 +170,16 @@ public abstract class BasePublicationResourceImpl
 		}
 	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "PublicationHistory")
+		}
 	)
 	@javax.ws.rs.Consumes("application/json")
-	@javax.ws.rs.Path("/publications/batch")
+	@javax.ws.rs.Path("/publication-history/batch")
 	@javax.ws.rs.POST
 	@javax.ws.rs.Produces("application/json")
 	@Override
-	public Response postPublicationBatch(
+	public Response postPublicationHistoryBatch(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -186,14 +198,14 @@ public abstract class BasePublicationResourceImpl
 
 		return responseBuilder.entity(
 			vulcanBatchEngineImportTaskResource.postImportTask(
-				Publication.class.getName(), callbackURL, null, object)
+				PublicationHistory.class.getName(), callbackURL, null, object)
 		).build();
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'DELETE' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}'  -u 'test@liferay.com:test'
+	 * curl -X 'GET' 'http://localhost:8080/o/change-tracking-rest/v1.0/publication-history/{id}'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -204,96 +216,27 @@ public abstract class BasePublicationResourceImpl
 		}
 	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.DELETE
-	@javax.ws.rs.Path("/publications/{id}")
-	@javax.ws.rs.Produces({"application/json", "application/xml"})
-	@Override
-	public void deletePublication(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
-			Long id)
-		throws Exception {
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'DELETE' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/batch'  -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "callbackURL"
-			)
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "PublicationHistory")
 		}
-	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Consumes("application/json")
-	@javax.ws.rs.DELETE
-	@javax.ws.rs.Path("/publications/batch")
-	@javax.ws.rs.Produces("application/json")
-	@Override
-	public Response deletePublicationBatch(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("callbackURL")
-			String callbackURL,
-			Object object)
-		throws Exception {
-
-		vulcanBatchEngineImportTaskResource.setContextAcceptLanguage(
-			contextAcceptLanguage);
-		vulcanBatchEngineImportTaskResource.setContextCompany(contextCompany);
-		vulcanBatchEngineImportTaskResource.setContextHttpServletRequest(
-			contextHttpServletRequest);
-		vulcanBatchEngineImportTaskResource.setContextUriInfo(contextUriInfo);
-		vulcanBatchEngineImportTaskResource.setContextUser(contextUser);
-
-		Response.ResponseBuilder responseBuilder = Response.accepted();
-
-		return responseBuilder.entity(
-			vulcanBatchEngineImportTaskResource.deleteImportTask(
-				Publication.class.getName(), callbackURL, object)
-		).build();
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'GET' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}'  -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
-		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "id"
-			)
-		}
-	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
 	)
 	@javax.ws.rs.GET
-	@javax.ws.rs.Path("/publications/{id}")
+	@javax.ws.rs.Path("/publication-history/{id}")
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public Publication getPublication(
+	public PublicationHistory getPublicationHistory(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
 			Long id)
 		throws Exception {
 
-		return new Publication();
+		return new PublicationHistory();
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PATCH' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}' -d $'{"description": ___, "name": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publication-history/{id}/revert'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -304,213 +247,15 @@ public abstract class BasePublicationResourceImpl
 		}
 	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Consumes({"application/json", "application/xml"})
-	@javax.ws.rs.PATCH
-	@javax.ws.rs.Path("/publications/{id}")
-	@javax.ws.rs.Produces({"application/json", "application/xml"})
-	@Override
-	public Publication patchPublication(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
-			Long id,
-			Publication publication)
-		throws Exception {
-
-		Publication existingPublication = getPublication(id);
-
-		if (publication.getActions() != null) {
-			existingPublication.setActions(publication.getActions());
-		}
-
-		if (publication.getDateCreated() != null) {
-			existingPublication.setDateCreated(publication.getDateCreated());
-		}
-
-		if (publication.getDateModified() != null) {
-			existingPublication.setDateModified(publication.getDateModified());
-		}
-
-		if (publication.getDateScheduled() != null) {
-			existingPublication.setDateScheduled(
-				publication.getDateScheduled());
-		}
-
-		if (publication.getDescription() != null) {
-			existingPublication.setDescription(publication.getDescription());
-		}
-
-		if (publication.getName() != null) {
-			existingPublication.setName(publication.getName());
-		}
-
-		if (publication.getOwnerName() != null) {
-			existingPublication.setOwnerName(publication.getOwnerName());
-		}
-
-		preparePatch(publication, existingPublication);
-
-		return putPublication(id, existingPublication);
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}' -d $'{"description": ___, "name": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "id"
-			)
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "PublicationHistory")
 		}
 	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Consumes({"application/json", "application/xml"})
-	@javax.ws.rs.Path("/publications/{id}")
-	@javax.ws.rs.Produces({"application/json", "application/xml"})
-	@javax.ws.rs.PUT
-	@Override
-	public Publication putPublication(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
-			Long id,
-			Publication publication)
-		throws Exception {
-
-		return new Publication();
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/batch'  -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
-		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "callbackURL"
-			)
-		}
-	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Consumes("application/json")
-	@javax.ws.rs.Path("/publications/batch")
-	@javax.ws.rs.Produces("application/json")
-	@javax.ws.rs.PUT
-	@Override
-	public Response putPublicationBatch(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("callbackURL")
-			String callbackURL,
-			Object object)
-		throws Exception {
-
-		vulcanBatchEngineImportTaskResource.setContextAcceptLanguage(
-			contextAcceptLanguage);
-		vulcanBatchEngineImportTaskResource.setContextCompany(contextCompany);
-		vulcanBatchEngineImportTaskResource.setContextHttpServletRequest(
-			contextHttpServletRequest);
-		vulcanBatchEngineImportTaskResource.setContextUriInfo(contextUriInfo);
-		vulcanBatchEngineImportTaskResource.setContextUser(contextUser);
-
-		Response.ResponseBuilder responseBuilder = Response.accepted();
-
-		return responseBuilder.entity(
-			vulcanBatchEngineImportTaskResource.putImportTask(
-				Publication.class.getName(), callbackURL, object)
-		).build();
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}/checkout'  -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
-		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "id"
-			)
-		}
-	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Path("/publications/{id}/checkout")
+	@javax.ws.rs.Path("/publication-history/{id}/revert")
 	@javax.ws.rs.POST
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public void postPublicationCheckout(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
-			Long id)
-		throws Exception {
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}/publish'  -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
-		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "id"
-			),
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "publishDate"
-			)
-		}
-	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Path("/publications/{id}/publish")
-	@javax.ws.rs.POST
-	@javax.ws.rs.Produces({"application/json", "application/xml"})
-	@Override
-	public void postPublicationPublish(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
-			Long id,
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("publishDate")
-			java.util.Date publishDate)
-		throws Exception {
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/change-tracking-rest/v1.0/publications/{id}/schedule-publish'  -u 'test@liferay.com:test'
-	 */
-	@io.swagger.v3.oas.annotations.Parameters(
-		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "id"
-			)
-		}
-	)
-	@io.swagger.v3.oas.annotations.tags.Tags(
-		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Publication")}
-	)
-	@javax.ws.rs.Path("/publications/{id}/schedule-publish")
-	@javax.ws.rs.POST
-	@javax.ws.rs.Produces({"application/json", "application/xml"})
-	@Override
-	public void postPublicationSchedulePublish(
+	public void postPublicationHistoryRevert(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.validation.constraints.NotNull @javax.ws.rs.PathParam("id")
 			Long id)
@@ -520,46 +265,47 @@ public abstract class BasePublicationResourceImpl
 	@Override
 	@SuppressWarnings("PMD.UnusedLocalVariable")
 	public void create(
-			Collection<Publication> publications,
+			Collection<PublicationHistory> publicationHistories,
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		UnsafeConsumer<Publication, Exception> publicationUnsafeConsumer = null;
+		UnsafeConsumer<PublicationHistory, Exception>
+			publicationHistoryUnsafeConsumer = null;
 
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
 		if ("INSERT".equalsIgnoreCase(createStrategy)) {
-			publicationUnsafeConsumer = publication -> postPublication(
-				publication);
+			publicationHistoryUnsafeConsumer =
+				publicationHistory -> postPublicationHistory(
+					publicationHistory);
 		}
 
-		if (publicationUnsafeConsumer == null) {
+		if (publicationHistoryUnsafeConsumer == null) {
 			throw new NotSupportedException(
 				"Create strategy \"" + createStrategy +
-					"\" is not supported for Publication");
+					"\" is not supported for PublicationHistory");
 		}
 
 		if (contextBatchUnsafeConsumer != null) {
 			contextBatchUnsafeConsumer.accept(
-				publications, publicationUnsafeConsumer);
+				publicationHistories, publicationHistoryUnsafeConsumer);
 		}
 		else {
-			for (Publication publication : publications) {
-				publicationUnsafeConsumer.accept(publication);
+			for (PublicationHistory publicationHistory : publicationHistories) {
+				publicationHistoryUnsafeConsumer.accept(publicationHistory);
 			}
 		}
 	}
 
 	@Override
 	public void delete(
-			Collection<Publication> publications,
+			Collection<PublicationHistory> publicationHistories,
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (Publication publication : publications) {
-			deletePublication(publication.getId());
-		}
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	public Set<String> getAvailableCreateStrategies() {
@@ -567,7 +313,7 @@ public abstract class BasePublicationResourceImpl
 	}
 
 	public Set<String> getAvailableUpdateStrategies() {
-		return SetUtil.fromArray("PARTIAL_UPDATE", "UPDATE");
+		return SetUtil.fromArray();
 	}
 
 	@Override
@@ -590,13 +336,13 @@ public abstract class BasePublicationResourceImpl
 	}
 
 	@Override
-	public Page<Publication> read(
+	public Page<PublicationHistory> read(
 			Filter filter, Pagination pagination, Sort[] sorts,
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		return getPublicationsPage(
-			(Integer[])parameters.get("status"), search, pagination, sorts);
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	@Override
@@ -623,44 +369,12 @@ public abstract class BasePublicationResourceImpl
 
 	@Override
 	public void update(
-			Collection<Publication> publications,
+			Collection<PublicationHistory> publicationHistories,
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		UnsafeConsumer<Publication, Exception> publicationUnsafeConsumer = null;
-
-		String updateStrategy = (String)parameters.getOrDefault(
-			"updateStrategy", "UPDATE");
-
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
-			publicationUnsafeConsumer = publication -> patchPublication(
-				publication.getId() != null ? publication.getId() :
-					Long.parseLong((String)parameters.get("publicationId")),
-				publication);
-		}
-
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
-			publicationUnsafeConsumer = publication -> putPublication(
-				publication.getId() != null ? publication.getId() :
-					Long.parseLong((String)parameters.get("publicationId")),
-				publication);
-		}
-
-		if (publicationUnsafeConsumer == null) {
-			throw new NotSupportedException(
-				"Update strategy \"" + updateStrategy +
-					"\" is not supported for Publication");
-		}
-
-		if (contextBatchUnsafeConsumer != null) {
-			contextBatchUnsafeConsumer.accept(
-				publications, publicationUnsafeConsumer);
-		}
-		else {
-			for (Publication publication : publications) {
-				publicationUnsafeConsumer.accept(publication);
-			}
-		}
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {
@@ -669,8 +383,9 @@ public abstract class BasePublicationResourceImpl
 
 	public void setContextBatchUnsafeConsumer(
 		UnsafeBiConsumer
-			<Collection<Publication>, UnsafeConsumer<Publication, Exception>,
-			 Exception> contextBatchUnsafeConsumer) {
+			<Collection<PublicationHistory>,
+			 UnsafeConsumer<PublicationHistory, Exception>, Exception>
+				contextBatchUnsafeConsumer) {
 
 		this.contextBatchUnsafeConsumer = contextBatchUnsafeConsumer;
 	}
@@ -846,10 +561,6 @@ public abstract class BasePublicationResourceImpl
 			actionName, siteId, methodName, null, permissionName, siteId);
 	}
 
-	protected void preparePatch(
-		Publication publication, Publication existingPublication) {
-	}
-
 	protected <T, R, E extends Throwable> List<R> transform(
 		Collection<T> collection, UnsafeFunction<T, R, E> unsafeFunction) {
 
@@ -908,8 +619,9 @@ public abstract class BasePublicationResourceImpl
 
 	protected AcceptLanguage contextAcceptLanguage;
 	protected UnsafeBiConsumer
-		<Collection<Publication>, UnsafeConsumer<Publication, Exception>,
-		 Exception> contextBatchUnsafeConsumer;
+		<Collection<PublicationHistory>,
+		 UnsafeConsumer<PublicationHistory, Exception>, Exception>
+			contextBatchUnsafeConsumer;
 	protected com.liferay.portal.kernel.model.Company contextCompany;
 	protected HttpServletRequest contextHttpServletRequest;
 	protected HttpServletResponse contextHttpServletResponse;
@@ -927,6 +639,6 @@ public abstract class BasePublicationResourceImpl
 		vulcanBatchEngineImportTaskResource;
 
 	private static final com.liferay.portal.kernel.log.Log _log =
-		LogFactoryUtil.getLog(BasePublicationResourceImpl.class);
+		LogFactoryUtil.getLog(BasePublicationHistoryResourceImpl.class);
 
 }

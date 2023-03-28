@@ -16,7 +16,9 @@ package com.liferay.change.tracking.rest.internal.graphql.servlet.v1_0;
 
 import com.liferay.change.tracking.rest.internal.graphql.mutation.v1_0.Mutation;
 import com.liferay.change.tracking.rest.internal.graphql.query.v1_0.Query;
+import com.liferay.change.tracking.rest.internal.resource.v1_0.PublicationHistoryResourceImpl;
 import com.liferay.change.tracking.rest.internal.resource.v1_0.PublicationResourceImpl;
+import com.liferay.change.tracking.rest.resource.v1_0.PublicationHistoryResource;
 import com.liferay.change.tracking.rest.resource.v1_0.PublicationResource;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
@@ -45,9 +47,13 @@ public class ServletDataImpl implements ServletData {
 	public void activate(BundleContext bundleContext) {
 		Mutation.setPublicationResourceComponentServiceObjects(
 			_publicationResourceComponentServiceObjects);
+		Mutation.setPublicationHistoryResourceComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects);
 
 		Query.setPublicationResourceComponentServiceObjects(
 			_publicationResourceComponentServiceObjects);
+		Query.setPublicationHistoryResourceComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects);
 	}
 
 	public String getApplicationName() {
@@ -84,6 +90,11 @@ public class ServletDataImpl implements ServletData {
 		_resourceMethodObjectValuePairs =
 			new HashMap<String, ObjectValuePair<Class<?>, String>>() {
 				{
+					put(
+						"mutation#createPublicationsPageExportBatch",
+						new ObjectValuePair<>(
+							PublicationResourceImpl.class,
+							"postPublicationsPageExportBatch"));
 					put(
 						"mutation#createPublication",
 						new ObjectValuePair<>(
@@ -131,6 +142,21 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							PublicationResourceImpl.class,
 							"postPublicationSchedulePublish"));
+					put(
+						"mutation#createPublicationHistory",
+						new ObjectValuePair<>(
+							PublicationHistoryResourceImpl.class,
+							"postPublicationHistory"));
+					put(
+						"mutation#createPublicationHistoryBatch",
+						new ObjectValuePair<>(
+							PublicationHistoryResourceImpl.class,
+							"postPublicationHistoryBatch"));
+					put(
+						"mutation#createPublicationHistoryRevert",
+						new ObjectValuePair<>(
+							PublicationHistoryResourceImpl.class,
+							"postPublicationHistoryRevert"));
 
 					put(
 						"query#publications",
@@ -141,11 +167,25 @@ public class ServletDataImpl implements ServletData {
 						"query#publication",
 						new ObjectValuePair<>(
 							PublicationResourceImpl.class, "getPublication"));
+					put(
+						"query#publicationHistory",
+						new ObjectValuePair<>(
+							PublicationHistoryResourceImpl.class,
+							"getPublicationHistoryPage"));
+					put(
+						"query#publicationHistory",
+						new ObjectValuePair<>(
+							PublicationHistoryResourceImpl.class,
+							"getPublicationHistory"));
 				}
 			};
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<PublicationResource>
 		_publicationResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<PublicationHistoryResource>
+		_publicationHistoryResourceComponentServiceObjects;
 
 }

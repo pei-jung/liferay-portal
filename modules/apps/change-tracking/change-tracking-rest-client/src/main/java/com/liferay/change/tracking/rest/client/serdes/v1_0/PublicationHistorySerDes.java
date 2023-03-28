@@ -14,7 +14,7 @@
 
 package com.liferay.change.tracking.rest.client.serdes.v1_0;
 
-import com.liferay.change.tracking.rest.client.dto.v1_0.Publication;
+import com.liferay.change.tracking.rest.client.dto.v1_0.PublicationHistory;
 import com.liferay.change.tracking.rest.client.json.BaseJSONParser;
 
 import java.text.DateFormat;
@@ -33,24 +33,24 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PublicationSerDes {
+public class PublicationHistorySerDes {
 
-	public static Publication toDTO(String json) {
-		PublicationJSONParser publicationJSONParser =
-			new PublicationJSONParser();
+	public static PublicationHistory toDTO(String json) {
+		PublicationHistoryJSONParser publicationHistoryJSONParser =
+			new PublicationHistoryJSONParser();
 
-		return publicationJSONParser.parseToDTO(json);
+		return publicationHistoryJSONParser.parseToDTO(json);
 	}
 
-	public static Publication[] toDTOs(String json) {
-		PublicationJSONParser publicationJSONParser =
-			new PublicationJSONParser();
+	public static PublicationHistory[] toDTOs(String json) {
+		PublicationHistoryJSONParser publicationHistoryJSONParser =
+			new PublicationHistoryJSONParser();
 
-		return publicationJSONParser.parseToDTOs(json);
+		return publicationHistoryJSONParser.parseToDTOs(json);
 	}
 
-	public static String toJSON(Publication publication) {
-		if (publication == null) {
+	public static String toJSON(PublicationHistory publicationHistory) {
+		if (publicationHistory == null) {
 			return "null";
 		}
 
@@ -61,17 +61,17 @@ public class PublicationSerDes {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssXX");
 
-		if (publication.getActions() != null) {
+		if (publicationHistory.getActions() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"actions\": ");
 
-			sb.append(_toJSON(publication.getActions()));
+			sb.append(_toJSON(publicationHistory.getActions()));
 		}
 
-		if (publication.getDateCreated() != null) {
+		if (publicationHistory.getDateCreated() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -81,42 +81,13 @@ public class PublicationSerDes {
 			sb.append("\"");
 
 			sb.append(
-				liferayToJSONDateFormat.format(publication.getDateCreated()));
+				liferayToJSONDateFormat.format(
+					publicationHistory.getDateCreated()));
 
 			sb.append("\"");
 		}
 
-		if (publication.getDateModified() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"dateModified\": ");
-
-			sb.append("\"");
-
-			sb.append(
-				liferayToJSONDateFormat.format(publication.getDateModified()));
-
-			sb.append("\"");
-		}
-
-		if (publication.getDateScheduled() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"dateScheduled\": ");
-
-			sb.append("\"");
-
-			sb.append(
-				liferayToJSONDateFormat.format(publication.getDateScheduled()));
-
-			sb.append("\"");
-		}
-
-		if (publication.getDescription() != null) {
+		if (publicationHistory.getDescription() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -125,22 +96,22 @@ public class PublicationSerDes {
 
 			sb.append("\"");
 
-			sb.append(_escape(publication.getDescription()));
+			sb.append(_escape(publicationHistory.getDescription()));
 
 			sb.append("\"");
 		}
 
-		if (publication.getId() != null) {
+		if (publicationHistory.getId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"id\": ");
 
-			sb.append(publication.getId());
+			sb.append(publicationHistory.getId());
 		}
 
-		if (publication.getName() != null) {
+		if (publicationHistory.getName() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
@@ -149,33 +120,33 @@ public class PublicationSerDes {
 
 			sb.append("\"");
 
-			sb.append(_escape(publication.getName()));
+			sb.append(_escape(publicationHistory.getName()));
 
 			sb.append("\"");
 		}
 
-		if (publication.getOwnerName() != null) {
+		if (publicationHistory.getPublisherName() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"ownerName\": ");
+			sb.append("\"publisherName\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(publication.getOwnerName()));
+			sb.append(_escape(publicationHistory.getPublisherName()));
 
 			sb.append("\"");
 		}
 
-		if (publication.getStatus() != null) {
+		if (publicationHistory.getStatus() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
 			sb.append("\"status\": ");
 
-			sb.append(String.valueOf(publication.getStatus()));
+			sb.append(String.valueOf(publicationHistory.getStatus()));
 		}
 
 		sb.append("}");
@@ -184,14 +155,16 @@ public class PublicationSerDes {
 	}
 
 	public static Map<String, Object> toMap(String json) {
-		PublicationJSONParser publicationJSONParser =
-			new PublicationJSONParser();
+		PublicationHistoryJSONParser publicationHistoryJSONParser =
+			new PublicationHistoryJSONParser();
 
-		return publicationJSONParser.parseToMap(json);
+		return publicationHistoryJSONParser.parseToMap(json);
 	}
 
-	public static Map<String, String> toMap(Publication publication) {
-		if (publication == null) {
+	public static Map<String, String> toMap(
+		PublicationHistory publicationHistory) {
+
+		if (publicationHistory == null) {
 			return null;
 		}
 
@@ -200,146 +173,122 @@ public class PublicationSerDes {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssXX");
 
-		if (publication.getActions() == null) {
+		if (publicationHistory.getActions() == null) {
 			map.put("actions", null);
 		}
 		else {
-			map.put("actions", String.valueOf(publication.getActions()));
+			map.put("actions", String.valueOf(publicationHistory.getActions()));
 		}
 
-		if (publication.getDateCreated() == null) {
+		if (publicationHistory.getDateCreated() == null) {
 			map.put("dateCreated", null);
 		}
 		else {
 			map.put(
 				"dateCreated",
-				liferayToJSONDateFormat.format(publication.getDateCreated()));
+				liferayToJSONDateFormat.format(
+					publicationHistory.getDateCreated()));
 		}
 
-		if (publication.getDateModified() == null) {
-			map.put("dateModified", null);
-		}
-		else {
-			map.put(
-				"dateModified",
-				liferayToJSONDateFormat.format(publication.getDateModified()));
-		}
-
-		if (publication.getDateScheduled() == null) {
-			map.put("dateScheduled", null);
-		}
-		else {
-			map.put(
-				"dateScheduled",
-				liferayToJSONDateFormat.format(publication.getDateScheduled()));
-		}
-
-		if (publication.getDescription() == null) {
+		if (publicationHistory.getDescription() == null) {
 			map.put("description", null);
 		}
 		else {
 			map.put(
-				"description", String.valueOf(publication.getDescription()));
+				"description",
+				String.valueOf(publicationHistory.getDescription()));
 		}
 
-		if (publication.getId() == null) {
+		if (publicationHistory.getId() == null) {
 			map.put("id", null);
 		}
 		else {
-			map.put("id", String.valueOf(publication.getId()));
+			map.put("id", String.valueOf(publicationHistory.getId()));
 		}
 
-		if (publication.getName() == null) {
+		if (publicationHistory.getName() == null) {
 			map.put("name", null);
 		}
 		else {
-			map.put("name", String.valueOf(publication.getName()));
+			map.put("name", String.valueOf(publicationHistory.getName()));
 		}
 
-		if (publication.getOwnerName() == null) {
-			map.put("ownerName", null);
+		if (publicationHistory.getPublisherName() == null) {
+			map.put("publisherName", null);
 		}
 		else {
-			map.put("ownerName", String.valueOf(publication.getOwnerName()));
+			map.put(
+				"publisherName",
+				String.valueOf(publicationHistory.getPublisherName()));
 		}
 
-		if (publication.getStatus() == null) {
+		if (publicationHistory.getStatus() == null) {
 			map.put("status", null);
 		}
 		else {
-			map.put("status", String.valueOf(publication.getStatus()));
+			map.put("status", String.valueOf(publicationHistory.getStatus()));
 		}
 
 		return map;
 	}
 
-	public static class PublicationJSONParser
-		extends BaseJSONParser<Publication> {
+	public static class PublicationHistoryJSONParser
+		extends BaseJSONParser<PublicationHistory> {
 
 		@Override
-		protected Publication createDTO() {
-			return new Publication();
+		protected PublicationHistory createDTO() {
+			return new PublicationHistory();
 		}
 
 		@Override
-		protected Publication[] createDTOArray(int size) {
-			return new Publication[size];
+		protected PublicationHistory[] createDTOArray(int size) {
+			return new PublicationHistory[size];
 		}
 
 		@Override
 		protected void setField(
-			Publication publication, String jsonParserFieldName,
+			PublicationHistory publicationHistory, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
 			if (Objects.equals(jsonParserFieldName, "actions")) {
 				if (jsonParserFieldValue != null) {
-					publication.setActions(
-						(Map)PublicationSerDes.toMap(
+					publicationHistory.setActions(
+						(Map)PublicationHistorySerDes.toMap(
 							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "dateCreated")) {
 				if (jsonParserFieldValue != null) {
-					publication.setDateCreated(
-						toDate((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "dateModified")) {
-				if (jsonParserFieldValue != null) {
-					publication.setDateModified(
-						toDate((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "dateScheduled")) {
-				if (jsonParserFieldValue != null) {
-					publication.setDateScheduled(
+					publicationHistory.setDateCreated(
 						toDate((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "description")) {
 				if (jsonParserFieldValue != null) {
-					publication.setDescription((String)jsonParserFieldValue);
+					publicationHistory.setDescription(
+						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
-					publication.setId(
+					publicationHistory.setId(
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "name")) {
 				if (jsonParserFieldValue != null) {
-					publication.setName((String)jsonParserFieldValue);
+					publicationHistory.setName((String)jsonParserFieldValue);
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "ownerName")) {
+			else if (Objects.equals(jsonParserFieldName, "publisherName")) {
 				if (jsonParserFieldValue != null) {
-					publication.setOwnerName((String)jsonParserFieldValue);
+					publicationHistory.setPublisherName(
+						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "status")) {
 				if (jsonParserFieldValue != null) {
-					publication.setStatus(
+					publicationHistory.setStatus(
 						StatusSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}

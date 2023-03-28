@@ -46,6 +46,7 @@ public class PublicationsOngoingTableFDSView extends BaseTableFDSView {
 			fdsTableSchemaField -> {
 				fdsTableSchemaField.setActionId("review-changes");
 				fdsTableSchemaField.setContentRenderer("actionLink");
+				fdsTableSchemaField.setExpand(true);
 				fdsTableSchemaField.setSortable(true);
 			}
 		).add(
@@ -53,7 +54,7 @@ public class PublicationsOngoingTableFDSView extends BaseTableFDSView {
 		).add(
 			"dateModified", "last-modified",
 			fdsTableSchemaField -> {
-				fdsTableSchemaField.setContentRenderer("date");
+				fdsTableSchemaField.setContentRenderer("dateTime");
 				fdsTableSchemaField.setSortable(true);
 			}
 		).add(
@@ -66,10 +67,11 @@ public class PublicationsOngoingTableFDSView extends BaseTableFDSView {
 			"status", "status",
 			fdsTableSchemaField -> {
 				fdsTableSchemaField.setContentRenderer("status");
+				fdsTableSchemaField.setLocalizeLabel(true);
 				fdsTableSchemaField.setSortable(true);
 			}
 		).add(
-			"creator.name", "owner",
+			"ownerName", "owner",
 			fdsTableSchemaField -> fdsTableSchemaField.setSortable(true)
 		).build();
 	}

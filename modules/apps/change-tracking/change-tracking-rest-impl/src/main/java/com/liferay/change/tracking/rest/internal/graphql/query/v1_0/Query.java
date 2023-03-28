@@ -15,6 +15,8 @@
 package com.liferay.change.tracking.rest.internal.graphql.query.v1_0;
 
 import com.liferay.change.tracking.rest.dto.v1_0.Publication;
+import com.liferay.change.tracking.rest.dto.v1_0.PublicationHistory;
+import com.liferay.change.tracking.rest.resource.v1_0.PublicationHistoryResource;
 import com.liferay.change.tracking.rest.resource.v1_0.PublicationResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
@@ -55,6 +57,14 @@ public class Query {
 			publicationResourceComponentServiceObjects;
 	}
 
+	public static void setPublicationHistoryResourceComponentServiceObjects(
+		ComponentServiceObjects<PublicationHistoryResource>
+			publicationHistoryResourceComponentServiceObjects) {
+
+		_publicationHistoryResourceComponentServiceObjects =
+			publicationHistoryResourceComponentServiceObjects;
+	}
+
 	/**
 	 * Invoke this method with the command line:
 	 *
@@ -81,7 +91,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {publication(id: ___){actions, creator, dateCreated, dateModified, datePublished, dateScheduled, description, id, name, status}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {publication(id: ___){actions, dateCreated, dateModified, dateScheduled, description, id, name, ownerName, status}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public Publication publication(@GraphQLName("id") Long id)
@@ -91,6 +101,50 @@ public class Query {
 			_publicationResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			publicationResource -> publicationResource.getPublication(id));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {publicationHistory(filter: ___, page: ___, pageSize: ___, search: ___, sorts: ___, status: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public PublicationHistoryPage publicationHistory(
+			@GraphQLName("status") Integer status,
+			@GraphQLName("search") String search,
+			@GraphQLName("filter") String filterString,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			publicationHistoryResource -> new PublicationHistoryPage(
+				publicationHistoryResource.getPublicationHistoryPage(
+					status, search,
+					_filterBiFunction.apply(
+						publicationHistoryResource, filterString),
+					Pagination.of(page, pageSize),
+					_sortsBiFunction.apply(
+						publicationHistoryResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {publicationHistory(id: ___){actions, dateCreated, description, id, name, publisherName, status}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public PublicationHistory publicationHistory(@GraphQLName("id") Long id)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			publicationHistoryResource ->
+				publicationHistoryResource.getPublicationHistory(id));
 	}
 
 	@GraphQLName("PublicationPage")
@@ -111,6 +165,39 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<Publication> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("PublicationHistoryPage")
+	public class PublicationHistoryPage {
+
+		public PublicationHistoryPage(Page publicationHistoryPage) {
+			actions = publicationHistoryPage.getActions();
+
+			items = publicationHistoryPage.getItems();
+			lastPage = publicationHistoryPage.getLastPage();
+			page = publicationHistoryPage.getPage();
+			pageSize = publicationHistoryPage.getPageSize();
+			totalCount = publicationHistoryPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<PublicationHistory> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -159,8 +246,26 @@ public class Query {
 		publicationResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private void _populateResourceContext(
+			PublicationHistoryResource publicationHistoryResource)
+		throws Exception {
+
+		publicationHistoryResource.setContextAcceptLanguage(_acceptLanguage);
+		publicationHistoryResource.setContextCompany(_company);
+		publicationHistoryResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		publicationHistoryResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		publicationHistoryResource.setContextUriInfo(_uriInfo);
+		publicationHistoryResource.setContextUser(_user);
+		publicationHistoryResource.setGroupLocalService(_groupLocalService);
+		publicationHistoryResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private static ComponentServiceObjects<PublicationResource>
 		_publicationResourceComponentServiceObjects;
+	private static ComponentServiceObjects<PublicationHistoryResource>
+		_publicationHistoryResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;

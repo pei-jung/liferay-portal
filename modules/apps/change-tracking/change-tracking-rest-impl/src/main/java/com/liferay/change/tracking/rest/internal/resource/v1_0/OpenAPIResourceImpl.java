@@ -96,6 +96,8 @@ public class OpenAPIResourceImpl {
 		{
 			add(PublicationResourceImpl.class);
 
+			add(PublicationHistoryResourceImpl.class);
+
 			add(OpenAPIResourceImpl.class);
 		}
 	};

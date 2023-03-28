@@ -95,35 +95,6 @@ public class Publication implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Map<String, Map<String, String>> actions;
 
-	@Schema(description = "The publication's creator.")
-	@Valid
-	public Creator getCreator() {
-		return creator;
-	}
-
-	public void setCreator(Creator creator) {
-		this.creator = creator;
-	}
-
-	@JsonIgnore
-	public void setCreator(
-		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
-
-		try {
-			creator = creatorUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField(description = "The publication's creator.")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected Creator creator;
-
 	@Schema(description = "The publication's creation date.")
 	public Date getDateCreated() {
 		return dateCreated;
@@ -183,38 +154,6 @@ public class Publication implements Serializable {
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Date dateModified;
-
-	@Schema(
-		description = "The date that the publication was or will be published."
-	)
-	public Date getDatePublished() {
-		return datePublished;
-	}
-
-	public void setDatePublished(Date datePublished) {
-		this.datePublished = datePublished;
-	}
-
-	@JsonIgnore
-	public void setDatePublished(
-		UnsafeSupplier<Date, Exception> datePublishedUnsafeSupplier) {
-
-		try {
-			datePublished = datePublishedUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField(
-		description = "The date that the publication was or will be published."
-	)
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected Date datePublished;
 
 	@Schema(description = "The date that the publication will be published.")
 	public Date getDateScheduled() {
@@ -326,6 +265,34 @@ public class Publication implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String name;
 
+	@Schema(description = "The publication's creator.")
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	@JsonIgnore
+	public void setOwnerName(
+		UnsafeSupplier<String, Exception> ownerNameUnsafeSupplier) {
+
+		try {
+			ownerName = ownerNameUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(description = "The publication's creator.")
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String ownerName;
+
 	@Schema
 	@Valid
 	public Status getStatus() {
@@ -395,16 +362,6 @@ public class Publication implements Serializable {
 			sb.append(_toJSON(actions));
 		}
 
-		if (creator != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"creator\": ");
-
-			sb.append(String.valueOf(creator));
-		}
-
 		if (dateCreated != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -429,20 +386,6 @@ public class Publication implements Serializable {
 			sb.append("\"");
 
 			sb.append(liferayToJSONDateFormat.format(dateModified));
-
-			sb.append("\"");
-		}
-
-		if (datePublished != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"datePublished\": ");
-
-			sb.append("\"");
-
-			sb.append(liferayToJSONDateFormat.format(datePublished));
 
 			sb.append("\"");
 		}
@@ -495,6 +438,20 @@ public class Publication implements Serializable {
 			sb.append("\"");
 
 			sb.append(_escape(name));
+
+			sb.append("\"");
+		}
+
+		if (ownerName != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ownerName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(ownerName));
 
 			sb.append("\"");
 		}

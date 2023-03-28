@@ -29,12 +29,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Generated;
+
+import javax.validation.Valid;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -44,38 +50,38 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Generated("")
 @GraphQLName(
-	description = "Represents the user who created the collection. Properties follow the [creator](https://schema.org/creator) specification.",
-	value = "Creator"
+	description = "Publication that have been published.",
+	value = "PublicationHistory"
 )
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "Creator")
-public class Creator implements Serializable {
+@XmlRootElement(name = "PublicationHistory")
+public class PublicationHistory implements Serializable {
 
-	public static Creator toDTO(String json) {
-		return ObjectMapperUtil.readValue(Creator.class, json);
+	public static PublicationHistory toDTO(String json) {
+		return ObjectMapperUtil.readValue(PublicationHistory.class, json);
 	}
 
-	public static Creator unsafeToDTO(String json) {
-		return ObjectMapperUtil.unsafeReadValue(Creator.class, json);
+	public static PublicationHistory unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(PublicationHistory.class, json);
 	}
 
-	@Schema(
-		description = "An additional name for the user. This can be used for a middle name."
-	)
-	public String getAdditionalName() {
-		return additionalName;
+	@Schema
+	@Valid
+	public Map<String, Map<String, String>> getActions() {
+		return actions;
 	}
 
-	public void setAdditionalName(String additionalName) {
-		this.additionalName = additionalName;
+	public void setActions(Map<String, Map<String, String>> actions) {
+		this.actions = actions;
 	}
 
 	@JsonIgnore
-	public void setAdditionalName(
-		UnsafeSupplier<String, Exception> additionalNameUnsafeSupplier) {
+	public void setActions(
+		UnsafeSupplier<Map<String, Map<String, String>>, Exception>
+			actionsUnsafeSupplier) {
 
 		try {
-			additionalName = additionalNameUnsafeSupplier.get();
+			actions = actionsUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -85,27 +91,25 @@ public class Creator implements Serializable {
 		}
 	}
 
-	@GraphQLField(
-		description = "An additional name for the user. This can be used for a middle name."
-	)
+	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String additionalName;
+	protected Map<String, Map<String, String>> actions;
 
-	@Schema(description = "The type of the content.")
-	public String getContentType() {
-		return contentType;
+	@Schema(description = "The publication's creation date.")
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 	@JsonIgnore
-	public void setContentType(
-		UnsafeSupplier<String, Exception> contentTypeUnsafeSupplier) {
+	public void setDateCreated(
+		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
 
 		try {
-			contentType = contentTypeUnsafeSupplier.get();
+			dateCreated = dateCreatedUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -115,25 +119,25 @@ public class Creator implements Serializable {
 		}
 	}
 
-	@GraphQLField(description = "The type of the content.")
+	@GraphQLField(description = "The publication's creation date.")
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String contentType;
+	protected Date dateCreated;
 
-	@Schema(description = "The user's surname (last name).")
-	public String getFamilyName() {
-		return familyName;
+	@Schema
+	public String getDescription() {
+		return description;
 	}
 
-	public void setFamilyName(String familyName) {
-		this.familyName = familyName;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@JsonIgnore
-	public void setFamilyName(
-		UnsafeSupplier<String, Exception> familyNameUnsafeSupplier) {
+	public void setDescription(
+		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
 		try {
-			familyName = familyNameUnsafeSupplier.get();
+			description = descriptionUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -143,39 +147,11 @@ public class Creator implements Serializable {
 		}
 	}
 
-	@GraphQLField(description = "The user's surname (last name).")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String familyName;
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String description;
 
-	@Schema(description = "The user's first name.")
-	public String getGivenName() {
-		return givenName;
-	}
-
-	public void setGivenName(String givenName) {
-		this.givenName = givenName;
-	}
-
-	@JsonIgnore
-	public void setGivenName(
-		UnsafeSupplier<String, Exception> givenNameUnsafeSupplier) {
-
-		try {
-			givenName = givenNameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField(description = "The user's first name.")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String givenName;
-
-	@Schema(description = "The user's ID.")
+	@Schema
 	public Long getId() {
 		return id;
 	}
@@ -197,39 +173,11 @@ public class Creator implements Serializable {
 		}
 	}
 
-	@GraphQLField(description = "The user's ID.")
+	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long id;
 
-	@Schema(description = "A relative URL to the user's profile image.")
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	@JsonIgnore
-	public void setImage(
-		UnsafeSupplier<String, Exception> imageUnsafeSupplier) {
-
-		try {
-			image = imageUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField(description = "A relative URL to the user's profile image.")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String image;
-
-	@Schema(description = "The user's full name.")
+	@Schema
 	public String getName() {
 		return name;
 	}
@@ -251,25 +199,25 @@ public class Creator implements Serializable {
 		}
 	}
 
-	@GraphQLField(description = "The user's full name.")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String name;
 
-	@Schema(description = "A relative URL to the user's profile.")
-	public String getProfileURL() {
-		return profileURL;
+	@Schema(description = "The publication's creator.")
+	public String getPublisherName() {
+		return publisherName;
 	}
 
-	public void setProfileURL(String profileURL) {
-		this.profileURL = profileURL;
+	public void setPublisherName(String publisherName) {
+		this.publisherName = publisherName;
 	}
 
 	@JsonIgnore
-	public void setProfileURL(
-		UnsafeSupplier<String, Exception> profileURLUnsafeSupplier) {
+	public void setPublisherName(
+		UnsafeSupplier<String, Exception> publisherNameUnsafeSupplier) {
 
 		try {
-			profileURL = profileURLUnsafeSupplier.get();
+			publisherName = publisherNameUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -279,9 +227,38 @@ public class Creator implements Serializable {
 		}
 	}
 
-	@GraphQLField(description = "A relative URL to the user's profile.")
+	@GraphQLField(description = "The publication's creator.")
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String profileURL;
+	protected String publisherName;
+
+	@Schema
+	@Valid
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@JsonIgnore
+	public void setStatus(
+		UnsafeSupplier<Status, Exception> statusUnsafeSupplier) {
+
+		try {
+			status = statusUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Status status;
 
 	@Override
 	public boolean equals(Object object) {
@@ -289,13 +266,13 @@ public class Creator implements Serializable {
 			return true;
 		}
 
-		if (!(object instanceof Creator)) {
+		if (!(object instanceof PublicationHistory)) {
 			return false;
 		}
 
-		Creator creator = (Creator)object;
+		PublicationHistory publicationHistory = (PublicationHistory)object;
 
-		return Objects.equals(toString(), creator.toString());
+		return Objects.equals(toString(), publicationHistory.toString());
 	}
 
 	@Override
@@ -310,58 +287,43 @@ public class Creator implements Serializable {
 
 		sb.append("{");
 
-		if (additionalName != null) {
+		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+		if (actions != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"additionalName\": ");
+			sb.append("\"actions\": ");
+
+			sb.append(_toJSON(actions));
+		}
+
+		if (dateCreated != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"dateCreated\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(additionalName));
+			sb.append(liferayToJSONDateFormat.format(dateCreated));
 
 			sb.append("\"");
 		}
 
-		if (contentType != null) {
+		if (description != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"contentType\": ");
+			sb.append("\"description\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(contentType));
-
-			sb.append("\"");
-		}
-
-		if (familyName != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"familyName\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(familyName));
-
-			sb.append("\"");
-		}
-
-		if (givenName != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"givenName\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(givenName));
+			sb.append(_escape(description));
 
 			sb.append("\"");
 		}
@@ -374,20 +336,6 @@ public class Creator implements Serializable {
 			sb.append("\"id\": ");
 
 			sb.append(id);
-		}
-
-		if (image != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"image\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(image));
-
-			sb.append("\"");
 		}
 
 		if (name != null) {
@@ -404,18 +352,28 @@ public class Creator implements Serializable {
 			sb.append("\"");
 		}
 
-		if (profileURL != null) {
+		if (publisherName != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"profileURL\": ");
+			sb.append("\"publisherName\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(profileURL));
+			sb.append(_escape(publisherName));
 
 			sb.append("\"");
+		}
+
+		if (status != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"status\": ");
+
+			sb.append(String.valueOf(status));
 		}
 
 		sb.append("}");
@@ -425,7 +383,7 @@ public class Creator implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
-		defaultValue = "com.liferay.change.tracking.rest.dto.v1_0.Creator",
+		defaultValue = "com.liferay.change.tracking.rest.dto.v1_0.PublicationHistory",
 		name = "x-class-name"
 	)
 	public String xClassName;

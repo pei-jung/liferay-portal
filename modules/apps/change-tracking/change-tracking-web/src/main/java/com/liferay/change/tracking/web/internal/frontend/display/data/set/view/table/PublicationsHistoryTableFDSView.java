@@ -31,10 +31,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author David Truong
  */
 @Component(
-	property = "frontend.data.set.name=" + PublicationsFDSNames.PUBLICATIONS_SCHEDULED,
+	property = "frontend.data.set.name=" + PublicationsFDSNames.PUBLICATIONS_HISTORY,
 	service = FDSView.class
 )
-public class PublicationsScheduledTableFDSView extends BaseTableFDSView {
+public class PublicationsHistoryTableFDSView extends BaseTableFDSView {
 
 	@Override
 	public FDSTableSchema getFDSTableSchema(Locale locale) {
@@ -44,33 +44,24 @@ public class PublicationsScheduledTableFDSView extends BaseTableFDSView {
 		return fdsTableSchemaBuilder.add(
 			"name", "publication",
 			fdsTableSchemaField -> {
-				fdsTableSchemaField.setActionId("review-changes");
 				fdsTableSchemaField.setContentRenderer("actionLink");
 				fdsTableSchemaField.setSortable(true);
 			}
 		).add(
-			"description", "description"
-		).add(
-			"dateScheduled", "publishing",
+			"dateCreated", "published-date",
 			fdsTableSchemaField -> {
 				fdsTableSchemaField.setContentRenderer("dateTime");
 				fdsTableSchemaField.setSortable(true);
 			}
 		).add(
-			"dateModified", "last-modified",
-			fdsTableSchemaField -> {
-				fdsTableSchemaField.setContentRenderer("dateTime");
-				fdsTableSchemaField.setSortable(true);
-			}
-		).add(
-			"dateCreated", "create-date",
-			fdsTableSchemaField -> {
-				fdsTableSchemaField.setContentRenderer("dateTime");
-				fdsTableSchemaField.setSortable(true);
-			}
-		).add(
-			"ownerName", "owner",
+			"creator.name", "published-by",
 			fdsTableSchemaField -> fdsTableSchemaField.setSortable(true)
+		).add(
+			"status", "status",
+			fdsTableSchemaField -> {
+				fdsTableSchemaField.setContentRenderer("status");
+				fdsTableSchemaField.setSortable(true);
+			}
 		).build();
 	}
 

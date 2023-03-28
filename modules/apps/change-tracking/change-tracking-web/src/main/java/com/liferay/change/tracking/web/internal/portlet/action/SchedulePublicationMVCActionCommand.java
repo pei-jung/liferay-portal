@@ -50,6 +50,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class SchedulePublicationMVCActionCommand extends BaseMVCActionCommand {
 
+	// delete class
+
 	@Override
 	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)

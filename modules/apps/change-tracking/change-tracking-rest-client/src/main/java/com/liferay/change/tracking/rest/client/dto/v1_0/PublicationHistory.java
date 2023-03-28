@@ -15,7 +15,7 @@
 package com.liferay.change.tracking.rest.client.dto.v1_0;
 
 import com.liferay.change.tracking.rest.client.function.UnsafeSupplier;
-import com.liferay.change.tracking.rest.client.serdes.v1_0.PublicationSerDes;
+import com.liferay.change.tracking.rest.client.serdes.v1_0.PublicationHistorySerDes;
 
 import java.io.Serializable;
 
@@ -30,10 +30,10 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Publication implements Cloneable, Serializable {
+public class PublicationHistory implements Cloneable, Serializable {
 
-	public static Publication toDTO(String json) {
-		return PublicationSerDes.toDTO(json);
+	public static PublicationHistory toDTO(String json) {
+		return PublicationHistorySerDes.toDTO(json);
 	}
 
 	public Map<String, Map<String, String>> getActions() {
@@ -78,48 +78,6 @@ public class Publication implements Cloneable, Serializable {
 	}
 
 	protected Date dateCreated;
-
-	public Date getDateModified() {
-		return dateModified;
-	}
-
-	public void setDateModified(Date dateModified) {
-		this.dateModified = dateModified;
-	}
-
-	public void setDateModified(
-		UnsafeSupplier<Date, Exception> dateModifiedUnsafeSupplier) {
-
-		try {
-			dateModified = dateModifiedUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected Date dateModified;
-
-	public Date getDateScheduled() {
-		return dateScheduled;
-	}
-
-	public void setDateScheduled(Date dateScheduled) {
-		this.dateScheduled = dateScheduled;
-	}
-
-	public void setDateScheduled(
-		UnsafeSupplier<Date, Exception> dateScheduledUnsafeSupplier) {
-
-		try {
-			dateScheduled = dateScheduledUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected Date dateScheduled;
 
 	public String getDescription() {
 		return description;
@@ -180,26 +138,26 @@ public class Publication implements Cloneable, Serializable {
 
 	protected String name;
 
-	public String getOwnerName() {
-		return ownerName;
+	public String getPublisherName() {
+		return publisherName;
 	}
 
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
+	public void setPublisherName(String publisherName) {
+		this.publisherName = publisherName;
 	}
 
-	public void setOwnerName(
-		UnsafeSupplier<String, Exception> ownerNameUnsafeSupplier) {
+	public void setPublisherName(
+		UnsafeSupplier<String, Exception> publisherNameUnsafeSupplier) {
 
 		try {
-			ownerName = ownerNameUnsafeSupplier.get();
+			publisherName = publisherNameUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected String ownerName;
+	protected String publisherName;
 
 	public Status getStatus() {
 		return status;
@@ -223,8 +181,8 @@ public class Publication implements Cloneable, Serializable {
 	protected Status status;
 
 	@Override
-	public Publication clone() throws CloneNotSupportedException {
-		return (Publication)super.clone();
+	public PublicationHistory clone() throws CloneNotSupportedException {
+		return (PublicationHistory)super.clone();
 	}
 
 	@Override
@@ -233,13 +191,13 @@ public class Publication implements Cloneable, Serializable {
 			return true;
 		}
 
-		if (!(object instanceof Publication)) {
+		if (!(object instanceof PublicationHistory)) {
 			return false;
 		}
 
-		Publication publication = (Publication)object;
+		PublicationHistory publicationHistory = (PublicationHistory)object;
 
-		return Objects.equals(toString(), publication.toString());
+		return Objects.equals(toString(), publicationHistory.toString());
 	}
 
 	@Override
@@ -250,7 +208,7 @@ public class Publication implements Cloneable, Serializable {
 	}
 
 	public String toString() {
-		return PublicationSerDes.toJSON(this);
+		return PublicationHistorySerDes.toJSON(this);
 	}
 
 }

@@ -15,6 +15,8 @@
 package com.liferay.change.tracking.rest.internal.graphql.mutation.v1_0;
 
 import com.liferay.change.tracking.rest.dto.v1_0.Publication;
+import com.liferay.change.tracking.rest.dto.v1_0.PublicationHistory;
+import com.liferay.change.tracking.rest.resource.v1_0.PublicationHistoryResource;
 import com.liferay.change.tracking.rest.resource.v1_0.PublicationResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
@@ -52,6 +54,34 @@ public class Mutation {
 
 		_publicationResourceComponentServiceObjects =
 			publicationResourceComponentServiceObjects;
+	}
+
+	public static void setPublicationHistoryResourceComponentServiceObjects(
+		ComponentServiceObjects<PublicationHistoryResource>
+			publicationHistoryResourceComponentServiceObjects) {
+
+		_publicationHistoryResourceComponentServiceObjects =
+			publicationHistoryResourceComponentServiceObjects;
+	}
+
+	@GraphQLField
+	public Response createPublicationsPageExportBatch(
+			@GraphQLName("status") Integer[] status,
+			@GraphQLName("search") String search,
+			@GraphQLName("sort") String sortsString,
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("contentType") String contentType,
+			@GraphQLName("fieldNames") String fieldNames)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_publicationResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			publicationResource ->
+				publicationResource.postPublicationsPageExportBatch(
+					status, search,
+					_sortsBiFunction.apply(publicationResource, sortsString),
+					callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField
@@ -184,6 +214,47 @@ public class Mutation {
 		return true;
 	}
 
+	@GraphQLField
+	public PublicationHistory createPublicationHistory(
+			@GraphQLName("publicationHistory") PublicationHistory
+				publicationHistory)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			publicationHistoryResource ->
+				publicationHistoryResource.postPublicationHistory(
+					publicationHistory));
+	}
+
+	@GraphQLField
+	public Response createPublicationHistoryBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			publicationHistoryResource ->
+				publicationHistoryResource.postPublicationHistoryBatch(
+					callbackURL, object));
+	}
+
+	@GraphQLField
+	public boolean createPublicationHistoryRevert(@GraphQLName("id") Long id)
+		throws Exception {
+
+		_applyVoidComponentServiceObjects(
+			_publicationHistoryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			publicationHistoryResource ->
+				publicationHistoryResource.postPublicationHistoryRevert(id));
+
+		return true;
+	}
+
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R
 			_applyComponentServiceObjects(
 				ComponentServiceObjects<T> componentServiceObjects,
@@ -239,8 +310,29 @@ public class Mutation {
 			_vulcanBatchEngineImportTaskResource);
 	}
 
+	private void _populateResourceContext(
+			PublicationHistoryResource publicationHistoryResource)
+		throws Exception {
+
+		publicationHistoryResource.setContextAcceptLanguage(_acceptLanguage);
+		publicationHistoryResource.setContextCompany(_company);
+		publicationHistoryResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		publicationHistoryResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		publicationHistoryResource.setContextUriInfo(_uriInfo);
+		publicationHistoryResource.setContextUser(_user);
+		publicationHistoryResource.setGroupLocalService(_groupLocalService);
+		publicationHistoryResource.setRoleLocalService(_roleLocalService);
+
+		publicationHistoryResource.setVulcanBatchEngineImportTaskResource(
+			_vulcanBatchEngineImportTaskResource);
+	}
+
 	private static ComponentServiceObjects<PublicationResource>
 		_publicationResourceComponentServiceObjects;
+	private static ComponentServiceObjects<PublicationHistoryResource>
+		_publicationHistoryResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;

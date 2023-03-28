@@ -41,6 +41,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DeleteCTCollectionMVCActionCommand extends BaseMVCActionCommand {
 
+	// delete class
+
 	@Override
 	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)

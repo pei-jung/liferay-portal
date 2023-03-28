@@ -14,7 +14,7 @@
 
 package com.liferay.change.tracking.rest.resource.v1_0;
 
-import com.liferay.change.tracking.rest.dto.v1_0.Publication;
+import com.liferay.change.tracking.rest.dto.v1_0.PublicationHistory;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -30,7 +30,6 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -55,46 +54,24 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @Generated("")
 @ProviderType
-public interface PublicationResource {
+public interface PublicationHistoryResource {
 
-	public Page<Publication> getPublicationsPage(
-			Integer[] status, String search, Pagination pagination,
+	public Page<PublicationHistory> getPublicationHistoryPage(
+			Integer status, String search, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception;
 
-	public Response postPublicationsPageExportBatch(
-			Integer[] status, String search, Sort[] sorts, String callbackURL,
-			String contentType, String fieldNames)
+	public PublicationHistory postPublicationHistory(
+			PublicationHistory publicationHistory)
 		throws Exception;
 
-	public Publication postPublication(Publication publication)
+	public Response postPublicationHistoryBatch(
+			String callbackURL, Object object)
 		throws Exception;
 
-	public Response postPublicationBatch(String callbackURL, Object object)
-		throws Exception;
+	public PublicationHistory getPublicationHistory(Long id) throws Exception;
 
-	public void deletePublication(Long id) throws Exception;
-
-	public Response deletePublicationBatch(String callbackURL, Object object)
-		throws Exception;
-
-	public Publication getPublication(Long id) throws Exception;
-
-	public Publication patchPublication(Long id, Publication publication)
-		throws Exception;
-
-	public Publication putPublication(Long id, Publication publication)
-		throws Exception;
-
-	public Response putPublicationBatch(String callbackURL, Object object)
-		throws Exception;
-
-	public void postPublicationCheckout(Long id) throws Exception;
-
-	public void postPublicationPublish(Long id, Date publishDate)
-		throws Exception;
-
-	public void postPublicationSchedulePublish(Long id) throws Exception;
+	public void postPublicationHistoryRevert(Long id) throws Exception;
 
 	public default void setContextAcceptLanguage(
 		AcceptLanguage contextAcceptLanguage) {
@@ -157,7 +134,7 @@ public interface PublicationResource {
 	@ProviderType
 	public interface Builder {
 
-		public PublicationResource build();
+		public PublicationHistoryResource build();
 
 		public Builder checkPermissions(boolean checkPermissions);
 

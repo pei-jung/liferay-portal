@@ -31,34 +31,10 @@ SearchContainer<CTProcess> searchContainer = viewHistoryDisplayContext.getSearch
 />
 
 <clay:container-fluid>
-	<div class="container-view">
-		<c:choose>
-			<c:when test="<%= !searchContainer.hasResults() && viewHistoryDisplayContext.isSearch() %>">
-				<liferay-frontend:empty-result-message
-					animationType="<%= EmptyResultMessageKeys.AnimationType.SEARCH %>"
-					title='<%= LanguageUtil.get(resourceBundle, "no-publication-has-been-published-yet") %>'
-				/>
-			</c:when>
-			<c:when test="<%= !searchContainer.hasResults() %>">
-				<liferay-frontend:empty-result-message
-					title='<%= LanguageUtil.get(resourceBundle, "no-publication-has-been-published-yet") %>'
-				/>
-			</c:when>
-			<c:otherwise>
-				<div>
-					<span aria-hidden="true" class="loading-animation"></span>
-
-					<react:component
-						module="publications/js/views/PublicationsHistoryView"
-						props="<%= viewHistoryDisplayContext.getReactProps() %>"
-					/>
-				</div>
-			</c:otherwise>
-		</c:choose>
-
-		<liferay-ui:search-paginator
-			markupView="lexicon"
-			searchContainer="<%= searchContainer %>"
-		/>
-	</div>
+	<frontend-data-set:headless-display
+		apiURL="<%= viewHistoryDisplayContext.getAPIURL() %>"
+		fdsActionDropdownItems="<%= viewHistoryDisplayContext.getFDSActionDropdownItems() %>"
+		id="<%= PublicationsFDSNames.PUBLICATIONS_HISTORY %>"
+		style="stacked"
+	/>
 </clay:container-fluid>

@@ -15,12 +15,12 @@
 package com.liferay.change.tracking.rest.internal.resource.v1_0;
 
 import com.liferay.change.tracking.constants.CTActionKeys;
+import com.liferay.change.tracking.constants.CTDestinationNames;
 import com.liferay.change.tracking.mapping.CTMappingTableInfo;
 import com.liferay.change.tracking.model.CTCollection;
-import com.liferay.change.tracking.model.CTCollectionTable;
-import com.liferay.change.tracking.rest.dto.v1_0.Creator;
 import com.liferay.change.tracking.rest.dto.v1_0.Publication;
 import com.liferay.change.tracking.rest.dto.v1_0.Status;
+import com.liferay.change.tracking.rest.internal.odata.entity.v1_0.PublicationEntityModel;
 import com.liferay.change.tracking.rest.internal.util.v1_0.PublishUtil;
 import com.liferay.change.tracking.rest.resource.v1_0.PublicationResource;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
@@ -33,29 +33,31 @@ import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.SearchUtil;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -83,6 +85,11 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 	}
 
 	@Override
+	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
+		return _entityModel;
+	}
+
+	@Override
 	public Publication getPublication(Long ctCollectionId) throws Exception {
 		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
 			ctCollectionId);
@@ -96,23 +103,24 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 			Sort[] sorts)
 		throws Exception {
 
-		if (statuses == null) {
-			statuses = new Integer[] {
-				WorkflowConstants.STATUS_DRAFT, WorkflowConstants.STATUS_EXPIRED
-			};
-		}
+		return SearchUtil.search(
+			Collections.emptyMap(),
+			booleanQuery -> booleanQuery.getPreBooleanFilter(), null,
+			CTCollection.class.getName(), search, pagination,
+			queryConfig -> queryConfig.setSelectedFieldNames(
+				Field.ENTRY_CLASS_PK),
+			searchContext -> {
+				searchContext.setAttribute("statuses", statuses);
+				searchContext.setCompanyId(contextCompany.getCompanyId());
 
-		return Page.of(
-			transform(
-				_ctCollectionService.getCTCollections(
-					contextCompany.getCompanyId(), ArrayUtil.toArray(statuses),
-					search, pagination.getStartPosition(),
-					pagination.getEndPosition(), _toOrderByComparator(sorts)),
-				this::_toPublication),
-			pagination,
-			_ctCollectionService.getCTCollectionsCount(
-				contextCompany.getCompanyId(), ArrayUtil.toArray(statuses),
-				search));
+				if (Validator.isNotNull(search)) {
+					searchContext.setKeywords(search);
+				}
+			},
+			sorts,
+			document -> _toPublication(
+				_ctCollectionLocalService.fetchCTCollection(
+					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
 	}
 
 	@CTAware(onProduction = true)
@@ -158,6 +166,15 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 			_triggerFactory, contextUser.getUserId());
 	}
 
+	@Override
+	public Response postPublicationsPageExportBatch(
+			Integer[] status, String search, Sort[] sorts, String callbackURL,
+			String contentType, String fieldNames)
+		throws Exception {
+
+		return null;
+	}
+
 	private Date _getDateScheduled(CTCollection ctCollection) throws Exception {
 		if (ctCollection.getStatus() != WorkflowConstants.STATUS_SCHEDULED) {
 			return null;
@@ -166,7 +183,7 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 		SchedulerResponse schedulerResponse =
 			_schedulerEngineHelper.getScheduledJob(
 				String.valueOf(ctCollection.getCtCollectionId()),
-				"liferay/ct_collection_scheduled_publish",
+				CTDestinationNames.CT_COLLECTION_SCHEDULED_PUBLISH,
 				StorageType.PERSISTED);
 
 		if (schedulerResponse == null) {
@@ -192,75 +209,6 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 		}
 
 		return false;
-	}
-
-	private Creator _toCreator(User user) {
-		return new Creator() {
-			{
-				additionalName = user.getMiddleName();
-				contentType = "UserAccount";
-				familyName = user.getLastName();
-				givenName = user.getFirstName();
-				id = user.getUserId();
-				name = user.getFullName();
-
-				setImage(
-					() -> {
-						if (user.getPortraitId() == 0) {
-							return null;
-						}
-
-						ThemeDisplay themeDisplay = new ThemeDisplay() {
-							{
-								setPathImage(_portal.getPathImage());
-							}
-						};
-
-						return user.getPortraitURL(themeDisplay);
-					});
-				setProfileURL(
-					() -> {
-						Group group = user.getGroup();
-
-						ThemeDisplay themeDisplay = new ThemeDisplay() {
-							{
-								setPortalURL(StringPool.BLANK);
-								setSiteGroupId(group.getGroupId());
-							}
-						};
-
-						return group.getDisplayURL(themeDisplay);
-					});
-			}
-		};
-	}
-
-	private OrderByComparator<CTCollection> _toOrderByComparator(Sort[] sorts) {
-		if (ArrayUtil.isEmpty(sorts)) {
-			return null;
-		}
-
-		List<Object> objects = new ArrayList<>();
-
-		for (Sort sort : sorts) {
-			String fieldName = sort.getFieldName();
-
-			if (fieldName.equals("dateCreated")) {
-				objects.add("createDate");
-			}
-			else if (fieldName.equals("dateModified")) {
-				objects.add("modifiedDate");
-			}
-			else {
-				objects.add(fieldName);
-			}
-
-			objects.add(!sort.isReverse());
-		}
-
-		return OrderByComparatorFactoryUtil.create(
-			CTCollectionTable.INSTANCE.getTableName(),
-			objects.toArray(new Object[0]));
 	}
 
 	private Publication _toPublication(CTCollection ctCollection)
@@ -347,8 +295,6 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 						CTCollection.class.getName(),
 						ctCollection.getCtCollectionId())
 				).build();
-				creator = _toCreator(
-					_userLocalService.fetchUser(ctCollection.getUserId()));
 				dateCreated = ctCollection.getCreateDate();
 				dateModified = ctCollection.getModifiedDate();
 				dateScheduled = _getDateScheduled(ctCollection);
@@ -356,6 +302,13 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 				id = ctCollection.getCtCollectionId();
 				name = ctCollection.getName();
 				status = _toStatus(ctCollection.getStatus());
+
+				User user = _userLocalService.fetchUser(
+					ctCollection.getUserId());
+
+				if (user != null) {
+					ownerName = user.getFullName();
+				}
 			}
 		};
 	}
@@ -392,6 +345,9 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 		};
 	}
 
+	private static final EntityModel _entityModel =
+		new PublicationEntityModel();
+
 	@Reference
 	private CTCollectionLocalService _ctCollectionLocalService;
 
@@ -409,9 +365,6 @@ public class PublicationResourceImpl extends BasePublicationResourceImpl {
 
 	@Reference
 	private Language _language;
-
-	@Reference
-	private Portal _portal;
 
 	@Reference
 	private SchedulerEngineHelper _schedulerEngineHelper;
