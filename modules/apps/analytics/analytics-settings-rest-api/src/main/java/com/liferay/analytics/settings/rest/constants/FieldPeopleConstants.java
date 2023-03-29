@@ -71,7 +71,7 @@ public class FieldPeopleConstants {
 		"externalReferenceCode", "facebookId", "firstName", "googleUserId",
 		"greeting", "jobTitle", "languageId", "lastName", "ldapServerId",
 		"middleName", "modifiedDate", "openId", "portraitId", "screenName",
-		"status", "timeZoneId", "userId", "uuid"
+		"type", "status", "timeZoneId", "userId", "uuid"
 	};
 
 	public static final String[] FIELD_USER_REQUIRED_NAMES = {

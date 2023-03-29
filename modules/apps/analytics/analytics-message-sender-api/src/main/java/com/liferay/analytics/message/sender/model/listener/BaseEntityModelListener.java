@@ -136,7 +136,7 @@ public abstract class BaseEntityModelListener<T extends BaseModel<T>>
 
 			analyticsMessageLocalService.addAnalyticsMessage(
 				shardedModel.getCompanyId(),
-				userLocalService.getDefaultUserId(shardedModel.getCompanyId()),
+				userLocalService.getGuestUserId(shardedModel.getCompanyId()),
 				analyticsMessageJSON.getBytes(Charset.defaultCharset()));
 		}
 		catch (Exception exception) {
@@ -765,7 +765,7 @@ public abstract class BaseEntityModelListener<T extends BaseModel<T>>
 				analyticsMessageBuilder.buildJSONString();
 
 			analyticsMessageLocalService.addAnalyticsMessage(
-				companyId, userLocalService.getDefaultUserId(companyId),
+				companyId, userLocalService.getGuestUserId(companyId),
 				analyticsMessageJSON.getBytes(Charset.defaultCharset()));
 		}
 		catch (Exception exception) {
@@ -791,6 +791,6 @@ public abstract class BaseEntityModelListener<T extends BaseModel<T>>
 		"expando", "externalReferenceCode", "facebookId", "firstName",
 		"googleUserId", "greeting", "jobTitle", "languageId", "lastName",
 		"ldapServerId", "memberships", "middleName", "modifiedDate", "openId",
-		"portraitId", "screenName", "status", "timeZoneId", "uuid");
+		"portraitId", "screenName", "type", "status", "timeZoneId", "uuid");
 
 }
