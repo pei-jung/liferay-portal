@@ -2780,8 +2780,12 @@ public class DDMStorageLinkPersistenceImpl
 					}
 				}
 				else {
+					if(structureVersionIds.length == 0) {
+						count = 0L;
+					} else {
 					count = Long.valueOf(
 						_countByStructureVersionId(structureVersionIds));
+					}
 				}
 
 				if (productionMode) {
