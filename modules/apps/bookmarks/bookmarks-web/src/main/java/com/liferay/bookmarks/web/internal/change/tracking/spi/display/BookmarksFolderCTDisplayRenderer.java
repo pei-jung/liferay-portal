@@ -115,7 +115,11 @@ public class BookmarksFolderCTDisplayRenderer
 				BookmarksFolder parentFolder =
 					bookmarksFolder.getParentFolder();
 
-				return parentFolder.getName();
+				if (Validator.isNotNull(parentFolder)) {
+					return parentFolder.getName();
+				}
+
+				return null;
 			}
 		);
 	}

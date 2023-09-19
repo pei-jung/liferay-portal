@@ -116,7 +116,11 @@ public class BookmarksEntryCTDisplayRenderer
 			() -> {
 				BookmarksFolder bookmarksFolder = bookmarksEntry.getFolder();
 
-				return bookmarksFolder.getName();
+				if (Validator.isNotNull(bookmarksFolder)) {
+					return bookmarksFolder.getName();
+				}
+
+				return null;
 			}
 		).display(
 			"url", bookmarksEntry.getUrl()
