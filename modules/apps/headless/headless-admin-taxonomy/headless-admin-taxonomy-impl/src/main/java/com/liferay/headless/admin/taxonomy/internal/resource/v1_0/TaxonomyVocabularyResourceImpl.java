@@ -11,7 +11,6 @@ import com.liferay.asset.kernel.model.AssetCategoryConstants;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.model.AssetVocabularyConstants;
-import com.liferay.asset.kernel.model.AssetVocabularyGroupRel;
 import com.liferay.asset.kernel.model.ClassType;
 import com.liferay.asset.kernel.model.ClassTypeReader;
 import com.liferay.asset.kernel.service.AssetVocabularyGroupRelLocalService;
@@ -175,9 +174,7 @@ public class TaxonomyVocabularyResourceImpl
 			ServiceContextBuilder.create(
 				assetVocabulary.getGroupId(), contextHttpServletRequest,
 				taxonomyVocabulary.getViewableByAsString()
-			).build(),
-			AssetVocabularyConstants.fromString(
-				taxonomyVocabulary.getVisibilityTypeAsString()));
+			).build());
 
 		return _toTaxonomyVocabulary(assetVocabulary);
 	}
@@ -881,25 +878,14 @@ public class TaxonomyVocabularyResourceImpl
 			false, LocaleUtil.getSiteDefault(), "Taxonomy vocabulary", titleMap,
 			new HashSet<>(descriptionMap.keySet()));
 
-		List<AssetVocabularyGroupRel> assetVocabularyGroupRels =
-			_assetVocabularyGroupRelLocalService.
-				getAssetVocabularyGroupRelsByVocabularyId(
-					assetVocabulary.getVocabularyId());
+		if (FeatureFlagManagerUtil.isEnabled("LPD-17564") &&
+			ArrayUtil.isNotEmpty(taxonomyVocabulary.getAssetLibraries())) {
 
-		for (AssetVocabularyGroupRel assetVocabularyGroupRel :
-				assetVocabularyGroupRels) {
-
-			_assetVocabularyGroupRelLocalService.deleteAssetVocabularyGroupRel(
-				assetVocabularyGroupRel.getGroupId());
-		}
-
-		AssetLibrary[] assetLibraries = taxonomyVocabulary.getAssetLibraries();
-
-		if (assetLibraries != null) {
-			for (AssetLibrary assetLibrary : assetLibraries) {
-				_assetVocabularyGroupRelLocalService.addAssetVocabularyGroupRel(
-					assetLibrary.getId(), assetVocabulary.getVocabularyId());
-			}
+			_assetVocabularyGroupRelLocalService.setAssetVocabularyGroupRels(
+				taxonomyVocabulary.getId(),
+				transformToLongArray(
+					Arrays.asList(taxonomyVocabulary.getAssetLibraries()),
+					AssetLibrary::getId));
 		}
 
 		return _assetVocabularyService.updateVocabulary(
@@ -911,9 +897,7 @@ public class TaxonomyVocabularyResourceImpl
 			ServiceContextBuilder.create(
 				assetVocabulary.getGroupId(), contextHttpServletRequest,
 				taxonomyVocabulary.getViewableByAsString()
-			).build(),
-			AssetVocabularyConstants.fromString(
-				taxonomyVocabulary.getVisibilityTypeAsString()));
+			).build());
 	}
 
 	private static final Map<String, String> _assetTypeTypeToClassNames =
