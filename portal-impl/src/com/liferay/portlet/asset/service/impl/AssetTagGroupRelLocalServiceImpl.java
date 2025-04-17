@@ -8,9 +8,13 @@ package com.liferay.portlet.asset.service.impl;
 import com.liferay.asset.kernel.exception.AssetTagGroupRelGroupIdException;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.model.AssetTagGroupRel;
+import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.service.DepotEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portlet.asset.service.base.AssetTagGroupRelLocalServiceBaseImpl;
 
@@ -36,7 +40,23 @@ public class AssetTagGroupRelLocalServiceImpl
 		assetTagGroupRel = assetTagGroupRelPersistence.create(
 			counterLocalService.increment());
 
-		assetTagGroupRel.setGroupId(groupId);
+		if (groupId == -1) {
+			assetTagGroupRel.setGroupId(groupId);
+		} else {
+			Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+
+			if (group != null) {
+				DepotEntry depotEntry =
+					DepotEntryLocalServiceUtil.fetchGroupDepotEntry(groupId);
+				if (depotEntry != null) {
+					assetTagGroupRel.setGroupId(group.getGroupId());
+				}
+				else {
+					throw new AssetTagGroupRelGroupIdException();
+				}
+			}
+		}
+
 		assetTagGroupRel.setTagId(tagId);
 
 		assetTagGroupRel = assetTagGroupRelPersistence.update(assetTagGroupRel);
