@@ -38,6 +38,7 @@ import com.liferay.change.tracking.model.CTScore;
 import com.liferay.change.tracking.service.CTEntryLocalService;
 import com.liferay.change.tracking.service.CTPreferencesLocalService;
 import com.liferay.change.tracking.service.CTSchemaVersionLocalService;
+import com.liferay.change.tracking.service.CTScoreLocalService;
 import com.liferay.change.tracking.service.base.CTCollectionLocalServiceBaseImpl;
 import com.liferay.change.tracking.service.persistence.CTAutoResolutionInfoPersistence;
 import com.liferay.change.tracking.service.persistence.CTCommentPersistence;
@@ -163,6 +164,8 @@ public class CTCollectionLocalServiceImpl
 		ctCollection.setStatus(WorkflowConstants.STATUS_DRAFT);
 
 		ctCollection = ctCollectionPersistence.update(ctCollection);
+
+		_ctScoreLocalService.addCTScore(ctCollectionId);
 
 		_resourceLocalService.addResources(
 			ctCollection.getCompanyId(), 0, ctCollection.getUserId(),
@@ -1701,6 +1704,9 @@ public class CTCollectionLocalServiceImpl
 
 	@Reference
 	private CTSchemaVersionLocalService _ctSchemaVersionLocalService;
+
+	@Reference
+	private CTScoreLocalService _ctScoreLocalService;
 
 	@Reference
 	private CTScorePersistence _ctScorePersistence;
