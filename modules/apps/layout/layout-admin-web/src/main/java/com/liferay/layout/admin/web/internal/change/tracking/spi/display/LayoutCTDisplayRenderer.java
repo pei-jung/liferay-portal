@@ -10,32 +10,43 @@ import com.liferay.change.tracking.spi.display.CTDisplayRenderer;
 import com.liferay.change.tracking.spi.display.context.DisplayContext;
 import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
-import com.liferay.petra.string.StringBundler;
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.taglib.servlet.taglib.renderer.LayoutStructureRenderer;
+import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.layout.util.structure.LayoutStructureItem;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.model.ColorScheme;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
+import com.liferay.portal.kernel.servlet.PipingServletResponse;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.RenderLayoutContentThreadLocal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
+import com.liferay.taglib.servlet.PageContextFactoryUtil;
 
 import jakarta.portlet.PortletRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -131,6 +142,11 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 	}
 
 	@Override
+	public boolean isShowPreviewDiff() {
+		return true;
+	}
+
+	@Override
 	public String renderPreview(DisplayContext<Layout> displayContext)
 		throws Exception {
 
@@ -143,42 +159,83 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 		HttpServletRequest httpServletRequest =
 			displayContext.getHttpServletRequest();
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
+		HttpServletResponse httpServletResponse =
+			displayContext.getHttpServletResponse();
 
-		Layout previewLayout = layout;
+		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
 
-		if (layout.isDenied() || layout.isPending()) {
-			previewLayout = layout.fetchDraftLayout();
+		PipingServletResponse pipingServletResponse = new PipingServletResponse(
+			httpServletResponse, unsyncStringWriter);
+
+		PageContext pageContext = PageContextFactoryUtil.create(
+			httpServletRequest, pipingServletResponse);
+
+		LayoutStructure layoutStructure = null;
+
+		if (layout.isTypeContent()) {
+			LayoutPageTemplateStructure layoutPageTemplateStructure =
+				_layoutPageTemplateStructureLocalService.
+					fetchLayoutPageTemplateStructure(
+						layout.getGroupId(), layout.getPlid());
+
+			if (layoutPageTemplateStructure == null) {
+				return StringPool.BLANK;
+			}
+
+			long segmentsExperienceId = ParamUtil.getLong(
+				httpServletRequest, "segmentsExperienceId");
+
+			layoutStructure = LayoutStructure.of(
+				layoutPageTemplateStructure.getData(segmentsExperienceId));
+		}
+		else {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			themeDisplay.setLayout(layout);
+			themeDisplay.setLayoutTypePortlet(
+				(LayoutTypePortlet)layout.getLayoutType());
+
+			httpServletRequest.setAttribute(WebKeys.LAYOUT, layout);
+			httpServletRequest.setAttribute(
+				WebKeys.PORTLET_AJAX_RENDER, Boolean.FALSE);
+			httpServletRequest.setAttribute(
+				"ORIGINAL_HTTP_SERVLET_REQUEST", httpServletRequest);
+
+			layoutStructure = new LayoutStructure();
+
+			LayoutStructureItem rootLayoutStructureItem =
+				layoutStructure.addRootLayoutStructureItem();
+
+			layoutStructure.addDropZoneLayoutStructureItem(
+				rootLayoutStructureItem.getItemId(), 0);
 		}
 
-		String languageId = LocaleUtil.toLanguageId(displayContext.getLocale());
-
-		String url = HttpComponentsUtil.addParameters(
-			themeDisplay.getPathMain() + "/portal/get_page_preview",
-			"languageId", languageId, "p_l_mode", Constants.PREVIEW,
-			"p_p_state", "undefined", "previewCTCollectionId",
-			layout.getCtCollectionId());
-
-		long segmentsExperienceId = ParamUtil.getLong(
-			httpServletRequest, "segmentsExperienceId");
-
-		if (segmentsExperienceId > 0) {
-			url = HttpComponentsUtil.addParameter(
-				url, "segmentsExperienceId", segmentsExperienceId);
+		if (layoutStructure == null) {
+			return StringPool.BLANK;
 		}
 
-		url = HttpComponentsUtil.addParameter(
-			url, "selPlid", previewLayout.getPlid());
+		boolean originalRenderLayoutContent =
+			RenderLayoutContentThreadLocal.isRenderLayoutContent();
 
-		url = HttpComponentsUtil.addParameter(
-			url, "showUserLocaleOptionsMessage", "false");
+		try {
+			RenderLayoutContentThreadLocal.setRenderLayoutContent(true);
 
-		return StringBundler.concat(
-			"<iframe frameborder=\"0\" onload=\"this.style.height = ",
-			"(this.contentWindow.document.body.scrollHeight+20) + 'px';\" ",
-			"src=\"", url, "\" width=\"100%\"></iframe>");
+			LayoutStructureRenderer layoutStructureRenderer =
+				new LayoutStructureRenderer(
+					httpServletRequest, layoutStructure,
+					layoutStructure.getMainItemId(), Constants.PREVIEW,
+					pageContext, false, true);
+
+			layoutStructureRenderer.render();
+		}
+		finally {
+			RenderLayoutContentThreadLocal.setRenderLayoutContent(
+				originalRenderLayoutContent);
+		}
+
+		return unsyncStringWriter.toString();
 	}
 
 	@Override
@@ -270,6 +327,10 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 			"priority", layout.getPriority()
 		);
 	}
+
+	@Reference
+	private LayoutPageTemplateStructureLocalService
+		_layoutPageTemplateStructureLocalService;
 
 	@Reference
 	private LayoutPermission _layoutPermission;
